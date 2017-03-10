@@ -1,18 +1,26 @@
-#include <cassert>
-#include <thread>
-#include <chrono>
-
-#include <programmer.h>
-#include <pavrpgm_config.h>
+#include <tic.h>
+#include <config.h>
 
 #define USB_VENDOR_ID_POLOLU 0x1FFB
 #define USB_PRODUCT_ID_TIC01A 0x00B3
+
+/// The maximum firmware major version supported by this library.
+#define TIC_FIRMWARE_VERSION_MAJOR_MAX 1
 
 // A setup packet bRequest value from USB 2.0 Table 9-4
 #define USB_REQUEST_GET_DESCRIPTOR 6
 
 // A descriptor type from USB 2.0 Table 9-5
 #define USB_DESCRIPTOR_TYPE_STRING 3
+
+struct tic_device
+{
+    libusbp_device usb_device;
+    libusbp_generic_interface usb_interface;
+    char serial_number[SERIAL_NUMBER_MAX_LENGTH + 1];
+    uint16_t firmwareVersion;
+};
+
 
 /** TODO: std::string Tic::convertDeviceResetToString(uint8_t deviceReset)
 {
