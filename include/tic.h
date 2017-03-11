@@ -22,12 +22,6 @@ extern "C" {
 
 #define TIC_API
 
-/// Some functions in this library return strings that must be freed using this
-/// function.  Refer to the documentation of the function you are calling to
-/// determine whether you need to free the string.  Do not free the same
-/// non-NULL string twice.
-TIC_API void tic_string_free(char *);  // TODO: is this needed?
-
 
 // tic_error ////////////////////////////////////////////////////////////////////
 

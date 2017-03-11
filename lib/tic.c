@@ -13,13 +13,6 @@
 // A descriptor type from USB 2.0 Table 9-5
 #define USB_DESCRIPTOR_TYPE_STRING 3
 
-struct tic_device
-{
-    libusbp_device usb_device;
-    libusbp_generic_interface usb_interface;
-    char serial_number[SERIAL_NUMBER_MAX_LENGTH + 1];
-    uint16_t firmwareVersion;
-};
 
 
 /** TODO: std::string Tic::convertDeviceResetToString(uint8_t deviceReset)
