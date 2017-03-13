@@ -62,17 +62,38 @@ tic_error * tic_list_connected_devices(
         if (error) { break; }
         if (product_id != USB_PRODUCT_ID_TIC01A) { continue; }
 
+        // Get the USB interface.
+        libusbp_generic_interface * usb_interface = NULL;
+        {
+            uint8_t interface_number = 0;
+            bool composite = false;
+            libusbp_error * usb_error = libusbp_generic_interface_create(
+                usb_device, interface_number, composite, &usb_interface);
+            if (usb_error)
+            {
+                if (libusbp_error_has_code(usb_error, LIBUSBP_ERROR_NOT_READY))
+                {
+                    // An error occurred that is normal if the interface is simply
+                    // not ready to use yet.  Silently ignore this device.
+                    continue;
+                }
+                error = tic_usb_error(usb_error);
+                break;
+            }
+        }
+
         // Allocate the new device.
         tic_device * tic_device = calloc(1, sizeof(tic_device));
-        if (tic_device == NULL) { continue; }
+        if (tic_device == NULL)
+        {
+            error = &tic_error_no_memory;
+            break;
+        }
         tic_device_list[tic_device_count++] = tic_device;
 
-        // Get the USB interface.
-        uint8_t interface_number = 0;
-        bool composite = false;
-        error = tic_usb_error(libusbp_generic_interface_create(
-          usb_device, interface_number, composite, &tic_device->usb_interface));
-        if (error) { break; }
+        // Store the USB interface.  Must do this here so that it will get freed
+        // if any of the calls below fail.
+        tic_device->usb_interface = usb_interface;
 
         // Get the serial number.
         error = tic_usb_error(libusbp_device_get_serial_number(
