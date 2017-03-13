@@ -1,8 +1,9 @@
 #include "tic_internal.h"
 
+// TODO: handle LIBUSBP_ERROR_NOT_READY errors properly by ignoring the device that generated them
+
 struct tic_device
 {
-    libusbp_device * usb_device;
     libusbp_generic_interface * usb_interface;
     char * serial_number;
     char * os_id;
@@ -13,10 +14,14 @@ tic_error * tic_list_connected_devices(
     tic_device *** device_list,
     size_t * device_count)
 {
+    if (device_count) { *device_count = 0; }
+
     if (device_list == NULL)
     {
         return tic_error_create("Device list output pointer is null.");
     }
+
+    *device_list = NULL;
 
     tic_error * error = NULL;
 
@@ -62,30 +67,27 @@ tic_error * tic_list_connected_devices(
         if (tic_device == NULL) { continue; }
         tic_device_list[tic_device_count++] = tic_device;
 
-        // Move the USB device into the new device.
-        tic_device->usb_device = usb_device;
-        usb_device_list[i] = NULL;
-
         // Get the USB interface.
         uint8_t interface_number = 0;
         bool composite = false;
         error = tic_usb_error(libusbp_generic_interface_create(
           usb_device, interface_number, composite, &tic_device->usb_interface));
-        if (error) { continue; }
+        if (error) { break; }
 
         // Get the serial number.
         error = tic_usb_error(libusbp_device_get_serial_number(
           usb_device, &tic_device->serial_number));
-        if (error) { continue; }
+        if (error) { break; }
 
         // Get the OS ID.
         error = tic_usb_error(libusbp_device_get_os_id(
           usb_device, &tic_device->os_id));
-        if (error) { continue; }
+        if (error) { break; }
 
         // Get the firmware version.
         error = tic_usb_error(libusbp_device_get_revision(
           usb_device, &tic_device->firwmare_version));
+        if (error) { break; }
     }
 
     if (error == NULL)
@@ -127,7 +129,6 @@ void tic_device_free(tic_device * device)
 {
     if (device != NULL)
     {
-        libusbp_free_device(device->usb_device);
         libusbp_generic_interface_free(device->usb_interface);
         libusbp_string_free(device->os_id);
         libusbp_string_free(device->serial_number);
@@ -151,4 +152,17 @@ const char * tic_device_get_os_id(const tic_device * device)
 {
     if (device == NULL) { return ""; }
     return device->os_id;
+}
+
+uint16_t tic_device_get_firmware_version(const tic_device *)
+{
+    if (device == NULL) { return 0xFFFF; }
+    return device->firmware_version;
+}
+
+const libusbp_generic_interface *
+tic_device_get_generic_interface(const tic_device * device)
+{
+    if (device == NULL) { return NULL; }
+    return device->usb_interface;
 }

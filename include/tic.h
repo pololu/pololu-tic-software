@@ -142,6 +142,12 @@ const char * tic_device_get_serial_number(const tic_device *);
 TIC_API TIC_WARN_UNUSED
 const char * tic_device_get_os_id(const tic_device *);
 
+/// Gets the firmware version as a binary-coded decimal number (e.g. 0x0100
+/// means "1.00").  We recommend using tic_get_firmware_version_string() instead
+/// of this function if possible.
+TIC_API TIC_WARN_UNUSED
+uint16_t tic_device_get_firmware_version(const tic_device *);
+
 
 // tic_handle ///////////////////////////////////////////////////////////////////
 
@@ -176,14 +182,8 @@ const tic_device * tic_handle_get_device(const tic_handle *);
 TIC_API TIC_WARN_UNUSED
 const char * tic_get_firmware_version_string(tic_handle *);
 
-// TODO: tic_get_settings
-// TODO: tic_validate_settings
-// TODO: tic_apply_settings
-// TODO: tic_restore_defaults
-// TODO: tic_get_variables
-
 TIC_API TIC_WARN_UNUSED
-tic_error * tic_get_debug_data(tic_handle *, uint8_t data, size_t * size);
+tic_error * tic_get_debug_data(tic_handle *, uint8_t * data, size_t * size);
 
 #ifdef __cplusplus
 }
