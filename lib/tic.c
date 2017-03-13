@@ -1,19 +1,6 @@
 #include <tic.h>
 #include <config.h>
 
-#define USB_VENDOR_ID_POLOLU 0x1FFB
-#define USB_PRODUCT_ID_TIC01A 0x00B3
-
-/// The maximum firmware major version supported by this library.
-#define TIC_FIRMWARE_VERSION_MAJOR_MAX 1
-
-// A setup packet bRequest value from USB 2.0 Table 9-4
-#define USB_REQUEST_GET_DESCRIPTOR 6
-
-// A descriptor type from USB 2.0 Table 9-5
-#define USB_DESCRIPTOR_TYPE_STRING 3
-
-
 
 /** TODO: std::string Tic::convertDeviceResetToString(uint8_t deviceReset)
 {

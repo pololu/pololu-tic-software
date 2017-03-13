@@ -14,6 +14,9 @@ extern "C" {
 #include <stdint.h>
 #include <stdbool.h>
 
+// The maximum firmware major version supported by this library.
+#define TIC_FIRMWARE_VERSION_MAJOR_MAX 1
+
 #ifdef _MSC_VER
 #define TIC_WARN_UNUSED _Check_return_
 #else
@@ -91,9 +94,8 @@ typedef struct tic_device tic_device;
 /// Finds all the Tic devices connected to the computer via USB and returns a
 /// list of them.
 ///
-/// The optional @a device_count parameter is used to return the number of
-/// devices in the list.  The list is actually one element larger because it
-/// ends with a NULL pointer.
+/// The list is terminated by a NULL pointer.  The optional @a device_count
+/// parameter is used to return the number of devices in the list.
 ///
 /// If this function is successful (the returned error pointer is NULL), then
 /// you must later free each device by calling tic_device_free() and free the
@@ -123,17 +125,20 @@ void tic_device_free(tic_device *);
 
 /// Gets the name of the device as an ASCII-encoded string.
 /// The string will be valid at least as long as the device object.
+/// If the device is NULL, returns an empty string.
 TIC_API TIC_WARN_UNUSED
 const char * tic_device_get_name(const tic_device *);
 
 /// Gets the serial number of the device as an ASCII-encoded string.
 /// The string will be valid at least as long as the device object.
+/// If the device is NULL, returns an empty string.
 TIC_API TIC_WARN_UNUSED
 const char * tic_device_get_serial_number(const tic_device *);
 
 /// Get an operating system-specific identifier for this device as an
 /// ASCII-encoded string.  The string will be valid at least as long as the
 /// device object.
+/// If the device is NULL, returns an empty string.
 TIC_API TIC_WARN_UNUSED
 const char * tic_device_get_os_id(const tic_device *);
 

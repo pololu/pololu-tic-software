@@ -14,10 +14,11 @@ struct tic_error
     uint32_t * code_array;
 };
 
-static uint32_t mem_error_code_array[1] = { TIC_ERROR_MEMORY };
+static uint32_t tic_mem_error_code_array[1] = { TIC_ERROR_MEMORY };
 
-static char error_no_memory_msg[] = "Failed to allocate memory.";
-tic_error error_no_memory =
+static char tic_error_no_memory_msg[] =
+    "Failed to allocate memory.";
+tic_error tic_error_no_memory =
 {
     .do_not_free = true,
     .message = error_no_memory_msg,
@@ -25,8 +26,9 @@ tic_error error_no_memory =
     .code_array = mem_error_code_array,
 };
 
-static char error_masked_by_no_memory_msg[] = "Failed to allocate memory for reporting an error.";
-static tic_error error_masked_by_no_memory =
+static char tic_error_masked_by_no_memory_msg[] =
+    "Failed to allocate memory for reporting an error.";
+static tic_error tic_error_masked_by_no_memory =
 {
     .do_not_free = true,
     .message = error_masked_by_no_memory_msg,
@@ -34,7 +36,7 @@ static tic_error error_masked_by_no_memory =
     .code_array = mem_error_code_array,
 };
 
-static tic_error error_blank =
+static tic_error tic_error_blank =
 {
     .do_not_free = true,
     .message = NULL,
@@ -75,7 +77,7 @@ tic_error * tic_error_copy(const tic_error * src_error)
         free(new_error);
         free(new_message);
         free(new_code_array);
-        return &error_masked_by_no_memory;
+        return &tic_error_masked_by_no_memory;
     }
 
     if (code_count != 0)
@@ -136,7 +138,7 @@ tic_error * tic_error_add_v(tic_error * error, const char * format, va_list ap)
     if (message == NULL)
     {
         tic_error_free(error);
-        return &error_masked_by_no_memory;
+        return &tic_error_masked_by_no_memory;
     }
 
     // Assemble the message.
@@ -156,7 +158,7 @@ tic_error * tic_error_add_v(tic_error * error, const char * format, va_list ap)
 // This is just like error_add_v in terms of pointer ownership.
 tic_error * tic_error_add_code(tic_error * error, uint32_t code)
 {
-    error = error_make_mutable(error);
+    error = tic_error_make_mutable(error);
     if (error == NULL || error->do_not_free) { return error; }
     if (error->code_count >= SIZE_MAX / sizeof(uint32_t)) { return error; }
 
@@ -165,7 +167,7 @@ tic_error * tic_error_add_code(tic_error * error, uint32_t code)
     if (new_array == NULL)
     {
         tic_error_free(error);
-        return &error_masked_by_no_memory;
+        return &tic_error_masked_by_no_memory;
     }
     error->code_array = new_array;
     error->code_array[error->code_count++] = code;
@@ -187,7 +189,7 @@ tic_error * tic_error_create(const char * format, ...)
 {
     va_list ap;
     va_start(ap, format);
-    tic_error * error = error_add_v(NULL, format, ap);
+    tic_error * error = tic_error_add_v(NULL, format, ap);
     va_end(ap);
     return error;
 }
