@@ -76,7 +76,7 @@ tic_error * tic_handle_open(const tic_device * device, tic_handle ** handle)
 
     tic_handle_close(new_handle);
 
-    return NULL;
+    return error;
 }
 
 void tic_handle_close(tic_handle * handle)

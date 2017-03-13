@@ -134,7 +134,7 @@ tic_error * tic_list_connected_devices(
 
     libusbp_list_free(usb_device_list);
 
-    return NULL;
+    return error;
 }
 
 void tic_list_free(tic_device ** list)
@@ -144,7 +144,24 @@ void tic_list_free(tic_device ** list)
 
 tic_error * tic_device_copy(
     const tic_device * source,
-    tic_device ** dest);
+    tic_device ** dest)
+{
+    if (dest == NULL)
+    {
+        return error_create("Device output pointer is null.");
+    }
+
+    *dest = NULL;
+
+    if (source == NULL)
+    {
+        return NULL;
+    }
+
+    tic_error * error = NULL;
+
+    return error;
+}
 
 void tic_device_free(tic_device * device)
 {
