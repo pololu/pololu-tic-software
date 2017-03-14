@@ -30,7 +30,7 @@ tic_error * tic_list_connected_devices(
     if (error == NULL)
     {
         error = tic_usb_error(
-            libusbp_list_connected_devices(&device_list, &device_count));
+            libusbp_list_connected_devices(&usb_device_list, &usb_device_count));
     }
 
     tic_device ** tic_device_list = NULL;
@@ -97,17 +97,17 @@ tic_error * tic_list_connected_devices(
 
         // Get the serial number.
         error = tic_usb_error(libusbp_device_get_serial_number(
-          usb_device, &tic_device->serial_number));
+            usb_device, &tic_device->serial_number));
         if (error) { break; }
 
         // Get the OS ID.
         error = tic_usb_error(libusbp_device_get_os_id(
-          usb_device, &tic_device->os_id));
+            usb_device, &tic_device->os_id));
         if (error) { break; }
 
         // Get the firmware version.
         error = tic_usb_error(libusbp_device_get_revision(
-          usb_device, &tic_device->firwmare_version));
+            usb_device, &tic_device->firmware_version));
         if (error) { break; }
     }
 
@@ -129,7 +129,7 @@ tic_error * tic_list_connected_devices(
 
     for (size_t i = 0; i < usb_device_count; i++)
     {
-        libusb_device_free(usb_device_list[i]);
+        libusbp_device_free(usb_device_list[i]);
     }
 
     libusbp_list_free(usb_device_list);
@@ -148,7 +148,7 @@ tic_error * tic_device_copy(
 {
     if (dest == NULL)
     {
-        return error_create("Device output pointer is null.");
+        return tic_error_create("Device output pointer is null.");
     }
 
     *dest = NULL;
@@ -192,7 +192,7 @@ const char * tic_device_get_os_id(const tic_device * device)
     return device->os_id;
 }
 
-uint16_t tic_device_get_firmware_version(const tic_device *)
+uint16_t tic_device_get_firmware_version(const tic_device * device)
 {
     if (device == NULL) { return 0xFFFF; }
     return device->firmware_version;

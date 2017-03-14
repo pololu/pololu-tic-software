@@ -5,7 +5,7 @@
 
 #include <libusbp.h>
 
-#include <strsafe.h>
+#include <stdio.h>
 
 #define USB_VENDOR_ID_POLOLU 0x1FFB
 #define USB_PRODUCT_ID_TIC01A 0x00B3
