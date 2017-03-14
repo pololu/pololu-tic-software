@@ -1,16 +1,15 @@
+#include <tic.hpp>
+#include "config.h"
+#include "arg_reader.h"
+#include "exit_codes.h"
+#include "exception_with_exit_code.h"
+
 #include <iostream>
 #include <string>
 #include <limits>
 #include <iomanip>
 #include <bitset>
 #include <cassert>
-
-#include <pavrpgm_config.h>
-#include <programmer.h>
-#include "arg_reader.h"
-#include "exit_codes.h"
-#include "exception_with_exit_code.h"
-#include "pgm04a_native_usb_protocol.h"
 
 // [all-settings]
 static const char help[] =

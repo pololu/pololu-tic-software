@@ -78,7 +78,7 @@ TIC_API TIC_WARN_UNUSED
 bool tic_error_has_code(const tic_error *, uint32_t code);
 
 /// Returns an English-language ASCII-encoded string describing the error.  The
-/// message consists of one or more sentences.
+/// string consists of one or more complete sentences.
 ///
 /// The returned pointer will be valid at least until the error is freed.
 TIC_API TIC_WARN_UNUSED
@@ -151,8 +151,8 @@ uint16_t tic_device_get_firmware_version(const tic_device *);
 
 // tic_handle ///////////////////////////////////////////////////////////////////
 
-/// Represents a handle to a Tic device.  The handle can be used to read and
-/// write data from the device.
+///  Represents an open handle that can be used to read and write data from a
+///  device.
 typedef struct tic_handle tic_handle;
 
 /// Opens a handle to the specified device.  The handle must later be closed
@@ -182,8 +182,10 @@ const tic_device * tic_handle_get_device(const tic_handle *);
 TIC_API TIC_WARN_UNUSED
 const char * tic_get_firmware_version_string(tic_handle *);
 
+/// \cond
 TIC_API TIC_WARN_UNUSED
 tic_error * tic_get_debug_data(tic_handle *, uint8_t * data, size_t * size);
+/// \endcond
 
 #ifdef __cplusplus
 }
