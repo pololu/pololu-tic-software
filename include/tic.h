@@ -40,28 +40,28 @@ typedef struct tic_error tic_error;
 /// when the error occurs.  This enum defines which error codes are possible.
 enum tic_error_code
 {
-    /// There were problems allocating memory.  A memory shortage might be the
-    /// root cause of the error, or there might be another error that is masked
-    /// by the memory problems.
-    TIC_ERROR_MEMORY = 1,
+  /// There were problems allocating memory.  A memory shortage might be the
+  /// root cause of the error, or there might be another error that is masked by
+  /// the memory problems.
+  TIC_ERROR_MEMORY = 1,
 
-    /// Access was denied.  A common cause of this error on Windows is that
-    /// another application has a handle open to the same device.
-    TIC_ERROR_ACCESS_DENIED = 2,
+  /// Access was denied.  A common cause of this error on Windows is that
+  /// another application has a handle open to the same device.
+  TIC_ERROR_ACCESS_DENIED = 2,
 
-    /// The device took too long to respond to a request or transfer data.
-    TIC_ERROR_TIMEOUT = 3,
+  /// The device took too long to respond to a request or transfer data.
+  TIC_ERROR_TIMEOUT = 3,
 
-    /// The error might have been caused by the device being disconnected, but
-    /// it is possible it was caused by something else.
-    TIC_ERROR_DEVICE_DISCONNECTED = 4,
+  /// The error might have been caused by the device being disconnected, but it
+  /// is possible it was caused by something else.
+  TIC_ERROR_DEVICE_DISCONNECTED = 4,
 };
 
-/// Attempts to copy an error.  If you copy a NULL ::tic_error
-/// pointer, the result will also be NULL.  If you copy a non-NULL ::tic_error
-/// pointer, the result will be non-NULL, but if there are issues allocating
-/// memory, then the copied error might have different properties than the
-/// original error, and it will have the ::TIC_ERROR_MEMORY code.
+/// Attempts to copy an error.  If you copy a NULL ::tic_error pointer, the
+/// result will also be NULL.  If you copy a non-NULL ::tic_error pointer, the
+/// result will be non-NULL, but if there are issues allocating memory, then the
+/// copied error might have different properties than the original error, and it
+/// will have the ::TIC_ERROR_MEMORY code.
 ///
 /// It is the caller's responsibility to free the copied error.
 TIC_API TIC_WARN_UNUSED
@@ -103,8 +103,8 @@ typedef struct tic_device tic_device;
 /// retrieved objects are freed does not matter.
 TIC_API TIC_WARN_UNUSED
 tic_error * tic_list_connected_devices(
-    tic_device *** device_list,
-    size_t * device_count);
+  tic_device *** device_list,
+  size_t * device_count);
 
 /// Frees a device list returned by ::tic_list_connected_devices.
 ///
@@ -115,8 +115,8 @@ void tic_list_free(tic_device ** list);
 /// need to free the copy by calling tic_device_free() at some point.
 TIC_API TIC_WARN_UNUSED
 tic_error * tic_device_copy(
-    const tic_device * source,
-    tic_device ** dest);
+  const tic_device * source,
+  tic_device ** dest);
 
 /// Frees a device object.  Passing a NULL pointer to this function is OK.  Do
 /// not free the same non-NULL pointer twice.
