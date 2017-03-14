@@ -2,30 +2,30 @@
 
 #include <stdexcept>
 
-class ExceptionWithExitCode : public std::exception
+class exception_with_exit_code : public std::exception
 {
 public:
-    explicit ExceptionWithExitCode(uint8_t code, std::string message)
-        : code(code), msg(message)
-    {
-    }
+  explicit exception_with_exit_code(uint8_t code, std::string message)
+    : code(code), msg(message)
+  {
+  }
 
-    virtual const char * what() const noexcept
-    {
-        return msg.c_str();
-    }
+  virtual const char * what() const noexcept
+  {
+    return msg.c_str();
+  }
 
-    std::string message() const
-    {
-        return msg;
-    }
+  std::string message() const
+  {
+    return msg;
+  }
 
-    uint8_t getCode() const noexcept
-    {
-        return code;
-    }
+  uint8_t get_code() const noexcept
+  {
+    return code;
+  }
 
 private:
-    uint8_t code;
-    std::string msg;
+  uint8_t code;
+  std::string msg;
 };

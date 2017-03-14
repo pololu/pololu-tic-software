@@ -34,7 +34,7 @@ namespace tic
   }
 
   /// Wrapper for tic_error_copy().
-  inline tic_error * pointer_copy(tic_error * p) noexcept
+  inline tic_error * pointer_copy(const tic_error * p) noexcept
   {
     return tic_error_copy(p);
   }
@@ -46,7 +46,7 @@ namespace tic
   }
 
   /// Wrapper for tic_device_copy().
-  inline void pointer_copy(tic_device * p)
+  inline tic_device * pointer_copy(const tic_device * p)
   {
     tic_device * copy;
     throw_if_needed(tic_device_copy(p, &copy));
@@ -159,14 +159,14 @@ namespace tic
       const unique_pointer_wrapper_with_copy & other)
       : unique_pointer_wrapper<T>()
     {
-      pointer = pointer_copy(other.pointer);
+      this->pointer = pointer_copy(other.pointer);
     }
 
     /// Copy assignment operator.
     unique_pointer_wrapper_with_copy & operator=(
       const unique_pointer_wrapper_with_copy & other)
     {
-      pointer_reset(pointer_copy(other.pointer));
+      this->pointer_reset(pointer_copy(other.pointer));
       return *this;
     }
 
@@ -176,11 +176,11 @@ namespace tic
   };
 
   /// Represents an error from a library call.
-  class error : public unique_pointer_wrapper_with_copy<libusbp_error>, public std::exception
+  class error : public unique_pointer_wrapper_with_copy<tic_error>, public std::exception
   {
   public:
     /// Constructor that takes a pointer from the C API.
-    explicit error(libusbp_error * p = NULL) noexcept :
+    explicit error(tic_error * p = NULL) noexcept :
       unique_pointer_wrapper_with_copy(p)
     {
     }
@@ -203,7 +203,7 @@ namespace tic
     /// listed in the ::tic_error_code enum.
     bool has_code(uint32_t error_code) const noexcept
     {
-      return libusbp_error_has_code(pointer, error_code);
+      return tic_error_has_code(pointer, error_code);
     }
   };
 
@@ -216,19 +216,25 @@ namespace tic
 
   /// Represents a Tic that is or was connected to the computer.  Can also be in
   /// a null state where it does not represent a device.
-  class tic_device : public unique_pointer_wrapper_with_copy<tic_device>
+  class device : public unique_pointer_wrapper_with_copy<tic_device>
   {
   public:
+    /// Constructor that takes a pointer from the C API.
+    explicit device(tic_device * p = NULL) noexcept :
+      unique_pointer_wrapper_with_copy(p)
+    {
+    } // TODO: try to use "using" instead
+
     /// Gets the name of the device as an ASCII-encoded string.
     /// If the device is null, returns an empty string.
-    std::string get_name() noexcept
+    std::string get_name() const noexcept
     {
       return tic_device_get_name(pointer);
     }
 
     /// Gets the serial number of the device as an ASCII-encoded string.
     /// If the device is null, returns an empty string.
-    std::string get_name() noexcept
+    std::string get_serial_number() const noexcept
     {
       return tic_device_get_serial_number(pointer);
     }
@@ -236,7 +242,7 @@ namespace tic
     /// Get an operating system-specific identifier for this device as an
     /// ASCII-encoded string.  The string will be valid at least as long as the
     /// device object.  If the device is NULL, returns an empty string.
-    std::string get_os_id() noexcept
+    std::string get_os_id() const noexcept
     {
       return tic_device_get_os_id(pointer);
     }
@@ -245,7 +251,7 @@ namespace tic
     /// means "1.00").  We recommend using
     /// tic::handle::get_firmware_version_string() instead of this function if
     /// possible.
-    uint16_t get_firmware_version() noexcept
+    uint16_t get_firmware_version() const noexcept
     {
       return tic_device_get_firmware_version(pointer);
     }
@@ -274,8 +280,8 @@ namespace tic
   public:
     /// Constructor that takes a pointer from the C API.  This object will free
     /// the pointer when it is destroyed.
-    explicit generic_handle(libusbp_generic_handle * p = NULL)
-      : unique_pointer_wrapper(p) noexcept
+    explicit handle(tic_handle * p = NULL) noexcept
+      : unique_pointer_wrapper(p)
     {
     } // TODO: is this needed?  can we implement it with "using"?
 
@@ -292,9 +298,9 @@ namespace tic
     }
 
     /// Gets the device object that corresponds to this handle.
-    device get_device()
+    device get_device() const
     {
-      return device(tic_handle_get_device(pointer));
+      return device(pointer_copy(tic_handle_get_device(pointer)));
     }
 
     /// Gets the firmware version string, including any special modification codes
@@ -307,10 +313,13 @@ namespace tic
     /// \cond
     void get_debug_data(std::vector<uint8_t> & data)
     {
-      throw_if_needed(tic_get_debug_data(data.data(), data.size()));
+      size_t size = data.size();
+      throw_if_needed(tic_get_debug_data(pointer, data.data(), &size));
+      data.resize(size);
     }
     /// \endcond
 
+  };
 #ifdef __cplusplus
 }
 #endif
