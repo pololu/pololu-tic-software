@@ -2,8 +2,8 @@
 
 /// \file tic.h
 ///
-/// This file provides the C API for libtic, a library supports communciating
-/// with the Pololu Tic USB Stepper Motor Controller.
+/// This file provides the C API for libpololu-tic, a library supports
+/// communciating with the Pololu Tic USB Stepper Motor Controller.
 
 #pragma once
 
@@ -69,7 +69,7 @@ tic_error * tic_error_copy(const tic_error *);
 
 /// Frees a returned error object.  Passing the NULL pointer to this function is
 /// OK.  Do not free the same non-NULL error twice.
-TIC_API TIC_WARN_UNUSED
+TIC_API
 void tic_error_free(tic_error *);
 
 /// Returns true if the error has specified error code.  The error codes are

@@ -21,9 +21,9 @@ static char tic_error_no_memory_msg[] =
 tic_error tic_error_no_memory =
 {
     .do_not_free = true,
-    .message = error_no_memory_msg,
+    .message = tic_error_no_memory_msg,
     .code_count = 1,
-    .code_array = mem_error_code_array,
+    .code_array = tic_mem_error_code_array,
 };
 
 static char tic_error_masked_by_no_memory_msg[] =
@@ -31,9 +31,9 @@ static char tic_error_masked_by_no_memory_msg[] =
 static tic_error tic_error_masked_by_no_memory =
 {
     .do_not_free = true,
-    .message = error_masked_by_no_memory_msg,
+    .message = tic_error_masked_by_no_memory_msg,
     .code_count = 1,
-    .code_array = mem_error_code_array,
+    .code_array = tic_mem_error_code_array,
 };
 
 static tic_error tic_error_blank =
@@ -97,7 +97,7 @@ tic_error * tic_error_copy(const tic_error * src_error)
 // cannot be allocated.
 static tic_error * tic_error_make_mutable(tic_error * error)
 {
-    if (error == NULL) { error = &error_blank; }
+    if (error == NULL) { error = &tic_error_blank; }
     if (error->do_not_free)
     {
       error = tic_error_copy(error);
@@ -112,7 +112,7 @@ tic_error * tic_error_add_v(tic_error * error, const char * format, va_list ap)
 {
     if (format == NULL) { return error; }
 
-    error = error_make_mutable(error);
+    error = tic_error_make_mutable(error);
     if (error == NULL || error->do_not_free) { return error; }
 
     if (error->message == NULL) { error->message = ""; }
@@ -179,7 +179,7 @@ tic_error * tic_error_add(tic_error * error, const char * format, ...)
 {
     va_list ap;
     va_start(ap, format);
-    error = error_add_v(error, format, ap);
+    error = tic_error_add_v(error, format, ap);
     va_end(ap);
     return error;
 }
@@ -224,7 +224,7 @@ const char * tic_error_get_message(const tic_error * error)
 // Convert a libusbp_error into a tic_error and free the libusbp_error.
 tic_error * tic_usb_error(libusbp_error * usb_error)
 {
-    if (error == NULL) { return NULL; }
+    if (usb_error == NULL) { return NULL; }
 
     // Create the error and copy the message from libusbp.
     tic_error * error = tic_error_create("%s", libusbp_error_get_message(usb_error));

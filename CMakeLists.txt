@@ -25,6 +25,17 @@ if (NOT CMAKE_BUILD_TYPE)
     "Options are Debug Release RelWithDebInfo MinSizeRel" FORCE)
 endif ()
 
+# Our C code uses features from the C99 standard.
+macro(use_c99)
+  if (CMAKE_VERSION VERSION_LESS "3.1")
+    if (CMAKE_C_COMPILER_ID STREQUAL "GNU")
+      set (CMAKE_C_FLAGS "--std=gnu99 ${CMAKE_C_FLAGS}")
+    endif ()
+  else ()
+    set (CMAKE_C_STANDARD 99)
+  endif ()
+endmacro(use_c99)
+
 # Our C++ code uses features from the C++11 standard.
 macro(use_cxx11)
   if (CMAKE_VERSION VERSION_LESS "3.1")
@@ -64,18 +75,14 @@ if (NOT CMAKE_VERSION VERSION_LESS "3.0")
   cmake_policy(SET CMP0042 NEW)
 endif ()
 
-# Find libusbp and use it.
-pkg_check_modules(LIBUSBP REQUIRED libusbp-1)
-set (CMAKE_CXX_FLAGS "${LIBUSBP_CFLAGS} ${CMAKE_CXX_FLAGS}")
-
 include_directories (
   "${CMAKE_SOURCE_DIR}/include"
   "${CMAKE_BINARY_DIR}/include"
 )
 
 configure_file (
-  "include/pavrpgm_config.h.in"
-  "include/pavrpgm_config.h"
+  "include/config.h.in"
+  "include/config.h"
 )
 
 file(WRITE "${CMAKE_BINARY_DIR}/version.txt" "${SOFTWARE_VERSION}")
