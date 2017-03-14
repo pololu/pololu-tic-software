@@ -160,6 +160,47 @@ tic_error * tic_device_copy(
 
     tic_error * error = NULL;
 
+    tic_device * new_device = calloc(1, sizeof(new_device));
+    if (new_device == NULL)
+    {
+        error = &tic_error_no_memory;
+    }
+
+    if (error == NULL)
+    {
+        error = tic_usb_error(libusbp_generic_interface_copy(
+            source->usb_interface, &new_device->usb_interface));
+    }
+
+    if (error == NULL)
+    {
+        new_device->serial_number = strdup(source->serial_number);
+        if (new_device->serial_number == NULL)
+        {
+            error = &tic_error_no_memory;
+        }
+    }
+
+    if (error == NULL)
+    {
+        new_device->os_id = strdup(source->os_id);
+        if (new_device->os_id == NULL)
+        {
+            error = &tic_error_no_memory;
+        }
+    }
+
+    new_device->firmware_version = source->firmware_version;
+
+    if (error == NULL)
+    {
+        // Success.  Give the copy to the caller.
+        *dest = new_device;
+        new_device = NULL;
+    }
+
+    tic_device_free(new_device);
+
     return error;
 }
 
