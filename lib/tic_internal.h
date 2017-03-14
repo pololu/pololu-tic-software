@@ -2,6 +2,7 @@
 
 #include <tic.h>
 #include "tic_usb_protocol.h"
+#include <config.h>
 
 #include <libusbp.h>
 

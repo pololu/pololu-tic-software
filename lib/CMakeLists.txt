@@ -1,5 +1,8 @@
 use_c99()
 
+# TODO: what about putting the major version in the shared library name?
+# TODO: what about the RC file so people can easily see the version on Windows?
+
 # Find libusbp using pkg-config and use it.
 pkg_check_modules(LIBUSBP REQUIRED libusbp-1)
 set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${LIBUSBP_CFLAGS}")
@@ -10,7 +13,7 @@ if (CMAKE_C_COMPILER_ID STREQUAL "GNU")
   set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fvisibility=hidden")
 endif ()
 
-add_library (lib STATIC
+add_library (lib SHARED
   tic_error.c
   tic_device.c
   tic_handle.c
@@ -21,7 +24,7 @@ add_library (lib STATIC
 #)
 
 set_target_properties(lib PROPERTIES
-  OUTPUT_NAME libpololu-tic
+  OUTPUT_NAME pololu-tic
 )
 
 target_link_libraries (lib "${LIBUSBP_LDFLAGS}")

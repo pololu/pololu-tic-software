@@ -5,20 +5,20 @@ struct tic_handle
     libusbp_generic_handle * usb_handle;
     tic_device * device;
     char * cached_firmware_version_string;
-}
+};
 
 tic_error * tic_handle_open(const tic_device * device, tic_handle ** handle)
 {
     if (handle == NULL)
     {
-        return error_create("Handle output pointer is NULL.");
+        return tic_error_create("Handle output pointer is NULL.");
     }
 
     *handle = NULL;
 
     if (device == NULL)
     {
-        return error_create("Device is null.");
+        return tic_error_create("Device is null.");
     }
 
     tic_error * error = NULL;
@@ -53,8 +53,8 @@ tic_error * tic_handle_open(const tic_device * device, tic_handle ** handle)
 
     if (error == NULL)
     {
-        libusbp_generic_interface * usb_interface =
-            tic_device_get_generic_interface(const tic_device * device);
+        const libusbp_generic_interface * usb_interface =
+            tic_device_get_generic_interface(device);
         error = tic_usb_error(libusbp_generic_handle_open(
             usb_interface, &new_handle->usb_handle));
     }
@@ -112,7 +112,7 @@ const char * tic_get_firmware_version_string(tic_handle * handle)
     char * new_string = malloc(133);
     if (new_string == NULL)
     {
-        return &tic_no_memory;
+        return "";
     }
 
     size_t index = 0;
@@ -141,7 +141,7 @@ const char * tic_get_firmware_version_string(tic_handle * handle)
     {
         // Let's make this be a non-fatal error because it's not so important.
         // Just add a question mark so we can tell if something is wrong.
-        new_string[index++] = '0':
+        new_string[index++] = '0';
     }
 
     // Ignore the modification string if it is just a dash.
@@ -165,20 +165,19 @@ tic_error * tic_get_debug_data(tic_handle * handle, uint8_t * data, size_t * siz
 {
     if (handle == NULL)
     {
-        return error_create("Handle is null.");
+        return tic_error_create("Handle is null.");
     }
 
     if (data == NULL)
     {
-        return error_create("Data output pointer is null.");
+        return tic_error_create("Data output pointer is null.");
     }
 
     if (size == NULL)
     {
-        return error_create("Size output pointer is null.");
+        return tic_error_create("Size output pointer is null.");
     }
 
-    uint8_t buffer[4096];
     size_t transferred;
     libusbp_error * usb_error = libusbp_control_transfer(
         handle->usb_handle,

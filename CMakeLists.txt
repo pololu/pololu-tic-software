@@ -53,7 +53,7 @@ endmacro(use_cxx11)
 set (CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 set (CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 
-# Warn about everything.
+# Configure warnings and errors.
 set (CMAKE_C_FLAGS "-Wall -Wextra ${CMAKE_C_FLAGS}")
 set (CMAKE_CXX_FLAGS "-Wall -Wextra ${CMAKE_CXX_FLAGS}")
 
