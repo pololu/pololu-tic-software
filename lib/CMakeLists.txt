@@ -25,6 +25,9 @@ add_library (lib SHARED
 
 set_target_properties(lib PROPERTIES
   OUTPUT_NAME pololu-tic
+  SOVERSION ${SOFTWARE_VERSION}
+  VERSION ${SOFTWARE_VERSION}
+  DEFINE_SYMBOL TIC_EXPORTS
 )
 
 target_link_libraries (lib "${LIBUSBP_LDFLAGS}")
