@@ -28,10 +28,6 @@ static const char help[] =
   "For more help, see: " DOCUMENTATION_URL "\n"
   "\n";
 
-// Note: The arguments that are entered as a number by the user are all
-// uint32_t.  If we made them be their proper types, that would mean adding more
-// information to the CLI code that code instead be in the library, and it means
-// a typical user would see a wider variety of error messages.
 struct arguments
 {
   bool show_status = false;
