@@ -46,7 +46,7 @@ tic_error * tic_list_connected_devices(
     }
   }
 
-  for (size_t i = 0; error != NULL && i < usb_device_count; i++)
+  for (size_t i = 0; error == NULL && i < usb_device_count; i++)
   {
     libusbp_device * usb_device = usb_device_list[i];
 
@@ -58,7 +58,7 @@ tic_error * tic_list_connected_devices(
 
     // Check the USB product ID.
     uint16_t product_id;
-    error = tic_usb_error(libusbp_device_get_vendor_id(usb_device, &product_id));
+    error = tic_usb_error(libusbp_device_get_product_id(usb_device, &product_id));
     if (error) { break; }
     if (product_id != USB_PRODUCT_ID_TIC01A) { continue; }
 
