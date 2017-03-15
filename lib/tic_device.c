@@ -46,7 +46,7 @@ tic_error * tic_list_connected_devices(
     }
   }
 
-  for (size_t i = 0; error != NULL && i < usb_device_count; i++)
+  for (size_t i = 0; error == NULL && i < usb_device_count; i++)
   {
     libusbp_device * usb_device = usb_device_list[i];
 
@@ -58,7 +58,7 @@ tic_error * tic_list_connected_devices(
 
     // Check the USB product ID.
     uint16_t product_id;
-    error = tic_usb_error(libusbp_device_get_vendor_id(usb_device, &product_id));
+    error = tic_usb_error(libusbp_device_get_product_id(usb_device, &product_id));
     if (error) { break; }
     if (product_id != USB_PRODUCT_ID_TIC01A) { continue; }
 
@@ -83,31 +83,31 @@ tic_error * tic_list_connected_devices(
     }
 
     // Allocate the new device.
-    tic_device * tic_device = calloc(1, sizeof(tic_device));
-    if (tic_device == NULL)
+    tic_device * new_device = calloc(1, sizeof(tic_device));
+    if (new_device == NULL)
     {
       error = &tic_error_no_memory;
       break;
     }
-    tic_device_list[tic_device_count++] = tic_device;
+    tic_device_list[tic_device_count++] = new_device;
 
     // Store the USB interface.  Must do this here so that it will get freed
     // if any of the calls below fail.
-    tic_device->usb_interface = usb_interface;
+    new_device->usb_interface = usb_interface;
 
     // Get the serial number.
     error = tic_usb_error(libusbp_device_get_serial_number(
-        usb_device, &tic_device->serial_number));
+        usb_device, &new_device->serial_number));
     if (error) { break; }
 
     // Get the OS ID.
     error = tic_usb_error(libusbp_device_get_os_id(
-        usb_device, &tic_device->os_id));
+        usb_device, &new_device->os_id));
     if (error) { break; }
 
     // Get the firmware version.
     error = tic_usb_error(libusbp_device_get_revision(
-        usb_device, &tic_device->firmware_version));
+        usb_device, &new_device->firmware_version));
     if (error) { break; }
   }
 
@@ -160,7 +160,7 @@ tic_error * tic_device_copy(
 
   tic_error * error = NULL;
 
-  tic_device * new_device = calloc(1, sizeof(new_device));
+  tic_device * new_device = calloc(1, sizeof(tic_device));
   if (new_device == NULL)
   {
     error = &tic_error_no_memory;

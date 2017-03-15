@@ -12,10 +12,19 @@ extern "C" {
 #endif
 
 #include <stdint.h>
+#include <stddef.h>
 #include <stdbool.h>
 
 // The maximum firmware major version supported by this library.
 #define TIC_FIRMWARE_VERSION_MAJOR_MAX 1
+
+#ifdef _WIN32
+#  define TIC_DLL_EXPORT __declspec(dllexport)
+#  define TIC_DLL_IMPORT __declspec(dllimport)
+#else
+#  define TIC_DLL_IMPORT __attribute__((visibility ("default")))
+#  define TIC_DLL_EXPORT __attribute__((visibility ("default")))
+#endif
 
 #ifdef _MSC_VER
 #define TIC_WARN_UNUSED _Check_return_
@@ -23,7 +32,15 @@ extern "C" {
 #define TIC_WARN_UNUSED __attribute__((warn_unused_result))
 #endif
 
-#define TIC_API
+#ifdef TIC_STATIC
+#  define TIC_API
+#else
+#  ifdef TIC_EXPORTS
+#    define TIC_API TIC_DLL_EXPORT
+#  else
+#    define TIC_API TIC_DLL_IMPORT
+#  endif
+#endif
 
 
 // tic_error ////////////////////////////////////////////////////////////////////
