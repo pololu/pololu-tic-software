@@ -235,12 +235,12 @@ int main(int argc, char ** argv)
   {
     run(argc, argv);
   }
-  catch(const exception_with_exit_code & error)
+  catch (const exception_with_exit_code & error)
   {
     std::cerr << "Error: " << error.what() << std::endl;
     exit_code = error.get_code();
   }
-  catch(const std::exception & error)
+  catch (const std::exception & error)
   {
     std::cerr << "Error: " << error.what() << std::endl;
     exit_code = EXIT_OPERATION_FAILED;
