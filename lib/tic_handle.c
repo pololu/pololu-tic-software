@@ -157,6 +157,8 @@ const char * tic_get_firmware_version_string(tic_handle * handle)
     new_string[index++] = buffer[i];
   }
 
+  new_string[index] = 0;
+
   handle->cached_firmware_version_string = new_string;
 
   return new_string;
