@@ -183,10 +183,10 @@ static void print_debug_data(device_selector & selector)
   std::vector<uint8_t> data(4096, 0);
   handle.get_debug_data(data);
 
-  std::cout << std::hex << std::setw(2) << std::setfill('0');
   for (const uint8_t & byte : data)
   {
-    std::cout << byte << std::endl;
+    std::cout << std::setfill('0') << std::setw(2) << std::hex
+              << (unsigned int)byte << std::endl;
   }
 }
 
