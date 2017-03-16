@@ -186,8 +186,9 @@ static void print_debug_data(device_selector & selector)
   for (const uint8_t & byte : data)
   {
     std::cout << std::setfill('0') << std::setw(2) << std::hex
-              << (unsigned int)byte << std::endl;
+              << (unsigned int)byte << ' ';
   }
+  std::cout << std::endl;
 }
 
 static void run(int argc, char ** argv)
