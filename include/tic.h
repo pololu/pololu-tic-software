@@ -43,6 +43,11 @@ extern "C" {
 #endif
 
 
+/// Certain functions in the library return a string and require the caller to
+/// call this function to free the string.
+void tic_string_free(char *);
+
+
 // tic_error ////////////////////////////////////////////////////////////////////
 
 /// A ::tic_error object represents an error that occurred in the library.  Many
@@ -102,6 +107,200 @@ TIC_API TIC_WARN_UNUSED
 const char * tic_error_get_message(const tic_error *);
 
 
+// tic_settings ////////////////////////////////////////////////////////////////
+
+/// Represents the non-volatile settings for a Tic.
+typedef struct tic_handle tic_handle;
+
+/// Creates a new settings object with the default settings.  The "model"
+/// parameter should be set to 0 for now, and in the future will be used to
+/// specify what type of Tic you are making settings for.
+/// If this function is successful, the caller must free the settings later by
+/// calling tic_settings_free().
+TIC_API TIC_WARN_UNUSED
+tic_error * tic_settings_create(tic_settings **, uint32_t model);
+
+/// Copies a settings object. If this function is successful, the caller must
+/// free the settings later by calling tic_settings_free().
+TIC_API TIC_WARN_UNUSED
+tic_error * tic_settings_copy(
+  const tic_settings * source ,
+  tic_settings ** dest);
+
+// Frees the settings object.
+void tic_settings_free(tic_settings *);
+
+/// Fixes the settings to valid and consistent.
+TIC_API TIC_WARN_UNUSED
+void tic_settings_fix(tic_setting *, char **);
+
+/// Sets the Control mode, which should be one of the TIC_CONTROL_MODE_* macros.
+/// Silently obeys if the input is invalid so that you can see a warning later
+/// when calling tic_settings_fix.
+TIC_API
+void tic_settings_control_mode_set(tic_settings *, uint8_t control_mode);
+
+/// Returns the Control mode described in tic_settings_control_mode_set().
+TIC_API
+uint8_t tic_settings_control_mode_get(const tic_settings *);
+
+/// Sets the Never sleep (ignore USB suspend) setting.  If true, prevents the
+/// device from going into deep sleep mode in order to comply with suspend
+/// current requirements of the USB specifications.
+TIC_API
+void tic_settings_never_sleep_set(tic_settings *);
+
+/// Gets the Never sleep (ignore USB suspend) setting described in
+/// tic_settings_never_sleep_set().
+TIC_API
+bool tic_settings_never_sleep_get(const tic_settings *);
+
+/// Sets the Disable safe start setting.  If true, it disables some extra
+/// conditions that are required to let the device start moving the motor.
+TIC_API
+void tic_settings_disable_safe_start_set(tic_settings *, bool);
+
+/// Gets the Disable safe start setting described in
+/// tic_settings_disable_safe_start_get().
+TIC_API
+bool tic_settings_disable_safe_start_get(const tic_settings *);
+
+/// Sets the Ignore ERR line high setting.  If true, allows the device to
+/// operate even if the ERR line is being driven high by something.
+TIC_API
+void tic_settings_ignore_err_line_high_set(tic_settings *, bool);
+
+/// Gets the Ignore ERR line high setting described in
+/// tic_settings_ignore_err_line_high_set().
+TIC_API
+bool tic_settings_ignore_err_line_high_get(const tic_settings *);
+
+/// Sets the baud rate to be an approximation of the specified baud rate in bits
+/// per second.
+TIC_API
+void tic_settings_baud_rate_set(tic_settings *);
+
+/// Returns an estimate of the baud rate the controller will use for its
+/// asynchronous serial port, in bits per second.
+TIC_API
+uint32_t tic_settings_baud_rate_get(const tic_settings *);
+
+/// Sets the Serial device number, a number between 0 and 0x7F that is used to
+/// identify the device when using the Pololu protocol.
+TIC_API
+void tic_settings_serial_device_number_set(tic_settings *, uint8_t);
+
+/// Gets the Serial device number setting described in
+/// tic_settings_serial_device_number_set().
+TIC_API
+uint8_t tic_settings_serial_device_number_get(const tic_settings *);
+
+/// Sets the I2C device address to use for I2C slave communication.
+TIC_API
+void tic_settings_i2c_device_address_set(tic_settings *, uint8_t);
+
+/// Gets the I2C device address to use for I2C slave communication.
+TIC_API
+uint8_t tic_settings_i2c_device_address_get(const tic_settings *);
+
+/// Sets the Command timeout, the time in milliseconds before the device
+/// considers it to be an error if we have not received certain commands.  A
+/// value of 0 disables the command timeout feature.
+TIC_API
+void tic_settings_command_timeout_set(const tic_settings *, uint16_t);
+
+/// Gets the Command timeout setting described in
+/// tic_settings_command_timeout_set().
+TIC_API
+uint16_t tic_settings_command_timeout_get(const tic_settings *);
+
+/// Sets the Serial CRC enabled setting.  If true, the device requires 7-bit CRC
+/// bytes on all serial commands.
+TIC_API
+void tic_settings_serial_crc_enabled_set(tic_settings *, bool);
+
+/// Gets the Serial CRC enabled setting described in
+/// tic_settings_serial_crc_enabled_set().
+TIC_API
+bool tic_settings_serial_crc_enabled_get(const tic_settings *);
+
+/// Sets the Low VIN shutoff timeout.  This determines how long, in milliseconds,
+/// it takes for a low reading on VIN to be interpreted as an error.
+TIC_API
+void tic_settings_low_vin_timeout_set(tic_settings *, uint16_t);
+
+/// Gets the Low VIN shutoff timeout setting described in
+/// tic_settings_vin_shutoff_timeout_set().
+TIC_API
+uint16_t tic_settings_low_vin_timeout_get(const tic_settings *);
+
+/// Sets the Low VIN shutoff voltage.  This determines how low, in millivolts,
+/// the VIN reading has to be for the controller to change from considering it
+/// to be adequate to considering it to be too low.
+TIC_API
+void tic_settings_low_vin_shutoff_voltage_set(tic_settings *, uint16_t);
+
+/// Gets the Low VIN shutoff voltage setting described in
+/// tic_settings_low_vin_shutoff_voltage_set().
+TIC_API
+uint16_t tic_settings_low_vin_shutoff_voltage_get(const tic_settings *);
+
+/// Sets the Low VIN startup voltage.  This determines how high, in millivolts,
+/// the VIN reading has to be for the controller to change from considering it
+/// to be too low to considering it to be adequate.
+TIC_API
+void tic_settings_low_vin_startup_voltage_set(tic_settings *, uint16_t);
+
+/// Gets the Low VIN startup voltage setting described in
+/// tic_settings_low_vin_startup_voltage_set().
+TIC_API
+uint16_t tic_settings_low_vin_startup_voltage_get(const tic_settings *);
+
+/// Sets the High VIN shutoff voltage.  This determines how high, in millivolts,
+/// the VIN reading has to be for the controller to change from considering it
+/// to be adequate to considering it to be too high.
+TIC_API
+void tic_settings_high_vin_shutoff_voltage_set(tic_settings *, uint16_t);
+
+/// Gets the High VIN shutoff voltage setting described in
+/// tic_settings_high_vin_shutoff_voltage_set().
+TIC_API
+uint16_t tic_settings_high_vin_shutoff_voltage_get(const tic_settings *);
+
+/// Sets the VIN multiplier offset, a calibration factor used in computing VIN.
+TIC_API
+void tic_settings_vin_multiplier_offset_set(tic_settings *, uint16_t);
+
+/// Sets the VIN multiplier offset setting described in
+/// tic_settings_vin_multiplier_offset_set().
+TIC_API
+uint16_t void tic_settings_vin_multiplier_offset_get(const tic_settings *);
+
+/// Sets the RC max pulse period.  This is the maximum allowed time between
+/// consecutive RC pulse rising edges, in milliseconds.
+TIC_API
+void tic_settings_rc_max_pulse_period_set(tic_settings *, uint16_t);
+
+/// Gets the RC max pulse period setting described in
+/// tic_settings_rc_max_pulse_period_set().
+TIC_API
+uint16_t tic_settings_rc_max_pulse_period_get(const tic_settings *);
+
+/// Sets the RC bad signal timeout.  This is the maximum time between valid RC
+/// pulses that we use to update the motor, in milliseconds.
+TIC_API
+void tic_settings_rc_bad_signal_timeout_set(tic_settings *, uint16_t);
+
+/// Gets the RC bad signal timeout setting described in
+/// tic_settings_rc_bad_signal_timeout_set.
+TIC_API
+uint16_t tic_settings_rc_bad_signal_timeout_get(const tic_settings *);
+
+// TODO: finish these accessors
+
+
+
+
 // tic_device ///////////////////////////////////////////////////////////////////
 
 /// Represents a Tic that is or was connected to the computer.
@@ -124,7 +323,6 @@ tic_error * tic_list_connected_devices(
   size_t * device_count);
 
 /// Frees a device list returned by ::tic_list_connected_devices.
-///
 TIC_API
 void tic_list_free(tic_device ** list);
 
@@ -168,8 +366,8 @@ uint16_t tic_device_get_firmware_version(const tic_device *);
 
 // tic_handle ///////////////////////////////////////////////////////////////////
 
-///  Represents an open handle that can be used to read and write data from a
-///  device.
+/// Represents an open handle that can be used to read and write data from a
+/// device.
 typedef struct tic_handle tic_handle;
 
 /// Opens a handle to the specified device.  The handle must later be closed
@@ -198,6 +396,17 @@ const tic_device * tic_handle_get_device(const tic_handle *);
 /// to call it frequently.
 TIC_API TIC_WARN_UNUSED
 const char * tic_get_firmware_version_string(tic_handle *);
+
+/// Reads all of the Tic's non-volatile settings and returns them as an object.
+/// The caller must free the settings later by calling tic_settings_free().
+TIC_API TIC_WARN_UNUSED
+tic_error * tic_get_settings(tic_handle *, tic_settings **);
+
+/// Writes all of the Tic's non-volatile settings.  This function calls
+/// tic_settings_fix() to fix any inconsistencies in the settings, so the
+/// settings might be modified by the function.
+TIC_API TIC_WARN_UNUSED
+tic_error * tic_set_settings(tic_handle *, tic_settings *);
 
 /// \cond
 TIC_API TIC_WARN_UNUSED
