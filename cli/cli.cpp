@@ -4,6 +4,7 @@
 #include "device_selector.h"
 #include "exit_codes.h"
 #include "exception_with_exit_code.h"
+#include "file_utils.h"
 
 #include <iostream>
 #include <string>
@@ -19,11 +20,13 @@ static const char help[] =
   "Usage: " CLI_NAME " OPTIONS\n"
   "\n"
   "General options:\n"
-  "  -s, --status                Show programmer settings and info.\n"
+  "  -s, --status                Show device settings and info.\n"
   "  -d SERIALNUMBER             Specifies the serial number of the device.\n"
   "  --list                      List devices connected to computer.\n"
-  "  -h, --help                  Show this help screen.\n"
   "  --restore-defaults          Restore device's factory settings\n"
+  "  --settings FILE             Load settings file into device.\n"
+  "  --get-settings FILE         Read device settings and write to file.\n"
+  "  -h, --help                  Show this help screen.\n"
   "\n"
   "For more help, see: " DOCUMENTATION_URL "\n"
   "\n";
@@ -39,6 +42,12 @@ struct arguments
 
   bool restore_defaults = false;
 
+  bool set_settings = false;
+  std::string input_settings_file_name;
+
+  bool get_settings = false;
+  std::string output_settings_file_name;
+
   bool show_help = false;
 
   bool get_debug_data = false;
@@ -48,6 +57,8 @@ struct arguments
     return show_status ||
       show_list ||
       restore_defaults ||
+      set_settings ||
+      get_settings ||
       show_help ||
       get_debug_data;
   }
@@ -99,21 +110,31 @@ static arguments parse_args(int argc, char ** argv)
 
     std::string arg = arg_c;
 
-    if (arg == "-d")
+    if (arg == "-s" || arg == "--status")
+    {
+      args.show_status = true;
+    }
+    else if (arg == "-d")
     {
       parse_arg_serial_number(arg_reader, args);
     }
-    else if (arg == "-s" || arg == "--status")
+    else if (arg == "--restore-defaults" || arg == "--restoredefaults")
     {
-      args.show_status = true;
+      args.restore_defaults = true;
+    }
+    else if (arg == "--settings" || arg == "--set-settings" || arg == "--configure")
+    {
+      args.set_settings = true;
+      parse_arg_string(arg_reader, args.input_settings_file_name);
+    }
+    else if (arg == "--get-settings" || arg == "--getconf")
+    {
+      args.get_settings = true;
+      parse_arg_string(arg_reader, args.output_settings_file_name);
     }
     else if (arg == "--list")
     {
       args.show_list = true;
-    }
-    else if (arg == "--restore-defaults")
-    {
-      args.restore_defaults = true;
     }
     else if (arg == "-h" || arg == "--help" ||
       arg == "--h" || arg == "-help" || arg == "/help" || arg == "/h")
@@ -217,6 +238,18 @@ static void run(int argc, char ** argv)
   if (args.show_status)
   {
     print_status(selector);
+  }
+
+  if (args.get_settings)
+  {
+    auto stream = open_file_or_pipe_input(args.input_settings_file_name);
+    // TODO:
+  }
+
+  if (args.set_settings)
+  {
+    auto stream = open_file_or_pipe_output(args.output_settings_file_name);
+    // TODO:
   }
 
   if (args.get_debug_data)
