@@ -132,8 +132,14 @@ tic_error * tic_settings_copy(
 void tic_settings_free(tic_settings *);
 
 /// Fixes the settings to valid and consistent.
+///
+/// The warnings parameters is an optional pointer to pointer to a string.  If
+/// you supply the warnings parameter, this function will allocate and return a
+/// string using the parameter.  The string will contain English sentences that
+/// describe what was fixed in the settings.  If this function is successful,
+/// the string must be freed by the caller using tic_string_free().
 TIC_API TIC_WARN_UNUSED
-void tic_settings_fix(tic_setting *, char **);
+tic_error * tic_settings_fix(tic_settings *, char ** warnings);
 
 /// Sets the control mode, which should be one of the TIC_CONTROL_MODE_* macros.
 /// Silently obeys if the input is invalid so that you can see a warning later
@@ -278,7 +284,7 @@ void tic_settings_vin_multiplier_offset_set(tic_settings *, uint16_t);
 /// Sets the VIN multiplier offset setting described in
 /// tic_settings_vin_multiplier_offset_set().
 TIC_API
-uint16_t void tic_settings_vin_multiplier_offset_get(const tic_settings *);
+uint16_t tic_settings_vin_multiplier_offset_get(const tic_settings *);
 
 /// Sets the RC max pulse period.  This is the maximum allowed time between
 /// consecutive RC pulse rising edges, in milliseconds.
@@ -541,66 +547,66 @@ void tic_settings_microstepping_mode_set(tic_settings *, uint32_t);
 /// Gets the microstepping mode described in
 /// tic_settings_microstepping_mode_set().
 TIC_API
-uint32_t tic_settings_microstepping_mode_get(const tic_setting *);
+uint32_t tic_settings_microstepping_mode_get(const tic_settings *);
 
 /// Sets the decay mode.  The argument should be TIC_DECAY_MIXED,
 /// TIC_DELAY_SLOW, or TIC_DECAY_FAST.
 TIC_API
-void tic_settings_decay_mode_set(tic_setting *, uint8_t);
+void tic_settings_decay_mode_set(tic_settings *, uint8_t);
 
 /// Gets the decay mode described in tic_settings_decay_mode_get().
 TIC_API
-uint8_t tic_settings_decay_mode_get(const tic_setting *);
+uint8_t tic_settings_decay_mode_get(const tic_settings *);
 
 /// Sets the speed minimum, or starting speed, in steps per 10000 seconds.
 /// Valid values are from -500000000 to 500000000.
 TIC_API
-void tic_settings_speed_min_set(tic_setting *, uint32_t);
+void tic_settings_speed_min_set(tic_settings *, uint32_t);
 
 /// Gets the speed minimum described in tic_settings_speed_min_set().
 TIC_API
-uint32_t tic_settings_speed_min_get(const tic_setting *);
+uint32_t tic_settings_speed_min_get(const tic_settings *);
 
 /// Sets the speed maximum, or speed limit, in steps per 10000 seconds.  Valid
 /// values are from 0 to 500000000 (50 kHz).  Values between 0 and 6 behave the
 /// same as 0.
 TIC_API
-void tic_settings_speed_max_set(tic_setting *, uint32_t);
+void tic_settings_speed_max_set(tic_settings *, uint32_t);
 
 /// Gets the speed maximum described in tic_settings_speed_max_set().
 TIC_API
-uint32_t tic_settings_speed_max_get(const tic_setting *);
+uint32_t tic_settings_speed_max_get(const tic_settings *);
 
 /// Sets the deceleration maximum, or deceleration limit, in steps per 100
 /// square seconds.  Valid values are 0 and 59 to 2147483647.  A value of 0
 /// causes the controller's deceleration limit to be equal to the acceleration
 /// limit.
 TIC_API
-void tic_settings_decel_max_set(tic_setting *, uint32_t);
+void tic_settings_decel_max_set(tic_settings *, uint32_t);
 
 /// Gets the deceleration maximum described in tic_settings_decel_max_set().
 TIC_API
-uint32_t tic_settings_decel_max_get(const tic_setting *);
+uint32_t tic_settings_decel_max_get(const tic_settings *);
 
 /// Sets the acceleration maximum, or acceleration limit, in steps per 100
 /// square seconds.  Valid values are 59 to 2147483647.
 TIC_API
-void tic_settings_accel_max_set(tic_setting *, uint32_t);
+void tic_settings_accel_max_set(tic_settings *, uint32_t);
 
 /// Gets the acceleration maximum described in tic_settings_accel_max_set().
 TIC_API
-uint32_t tic_settings_accel_max_get(const tic_setting *);
+uint32_t tic_settings_accel_max_get(const tic_settings *);
 
 /// Sets the deceleration maximum, or deceleration limit, that is used when the
 /// controller is stopping the motor due to an error, in steps per 100 square
 /// seconds.  Valid values are 0 and 59 to 2147483647.  A value of 0 causes the
 /// controller's deceleration limit to be equal to the acceleration limit.
 TIC_API
-void tic_settings_decel_max_during_error_set(tic_setting *, uint32_t);
+void tic_settings_decel_max_during_error_set(tic_settings *, uint32_t);
 
 /// Gets the deceleration maximum described in tic_settings_decel_max_set().
 TIC_API
-uint32_t tic_settings_decel_max_during_error_get(const tic_setting *);
+uint32_t tic_settings_decel_max_during_error_get(const tic_settings *);
 
 
 // tic_device ///////////////////////////////////////////////////////////////////
