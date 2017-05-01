@@ -15,6 +15,8 @@ extern "C" {
 #include <stddef.h>
 #include <stdbool.h>
 
+#include "tic_protocol.h"
+
 // The maximum firmware major version supported by this library.
 #define TIC_FIRMWARE_VERSION_MAJOR_MAX 1
 
