@@ -92,6 +92,12 @@ static void parse_arg_string(arg_reader & arg_reader, std::string & str)
         "Expected an argument after '" +
         std::string(arg_reader.last()) + "'.");
     }
+    if (value_c[0] == 0)
+    {
+      throw exception_with_exit_code(EXIT_BAD_ARGS,
+        "Expected a non-empty argument after '" +
+        std::string(arg_reader.last()) + "'.");
+    }
     str = value_c;
 }
 
@@ -114,7 +120,7 @@ static arguments parse_args(int argc, char ** argv)
     {
       args.show_status = true;
     }
-    else if (arg == "-d")
+    else if (arg == "-d" || arg == "--serial")
     {
       parse_arg_serial_number(arg_reader, args);
     }
@@ -242,13 +248,13 @@ static void run(int argc, char ** argv)
 
   if (args.get_settings)
   {
-    auto stream = open_file_or_pipe_input(args.input_settings_file_name);
+    auto stream = open_file_or_pipe_output(args.output_settings_file_name);
     // TODO:
   }
 
   if (args.set_settings)
   {
-    auto stream = open_file_or_pipe_output(args.output_settings_file_name);
+    auto stream = open_file_or_pipe_input(args.input_settings_file_name);
     // TODO:
   }
 
