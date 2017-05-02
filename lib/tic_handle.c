@@ -81,7 +81,7 @@ tic_error * tic_handle_open(const tic_device * device, tic_handle ** handle)
 
 void tic_handle_close(tic_handle * handle)
 {
-  if (handle)
+  if (handle != NULL)
   {
     libusbp_generic_handle_close(handle->usb_handle);
     tic_device_free(handle->device);
@@ -195,6 +195,12 @@ tic_error * tic_get_debug_data(tic_handle * handle, uint8_t * data, size_t * siz
   *size = transferred;
 
   return NULL;
+}
+
+libusbp_generic_handle * tic_handle_get_usb_handle(tic_handle * handle)
+{
+  if (handle == NULL) { return NULL; }
+  return handle->usb_handle;
 }
 
 // TODO: tic_get_settings
