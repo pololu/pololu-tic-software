@@ -40,7 +40,7 @@ struct tic_settings
   uint8_t rx_config;
   uint8_t rc_config;
   uint8_t current_limit;
-  uint8_t microstepping_mode;
+  uint32_t microstepping_mode;
   uint8_t decay_mode;
   uint32_t speed_min;
   uint32_t speed_max;
@@ -186,8 +186,8 @@ tic_error * tic_settings_fix(tic_settings * settings, char ** warnings)
   // empty string now.  Note: Memory allocation errors are checked at the end.
   if (warnings)
   {
-    w = malloc(4);
-    *w = 0;
+    w = malloc(1);
+    if (w != NULL) { *w = 0; }
   }
 
   warning_add(&w, &wlen, "Warning: TODO: implement tic_settings_fix fully.");
