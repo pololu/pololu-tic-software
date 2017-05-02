@@ -194,7 +194,7 @@ uint8_t tic_settings_control_mode_get(const tic_settings *);
 /// device from going into deep sleep mode in order to comply with suspend
 /// current requirements of the USB specifications.
 TIC_API
-void tic_settings_never_sleep_set(tic_settings *);
+void tic_settings_never_sleep_set(tic_settings *, bool never_sleep);
 
 /// Gets the Never sleep (ignore USB suspend) setting described in
 /// tic_settings_never_sleep_set().
@@ -358,6 +358,24 @@ void tic_settings_rc_consecutive_good_pulses_set(tic_settings *, uint8_t);
 /// tic_settings_rc_consecutive_good_pulses_set().
 TIC_API
 uint8_t tic_settings_rc_consecutive_good_pulses_get(const tic_settings *);
+
+/// Sets the input error minimum parameter.  In analog or RC control
+/// mode, values below this will cause an error.
+TIC_API
+void tic_settings_input_error_min_set(tic_settings *, uint16_t);
+
+/// Gets the input error minimum parameter.  See
+/// tic_settings_error_min_set().
+uint16_t TIC_API tic_settings_input_min_get(const tic_settings *);
+
+/// Sets the input error maximum parameter.  In analog or RC control
+/// mode, values above this will cause an error.
+TIC_API
+void tic_settings_input_error_max_set(tic_settings *, uint16_t);
+
+/// Gets the input error maximum parameter.  See
+/// tic_settings_error_max_set().
+uint16_t TIC_API tic_settings_input_max_get(const tic_settings *);
 
 /// Sets the input play.  The controller implements a filter on the raw
 /// input value (from RC pulses, encoders, or analog) that allows you to make

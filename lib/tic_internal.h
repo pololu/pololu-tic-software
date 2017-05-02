@@ -29,6 +29,12 @@
 
 #define TIC_FIRMWARE_MODIFICATION_STRING_INDEX 4
 
+// Internal tic_settings functions.
+
+void tic_settings_brg_set(tic_settings *, uint16_t);
+uint16_t tic_settings_brg_get(const tic_settings *);
+
+
 // Internal tic_device functions.
 
 const libusbp_generic_interface *
