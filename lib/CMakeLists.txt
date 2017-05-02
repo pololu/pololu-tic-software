@@ -14,9 +14,10 @@ if (CMAKE_C_COMPILER_ID STREQUAL "GNU")
 endif ()
 
 add_library (lib SHARED
-  tic_error.c
   tic_device.c
+  tic_error.c
   tic_handle.c
+  tic_settings.c
 )
 
 #include_directories (

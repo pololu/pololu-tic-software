@@ -1,7 +1,5 @@
 #include "tic_internal.h"
 
-// TODO: handle LIBUSBP_ERROR_NOT_READY errors properly by ignoring the device that generated them
-
 struct tic_device
 {
   libusbp_generic_interface * usb_interface;

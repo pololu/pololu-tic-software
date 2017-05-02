@@ -17,6 +17,8 @@ extern "C" {
 
 #include "tic_protocol.h"
 
+#define TIC_MODEL_T825 0
+
 // The maximum firmware major version supported by this library.
 #define TIC_FIRMWARE_VERSION_MAJOR_MAX 1
 
@@ -117,10 +119,9 @@ const char * tic_error_get_message(const tic_error *);
 typedef struct tic_settings tic_settings;
 
 /// Creates a new settings object with the default settings.  The "model"
-/// parameter should be set to 0 for now, and in the future will be used to
-/// specify what type of Tic you are making settings for.
-/// If this function is successful, the caller must free the settings later by
-/// calling tic_settings_free().
+/// parameter specifyies what type of Tic you are making settings for, and must
+/// be TIC_MODEL_T825.  If this function is successful, the caller must free the
+/// settings later by calling tic_settings_free().
 TIC_API TIC_WARN_UNUSED
 tic_error * tic_settings_create(tic_settings **, uint32_t model);
 
@@ -133,6 +134,7 @@ tic_error * tic_settings_copy(
 
 // Frees a settings object.  It is OK to pass a NULL pointer to this function.
 // Do not free the same non-NULL settings object twice.
+TIC_API
 void tic_settings_free(tic_settings *);
 
 /// Fixes the settings to valid and consistent.

@@ -10,6 +10,13 @@
 #include <stdarg.h>
 #include <stdio.h>
 #include <string.h>
+#include <assert.h>
+
+#ifdef _MSC_VER
+#define TIC_PRINTF(f, a)
+#else
+#define TIC_PRINTF(f, a) __attribute__((format (printf, f, a)))
+#endif
 
 #define USB_VENDOR_ID_POLOLU 0x1FFB
 #define USB_PRODUCT_ID_TIC01A 0x00B3
@@ -27,7 +34,13 @@ tic_device_get_generic_interface(const tic_device * device);
 
 // Error creation functions.
 tic_error * tic_error_add_code(tic_error * error, uint32_t code);
+
+TIC_PRINTF(2, 3)
 tic_error * tic_error_add(tic_error * error, const char * format, ...);
+
+TIC_PRINTF(1, 2)
 tic_error * tic_error_create(const char * format, ...);
+
 tic_error * tic_usb_error(libusbp_error *);
+
 extern tic_error tic_error_no_memory;
