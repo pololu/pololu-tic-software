@@ -53,4 +53,27 @@ namespace
     }
     return file;
   }
+
+  void write_string_to_file(std::string filename, std::string contents)
+  {
+    auto stream = open_file_or_pipe_output(filename);
+    *stream << contents;
+    if (stream->fail())
+    {
+      // TODO: can we get more details about what failed?
+      throw std::runtime_error("Failed to write to file or pipe.");
+    }
+  }
+
+  std::string read_string_from_file(std::string filename)
+  {
+    auto stream = open_file_or_pipe_input(filename);
+    std::string contents;
+    *stream >> contents;
+    if (stream->fail())
+    {
+      throw std::runtime_error("Failed to read from file or pipe.");
+    }
+    return contents;
+  }
 }

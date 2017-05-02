@@ -202,6 +202,35 @@ static void print_status(device_selector & selector)
   //          << std::endl;
 }
 
+static void fix_settings_and_warn_user(tic::settings & settings)
+{
+  std::string warnings;
+  settings.fix(&warnings);
+  std::cerr << warnings;
+}
+
+static void get_settings(device_selector & selector,
+  const std::string & filename)
+{
+  tic::device device = selector.select_device();
+  tic::settings settings = tic::handle(device).get_settings();
+  std::string settings_string = settings.to_string();
+  fix_settings_and_warn_user(settings);
+
+  write_string_to_file(filename, settings_string);
+}
+
+static void set_settings(device_selector & selector,
+  const std::string & filename)
+{
+  std::string settings_string = read_string_from_file(filename);
+  tic::settings settings(settings_string);
+  fix_settings_and_warn_user(settings);
+
+  tic::device device = selector.select_device();
+  tic::handle(device).set_settings(settings);
+}
+
 static void print_debug_data(device_selector & selector)
 {
   tic::device device = selector.select_device();
@@ -248,14 +277,12 @@ static void run(int argc, char ** argv)
 
   if (args.get_settings)
   {
-    auto stream = open_file_or_pipe_output(args.output_settings_file_name);
-    // TODO:
+    get_settings(selector, args.output_settings_file_name);
   }
 
   if (args.set_settings)
   {
-    auto stream = open_file_or_pipe_input(args.input_settings_file_name);
-    // TODO:
+    set_settings(selector, args.input_settings_file_name);
   }
 
   if (args.get_debug_data)

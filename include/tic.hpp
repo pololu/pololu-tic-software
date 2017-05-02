@@ -39,6 +39,20 @@ namespace tic
     return tic_error_copy(p);
   }
 
+  /// Wrapper for tic_settings_free().
+  inline void pointer_free(tic_settings * p) noexcept
+  {
+    tic_settings_free(p);
+  }
+
+  /// Wrapper for tic_settings_copy().
+  inline tic_settings * pointer_copy(const tic_settings * p) noexcept
+  {
+    tic_settings * copy;
+    throw_if_needed(tic_settings_copy(p, &copy));
+    return copy;
+  }
+
   /// Wrapper for tic_device_free().
   inline void pointer_free(tic_device * p) noexcept
   {
@@ -214,6 +228,48 @@ namespace tic
   }
   /*! \endcond */
 
+  /// Represets the settings for a Tic.  This object just stores plain old data;
+  /// it does not have any pointers or handles for other resources.
+  class settings : public unique_pointer_wrapper_with_copy<tic_settings>
+  {
+  public:
+    /// Constructor that takes a pointer from the C API.
+    explicit settings(tic_settings * p = NULL) noexcept :
+      unique_pointer_wrapper_with_copy(p)
+    {
+    }
+
+    /// Wrapper for tic_settings_from_string.
+    settings(std::string settings_string)
+    {
+      pointer = NULL;
+      throw_if_needed(
+        tic_settings_from_string(settings_string.c_str(), &pointer));
+    }
+
+    /// Wrapper for tic_settings_fix().  If a non-NULL warnings pointer is
+    /// provided, and this function does not throw an exception, the string it
+    /// points to will be overridden with an empty string or English sentences
+    /// that have warnings about what settings were changed.
+    void fix(std::string * warnings = NULL)
+    {
+      char * cstr;
+      char ** cstr_pointer = warnings ? &cstr : NULL;
+      throw_if_needed(tic_settings_fix(pointer, cstr_pointer));
+      if (warnings) { *warnings = std::string(cstr); }
+    }
+
+    /// Wrapper for tic_settings_to_string().
+    std::string to_string() const
+    {
+      char * str;
+      throw_if_needed(tic_settings_to_string(pointer, &str));
+      return std::string(str);
+    }
+
+    // TODO: wrappers for all the other accessors
+  };
+
   /// Represents a Tic that is or was connected to the computer.  Can also be in
   /// a null state where it does not represent a device.
   class device : public unique_pointer_wrapper_with_copy<tic_device>
@@ -297,17 +353,30 @@ namespace tic
       pointer_reset();
     }
 
-    /// Gets the device object that corresponds to this handle.
+    /// Wrapper for tic_handle_get_device();
     device get_device() const
     {
       return device(pointer_copy(tic_handle_get_device(pointer)));
     }
 
-    /// Gets the firmware version string, including any special modification codes
-    /// (e.g. "1.07nc").
+    /// Wrapper for tic_get_firmware_version_string().
     std::string get_firmware_version_string()
     {
       return tic_get_firmware_version_string(pointer);
+    }
+
+    /// Wrapper for tic_get_settings().
+    settings get_settings()
+    {
+      tic_settings * s;
+      throw_if_needed(tic_get_settings(pointer, &s));
+      return settings(s);
+    }
+
+    /// Wrapper for tic_set_settings().
+    void set_settings(const settings & settings)
+    {
+      throw_if_needed(tic_set_settings(pointer, settings.pointer_get()));
     }
 
     /// \cond

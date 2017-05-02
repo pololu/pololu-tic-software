@@ -46,7 +46,8 @@ extern "C" {
 
 
 /// Certain functions in the library return a string and require the caller to
-/// call this function to free the string.
+/// call this function to free the string.  Passing a NULL pointer to this
+/// function is OK.  Do not free the same non-NULL string twice.
 void tic_string_free(char *);
 
 
@@ -111,8 +112,8 @@ const char * tic_error_get_message(const tic_error *);
 
 // tic_settings ////////////////////////////////////////////////////////////////
 
-/// Represents the non-volatile settings for a Tic.  This object is just plain
-/// old data; it does not have any pointers or handles for other resources.
+/// Represents the settings for a Tic.  This object is just plain old data; it
+/// does not have any pointers or handles for other resources.
 typedef struct tic_settings tic_settings;
 
 /// Creates a new settings object with the default settings.  The "model"
@@ -130,18 +131,36 @@ tic_error * tic_settings_copy(
   const tic_settings * source ,
   tic_settings ** dest);
 
-// Frees the settings object.
+// Frees a settings object.  It is OK to pass a NULL pointer to this function.
+// Do not free the same non-NULL settings object twice.
 void tic_settings_free(tic_settings *);
 
 /// Fixes the settings to valid and consistent.
 ///
 /// The warnings parameters is an optional pointer to pointer to a string.  If
-/// you supply the warnings parameter, this function will allocate and return a
-/// string using the parameter.  The string will contain English sentences that
-/// describe what was fixed in the settings.  If this function is successful,
-/// the string must be freed by the caller using tic_string_free().
+/// you supply the warnings parameter, and this function is successfull, this
+/// function will allocate and return a string using the parameter.  The string
+/// will describe what was fixed in the settings or be empty if nothing was
+/// fixed.  Each distinct warning in the string will be a series of complete
+/// English sentences that ends with a newline character.  The string must be
+/// freed by the caller using tic_string_free().
 TIC_API TIC_WARN_UNUSED
 tic_error * tic_settings_fix(tic_settings *, char ** warnings);
+
+/// Gets the settings as an XML string, also known as a settings file.  If this
+/// function is successful, the string must be freed by the caller using
+/// tic_string_free().
+TIC_API TIC_WARN_UNUSED
+tic_error * tic_settings_to_string(const tic_settings *, char ** string);
+
+/// Parses an XML settings string, also known as a settings file, and returns
+/// the corresponding settings object.  This function returns an error for
+/// anything that is unrecognized or malformed enough that it cannot be stored
+/// in the settings object.  However, the settings returned might still be
+/// invalid, so it is recommend to call tic_settings_fix() to fix the settings
+/// and warn the user.
+TIC_API TIC_WARN_UNUSED
+tic_error * tic_settings_from_string(const char * string, tic_settings **);
 
 /// Sets the control mode, which should be one of the TIC_CONTROL_MODE_* macros.
 /// Silently obeys if the input is invalid so that you can see a warning later
@@ -632,7 +651,8 @@ tic_error * tic_list_connected_devices(
   tic_device *** device_list,
   size_t * device_count);
 
-/// Frees a device list returned by ::tic_list_connected_devices.
+/// Frees a device list returned by ::tic_list_connected_devices.  It is OK to
+/// pass NULL to this function.
 TIC_API
 void tic_list_free(tic_device ** list);
 
@@ -712,14 +732,13 @@ const char * tic_get_firmware_version_string(tic_handle *);
 TIC_API TIC_WARN_UNUSED
 tic_error * tic_get_settings(tic_handle *, tic_settings **);
 
-/// Writes all of the Tic's non-volatile settings.  This function calls
-/// tic_settings_fix() to fix any inconsistencies in the settings, so the
-/// settings might be modified by the function.
-///
-/// This setting should not be called in a fast loop because the Tic's EEPROM is
-/// only rated for 100000 erase/write cycles.
+/// Writes all of the Tic's non-volatile settings.  Internally, this function
+/// copies the settings and calls tic_settings_fix() to make sure that the
+/// settings will be valid when they are written to the device.  If you want to
+/// get warnings about what was changed, you should call tic_settings_fix()
+/// yourself beforehand.
 TIC_API TIC_WARN_UNUSED
-tic_error * tic_set_settings(tic_handle *, tic_settings *);
+tic_error * tic_set_settings(tic_handle *, const tic_settings *);
 
 /// \cond
 TIC_API TIC_WARN_UNUSED
