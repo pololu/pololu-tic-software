@@ -9,11 +9,11 @@ static tic_error * read_setting_byte(tic_handle * handle,
   assert(output != NULL);
   *output = 0;
 
-  libusbp_generic_handle * handle = tic_handle_get_usb_handle(handle);
+  libusbp_generic_handle * usb_handle = tic_handle_get_usb_handle(handle);
 
   size_t transferred;
-  tic_error * error = tic_usb_error(libusbp_control_transfer(
-      0xC0, TIC_CMD_GET_SETTING, 0, address, output, 1, &transferred));
+  tic_error * error = tic_usb_error(libusbp_control_transfer(usb_handle,
+      0xC0, TIC_CMD_READ_SETTING, 0, address, output, 1, &transferred));
   if (error != NULL)
   {
     return error;
@@ -44,11 +44,13 @@ tic_error * tic_get_settings(tic_handle * handle, tic_settings ** settings)
 
   tic_error * error = NULL;
 
+  uint32_t model = TIC_MODEL_T825;  // TODO: get from handle
+
   // Allocate the new settings object.
   tic_settings * new_settings = NULL;
   if (error == NULL)
   {
-    error = tic_settings_create(&new_settings);
+    error = tic_settings_create(&new_settings, model);
   }
 
   if (error == NULL)
@@ -56,7 +58,7 @@ tic_error * tic_get_settings(tic_handle * handle, tic_settings ** settings)
     uint8_t control_mode;
     error = read_setting_byte(handle,
       TIC_SETTING_CONTROL_MODE, &control_mode);
-    tic_settings_control_mode_set(control_mode);
+    tic_settings_control_mode_set(new_settings, control_mode);
   }
 
   // TODO: read in the rest of the settings

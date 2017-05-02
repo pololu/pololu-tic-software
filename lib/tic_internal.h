@@ -29,8 +29,14 @@
 
 #define TIC_FIRMWARE_MODIFICATION_STRING_INDEX 4
 
+// Internal tic_device functions.
+
 const libusbp_generic_interface *
 tic_device_get_generic_interface(const tic_device * device);
+
+// Internal tic_handle functions.
+
+libusbp_generic_handle * tic_handle_get_usb_handle(tic_handle *);
 
 // Error creation functions.
 tic_error * tic_error_add_code(tic_error * error, uint32_t code);

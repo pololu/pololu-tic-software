@@ -15,6 +15,7 @@ endif ()
 
 add_library (lib SHARED
   tic_device.c
+  tic_device_settings.c
   tic_error.c
   tic_handle.c
   tic_settings.c
