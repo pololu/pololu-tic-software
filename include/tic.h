@@ -119,11 +119,15 @@ const char * tic_error_get_message(const tic_error *);
 typedef struct tic_settings tic_settings;
 
 /// Creates a new settings object with the default settings.  The "model"
-/// parameter specifyies what type of Tic you are making settings for, and must
-/// be TIC_MODEL_T825.  If this function is successful, the caller must free the
-/// settings later by calling tic_settings_free().
+/// parameter specifies what type of Tic you are making settings for, and must
+/// be TIC_MODEL_T825.
+///
+/// The settings parameter should be a non-null pointer to a tic_settings
+/// pointer, which will receive a pointer to a new settings object if and only
+/// if this function is successful.  The caller must free the settings later by
+/// calling tic_settings_free().
 TIC_API TIC_WARN_UNUSED
-tic_error * tic_settings_create(tic_settings **, uint32_t model);
+tic_error * tic_settings_create(tic_settings ** settings, uint32_t model);
 
 /// Copies a settings object. If this function is successful, the caller must
 /// free the settings later by calling tic_settings_free().
@@ -140,7 +144,7 @@ void tic_settings_free(tic_settings *);
 /// Fixes the settings to valid and consistent.
 ///
 /// The warnings parameters is an optional pointer to pointer to a string.  If
-/// you supply the warnings parameter, and this function is successfull, this
+/// you supply the warnings parameter, and this function is successful, this
 /// function will allocate and return a string using the parameter.  The string
 /// will describe what was fixed in the settings or be empty if nothing was
 /// fixed.  Each distinct warning in the string will be a series of complete
@@ -156,13 +160,25 @@ TIC_API TIC_WARN_UNUSED
 tic_error * tic_settings_to_string(const tic_settings *, char ** string);
 
 /// Parses an XML settings string, also known as a settings file, and returns
-/// the corresponding settings object.  This function returns an error for
-/// anything that is unrecognized or malformed enough that it cannot be stored
-/// in the settings object.  However, the settings returned might still be
-/// invalid, so it is recommend to call tic_settings_fix() to fix the settings
-/// and warn the user.
+/// the corresponding settings object.  The settings returned might be invalid,
+/// so it is recommend to call tic_settings_fix() to fix the settings and warn
+/// the user.
+///
+/// The settings parameter should be a non-null pointer to a tic_settings
+/// pointer, which will receive a pointer to a new settings object if and only
+/// if this function is successful.  The caller must free the settings later by
+/// calling tic_settings_free().
+///
+/// The warnings parameters is an optional pointer to pointer to a string.  If
+/// you supply the warnings parameter, and this function is successful, this
+/// function will allocate and return a string using the parameter.  The string
+/// will describe what was fixed in the settings or be empty if nothing was
+/// fixed.  Each distinct warning in the string will be a series of complete
+/// English sentences that ends with a newline character.  The string must be
+/// freed by the caller using tic_string_free().
 TIC_API TIC_WARN_UNUSED
-tic_error * tic_settings_from_string(const char * string, tic_settings **);
+tic_error * tic_settings_read_from_string(const char * string,
+  tic_settings ** settings, char ** warnings);
 
 /// Sets the control mode, which should be one of the TIC_CONTROL_MODE_* macros.
 /// Silently obeys if the input is invalid so that you can see a warning later
@@ -730,9 +746,13 @@ TIC_API TIC_WARN_UNUSED
 const char * tic_get_firmware_version_string(tic_handle *);
 
 /// Reads all of the Tic's non-volatile settings and returns them as an object.
-/// The caller must free the settings later by calling tic_settings_free().
+///
+/// The settings parameter should be a non-null pointer to a tic_settings
+/// pointer, which will receive a pointer to a new settings object if and only
+/// if this function is successful.  The caller must free the settings later by
+/// calling tic_settings_free().
 TIC_API TIC_WARN_UNUSED
-tic_error * tic_get_settings(tic_handle *, tic_settings **);
+tic_error * tic_get_settings(tic_handle *, tic_settings ** settings);
 
 /// Writes all of the Tic's non-volatile settings.  Internally, this function
 /// copies the settings and calls tic_settings_fix() to make sure that the

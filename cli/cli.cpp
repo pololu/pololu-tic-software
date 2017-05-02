@@ -224,7 +224,11 @@ static void set_settings(device_selector & selector,
   const std::string & filename)
 {
   std::string settings_string = read_string_from_file(filename);
-  tic::settings settings(settings_string);
+
+  std::string warnings;
+  tic::settings settings = tic::settings::read_from_string(
+    settings_string, &warnings);
+  std::cerr << warnings;
   fix_settings_and_warn_user(settings);
 
   tic::device device = selector.select_device();

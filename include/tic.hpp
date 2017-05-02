@@ -239,21 +239,14 @@ namespace tic
     {
     }
 
-    /// Wrapper for tic_settings_from_string.
-    settings(std::string settings_string)
-    {
-      pointer = NULL;
-      throw_if_needed(
-        tic_settings_from_string(settings_string.c_str(), &pointer));
-    }
-
-    /// Wrapper for tic_settings_fix().  If a non-NULL warnings pointer is
-    /// provided, and this function does not throw an exception, the string it
-    /// points to will be overridden with an empty string or English sentences
-    /// that have warnings about what settings were changed.
+    /// Wrapper for tic_settings_fix().
+    ///
+    /// If a non-NULL warnings pointer is provided, and this function does not
+    /// throw an exception, the string it points to will be overridden with an
+    /// empty string or a string with English warnings.
     void fix(std::string * warnings = NULL)
     {
-      char * cstr;
+      char * cstr = NULL;
       char ** cstr_pointer = warnings ? &cstr : NULL;
       throw_if_needed(tic_settings_fix(pointer, cstr_pointer));
       if (warnings) { *warnings = std::string(cstr); }
@@ -265,6 +258,26 @@ namespace tic
       char * str;
       throw_if_needed(tic_settings_to_string(pointer, &str));
       return std::string(str);
+    }
+
+    /// Wrapper for tic_settings_read_from_string.
+    ///
+    /// If a non-NULL warnings pointer is provided, and this function does not
+    /// throw an exception, the string it points to will be overridden with an
+    /// empty string or a string with English warnings.
+    static settings read_from_string(
+      const std::string & settings_string, std::string * warnings = NULL)
+    {
+      char * cstr = NULL;
+      char ** cstr_pointer = warnings ? &cstr : NULL;
+
+      settings r;
+      throw_if_needed(tic_settings_read_from_string(
+          settings_string.c_str(), r.pointer_to_pointer_get(), cstr_pointer));
+
+      if (warnings) { *warnings = std::string(cstr); }
+
+      return r;
     }
 
     // TODO: wrappers for all the other accessors
