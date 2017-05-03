@@ -143,9 +143,7 @@ void tic_list_free(tic_device ** list)
   free(list);
 }
 
-tic_error * tic_device_copy(
-  const tic_device * source,
-  tic_device ** dest)
+tic_error * tic_device_copy(const tic_device * source, tic_device ** dest)
 {
   if (dest == NULL)
   {

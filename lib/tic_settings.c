@@ -115,7 +115,7 @@ tic_error * tic_settings_copy(const tic_settings * source, tic_settings ** dest)
 
   if (source == NULL)
   {
-    return tic_error_create("Settings pointer is NULL.");
+    return NULL;
   }
 
   tic_error * error = NULL;
