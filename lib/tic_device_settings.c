@@ -83,7 +83,8 @@ tic_error * tic_get_settings(tic_handle * handle, tic_settings ** settings)
   {
     uint8_t * p = buf + TIC_SETTING_SERIAL_BAUD_RATE_GENERATOR;
     uint16_t brg = p[0] + (p[1] << 8);
-    tic_settings_brg_set(new_settings, brg);
+    uint32_t baud_rate = tic_baud_rate_from_brg(brg);
+    tic_settings_baud_rate_set(new_settings, baud_rate);
   }
 
   {
@@ -268,8 +269,7 @@ tic_error * tic_get_settings(tic_handle * handle, tic_settings ** settings)
   }
 
   {
-    uint32_t current_limit = buf[TIC_SETTING_CURRENT_LIMIT] *
-      TIC_CURRENT_LIMIT_UNITS_MA;
+    uint32_t current_limit = tic_current_limit_from_code(buf[TIC_SETTING_CURRENT_LIMIT]);
     tic_settings_current_limit_set(new_settings, current_limit);
   }
 

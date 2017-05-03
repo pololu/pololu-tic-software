@@ -11,7 +11,7 @@ struct tic_settings
   bool never_sleep;
   bool disable_safe_start;
   bool ignore_err_line_high;
-  uint16_t serial_baud_rate_generator;
+  uint32_t baud_rate;
   uint8_t serial_device_number;
   uint8_t i2c_device_address;
   uint16_t command_timeout;
@@ -43,7 +43,7 @@ struct tic_settings
   uint8_t tx_config;
   uint8_t rx_config;
   uint8_t rc_config;
-  uint8_t current_limit;
+  uint32_t current_limit;
   uint8_t microstepping_mode;
   uint8_t decay_mode;
   uint32_t speed_min;
@@ -262,32 +262,16 @@ bool tic_settings_ignore_err_line_high_get(const tic_settings * settings)
   return settings->ignore_err_line_high;
 }
 
-void tic_settings_brg_set(tic_settings * settings, uint16_t brg)
-{
-  if (!settings) { return; }
-  settings->serial_baud_rate_generator = brg;
-}
-
-uint16_t tic_settings_brg_get(const tic_settings * settings)
-{
-  if (!settings) { return 0; }
-  return settings->serial_baud_rate_generator;
-}
-
 void tic_settings_baud_rate_set(tic_settings * settings, uint32_t baud_rate)
 {
-  uint16_t brg = 0;
-  if (baud_rate != 0)
-  {
-    brg = (TIC_BAUD_RATE_GENERATOR_FACTOR - (baud_rate >> 1)) / baud_rate;
-  }
-  tic_settings_brg_set(settings, brg);
+  if (!settings) { return; }
+  settings->baud_rate = baud_rate;
 }
 
 uint32_t tic_settings_baud_rate_get(const tic_settings * settings)
 {
-  uint16_t brg = tic_settings_brg_get(settings);
-  return (TIC_BAUD_RATE_GENERATOR_FACTOR + (brg + 1) / 2) / (brg + 1);
+  if (!settings) { return 0; }
+  return settings->baud_rate;
 }
 
 void tic_settings_serial_device_number_set(tic_settings * settings,
@@ -676,19 +660,13 @@ void tic_settings_current_limit_set(tic_settings * settings,
   uint32_t current_limit)
 {
   if (!settings) { return; }
-
-  // We have to divide it by 32 mA and change it to an achievable limit.
-  current_limit /= TIC_CURRENT_LIMIT_UNITS_MA;
-  if (current_limit > 124) { current_limit = 124; }
-  else if (current_limit > 64) { current_limit &= ~3; }
-  else if (current_limit > 32) { current_limit &= ~1; }
   settings->current_limit = current_limit;
 }
 
 uint32_t tic_settings_current_limit_get(const tic_settings * settings)
 {
   if (!settings) { return 0; }
-  return settings->current_limit * TIC_CURRENT_LIMIT_UNITS_MA;
+  return settings->current_limit;
 }
 
 void tic_settings_microstepping_mode_set(tic_settings * settings,
