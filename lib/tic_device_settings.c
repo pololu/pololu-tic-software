@@ -61,22 +61,22 @@ tic_error * tic_get_settings(tic_handle * handle, tic_settings ** settings)
   }
 
   {
-    bool control_mode = !!buf[TIC_SETTING_CONTROL_MODE];
+    bool control_mode = buf[TIC_SETTING_CONTROL_MODE] & 1;
     tic_settings_control_mode_set(new_settings, control_mode);
   }
 
   {
-    bool never_sleep = !!buf[TIC_SETTING_NEVER_SLEEP];
+    bool never_sleep = buf[TIC_SETTING_NEVER_SLEEP] & 1;
     tic_settings_never_sleep_set(new_settings, never_sleep);
   }
 
   {
-    bool disable_safe_start = !!buf[TIC_SETTING_DISABLE_SAFE_START];
+    bool disable_safe_start = buf[TIC_SETTING_DISABLE_SAFE_START] & 1;
     tic_settings_disable_safe_start_set(new_settings, disable_safe_start);
   }
 
   {
-    bool ignore_err_line_high = !!buf[TIC_SETTING_IGNORE_ERR_LINE_HIGH];
+    bool ignore_err_line_high = buf[TIC_SETTING_IGNORE_ERR_LINE_HIGH] & 1;
     tic_settings_ignore_err_line_high_set(new_settings, ignore_err_line_high);
   }
 
@@ -103,7 +103,7 @@ tic_error * tic_get_settings(tic_handle * handle, tic_settings ** settings)
   }
 
   {
-    bool serial_crc_enabled = !!buf[TIC_SETTING_SERIAL_CRC_ENABLED];
+    bool serial_crc_enabled = buf[TIC_SETTING_SERIAL_CRC_ENABLED] & 1;
     tic_settings_serial_crc_enabled_set(new_settings, serial_crc_enabled);
   }
 
@@ -185,7 +185,7 @@ tic_error * tic_get_settings(tic_handle * handle, tic_settings ** settings)
   }
 
   {
-    bool input_invert = !!buf[TIC_SETTING_INPUT_INVERT];
+    bool input_invert = buf[TIC_SETTING_INPUT_INVERT] & 1;
     tic_settings_input_play_set(new_settings, input_invert);
   }
 
