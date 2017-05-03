@@ -183,6 +183,7 @@ static void warning_add(char ** w, size_t * wlen, const char * format, ...)
       // This error seems really unlikely to happen.  If it does, we can add a
       // better way to report it.  For now, just set w to NULL so it is treated
       // like a memory allocation problem.
+      free(*w);
       *w = NULL;
       va_end(ap);
       return;
@@ -230,6 +231,8 @@ tic_error * tic_settings_fix(tic_settings * settings, char ** warnings)
     w = malloc(1);
     if (w != NULL) { *w = 0; }
   }
+
+  // TODO: how about using the tic_string.c library here instead of reinventing it
 
   warning_add(&w, &wlen, "Warning: TODO: implement tic_settings_fix fully.");
   warning_add(&w, &wlen, "Warning: TODO: implement tic_settings_fix fully!");

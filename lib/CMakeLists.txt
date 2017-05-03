@@ -22,6 +22,7 @@ add_library (lib SHARED
   tic_error.c
   tic_handle.c
   tic_settings.c
+  tic_string.c
 )
 
 #include_directories (

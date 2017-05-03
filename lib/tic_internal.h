@@ -30,6 +30,21 @@
 #define TIC_FIRMWARE_MODIFICATION_STRING_INDEX 4
 
 
+// Internal string manipulation library.
+
+typedef struct tic_string
+{
+  char * data;
+  size_t capacity;
+  size_t length;
+} tic_string;
+void tic_string_setup(tic_string *);
+void tic_string_setup_dummy(tic_string *);
+TIC_PRINTF(2, 3)
+void tic_string_printf(tic_string *, const char * format, ...);
+
+
+
 // Internal settings conversion functions.
 
 uint32_t tic_baud_rate_from_brg(uint16_t brg);
