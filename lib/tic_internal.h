@@ -29,10 +29,13 @@
 
 #define TIC_FIRMWARE_MODIFICATION_STRING_INDEX 4
 
-// Internal tic_settings functions.
 
-void tic_settings_brg_set(tic_settings *, uint16_t);
-uint16_t tic_settings_brg_get(const tic_settings *);
+// Internal settings conversion functions.
+
+uint32_t tic_baud_rate_from_brg(uint16_t brg);
+uint16_t tic_baud_rate_to_brg(uint32_t baud_rate);
+uint32_t tic_current_limit_from_code(uint8_t code);
+uint16_t tic_current_limit_to_code(uint32_t current_limit);
 
 
 // Internal tic_device functions.
@@ -40,11 +43,14 @@ uint16_t tic_settings_brg_get(const tic_settings *);
 const libusbp_generic_interface *
 tic_device_get_generic_interface(const tic_device * device);
 
+
 // Internal tic_handle functions.
 
 libusbp_generic_handle * tic_handle_get_usb_handle(tic_handle *);
 
+
 // Error creation functions.
+
 tic_error * tic_error_add_code(tic_error * error, uint32_t code);
 
 TIC_PRINTF(2, 3)
