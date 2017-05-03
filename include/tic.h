@@ -402,6 +402,15 @@ void tic_settings_input_scaling_degree_set(tic_settings *, uint8_t);
 TIC_API
 uint8_t tic_settings_input_scaling_degree_get(const tic_settings *);
 
+/// Sets the input invert setting.  See tic_settings_output_max_set().
+TIC_API
+void tic_settings_input_invert_set(tic_settings *, bool);
+
+/// Gets the input invert setting described in
+/// tic_settings_input_invert_set().
+TIC_API
+bool tic_settings_input_invert_get(const tic_settings *);
+
 /// Sets the input minimum scaling parameter.  See
 /// tic_settings_output_max_set().
 TIC_API
