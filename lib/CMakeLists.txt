@@ -14,6 +14,8 @@ if (CMAKE_C_COMPILER_ID STREQUAL "GNU")
 endif ()
 
 add_library (lib SHARED
+  tic_baud_rate.c
+  tic_current_limit.c
   tic_device.c
   tic_device_settings.c
   tic_error.c
