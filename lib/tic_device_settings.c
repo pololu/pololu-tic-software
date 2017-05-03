@@ -274,28 +274,7 @@ tic_error * tic_get_settings(tic_handle * handle, tic_settings ** settings)
   }
 
   {
-    uint32_t microstepping_mode;
-    switch(buf[TIC_SETTING_MICROSTEPPING_MODE])
-    {
-    case TIC_MICROSTEPPING_MODE_1:
-      microstepping_mode = 1;
-      break;
-    case TIC_MICROSTEPPING_MODE_2:
-      microstepping_mode = 2;
-      break;
-    case TIC_MICROSTEPPING_MODE_4:
-      microstepping_mode = 4;
-      break;
-    case TIC_MICROSTEPPING_MODE_8:
-      microstepping_mode = 8;
-      break;
-    case TIC_MICROSTEPPING_MODE_16:
-      microstepping_mode = 16;
-      break;
-    default:
-      microstepping_mode = 32;
-      break;
-    }
+    uint8_t microstepping_mode = buf[TIC_SETTING_MICROSTEPPING_MODE];
     tic_settings_microstepping_mode_set(new_settings, microstepping_mode);
   }
 

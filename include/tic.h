@@ -377,7 +377,7 @@ void tic_settings_input_error_max_set(tic_settings *, uint16_t);
 /// Gets the input error maximum parameter.  See
 /// tic_settings_error_max_set().
 TIC_API
-uint16_t tic_settings_input_max_get(const tic_settings *);
+uint16_t tic_settings_input_error_max_get(const tic_settings *);
 
 /// Sets the input play.  The controller implements a filter on the raw
 /// input value (from RC pulses, encoders, or analog) that allows you to make
@@ -604,15 +604,17 @@ TIC_API
 uint32_t tic_settings_current_limit_get(const tic_settings *);
 
 /// Sets the microstepping mode, which is the number of microsteps that
-/// corresponds to one step.  Valid values for the Tic T825 are 1, 2, 4, 8, and
-/// 32.
+/// corresponds to one step.  This should be one of the TIC_MICROSTEPPING_MODE_*
+/// macros, but not all microstepping modes are supported on all models.  If you
+/// specify an invalid or unsupported mode to this function, you can fix it with
+/// tic_settings_fix().
 TIC_API
-void tic_settings_microstepping_mode_set(tic_settings *, uint32_t);
+void tic_settings_microstepping_mode_set(tic_settings *, uint8_t);
 
 /// Gets the microstepping mode described in
 /// tic_settings_microstepping_mode_set().
 TIC_API
-uint32_t tic_settings_microstepping_mode_get(const tic_settings *);
+uint8_t tic_settings_microstepping_mode_get(const tic_settings *);
 
 /// Sets the decay mode.  The argument should be TIC_DECAY_MIXED,
 /// TIC_DELAY_SLOW, or TIC_DECAY_FAST.

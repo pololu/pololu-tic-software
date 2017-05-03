@@ -2,6 +2,7 @@
 
 // TODO: consider changing these and the accessors to have larger types
 // for numeric values in order to simplify the code that works with settings
+
 struct tic_settings
 {
   uint32_t tic_model;
@@ -43,13 +44,13 @@ struct tic_settings
   uint8_t rx_config;
   uint8_t rc_config;
   uint8_t current_limit;
-  uint32_t microstepping_mode;
+  uint8_t microstepping_mode;
   uint8_t decay_mode;
   uint32_t speed_min;
   uint32_t speed_max;
   uint32_t decel_max;
   uint32_t accel_max;
-  int32_t decel_max_during_error;
+  uint32_t decel_max_during_error;
 };
 
 static tic_error * tic_settings_fill_with_defaults(
@@ -691,13 +692,13 @@ uint32_t tic_settings_current_limit_get(const tic_settings * settings)
 }
 
 void tic_settings_microstepping_mode_set(tic_settings * settings,
-  uint32_t microstepping_mode)
+  uint8_t microstepping_mode)
 {
   if (!settings) { return; }
   settings->microstepping_mode = microstepping_mode;
 }
 
-uint32_t tic_settings_microstepping_mode_get(const tic_settings * settings)
+uint8_t tic_settings_microstepping_mode_get(const tic_settings * settings)
 {
   if (!settings) { return 1; }
   return settings->microstepping_mode;
