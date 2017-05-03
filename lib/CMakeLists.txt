@@ -18,6 +18,7 @@ add_library (lib SHARED
   tic_current_limit.c
   tic_device.c
   tic_get_settings.c
+  tic_set_settings.c
   tic_error.c
   tic_handle.c
   tic_settings.c

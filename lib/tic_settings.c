@@ -482,6 +482,18 @@ uint8_t tic_settings_input_scaling_degree_get(const tic_settings * settings)
   return settings->input_scaling_degree;
 }
 
+void tic_settings_input_invert_set(tic_settings * settings, bool invert)
+{
+  if (!settings) { return; }
+  settings->input_invert = invert;
+}
+
+bool tic_settings_input_invert_get(const tic_settings * settings)
+{
+  if (!settings) { return 0; }
+  return settings->input_invert;
+}
+
 void tic_settings_input_min_set(tic_settings * settings, uint16_t input_min)
 {
   if (!settings) { return; }
