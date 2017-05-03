@@ -1,5 +1,7 @@
 #include "tic_internal.h"
 
+// TODO: consider changing these and the accessors to have larger types
+// for numeric values in order to simplify the code that works with settings
 struct tic_settings
 {
   uint32_t tic_model;
@@ -14,8 +16,9 @@ struct tic_settings
   uint16_t command_timeout;
   bool serial_crc_enabled;
   uint16_t low_vin_timeout;
-  uint16_t low_vin_shutoff;
-  uint16_t high_vin_shutoff;
+  uint16_t low_vin_shutoff_voltage;
+  uint16_t low_vin_startup_voltage;
+  uint16_t high_vin_shutoff_voltage;
   int16_t vin_multiplier_offset;
   uint16_t rc_max_pulse_period;
   uint16_t rc_bad_signal_timeout;
@@ -220,7 +223,7 @@ uint8_t tic_settings_control_mode_get(const tic_settings * settings)
   return settings->control_mode;
 }
 
-void tic_settings_never_sleep_set(tic_settings * settings, bool never_sleep);
+void tic_settings_never_sleep_set(tic_settings * settings, bool never_sleep)
 {
   if (!settings) { return; }
   settings->never_sleep = never_sleep;
@@ -261,13 +264,13 @@ bool tic_settings_ignore_err_line_high_get(const tic_settings * settings)
 void tic_settings_brg_set(tic_settings * settings, uint16_t brg)
 {
   if (!settings) { return; }
-  settings->baud_rate_generator = brg;
+  settings->serial_baud_rate_generator = brg;
 }
 
-uint32_t tic_settings_brg_get(const tic_settings * settings)
+uint16_t tic_settings_brg_get(const tic_settings * settings)
 {
   if (!settings) { return 0; }
-  return settings->baud_rate_generator;
+  return settings->serial_baud_rate_generator;
 }
 
 void tic_settings_baud_rate_set(tic_settings * settings, uint32_t baud_rate)
@@ -300,7 +303,7 @@ uint8_t tic_settings_serial_device_number_get(const tic_settings * settings)
 }
 
 void tic_settings_i2c_device_address_set(tic_settings * settings,
-  uint8_t i2c_device_adddress)
+  uint8_t i2c_device_address)
 {
   if (!settings) { return; }
   settings->i2c_device_address = i2c_device_address;
@@ -321,7 +324,7 @@ void tic_settings_command_timeout_set(tic_settings * settings,
 
 uint16_t tic_settings_command_timeout_get(const tic_settings * settings)
 {
-  if (!settings) { return; }
+  if (!settings) { return 0; }
   return settings->command_timeout;
 }
 
@@ -367,7 +370,7 @@ uint16_t tic_settings_low_vin_shutoff_voltage_get(const tic_settings * settings)
 void tic_settings_low_vin_startup_voltage_set(tic_settings * settings,
   uint16_t low_vin_startup_voltage)
 {
-  if (!settings) { return 0; }
+  if (!settings) { return; }
   settings->low_vin_startup_voltage = low_vin_startup_voltage;
 }
 
@@ -394,7 +397,7 @@ void tic_settings_vin_multiplier_offset_set(tic_settings * settings,
   uint16_t vin_multiplier_offset)
 {
   if (!settings) { return; }
-  return settings->vin_multiplier_offset;
+  settings->vin_multiplier_offset = vin_multiplier_offset;
 }
 
 uint16_t tic_settings_vin_multiplier_offset_get(const tic_settings * settings)
@@ -425,7 +428,7 @@ void tic_settings_rc_bad_signal_timeout_set(tic_settings * settings,
 
 uint16_t tic_settings_rc_bad_signal_timeout_get(const tic_settings * settings)
 {
-  if (!settings) { return; }
+  if (!settings) { return 0; }
   return settings->rc_bad_signal_timeout;
 }
 
@@ -450,10 +453,10 @@ void tic_settings_input_error_min_set(tic_settings * settings,
   settings->input_error_min = input_error_min;
 }
 
-uint16_t tic_settings_input_min_get(const tic_settings * settings)
+uint16_t tic_settings_input_error_min_get(const tic_settings * settings)
 {
-  if (!settings) { return; }
-  return settings->input_min;
+  if (!settings) { return 0; }
+  return settings->input_error_min;
 }
 
 void tic_settings_input_error_max_set(tic_settings * settings,
@@ -463,9 +466,9 @@ void tic_settings_input_error_max_set(tic_settings * settings,
   settings->input_error_max = input_error_max;
 }
 
-uint16_t tic_settings_input_max_get(const tic_settings * settings)
+uint16_t tic_settings_input_error_max_get(const tic_settings * settings)
 {
-  if (!settings) { return; }
+  if (!settings) { return 0; }
   return settings->input_max;
 }
 
@@ -477,7 +480,7 @@ void tic_settings_input_play_set(tic_settings * settings, uint8_t input_play)
 
 uint8_t tic_settings_input_play_get(const tic_settings * settings)
 {
-  if (!settings) { return; }
+  if (!settings) { return 0; }
   return settings->input_play;
 }
 
@@ -490,7 +493,7 @@ void tic_settings_input_scaling_degree_set(tic_settings * settings,
 
 uint8_t tic_settings_input_scaling_degree_get(const tic_settings * settings)
 {
-  if (!settings) { return; }
+  if (!settings) { return 0; }
   return settings->input_scaling_degree;
 }
 
@@ -509,20 +512,20 @@ uint16_t tic_settings_input_min_get(const tic_settings * settings)
 void tic_settings_input_neutral_min_set(tic_settings * settings,
   uint16_t input_neutral_min)
 {
-  if (!settings) { return 0; }
+  if (!settings) { return; }
   settings->input_neutral_min = input_neutral_min;
 }
 
 uint16_t tic_settings_input_neutral_min_get(const tic_settings * settings)
 {
   if (!settings){ return 0; }
-  settings->input_neutral_min;
+  return settings->input_neutral_min;
 }
 
 void tic_settings_input_neutral_max_set(tic_settings * settings,
   uint16_t input_neutral_max)
 {
-  if (!settings) { return 0; }
+  if (!settings) { return; }
   settings->input_neutral_max = input_neutral_max;
 }
 
@@ -590,15 +593,15 @@ void tic_settings_encoder_prescaler_set(tic_settings * settings,
 
 uint8_t tic_settings_encoder_prescaler_get(const tic_settings * settings)
 {
-  if (!settings) { return; }
+  if (!settings) { return 0; }
   return settings->encoder_prescaler;
 }
 
 void tic_settings_encoder_postscaler_set(tic_settings * settings,
-  uint32_t encoder_postcaler)
+  uint32_t encoder_postscaler)
 {
   if (!settings) { return; }
-  settins->encoder_postscaler = encoder_postscaler;
+  settings->encoder_postscaler = encoder_postscaler;
 }
 
 uint32_t tic_settings_encoder_postscaler_get(const tic_settings * settings)
@@ -615,7 +618,7 @@ void tic_settings_scl_config_set(tic_settings * settings, uint8_t scl_config)
 
 uint8_t tic_settings_scl_config_get(const tic_settings * settings)
 {
-  if (!settins) { return 0; }
+  if (!settings) { return 0; }
   return settings->scl_config;
 }
 
@@ -664,7 +667,7 @@ void tic_settings_rc_config_set(tic_settings * settings, uint8_t rc_config)
 
 uint8_t tic_settings_rc_config_get(const tic_settings * settings)
 {
-  if (!settings) { return; }
+  if (!settings) { return 0; }
   return settings->rc_config;
 }
 
@@ -674,7 +677,7 @@ void tic_settings_current_limit_set(tic_settings * settings,
   if (!settings) { return; }
 
   // We have to divide it by 32 mA and change it to an achievable limit.
-  current_limit /= TIC_CURRENT_LIMIT_UNITS;
+  current_limit /= TIC_CURRENT_LIMIT_UNITS_MA;
   if (current_limit > 124) { current_limit = 124; }
   else if (current_limit > 64) { current_limit &= ~3; }
   else if (current_limit > 32) { current_limit &= ~1; }
@@ -684,7 +687,7 @@ void tic_settings_current_limit_set(tic_settings * settings,
 uint32_t tic_settings_current_limit_get(const tic_settings * settings)
 {
   if (!settings) { return 0; }
-  return settings->current_limit * TIC_CURRENT_LIMIT_UNITS;
+  return settings->current_limit * TIC_CURRENT_LIMIT_UNITS_MA;
 }
 
 void tic_settings_microstepping_mode_set(tic_settings * settings,
@@ -708,7 +711,7 @@ void tic_settings_decay_mode_set(tic_settings * settings, uint8_t decay_mode)
 
 uint8_t tic_settings_decay_mode_get(const tic_settings * settings)
 {
-  if (!settings) { return; }
+  if (!settings) { return 0; }
   return settings->decay_mode;
 }
 
@@ -744,7 +747,7 @@ void tic_settings_decel_max_set(tic_settings * settings, uint32_t decel_max)
 
 uint32_t tic_settings_decel_max_get(const tic_settings * settings)
 {
-  if (!settings) { return; }
+  if (!settings) { return 0; }
   return settings->decel_max;
 }
 

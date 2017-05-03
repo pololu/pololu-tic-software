@@ -367,7 +367,7 @@ void tic_settings_input_error_min_set(tic_settings *, uint16_t);
 /// Gets the input error minimum parameter.  See
 /// tic_settings_error_min_set().
 TIC_API
-uint16_t tic_settings_input_min_get(const tic_settings *);
+uint16_t tic_settings_input_error_min_get(const tic_settings *);
 
 /// Sets the input error maximum parameter.  In analog or RC control
 /// mode, values above this will cause an error.
