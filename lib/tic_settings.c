@@ -63,7 +63,7 @@ static tic_error * tic_settings_fill_with_defaults(
     return tic_error_create("Invalid model specified: %d.\n", model);
   }
 
-  // TODO: finish
+  // TODO: finish filling in defaults
 
   // TODO: make automated test to ensure these defaults match the firmware;
   // probably need to make a hidden feature of the CLI
@@ -104,7 +104,44 @@ tic_error * tic_settings_create(tic_settings ** settings, uint32_t model)
   return error;
 }
 
-// TODO: tic_settings_copy here
+tic_error * tic_settings_copy(const tic_settings * source, tic_settings ** dest)
+{
+  if (dest == NULL)
+  {
+    return tic_error_create("Settings output pointer is NULL.");
+  }
+
+  *dest = NULL;
+
+  if (source == NULL)
+  {
+    return tic_error_create("Settings pointer is NULL.");
+  }
+
+  tic_error * error = NULL;
+
+  tic_settings * new_settings = NULL;
+  if (error == NULL)
+  {
+    new_settings = (tic_settings *)calloc(1, sizeof(tic_settings));
+    if (new_settings == NULL) { error = &tic_error_no_memory; }
+  }
+
+  if (error == NULL)
+  {
+    memcpy(new_settings, source, sizeof(tic_settings));
+  }
+
+  if (error == NULL)
+  {
+    *dest = new_settings;
+    new_settings = NULL;
+  }
+
+  tic_settings_free(new_settings);
+
+  return error;
+}
 
 void tic_settings_free(tic_settings * settings)
 {
