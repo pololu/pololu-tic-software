@@ -256,7 +256,7 @@ uint8_t tic_settings_i2c_device_address_get(const tic_settings *);
 /// considers it to be an error if we have not received certain commands.  A
 /// value of 0 disables the command timeout feature.
 TIC_API
-void tic_settings_command_timeout_set(const tic_settings *, uint16_t);
+void tic_settings_command_timeout_set(tic_settings *, uint16_t);
 
 /// Gets the command timeout setting described in
 /// tic_settings_command_timeout_set().
@@ -366,7 +366,8 @@ void tic_settings_input_error_min_set(tic_settings *, uint16_t);
 
 /// Gets the input error minimum parameter.  See
 /// tic_settings_error_min_set().
-uint16_t TIC_API tic_settings_input_min_get(const tic_settings *);
+TIC_API
+uint16_t tic_settings_input_min_get(const tic_settings *);
 
 /// Sets the input error maximum parameter.  In analog or RC control
 /// mode, values above this will cause an error.
@@ -375,7 +376,8 @@ void tic_settings_input_error_max_set(tic_settings *, uint16_t);
 
 /// Gets the input error maximum parameter.  See
 /// tic_settings_error_max_set().
-uint16_t TIC_API tic_settings_input_max_get(const tic_settings *);
+TIC_API
+uint16_t tic_settings_input_max_get(const tic_settings *);
 
 /// Sets the input play.  The controller implements a filter on the raw
 /// input value (from RC pulses, encoders, or analog) that allows you to make
@@ -407,7 +409,8 @@ void tic_settings_input_min_set(tic_settings *, uint16_t);
 
 /// Gets the input minimum scaling parameter.  See
 /// tic_settings_output_max_set().
-uint16_t TIC_API tic_settings_input_min_get(const tic_settings *);
+TIC_API
+uint16_t tic_settings_input_min_get(const tic_settings *);
 
 /// Sets the input neutral minimum scaling parameter.  See
 /// tic_settings_output_max_set().
@@ -416,7 +419,8 @@ void tic_settings_input_neutral_min_set(tic_settings *, uint16_t);
 
 /// Gets the input neutral minimum scaling parameter.  See
 /// tic_settings_output_max_set().
-uint16_t TIC_API tic_settings_input_neutral_min_get(const tic_settings *);
+TIC_API
+uint16_t tic_settings_input_neutral_min_get(const tic_settings *);
 
 /// Sets the input neutral maximum scaling parameter.  See
 /// tic_settings_output_max_set().
@@ -425,7 +429,8 @@ void tic_settings_input_neutral_max_set(tic_settings *, uint16_t);
 
 /// Gets the input neutral maximum scaling parameter.  See
 /// tic_settings_output_max_set().
-uint16_t TIC_API tic_settings_input_neutral_max_get(const tic_settings *);
+TIC_API
+uint16_t tic_settings_input_neutral_max_get(const tic_settings *);
 
 /// Sets the input maximum scaling parameter.  See
 /// tic_settings_output_max_set().
@@ -434,7 +439,8 @@ void tic_settings_input_max_set(tic_settings *, uint16_t);
 
 /// Gets the input maximum scaling parameter.  See
 /// tic_settings_output_max_set().
-uint16_t TIC_API tic_settings_input_max_get(const tic_settings *);
+TIC_API
+uint16_t tic_settings_input_max_get(const tic_settings *);
 
 /// Sets the output minimum scaling parameter.  See
 /// tic_settings_output_max_set().
@@ -443,7 +449,8 @@ void tic_settings_output_min_set(tic_settings *, uint16_t);
 
 /// Gets the output minimum scaling parameter.  See
 /// tic_settings_output_max_set().
-uint16_t TIC_API tic_settings_output_min_get(const tic_settings *);
+TIC_API
+uint16_t tic_settings_output_min_get(const tic_settings *);
 
 /// Sets the output neutral scaling parameter.  See
 /// tic_settings_output_max_set().
@@ -452,10 +459,10 @@ void tic_settings_output_neutral_set(tic_settings *, uint16_t);
 
 /// Gets the output neutral scaling parameter.  See
 /// tic_settings_output_max_set().
-uint16_t TIC_API tic_settings_output_neutral_get(const tic_settings *);
+TIC_API
+uint16_t tic_settings_output_neutral_get(const tic_settings *);
 
-/// Sets the output maximum scaling parameter.  See
-/// tic_settings_output_max_set().
+/// Sets the output maximum scaling parameter.
 ///
 /// The following functions control the settings that define how an RC or analog
 /// input gets mapped to a stepper motor position or speed:
@@ -490,7 +497,8 @@ void tic_settings_output_max_set(tic_settings *, uint16_t);
 
 /// Gets the output maximum scaling parameter.  See
 /// tic_settings_output_max_set().
-uint16_t TIC_API tic_settings_output_max_get(const tic_settings *);
+TIC_API
+uint16_t tic_settings_output_max_get(const tic_settings *);
 
 /// Sets the encoder prescaler.  For encoder control mode, this determines the
 /// number of counts from the encoder per unit change of the stepper motor
@@ -507,11 +515,11 @@ uint8_t tic_settings_encoder_prescaler_get(const tic_settings *);
 /// size of a unit change in the stepper motor position or speed.  This cannot
 /// be negative, but the input_invert setting can be used.
 TIC_API
-void tic_settings_encoder_postscaler_set(tic_settings *, uint8_t);
+void tic_settings_encoder_postscaler_set(tic_settings *, uint32_t);
 
 /// Gets the encoder postscaler described in tic_settings_encoder_postscaler_set().
 TIC_API
-uint8_t tic_settings_encoder_postscaler_get(const tic_settings *);
+uint32_t tic_settings_encoder_postscaler_get(const tic_settings *);
 
 /// Sets the pin configuration for the SCL pin.  See
 /// tic_settings_rc_config_set().
@@ -593,7 +601,7 @@ void tic_settings_current_limit_set(tic_settings *, uint32_t);
 /// Gets the current limit settings as described in
 /// tic_settings_current_limit_set().
 TIC_API
-void tic_settings_current_limit_get(const tic_settings *);
+uint32_t tic_settings_current_limit_get(const tic_settings *);
 
 /// Sets the microstepping mode, which is the number of microsteps that
 /// corresponds to one step.  Valid values for the Tic T825 are 1, 2, 4, 8, and
