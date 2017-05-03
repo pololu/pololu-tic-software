@@ -1,4 +1,4 @@
-// Functions for reading and writing settings from the Tic over USB.
+// Function for reading settings from the Tic over USB.
 
 #include "tic_internal.h"
 
@@ -55,6 +55,8 @@ tic_error * tic_get_settings(tic_handle * handle, tic_settings ** settings)
 
   // Read all bytes from EEPROM that contain settings.
   uint8_t buf[TIC_HIGHEST_SETTING_ADDRESS + 1];
+  memset(buf, 0, sizeof(buf));
+
   for (uint8_t i = 1; i < sizeof(buf) && error == NULL; i++)
   {
     error = read_setting_byte(handle, i, buf + i);
