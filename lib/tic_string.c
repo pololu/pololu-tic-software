@@ -23,8 +23,7 @@ void tic_string_setup_dummy(tic_string * str)
 {
   assert(str != NULL);
   str->data = NULL;
-  str->capacity = 0;
-  str->length = 0;
+  str->capacity = str->length = 0;
 }
 
 void tic_string_printf(tic_string * str, const char * format, ...)
@@ -52,15 +51,16 @@ void tic_string_printf(tic_string * str, const char * format, ...)
     va_end(ap2);
     if (result > 0)
     {
-      additional_length = result;
+      length_increase = result;
     }
     else
     {
       // This error seems really unlikely to happen.  If it does, we can add a
       // better way to report it.  For now, just turn the string into a dummy
-      // string, as if there were a memory allocation problem.
+      // string.
       free(str->data);
       str->data = NULL;
+      str->length = str->capacity = 0;
       va_end(ap);
       return;
     }
@@ -74,6 +74,7 @@ void tic_string_printf(tic_string * str, const char * format, ...)
     free(str->data);
     str->data = NULL;
     str->length = str->capacity = 0;
+    va_end(ap);
     return;
   }
 
@@ -89,23 +90,26 @@ void tic_string_printf(tic_string * str, const char * format, ...)
       new_capacity = new_length + 1;
     }
 
-    str->data = realloc(str->data, new_capacity);
-    if (str->data == NULL)
+    char * resized_data = realloc(str->data, new_capacity);
+    if (resized_data == NULL)
     {
-      // Failed to allocate memory, let this just be a dummy string.
+      // Failed to allocate memory, so let this just be a dummy string.
+      free(str->data);
+      str->data = NULL;
       str->length = str->capacity = 0;
+      va_end(ap);
       return;
     }
+    str->data = resized_data;
     str->capacity = new_capacity;
   }
 
-  // Add the new warning and a newline and null terminator.
-  int result = vsnprintf(*w + *wlen, additional_length + 1, format, ap);
-  va_end(ap);
-  assert((size_t)result == additional_length);
+  // Add the new content anda  null terminator.
+  int result = vsnprintf(str->data + str->length, length_increase + 1, format, ap);
+  assert((size_t)result == length_increase);
   str->data[new_length] = 0;
   str->length = new_length;
 
-  assert(*w != NULL);
   assert(str->length == strlen(str->data));
+  va_end(ap);
 }
