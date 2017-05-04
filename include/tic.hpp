@@ -240,9 +240,9 @@ namespace tic
     }
 
     /// Wrapper for tic_setting_create.
-    explicit settings(uint32_t model)
+    explicit settings(uint32_t product)
     {
-      throw_if_needed(tic_settings_create(pointer_to_pointer_get(), model));
+      throw_if_needed(tic_settings_create(pointer_to_pointer_get(), product));
     }
 
     /// Wrapper for tic_settings_fix().

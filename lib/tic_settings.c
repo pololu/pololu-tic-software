@@ -5,7 +5,7 @@
 
 struct tic_settings
 {
-  uint32_t model;
+  uint32_t product;
 
   uint8_t control_mode;
   bool never_sleep;
@@ -54,16 +54,16 @@ struct tic_settings
 };
 
 static tic_error * tic_settings_fill_with_defaults(
-  tic_settings * settings, uint32_t model)
+  tic_settings * settings, uint32_t product)
 {
   assert(settings != NULL);
 
-  if (model != TIC_MODEL_T825)
+  if (product != TIC_PRODUCT_T825)
   {
-    return tic_error_create("Invalid model specified: %d.\n", model);
+    return tic_error_create("Invalid product specified: %d.\n", product);
   }
 
-  settings->model = model;
+  settings->product = product;
 
   // TODO: finish filling in defaults
 
@@ -72,7 +72,7 @@ static tic_error * tic_settings_fill_with_defaults(
   return NULL;
 }
 
-tic_error * tic_settings_create(tic_settings ** settings, uint32_t model)
+tic_error * tic_settings_create(tic_settings ** settings, uint32_t product)
 {
   if (settings == NULL)
   {
@@ -92,7 +92,7 @@ tic_error * tic_settings_create(tic_settings ** settings, uint32_t model)
 
   if (error == NULL)
   {
-    error = tic_settings_fill_with_defaults(new_settings, model);
+    error = tic_settings_fill_with_defaults(new_settings, product);
   }
 
   if (error == NULL)
@@ -195,16 +195,16 @@ tic_error * tic_settings_fix(tic_settings * settings, char ** warnings)
   return NULL;
 }
 
-void tic_settings_model_set(tic_settings * settings, uint8_t model)
+void tic_settings_product_set(tic_settings * settings, uint8_t product)
 {
   if (!settings) { return; }
-  settings->model = model;
+  settings->product = product;
 }
 
-uint8_t tic_settings_model_get(const tic_settings * settings)
+uint8_t tic_settings_product_get(const tic_settings * settings)
 {
   if (!settings) { return 0; }
-  return settings->model;
+  return settings->product;
 }
 
 void tic_settings_control_mode_set(tic_settings * settings,

@@ -301,13 +301,13 @@ tic_error * tic_get_settings(tic_handle * handle, tic_settings ** settings)
 
   tic_error * error = NULL;
 
-  uint32_t model = TIC_MODEL_T825;  // TODO: get from handle
+  uint32_t product = TIC_PRODUCT_T825;  // TODO: get from handle
 
   // Allocate the new settings object.
   tic_settings * new_settings = NULL;
   if (error == NULL)
   {
-    error = tic_settings_create(&new_settings, model);
+    error = tic_settings_create(&new_settings, product);
   }
 
   // Read all the settings from the device into a buffer.

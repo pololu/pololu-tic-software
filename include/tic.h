@@ -17,7 +17,7 @@ extern "C" {
 
 #include "tic_protocol.h"
 
-#define TIC_MODEL_T825 1
+#define TIC_PRODUCT_T825 1
 
 // The maximum firmware major version supported by this library.
 #define TIC_FIRMWARE_VERSION_MAJOR_MAX 1
@@ -118,16 +118,16 @@ const char * tic_error_get_message(const tic_error *);
 /// does not have any pointers or handles for other resources.
 typedef struct tic_settings tic_settings;
 
-/// Creates a new settings object with the default settings.  The "model"
+/// Creates a new settings object with the default settings.  The "product"
 /// parameter specifies what type of Tic you are making settings for, and must
-/// be TIC_MODEL_T825.
+/// be TIC_PRODUCT_T825.
 ///
 /// The settings parameter should be a non-null pointer to a tic_settings
 /// pointer, which will receive a pointer to a new settings object if and only
 /// if this function is successful.  The caller must free the settings later by
 /// calling tic_settings_free().
 TIC_API TIC_WARN_UNUSED
-tic_error * tic_settings_create(tic_settings ** settings, uint32_t model);
+tic_error * tic_settings_create(tic_settings ** settings, uint32_t product);
 
 /// Copies a settings object. If this function is successful, the caller must
 /// free the settings later by calling tic_settings_free().
@@ -180,14 +180,14 @@ TIC_API TIC_WARN_UNUSED
 tic_error * tic_settings_read_from_string(const char * string,
   tic_settings ** settings, char ** warnings);
 
-/// Sets the model, which specifies what Tic product these settings are for.
-/// The value should be one of the TIC_MODEL_* macros.
+/// Sets the product, which specifies what Tic product these settings are for.
+/// The value should be one of the TIC_PRODUCT_* macros.
 TIC_API
-void tic_settings_model_set(tic_settings *, uint8_t model);
+void tic_settings_product_set(tic_settings *, uint8_t product);
 
-/// Gets the model described in tic_settings_model_set().
+/// Gets the product described in tic_settings_product_set().
 TIC_API
-uint8_t tic_settings_model_get(const tic_settings *);
+uint8_t tic_settings_product_get(const tic_settings *);
 
 /// Sets the control mode, which should be one of the TIC_CONTROL_MODE_* macros.
 /// Silently obeys if the input is invalid so that you can see a warning later
@@ -623,7 +623,7 @@ uint32_t tic_settings_current_limit_get(const tic_settings *);
 
 /// Sets the microstepping mode, which is the number of microsteps that
 /// corresponds to one step.  This should be one of the TIC_MICROSTEPPING_MODE_*
-/// macros, but not all microstepping modes are supported on all models.  If you
+/// macros, but not all microstepping modes are supported on all products.  If you
 /// specify an invalid or unsupported mode to this function, you can fix it with
 /// tic_settings_fix().
 TIC_API

@@ -8,7 +8,7 @@ struct tic_device
   char * serial_number;
   char * os_id;
   uint16_t firmware_version;
-  // TODO: uint32_t model
+  // TODO: uint32_t product
 };
 
 tic_error * tic_list_connected_devices(
