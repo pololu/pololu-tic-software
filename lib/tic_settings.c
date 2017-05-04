@@ -11,7 +11,7 @@ struct tic_settings
   bool never_sleep;
   bool disable_safe_start;
   bool ignore_err_line_high;
-  uint32_t baud_rate;
+  uint32_t serial_baud_rate;
   uint8_t serial_device_number;
   uint8_t i2c_device_address;
   uint16_t command_timeout;
@@ -302,16 +302,16 @@ bool tic_settings_ignore_err_line_high_get(const tic_settings * settings)
   return settings->ignore_err_line_high;
 }
 
-void tic_settings_baud_rate_set(tic_settings * settings, uint32_t baud_rate)
+void tic_settings_serial_baud_rate_set(tic_settings * settings, uint32_t serial_baud_rate)
 {
   if (!settings) { return; }
-  settings->baud_rate = baud_rate;
+  settings->serial_baud_rate = serial_baud_rate;
 }
 
-uint32_t tic_settings_baud_rate_get(const tic_settings * settings)
+uint32_t tic_settings_serial_baud_rate_get(const tic_settings * settings)
 {
   if (!settings) { return 0; }
-  return settings->baud_rate;
+  return settings->serial_baud_rate;
 }
 
 void tic_settings_serial_device_number_set(tic_settings * settings,
@@ -494,7 +494,7 @@ void tic_settings_input_error_max_set(tic_settings * settings,
 uint16_t tic_settings_input_error_max_get(const tic_settings * settings)
 {
   if (!settings) { return 0; }
-  return settings->input_max;
+  return settings->input_error_max;
 }
 
 void tic_settings_input_play_set(tic_settings * settings, uint8_t input_play)
@@ -584,38 +584,38 @@ uint16_t tic_settings_input_max_get(const tic_settings * settings)
   return settings->input_max;
 }
 
-void tic_settings_output_min_set(tic_settings * settings, uint16_t output_min)
+void tic_settings_output_min_set(tic_settings * settings, int32_t output_min)
 {
   if (!settings) { return; }
   settings->output_min = output_min;
 }
 
-uint16_t tic_settings_output_min_get(const tic_settings * settings)
+int32_t tic_settings_output_min_get(const tic_settings * settings)
 {
   if (!settings) { return 0; }
   return settings->output_min;
 }
 
 void tic_settings_output_neutral_set(tic_settings * settings,
-  uint16_t output_neutral)
+  int32_t output_neutral)
 {
   if (!settings) { return; }
   settings->output_neutral = output_neutral;
 }
 
-uint16_t tic_settings_output_neutral_get(const tic_settings * settings)
+int32_t tic_settings_output_neutral_get(const tic_settings * settings)
 {
   if (!settings) { return 0; }
   return settings->output_neutral;
 }
 
-void tic_settings_output_max_set(tic_settings * settings, uint16_t output_max)
+void tic_settings_output_max_set(tic_settings * settings, int32_t output_max)
 {
   if (!settings) { return; }
   settings->output_max = output_max;
 }
 
-uint16_t tic_settings_output_max_get(const tic_settings * settings)
+int32_t tic_settings_output_max_get(const tic_settings * settings)
 {
   if (!settings) { return 0; }
   return settings->output_max;

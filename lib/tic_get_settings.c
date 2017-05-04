@@ -28,7 +28,7 @@ static void write_buffer_to_settings(const uint8_t * buf, tic_settings * setting
     const uint8_t * p = buf + TIC_SETTING_SERIAL_BAUD_RATE_GENERATOR;
     uint16_t brg = p[0] + (p[1] << 8);
     uint32_t baud_rate = tic_baud_rate_from_brg(brg);
-    tic_settings_baud_rate_set(settings, baud_rate);
+    tic_settings_serial_baud_rate_set(settings, baud_rate);
   }
 
   {
@@ -178,13 +178,13 @@ static void write_buffer_to_settings(const uint8_t * buf, tic_settings * setting
 
   {
     uint8_t encoder_prescaler = buf[TIC_SETTING_ENCODER_PRESCALER];
-    tic_settings_output_max_set(settings, encoder_prescaler);
+    tic_settings_encoder_prescaler_set(settings, encoder_prescaler);
   }
 
   {
     const uint8_t * p = buf + TIC_SETTING_ENCODER_POSTSCALER;
     uint32_t encoder_postscaler = p[0] + (p[1] << 8) + (p[2] << 16) + (p[3] << 24);
-    tic_settings_output_max_set(settings, encoder_postscaler);
+    tic_settings_encoder_postscaler_set(settings, encoder_postscaler);
   }
 
   {

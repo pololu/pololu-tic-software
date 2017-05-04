@@ -18,7 +18,7 @@ static void write_settings_to_buffer(const tic_settings * settings, uint8_t * bu
     tic_settings_ignore_err_line_high_get(settings);
 
   {
-    uint32_t baud_rate = tic_settings_baud_rate_get(settings);
+    uint32_t baud_rate = tic_settings_serial_baud_rate_get(settings);
     uint16_t brg = tic_baud_rate_to_brg(baud_rate);
     buf[TIC_SETTING_SERIAL_BAUD_RATE_GENERATOR + 0] = brg >> 0 & 0xFF;
     buf[TIC_SETTING_SERIAL_BAUD_RATE_GENERATOR + 1] = brg >> 8 & 0xFF;

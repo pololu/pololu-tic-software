@@ -225,14 +225,14 @@ bool tic_settings_ignore_err_line_high_get(const tic_settings *);
 ///
 /// Only certain baud rates are actually achievable.  This function will change
 /// the supplied baud rate to the nearest achievable baud rate.  You can call
-/// tic_settings_baud_rate_get() to see what baud rate was used.
+/// tic_settings_serial_baud_rate_get() to see what baud rate was used.
 TIC_API
-void tic_settings_baud_rate_set(tic_settings *, uint32_t);
+void tic_settings_serial_baud_rate_set(tic_settings *, uint32_t);
 
 /// Returns an estimate of the baud rate the controller will use for its
 /// asynchronous serial port, in bits per second.
 TIC_API
-uint32_t tic_settings_baud_rate_get(const tic_settings *);
+uint32_t tic_settings_serial_baud_rate_get(const tic_settings *);
 
 /// Sets the serial device number, a number between 0 and 0x7F that is used to
 /// identify the device when using the Pololu protocol.
@@ -454,22 +454,22 @@ uint16_t tic_settings_input_max_get(const tic_settings *);
 /// Sets the output minimum scaling parameter.  See
 /// tic_settings_output_max_set().
 TIC_API
-void tic_settings_output_min_set(tic_settings *, uint16_t);
+void tic_settings_output_min_set(tic_settings *, int32_t);
 
 /// Gets the output minimum scaling parameter.  See
 /// tic_settings_output_max_set().
 TIC_API
-uint16_t tic_settings_output_min_get(const tic_settings *);
+int32_t tic_settings_output_min_get(const tic_settings *);
 
 /// Sets the output neutral scaling parameter.  See
 /// tic_settings_output_max_set().
 TIC_API
-void tic_settings_output_neutral_set(tic_settings *, uint16_t);
+void tic_settings_output_neutral_set(tic_settings *, int32_t);
 
 /// Gets the output neutral scaling parameter.  See
 /// tic_settings_output_max_set().
 TIC_API
-uint16_t tic_settings_output_neutral_get(const tic_settings *);
+int32_t tic_settings_output_neutral_get(const tic_settings *);
 
 /// Sets the output maximum scaling parameter.
 ///
@@ -502,12 +502,12 @@ uint16_t tic_settings_output_neutral_get(const tic_settings *);
 /// Input values greater than or equal to the input maximum map to an output
 /// value of output_max.
 TIC_API
-void tic_settings_output_max_set(tic_settings *, uint16_t);
+void tic_settings_output_max_set(tic_settings *, int32_t);
 
 /// Gets the output maximum scaling parameter.  See
 /// tic_settings_output_max_set().
 TIC_API
-uint16_t tic_settings_output_max_get(const tic_settings *);
+int32_t tic_settings_output_max_get(const tic_settings *);
 
 /// Sets the encoder prescaler.  For encoder control mode, this determines the
 /// number of counts from the encoder per unit change of the stepper motor
