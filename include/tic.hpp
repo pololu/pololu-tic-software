@@ -239,6 +239,12 @@ namespace tic
     {
     }
 
+    /// Wrapper for tic_setting_create.
+    explicit settings(uint32_t model)
+    {
+      throw_if_needed(tic_settings_create(pointer_to_pointer_get(), model));
+    }
+
     /// Wrapper for tic_settings_fix().
     ///
     /// If a non-NULL warnings pointer is provided, and this function does not

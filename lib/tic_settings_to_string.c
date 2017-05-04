@@ -63,7 +63,8 @@ tic_error * tic_settings_to_string(const tic_settings * settings, char ** string
 
   if (error == NULL)
   {
-    yaml_document_start_event_initialize(&event, NULL, NULL, NULL, 0);
+    int implicit = 1;
+    yaml_document_start_event_initialize(&event, NULL, NULL, NULL, implicit);
     int success = yaml_emitter_emit(&emitter, &event);
     if (!success)
     {
@@ -73,7 +74,9 @@ tic_error * tic_settings_to_string(const tic_settings * settings, char ** string
 
   if (error == NULL)
   {
-    yaml_mapping_start_event_initialize(&event, NULL, NULL, 0, 0);
+    int implicit = 1;
+    yaml_mapping_start_event_initialize(&event, NULL, NULL,
+      implicit, YAML_ANY_SCALAR_STYLE);
     int success = yaml_emitter_emit(&emitter, &event);
     if (!success)
     {
@@ -85,7 +88,8 @@ tic_error * tic_settings_to_string(const tic_settings * settings, char ** string
   {
     // tmphax
     uint8_t x[2] = { 'f', 'h' };
-    yaml_scalar_event_initialize(&event, NULL, NULL, x, 2, 0, 0, 0);
+    yaml_scalar_event_initialize(&event, NULL, NULL, x, 2,
+      1, 0, YAML_ANY_SCALAR_STYLE);
     int success = yaml_emitter_emit(&emitter, &event);
     if (!success)
     {
@@ -97,7 +101,8 @@ tic_error * tic_settings_to_string(const tic_settings * settings, char ** string
   {
     // tmphax
     uint8_t x[2] = { 'm', '2' };
-    yaml_scalar_event_initialize(&event, NULL, NULL, x, 2, 0, 0, 0);
+    yaml_scalar_event_initialize(&event, NULL, NULL, x, 2,
+      1, 0, YAML_ANY_SCALAR_STYLE);
     int success = yaml_emitter_emit(&emitter, &event);
     if (!success)
     {
@@ -117,7 +122,8 @@ tic_error * tic_settings_to_string(const tic_settings * settings, char ** string
 
   if (error == NULL)
   {
-    yaml_document_end_event_initialize(&event, 0);
+    int implicit = 1;
+    yaml_document_end_event_initialize(&event, implicit);
     int success = yaml_emitter_emit(&emitter, &event);
     if (!success)
     {

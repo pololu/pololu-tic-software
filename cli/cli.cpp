@@ -212,8 +212,9 @@ static void fix_settings_and_warn_user(tic::settings & settings)
 static void get_settings(device_selector & selector,
   const std::string & filename)
 {
-  tic::device device = selector.select_device();
-  tic::settings settings = tic::handle(device).get_settings();
+  // TODO: tic::device device = selector.select_device();
+  // TODO: tic::settings settings = tic::handle(device).get_settings();
+  tic::settings settings((uint32_t)TIC_MODEL_T825);
   std::string settings_string = settings.to_string();
   fix_settings_and_warn_user(settings);
 
