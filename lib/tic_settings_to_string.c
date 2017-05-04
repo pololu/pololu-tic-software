@@ -50,6 +50,15 @@ tic_error * tic_settings_to_string(const tic_settings * settings, char ** string
   tic_string_setup(&str);
 
   {
+    char * model_str = "";
+    switch (tic_settings_model_get(settings))
+    {
+    case TIC_MODEL_T825: model_str = "T825"; break;
+    }
+    tic_string_printf(&str, "model: %s\n", model_str);
+  }
+
+  {
     char * mode_str = "";
     switch (tic_settings_control_mode_get(settings))
     {

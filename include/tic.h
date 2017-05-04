@@ -17,7 +17,7 @@ extern "C" {
 
 #include "tic_protocol.h"
 
-#define TIC_MODEL_T825 0
+#define TIC_MODEL_T825 1
 
 // The maximum firmware major version supported by this library.
 #define TIC_FIRMWARE_VERSION_MAJOR_MAX 1
@@ -179,6 +179,15 @@ tic_error * tic_settings_to_string(const tic_settings *, char ** string);
 TIC_API TIC_WARN_UNUSED
 tic_error * tic_settings_read_from_string(const char * string,
   tic_settings ** settings, char ** warnings);
+
+/// Sets the model, which specifies what Tic product these settings are for.
+/// The value should be one of the TIC_MODEL_* macros.
+TIC_API
+void tic_settings_model_set(tic_settings *, uint8_t model);
+
+/// Gets the model described in tic_settings_model_set().
+TIC_API
+uint8_t tic_settings_model_get(const tic_settings *);
 
 /// Sets the control mode, which should be one of the TIC_CONTROL_MODE_* macros.
 /// Silently obeys if the input is invalid so that you can see a warning later

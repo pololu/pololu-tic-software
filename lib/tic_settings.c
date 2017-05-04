@@ -5,7 +5,7 @@
 
 struct tic_settings
 {
-  uint32_t tic_model;
+  uint32_t model;
 
   uint8_t control_mode;
   bool never_sleep;
@@ -62,6 +62,8 @@ static tic_error * tic_settings_fill_with_defaults(
   {
     return tic_error_create("Invalid model specified: %d.\n", model);
   }
+
+  settings->model = model;
 
   // TODO: finish filling in defaults
 
@@ -148,6 +150,14 @@ void tic_settings_free(tic_settings * settings)
   free(settings);
 }
 
+static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings)
+{
+  //tic_string_printf(warnings, "Warning: TODO: implement tic_settings_fix fully.\n");
+  //tic_string_printf(warnings, "Warning: TODO: implement tic_settings_fix fully!!\n");
+
+  
+}
+
 tic_error * tic_settings_fix(tic_settings * settings, char ** warnings)
 {
   if (warnings) { *warnings = NULL; }
@@ -168,12 +178,11 @@ tic_error * tic_settings_fix(tic_settings * settings, char ** warnings)
     tic_string_setup_dummy(&str);
   }
 
-  tic_string_printf(&str, "Warning: TODO: implement tic_settings_fix fully.\n");
-  tic_string_printf(&str, "Warning: TODO: implement tic_settings_fix fully!!\n");
+  tic_settings_fix_core(settings, &str);
 
   if (warnings && str.data == NULL)
   {
-    // Memory allocation failed at some point and the warning string was freed.
+    // Memory allocation for the warning string failed at some point.
     return &tic_error_no_memory;
   }
 
@@ -184,6 +193,18 @@ tic_error * tic_settings_fix(tic_settings * settings, char ** warnings)
   }
 
   return NULL;
+}
+
+void tic_settings_model_set(tic_settings * settings, uint8_t model)
+{
+  if (!settings) { return; }
+  settings->model = model;
+}
+
+uint8_t tic_settings_model_get(const tic_settings * settings)
+{
+  if (!settings) { return 0; }
+  return settings->model;
 }
 
 void tic_settings_control_mode_set(tic_settings * settings,

@@ -2,6 +2,7 @@ require_relative 'spec_helper'
 
 DefaultSettings = {
   t825: <<END
+model: T825
 control_mode: serial
 never_sleep: false
 disable_safe_start: false
