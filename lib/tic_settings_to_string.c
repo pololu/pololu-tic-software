@@ -5,7 +5,7 @@ int tic_string_yaml_write_handler(void * data, uint8_t * buffer, size_t size)
   tic_string * string = (tic_string *)data;
 
   // TODO
-  printf("hey write: %d \"%s\"\n", size, buffer);
+  fprintf(stderr, "hey write: %d \"%s\"\n", size, buffer);
 
   (void)string;
   (void)buffer;
@@ -53,7 +53,7 @@ tic_error * tic_settings_to_string(const tic_settings * settings, char ** string
   yaml_event_t event;
   if (error == NULL)
   {
-    yaml_stream_start_event_initialize(&event, YAML_UTF8_ENCODING);
+    yaml_stream_start_event_initialize(&event, YAML_UTF8_ENCODING);  // TODO: check error
     int success = yaml_emitter_emit(&emitter, &event);
     if (!success)
     {
@@ -63,7 +63,71 @@ tic_error * tic_settings_to_string(const tic_settings * settings, char ** string
 
   if (error == NULL)
   {
-    yaml_stream_end_event_initialize(&event);
+    yaml_document_start_event_initialize(&event, NULL, NULL, NULL, 0);
+    int success = yaml_emitter_emit(&emitter, &event);
+    if (!success)
+    {
+      error = tic_error_create("Failed to start YAML document.");
+    }
+  }
+
+  if (error == NULL)
+  {
+    yaml_mapping_start_event_initialize(&event, NULL, NULL, 0, 0);
+    int success = yaml_emitter_emit(&emitter, &event);
+    if (!success)
+    {
+      error = tic_error_create("Failed to start YAML mapping.");
+    }
+  }
+
+  if (error == NULL)
+  {
+    // tmphax
+    uint8_t x[2] = { 'f', 'h' };
+    yaml_scalar_event_initialize(&event, NULL, NULL, x, 2, 0, 0, 0);
+    int success = yaml_emitter_emit(&emitter, &event);
+    if (!success)
+    {
+      error = tic_error_create("Failed to tmphax scalar.");
+    }
+  }
+
+  if (error == NULL)
+  {
+    // tmphax
+    uint8_t x[2] = { 'm', '2' };
+    yaml_scalar_event_initialize(&event, NULL, NULL, x, 2, 0, 0, 0);
+    int success = yaml_emitter_emit(&emitter, &event);
+    if (!success)
+    {
+      error = tic_error_create("Failed to tmphax scalar 2.");
+    }
+  }
+
+  if (error == NULL)
+  {
+    yaml_mapping_end_event_initialize(&event);
+    int success = yaml_emitter_emit(&emitter, &event);
+    if (!success)
+    {
+      error = tic_error_create("Failed to end YAML mapping.");
+    }
+  }
+
+  if (error == NULL)
+  {
+    yaml_document_end_event_initialize(&event, 0);
+    int success = yaml_emitter_emit(&emitter, &event);
+    if (!success)
+    {
+      error = tic_error_create("Failed to end YAML document.");
+    }
+  }
+
+  if (error == NULL)
+  {
+    yaml_stream_end_event_initialize(&event);  // TODO: check error
     int success = yaml_emitter_emit(&emitter, &event);
     if (!success)
     {
