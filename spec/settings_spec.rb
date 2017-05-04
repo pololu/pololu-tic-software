@@ -1,18 +1,7 @@
 require_relative 'spec_helper'
 
-describe 'settings' do
-  it 'settings test 1' do
-    # TODO: load some test settings and read them back
-
-    stdout, stderr, result = run_ticcmd('--restore-defaults')
-    expect(result).to eq 0
-    expect(stdout).to eq ""
-    expect(stderr).to eq ""
-
-    stdout, stderr, result = run_ticcmd('--get-settings -')
-    expect(result). to eq 0
-    expect(stderr).to eq ""
-    expect(stdout).to eq <<END
+DefaultSettings = {
+  t825: <<END
 control_mode: serial
 never_sleep: false
 disable_safe_start: false
@@ -57,6 +46,21 @@ accel_max: 40000
 decel_max: 0
 decel_max_during_error: 0
 END
+}
+
+describe 'settings' do
+  it 'settings test 1' do
+    # TODO: load some test settings and read them back
+
+    stdout, stderr, result = run_ticcmd('--restore-defaults')
+    expect(result).to eq 0
+    expect(stdout).to eq ""
+    expect(stderr).to eq ""
+
+    stdout, stderr, result = run_ticcmd('--get-settings -')
+    expect(result). to eq 0
+    expect(stderr).to eq ""
+    expect(stdout).to eq DefaultSettings[:t825]
     expect { YAML.load(stdout) }.to_not raise_error
   end
 end
