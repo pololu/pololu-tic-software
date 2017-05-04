@@ -148,69 +148,6 @@ void tic_settings_free(tic_settings * settings)
   free(settings);
 }
 
-// Attempts to add a string.
-TIC_PRINTF(3, 4)
-static void warning_add(char ** w, size_t * wlen, const char * format, ...)
-{
-  assert(format != NULL);
-
-  if (*w == NULL)
-  {
-    // Either warnings are not needed or there was a memory allocation error
-    // earlier.
-    return;
-  }
-
-  assert(*wlen == strlen(*w));
-
-  va_list ap;
-  va_start(ap, format);
-
-  // Determine the total length needed.
-  size_t additional_length = 0;
-  {
-    char x[1];
-    va_list ap2;
-    va_copy(ap2, ap);
-    int result = vsnprintf(x, 0, format, ap2);
-    va_end(ap2);
-    if (result > 0)
-    {
-      additional_length = result;
-    }
-    else
-    {
-      // This error seems really unlikely to happen.  If it does, we can add a
-      // better way to report it.  For now, just set w to NULL so it is treated
-      // like a memory allocation problem.
-      free(*w);
-      *w = NULL;
-      va_end(ap);
-      return;
-    }
-  }
-  size_t newline_length = 1;
-  size_t total_length = *wlen + additional_length + newline_length;
-
-  *w = realloc(*w, total_length + 1);
-  if (*w == NULL)
-  {
-    // Failed to allocate memory.
-    return;
-  }
-
-  // Add the new warning and a newline and null terminator.
-  int result = vsnprintf(*w + *wlen, additional_length + 1, format, ap);
-  va_end(ap);
-  assert((size_t)result == additional_length);
-  (*w)[total_length - 1] = '\n';
-  (*w)[total_length] = 0;
-  *wlen = total_length;
-
-  assert(*w != NULL);
-  assert(*wlen == strlen(*w));
-}
-
 tic_error * tic_settings_fix(tic_settings * settings, char ** warnings)
 {
   if (warnings) { *warnings = NULL; }
@@ -221,23 +158,20 @@ tic_error * tic_settings_fix(tic_settings * settings, char ** warnings)
   }
 
   // Make a string to store the warnings we accumulate in this function.
-  char * w = NULL;
-  size_t wlen = 0;
-
-  // We must return an empty string even if there are no warnings, so make an
-  // empty string now.  Note: Memory allocation errors are checked at the end.
+  tic_string str;
   if (warnings)
   {
-    w = malloc(1);
-    if (w != NULL) { *w = 0; }
+    tic_string_setup(&str);
+  }
+  else
+  {
+    tic_string_setup_dummy(&str);
   }
 
-  // TODO: how about using the tic_string.c library here instead of reinventing it
+  tic_string_printf(&str, "Warning: TODO: implement tic_settings_fix fully.\n");
+  tic_string_printf(&str, "Warning: TODO: implement tic_settings_fix fully!!\n");
 
-  warning_add(&w, &wlen, "Warning: TODO: implement tic_settings_fix fully.");
-  warning_add(&w, &wlen, "Warning: TODO: implement tic_settings_fix fully!");
-
-  if (warnings && w == NULL)
+  if (warnings && str.data == NULL)
   {
     // Memory allocation failed at some point and the warning string was freed.
     return &tic_error_no_memory;
@@ -245,7 +179,8 @@ tic_error * tic_settings_fix(tic_settings * settings, char ** warnings)
 
   if (warnings)
   {
-    *warnings = w;
+    *warnings = str.data;
+    str.data = NULL;
   }
 
   return NULL;
