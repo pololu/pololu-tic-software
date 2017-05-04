@@ -217,7 +217,7 @@ void tic_device_free(tic_device * device)
 const char * tic_device_get_name(const tic_device * device)
 {
   if (device == NULL) { return ""; }
-  return "Tic Stepper Motor Controller";  // TODO: use full product names
+  return "Tic USB Stepper Motor Controller T825";
 }
 
 const char * tic_device_get_serial_number(const tic_device * device)
