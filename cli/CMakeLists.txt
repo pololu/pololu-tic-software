@@ -1,5 +1,7 @@
 use_cxx11()
 
+set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra")
+
 configure_file (cli_info.rc.in cli_info.rc)
 
 add_executable (cli cli.cpp ${CMAKE_CURRENT_BINARY_DIR}/cli_info.rc)

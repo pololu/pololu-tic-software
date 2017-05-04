@@ -25,6 +25,9 @@ if (NOT CMAKE_BUILD_TYPE)
     "Options are Debug Release RelWithDebInfo MinSizeRel" FORCE)
 endif ()
 
+set(USE_SYSTEM_LIBYAML FALSE CACHE BOOL
+  "True if you want to use libyaml from the system instead of the bundled one.")
+
 # Our C code uses features from the C99 standard.
 macro(use_c99)
   if (CMAKE_VERSION VERSION_LESS "3.1")
@@ -52,10 +55,6 @@ endmacro(use_cxx11)
 # everything.
 set (CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 set (CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
-
-# Configure warnings and errors.
-set (CMAKE_C_FLAGS "-Wall -Wextra ${CMAKE_C_FLAGS}")
-set (CMAKE_CXX_FLAGS "-Wall -Wextra ${CMAKE_CXX_FLAGS}")
 
 if (WIN32)
   # Enable correct behavior for the return value of vsnprintf.
@@ -100,4 +99,8 @@ endif ()
 
 if (APPLE)
   # TODO: add_subdirectory (mac-installer)
+endif ()
+
+if (NOT USE_SYSTEM_LIBYAML)
+  add_subdirectory (libyaml)
 endif ()

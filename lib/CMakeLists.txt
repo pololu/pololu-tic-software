@@ -1,11 +1,24 @@
 use_c99()
 
+set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra")
+
 # TODO: what about putting the major version in the shared library name?
 # TODO: what about the RC file so people can easily see the version on Windows?
 
 # Find libusbp using pkg-config and use it.
 pkg_check_modules(LIBUSBP REQUIRED libusbp-1)
-set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${LIBUSBP_CFLAGS}")
+
+if (USE_SYSTEM_LIBYAML)
+  # TODO: make sure using the systme libyaml actually works
+  pkg_check_modules(YAML REQUIRED yaml)
+  STRING(REPLACE ";" " " LIBYAML_LDFLAGS "${LIBYAML_LDFLAGS}")
+else ()
+  set (LIBYAML_LDFLAGS yaml)
+  include_directories ("${CMAKE_SOURCE_DIR}/libyaml")
+  set (LIBYAML_CFLAGS "-DYAML_DECLARE_STATIC")
+endif ()
+
+set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${LIBUSBP_CFLAGS} ${LIBYAML_CFLAGS}")
 
 # Settings for GCC
 if (CMAKE_C_COMPILER_ID STREQUAL "GNU")
@@ -22,6 +35,8 @@ add_library (lib SHARED
   tic_error.c
   tic_handle.c
   tic_settings.c
+  tic_settings_read_from_string.c
+  tic_settings_to_string.c
   tic_string.c
 )
 
@@ -36,4 +51,4 @@ set_target_properties(lib PROPERTIES
   DEFINE_SYMBOL TIC_EXPORTS
 )
 
-target_link_libraries (lib "${LIBUSBP_LDFLAGS}")
+target_link_libraries (lib "${LIBUSBP_LDFLAGS}" "${LIBYAML_LDFLAGS}")

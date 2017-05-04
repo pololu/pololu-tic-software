@@ -2,6 +2,11 @@
 
 #include "tic_internal.h"
 
+void tic_string_free(char * data)
+{
+  free(data);
+}
+
 void tic_string_setup(tic_string * str)
 {
   assert(str != NULL);
