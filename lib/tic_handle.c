@@ -184,7 +184,7 @@ tic_error * tic_get_debug_data(tic_handle * handle, uint8_t * data, size_t * siz
   size_t transferred;
   libusbp_error * usb_error = libusbp_control_transfer(
     handle->usb_handle,
-    0xC0, TIC_REQUEST_GET_DEBUG_DATA, 0, 0,
+    0xC0, TIC_CMD_GET_DEBUG_DATA, 0, 0,
     data, *size, &transferred);
   if (usb_error)
   {
