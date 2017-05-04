@@ -14,9 +14,9 @@ BEGIN
         BLOCK "040904E4"
         BEGIN
             VALUE "CompanyName", "Pololu Corporation"
-            VALUE "FileDescription", "Pololu USB AVR Programmer v2 Command-line Utility"
+            VALUE "FileDescription", "Pololu Tic USB Stepper Motor Controller Command-line Utility"
             VALUE "FileVersion", VERSION_STR
-            VALUE "ProductName", "Pololu USB AVR Programmer v2 Command-line Utility (${CMAKE_BUILD_TYPE})"
+            VALUE "ProductName", "Pololu Tic USB Stepper Motor Controller Command-line Utility (${CMAKE_BUILD_TYPE})"
             VALUE "ProductVersion", VERSION_STR
             VALUE "LegalCopyright", "Copyright (C) ${YEAR} Pololu Corporation"
         END

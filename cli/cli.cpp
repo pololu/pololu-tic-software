@@ -15,7 +15,7 @@
 
 // [all-settings]
 static const char help[] =
-  CLI_NAME ": Pololu Tic Stepper Motor Controller Command-line Utility\n"
+  CLI_NAME ": Pololu Tic USB Stepper Motor Controller Command-line Utility\n"
   "Version " SOFTWARE_VERSION_STRING "\n"
   "Usage: " CLI_NAME " OPTIONS\n"
   "\n"
