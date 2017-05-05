@@ -126,12 +126,12 @@ static void write_buffer_to_settings(const uint8_t * buf, tic_settings * setting
 
   {
     uint8_t input_scaling_degree = buf[TIC_SETTING_INPUT_SCALING_DEGREE];
-    tic_settings_input_play_set(settings, input_scaling_degree);
+    tic_settings_input_scaling_degree_set(settings, input_scaling_degree);
   }
 
   {
     bool input_invert = buf[TIC_SETTING_INPUT_INVERT] & 1;
-    tic_settings_input_play_set(settings, input_invert);
+    tic_settings_input_invert_set(settings, input_invert);
   }
 
   {
@@ -255,7 +255,7 @@ static void write_buffer_to_settings(const uint8_t * buf, tic_settings * setting
     const uint8_t * p = buf + TIC_SETTING_DECEL_MAX_DURING_ERROR;
     uint32_t decel_max_during_error = p[0] + (p[1] << 8) +
       (p[2] << 16) + (p[3] << 24);
-    tic_settings_decel_max_set(settings, decel_max_during_error);
+    tic_settings_decel_max_during_error_set(settings, decel_max_during_error);
   }
 }
 
@@ -307,7 +307,13 @@ tic_error * tic_get_settings(tic_handle * handle, tic_settings ** settings)
   tic_settings * new_settings = NULL;
   if (error == NULL)
   {
-    error = tic_settings_create(&new_settings, product);
+    error = tic_settings_create(&new_settings);
+  }
+
+  // Specify what product these settings are for.
+  if (error == NULL)
+  {
+    tic_settings_product_set(new_settings, product);
   }
 
   // Read all the settings from the device into a buffer.
@@ -319,7 +325,10 @@ tic_error * tic_get_settings(tic_handle * handle, tic_settings ** settings)
   }
 
   // Store the in the new settings object.
-  write_buffer_to_settings(buf, new_settings);
+  if (error == NULL)
+  {
+    write_buffer_to_settings(buf, new_settings);
+  }
 
   // Pass the new settings to the caller.
   if (error == NULL)

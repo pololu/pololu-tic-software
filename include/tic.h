@@ -118,16 +118,22 @@ const char * tic_error_get_message(const tic_error *);
 /// does not have any pointers or handles for other resources.
 typedef struct tic_settings tic_settings;
 
-/// Creates a new settings object with the default settings.  The "product"
-/// parameter specifies what type of Tic you are making settings for, and must
-/// be TIC_PRODUCT_T825.
+/// Creates a new settings object.
+///
+/// The new settings object will have no product specified and all settings set
+/// to zero.  After creating the settings object, you would typically call
+/// tic_settings_product_set() and then tic_settings_fill_with_defaults().
+///
+/// Then you would use setter and getter methods to work with the settings.  At
+/// some point, you should call tic_settings_fix() to make sure the settings are
+/// valid and provide warnings about what settings were invalid.
 ///
 /// The settings parameter should be a non-null pointer to a tic_settings
 /// pointer, which will receive a pointer to a new settings object if and only
 /// if this function is successful.  The caller must free the settings later by
 /// calling tic_settings_free().
 TIC_API TIC_WARN_UNUSED
-tic_error * tic_settings_create(tic_settings ** settings, uint32_t product);
+tic_error * tic_settings_create(tic_settings ** settings);
 
 /// Copies a settings object. If this function is successful, the caller must
 /// free the settings later by calling tic_settings_free().
@@ -136,10 +142,17 @@ tic_error * tic_settings_copy(
   const tic_settings * source ,
   tic_settings ** dest);
 
-// Frees a settings object.  It is OK to pass a NULL pointer to this function.
-// Do not free the same non-NULL settings object twice.
+/// Frees a settings object.  It is OK to pass a NULL pointer to this function.
+/// Do not free the same non-NULL settings object twice.
 TIC_API
 void tic_settings_free(tic_settings *);
+
+/// Fixes the settings to have defaults.  Before calling this, you should
+/// specify what product the settings are for by calling
+/// tic_settings_set_product().  If the product is not set to a valid non-zero
+/// value, this function will do nothing (and you can later see a warning from
+/// tic_settings_fix()).
+void tic_settings_fill_with_defaults(tic_settings * settings);
 
 /// Fixes the settings to valid and consistent.
 ///

@@ -53,26 +53,25 @@ struct tic_settings
   uint32_t decel_max_during_error;
 };
 
-static tic_error * tic_settings_fill_with_defaults(
-  tic_settings * settings, uint32_t product)
+void tic_settings_fill_with_defaults(tic_settings * settings)
 {
   assert(settings != NULL);
 
-  if (product != TIC_PRODUCT_T825)
+  // The product should be set beforehand, and if it is not then we should do
+  // nothing.
+  if (settings->product != TIC_PRODUCT_T825)
   {
-    return tic_error_create("Invalid product specified: %d.\n", product);
+    return;
   }
-
-  settings->product = product;
 
   // TODO: finish filling in defaults
 
   // TODO: make automated test to ensure these defaults match the firmware;
-  // probably need to make a hidden feature of the CLI
-  return NULL;
+  // could make a --fix-settings CLI feature I suppose, assuming we allow missing
+  // params in settings files.  Or make a hidden CLI feature.
 }
 
-tic_error * tic_settings_create(tic_settings ** settings, uint32_t product)
+tic_error * tic_settings_create(tic_settings ** settings)
 {
   if (settings == NULL)
   {
@@ -88,11 +87,6 @@ tic_error * tic_settings_create(tic_settings ** settings, uint32_t product)
   {
     new_settings = (tic_settings *)calloc(1, sizeof(tic_settings));
     if (new_settings == NULL) { error = &tic_error_no_memory; }
-  }
-
-  if (error == NULL)
-  {
-    error = tic_settings_fill_with_defaults(new_settings, product);
   }
 
   if (error == NULL)
@@ -155,7 +149,7 @@ static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings
   //tic_string_printf(warnings, "Warning: TODO: implement tic_settings_fix fully.\n");
   //tic_string_printf(warnings, "Warning: TODO: implement tic_settings_fix fully!!\n");
 
-  
+  (void)settings; (void)warnings;  // tmphax
 }
 
 tic_error * tic_settings_fix(tic_settings * settings, char ** warnings)
@@ -751,10 +745,10 @@ uint32_t tic_settings_accel_max_get(const tic_settings * settings)
 }
 
 void tic_settings_decel_max_during_error_set(tic_settings * settings,
-  uint32_t decel_max)
+  uint32_t decel_max_during_error)
 {
   if (!settings) { return; }
-  settings->decel_max = decel_max;
+  settings->decel_max_during_error = decel_max_during_error;
 }
 
 uint32_t tic_settings_decel_max_during_error_get(const tic_settings * settings)
