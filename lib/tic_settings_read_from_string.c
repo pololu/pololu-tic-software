@@ -1,5 +1,26 @@
 #include "tic_internal.h"
 
+static tic_error * read_from_yaml_doc(yaml_document_t * doc, tic_settings * settings)
+{
+  yaml_node_t * root = yaml_document_get_root_node(doc);
+  if (root->type != YAML_MAPPING_NODE)
+  {
+    return tic_error_create("YAML root node is not a mapping.");
+  }
+
+  for (yaml_node_pair_t * pair = root->data.mapping.pairs.start;
+       pair < root->data.mapping.pairs.top; pair++)
+  {
+    yaml_node_t * key = yaml_document_get_node(doc, pair->key);
+    yaml_node_t * value = yaml_document_get_node(doc, pair->value);
+    printf("%s -> %s\n", key->data.scalar.value, value->data.scalar.value);
+  }
+
+  (void)settings; // tmphax
+
+  return NULL;
+}
+
 tic_error * tic_settings_read_from_string(const char * string,
   tic_settings ** settings, char ** warnings)
 {
@@ -20,12 +41,14 @@ tic_error * tic_settings_read_from_string(const char * string,
 
   tic_error * error = NULL;
 
+  // Allocate a new settings object.
   tic_settings * new_settings = NULL;
   if (error == NULL)
   {
     error = tic_settings_create(&new_settings);
   }
 
+  // If needed, allocate a string for holding warnings.
   tic_string wstr;
   if (warnings)
   {
@@ -36,6 +59,7 @@ tic_error * tic_settings_read_from_string(const char * string,
     tic_string_setup_dummy(&wstr);
   }
 
+  // Make a YAML parser.
   bool parser_initialized = false;
   yaml_parser_t parser;
   if (error == NULL)
@@ -51,45 +75,12 @@ tic_error * tic_settings_read_from_string(const char * string,
     }
   }
 
+  // Construct a YAML document using the parser.
+  bool document_initialized = false;
+  yaml_document_t doc;
   if (error == NULL)
   {
     yaml_parser_set_input_string(&parser, (const uint8_t *)string, strlen(string));
-  }
-
-  bool document_initialized = false;
-  yaml_document_t doc;
-
-  while (true)
-  {
-    yaml_event_t event;
-    int success = yaml_parser_parse(&parser, &event);
-    if (!success)
-    {
-      // TODO: better error handling, report line of error
-      error = tic_error_create("Failed to parse YAML.");
-      break;
-    }
-
-    if (event.type == YAML_STREAM_END_EVENT)
-    {
-      break;
-    }
-
-    if (event.type == YAML_SCALAR_EVENT)
-    {
-      printf("  scalar %s\n", event.data.scalar.value);
-    }
-    else
-    {
-      printf("hey %d\n", event.type);
-    }
-
-    yaml_event_delete(&event);
-  }
-
-#if 0
-  if (error == NULL)
-  {
     int success = yaml_parser_load(&parser, &doc);
     if (success)
     {
@@ -97,47 +88,16 @@ tic_error * tic_settings_read_from_string(const char * string,
     }
     else
     {
+      // TODO: better error message
       error = tic_error_create("Failed to load document.");
     }
   }
 
+  // Proces the YAML document.
   if (error == NULL)
   {
-    // tmphax
-    printf("string@%p\n", string);
-    printf("doc@%p\n", &doc);
-    int i = 1;
-    printf("  rootnode@%p\n", yaml_document_get_root_node(&doc));
-    while (true)
-    {
-      yaml_node_t * node = yaml_document_get_node(&doc, i);
-      if (node == NULL) { break; }
-      printf("  node@%p type=%d tag=%s ", node, node->type, node->tag);
-      printf("    %d:%d to %d:%d\n",
-        node->start_mark.line, node->start_mark.line,
-        node->end_mark.line, node->end_mark.line);
-      if (node->type == YAML_SCALAR_NODE)
-      {
-        printf("    value=%p len=%d\n", node->data.scalar.value, node->data.scalar.length);
-        printf("    ");
-        for (uint32_t i = 0; i < node->data.scalar.length; i++)
-        {
-          putchar(node->data.scalar.value[i]);
-        }
-        printf("\n");
-      }
-      if (node->type == YAML_MAPPING_NODE)
-      {
-        for (yaml_node_pair_t * pair = node->data.mapping.pairs.start;
-             pair < node->data.mapping.pairs.end; pair++)
-        {
-          printf("    pair@%p %d %d\n", pair, pair->key, pair->value);
-        }
-      }
-      i++;
-    }
+    error = read_from_yaml_doc(&doc, new_settings);
   }
-#endif
 
   // Detect memory allocation errors from the warnings string.
   if (error == NULL && warnings && wstr.data == NULL)
@@ -145,18 +105,16 @@ tic_error * tic_settings_read_from_string(const char * string,
     error = &tic_error_no_memory;
   }
 
-  // Pass the settings to the caller.
+  // Success!  Pass the settings and warnings to the caller.
   if (error == NULL)
   {
     *settings = new_settings;
     new_settings = NULL;
-  }
-
-  // Pass the warnings string to the caller.
-  if (error == NULL && warnings)
-  {
-    *warnings = wstr.data;
-    wstr.data = NULL;
+    if (warnings)
+    {
+      *warnings = wstr.data;
+      wstr.data = NULL;
+    }
   }
 
   if (document_initialized)

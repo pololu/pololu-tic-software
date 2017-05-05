@@ -4,11 +4,13 @@
 
 #pragma once
 
-#include <memory>
+#include <cstring>
 #include <iostream>
 #include <fstream>
-#include <cstring>
+#include <memory>
 #include <stdexcept>
+#include <streambuf>
+#include <string>
 
 namespace
 {
@@ -68,8 +70,11 @@ namespace
   std::string read_string_from_file(std::string filename)
   {
     auto stream = open_file_or_pipe_input(filename);
-    std::string contents;
-    *stream >> contents;
+    std::string contents =
+      std::string(
+        std::istreambuf_iterator<char>(*stream),
+        std::istreambuf_iterator<char>()
+      );
     if (stream->fail())
     {
       throw std::runtime_error("Failed to read from file or pipe.");
