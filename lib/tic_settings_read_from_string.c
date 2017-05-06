@@ -1,26 +1,170 @@
 #include "tic_internal.h"
 
-static tic_error * read_from_yaml_doc(yaml_document_t * doc, tic_settings * settings)
+// TODO: add RSpec examples for every error in this file
+
+static tic_error * apply_string_pair(tic_settings * settings,
+  const char * key, const char * value, uint32_t line)
 {
+  if (!strcmp(key, "product"))
+  {
+    // We already processed the product field separately.
+  }
+  else if (!strcmp(key, "control_mode"))
+  {
+    uint32_t control_mode;
+    if (!tic_name_to_code(tic_control_mode_names, value, &control_mode))
+    {
+      return tic_error_create("Invalid control_mode.");
+    }
+    tic_settings_control_mode_set(settings, control_mode);
+  }
+  else
+  {
+    return tic_error_create("Unrecognized key at line %d.", line);
+  }
+
+  return NULL;
+}
+
+// Returns true if the node is a scalar and its value equals the given
+// null-terminated string.
+static bool scalar_eq(const yaml_node_t * node, const char * v)
+{
+  if (node == NULL) { return NULL; }
+  if (node->type != YAML_SCALAR_NODE) { return false; }
+  if (node->data.scalar.length != strlen(v)) { return false; }
+  return !memcmp(v, node->data.scalar.value, node->data.scalar.length);
+}
+
+// Given a mapping and a key name (as a null-terminated string), gets the node
+// corresponding to the value, or NULL if it could not be found.
+static yaml_node_t * map_lookup(yaml_document_t * doc,
+  yaml_node_t * map, const char * key_name)
+{
+  if (doc == NULL) { assert(0); return NULL; }
+  if (map == NULL) { assert(0); return NULL; }
+  if (map->type != YAML_MAPPING_NODE) { return NULL; }
+
+  for (yaml_node_pair_t * pair = map->data.mapping.pairs.start;
+       pair < map->data.mapping.pairs.top; pair++)
+  {
+    yaml_node_t * key = yaml_document_get_node(doc, pair->key);
+    if (scalar_eq(key, key_name))
+    {
+      return yaml_document_get_node(doc, pair->value);
+    }
+  }
+  return NULL;
+}
+
+#define MAX_SCALAR_LENGTH 255
+
+// Takes a key-value pair from the YAML file, does some basic checks, creates
+// proper null-terminated C strings, and then calls apply_string_pair to do the
+// actual logic of parsing strins and applying the settings.
+static tic_error * apply_yaml_pair(tic_settings * settings,
+  const yaml_node_t * key, const yaml_node_t * value)
+{
+  if (key == NULL)
+  {
+    return tic_error_create("Internal YAML processing error: Invalid key index.");
+  }
+  if (value == NULL)
+  {
+    return tic_error_create("Internal YAML processing error: Invalid value index.");
+  }
+
+  uint32_t line = key->start_mark.line + 1;
+
+  // Make sure the key is valid and convert it to a C string (we aren't sure
+  // that libyaml always provides a null termination byte because scalars can
+  // have have null bytes in them).
+  if (key->type != YAML_SCALAR_NODE)
+  {
+    return tic_error_create(
+      "YAML key is not a scalar on line %d.", line);
+  }
+  if (key->data.scalar.length > MAX_SCALAR_LENGTH)
+  {
+    return tic_error_create(
+      "YAML key is too long on line %d.", line);
+  }
+  char key_str[MAX_SCALAR_LENGTH + 1];
+  memcpy(key_str, key->data.scalar.value, key->data.scalar.length);
+  key_str[key->data.scalar.length] = 0;
+
+  // Make sure the value is valid and convert it to a C string.
+  if (value->type != YAML_SCALAR_NODE)
+  {
+    return tic_error_create(
+      "YAML value is not a scalar on line %d.", line);
+  }
+  if (value->data.scalar.length > MAX_SCALAR_LENGTH)
+  {
+    return tic_error_create(
+      "YAML value is too long on line %d.", line);
+  }
+  char value_str[MAX_SCALAR_LENGTH + 1];
+  memcpy(value_str, value->data.scalar.value, value->data.scalar.length);
+  value_str[value->data.scalar.length] = 0;
+
+  return apply_string_pair(settings, key_str, value_str, line);
+}
+
+// Validates the YAML doc and populates the settings object with the settings
+// from the document.
+//
+// If there are any warnings they will be added to wstr.
+static tic_error * read_from_yaml_doc(
+  yaml_document_t * doc, tic_settings * settings)
+{
+  assert(doc != NULL);
+  assert(settings != NULL);
+
+  // Get the root node and make sure it is a mapping.
   yaml_node_t * root = yaml_document_get_root_node(doc);
   if (root->type != YAML_MAPPING_NODE)
   {
     return tic_error_create("YAML root node is not a mapping.");
   }
 
+  // Figure out the product these settings are for.
+  // TODO: might be nice if you could purposely have the product be missing from
+  // the settings file and this means the settings file is just a modification
+  // of the existing settings on the device, not a complete spec.
+  uint32_t product;
+  yaml_node_t * product_value_node = map_lookup(doc, root, "product");
+  if (scalar_eq(product_value_node, "T825"))
+  {
+    product = TIC_PRODUCT_T825;
+  }
+  else if (product_value_node != NULL)
+  {
+    return tic_error_create("An unrecognized product was specified in the settings file.");
+  }
+  else
+  {
+    return tic_error_create("No product was specified in the settings file.");
+  }
+
+  // Using the product, fill the settings with default values.
+  tic_settings_product_set(settings, product);
+  tic_settings_fill_with_defaults(settings);
+
+  // Iterate over the pairs in the YAML mapping and process each one.
   for (yaml_node_pair_t * pair = root->data.mapping.pairs.start;
        pair < root->data.mapping.pairs.top; pair++)
   {
     yaml_node_t * key = yaml_document_get_node(doc, pair->key);
     yaml_node_t * value = yaml_document_get_node(doc, pair->value);
-    printf("%s -> %s\n", key->data.scalar.value, value->data.scalar.value);
+    tic_error * error = apply_yaml_pair(settings, key, value);
+    if (error) { return error; }
   }
-
-  (void)settings; // tmphax
 
   return NULL;
 }
 
+// TODO: we don't actually have any warnings yet, right?  Maybe remove the param?
 tic_error * tic_settings_read_from_string(const char * string,
   tic_settings ** settings, char ** warnings)
 {
@@ -131,9 +275,9 @@ tic_error * tic_settings_read_from_string(const char * string,
 
   tic_settings_free(new_settings);
 
-  if (error == NULL)
+  if (error != NULL)
   {
-    error = tic_error_create("not implemented yo");
+    error = tic_error_add(error, "There was an error reading the settings file.");
   }
 
   return error;
