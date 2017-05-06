@@ -1,5 +1,10 @@
 #include "tic_internal.h"
 
+tic_name tic_product_names[] =
+{
+  { "T825", TIC_PRODUCT_T825 },
+};
+
 tic_name tic_control_mode_names[] =
 {
   { "serial", TIC_CONTROL_MODE_SERIAL },

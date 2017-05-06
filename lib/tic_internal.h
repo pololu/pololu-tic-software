@@ -55,6 +55,7 @@ typedef struct tic_name
 bool tic_name_to_code(const tic_name * table, const char * name, uint32_t * code);
 bool tic_code_to_name(const tic_name * table, uint32_t code, const char ** name);
 
+extern tic_name tic_product_names[];
 extern tic_name tic_control_mode_names[];
 
 // Internal settings conversion functions.

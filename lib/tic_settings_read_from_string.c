@@ -2,6 +2,20 @@
 
 // TODO: add RSpec examples for every error in this file
 
+// We apply the product name from the settings file first, and use it to set the
+// defaults.
+static tic_error * apply_product_name(tic_settings * settings, const char * product_name)
+{
+  uint32_t product;
+  if (!tic_name_to_code(tic_product_names, product_name, &product))
+  {
+    return tic_error_create("Unrecognized product name.");
+  }
+  tic_settings_product_set(settings, product);
+  tic_settings_fill_with_defaults(settings);
+  return NULL;
+}
+
 static tic_error * apply_string_pair(tic_settings * settings,
   const char * key, const char * value, uint32_t line)
 {
@@ -128,28 +142,28 @@ static tic_error * read_from_yaml_doc(
     return tic_error_create("YAML root node is not a mapping.");
   }
 
-  // Figure out the product these settings are for.
-  // TODO: might be nice if you could purposely have the product be missing from
-  // the settings file and this means the settings file is just a modification
-  // of the existing settings on the device, not a complete spec.
-  uint32_t product;
-  yaml_node_t * product_value_node = map_lookup(doc, root, "product");
-  if (scalar_eq(product_value_node, "T825"))
-  {
-    product = TIC_PRODUCT_T825;
-  }
-  else if (product_value_node != NULL)
-  {
-    return tic_error_create("An unrecognized product was specified in the settings file.");
-  }
-  else
+  // Process the "product" key/value pair first.
+  yaml_node_t * product_value = map_lookup(doc, root, "product");
+  if (product_value == NULL)
   {
     return tic_error_create("No product was specified in the settings file.");
   }
-
-  // Using the product, fill the settings with default values.
-  tic_settings_product_set(settings, product);
-  tic_settings_fill_with_defaults(settings);
+  uint32_t product_line = product_value->start_mark.line + 1;
+  if (product_value->type != YAML_SCALAR_NODE)
+  {
+    return tic_error_create(
+      "YAML product value is not a scalar on line %d.", product_line);
+  }
+  if (product_value->data.scalar.length > MAX_SCALAR_LENGTH)
+  {
+    return tic_error_create(
+      "YAML product value is too long on line %d.", product_line);
+  }
+  char product_str[MAX_SCALAR_LENGTH + 1];
+  memcpy(product_str, product_value->data.scalar.value,
+    product_value->data.scalar.length);
+  product_str[product_value->data.scalar.length] = 0;
+  apply_product_name(settings, product_str);
 
   // Iterate over the pairs in the YAML mapping and process each one.
   for (yaml_node_pair_t * pair = root->data.mapping.pairs.start;
