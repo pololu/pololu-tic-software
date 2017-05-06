@@ -34,6 +34,7 @@ add_library (lib SHARED
   tic_set_settings.c
   tic_error.c
   tic_handle.c
+  tic_names.c
   tic_settings.c
   tic_settings_read_from_string.c
   tic_settings_to_string.c

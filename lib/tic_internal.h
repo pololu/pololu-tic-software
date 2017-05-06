@@ -38,11 +38,24 @@ typedef struct tic_string
   size_t capacity;
   size_t length;
 } tic_string;
+
 void tic_string_setup(tic_string *);
 void tic_string_setup_dummy(tic_string *);
 TIC_PRINTF(2, 3)
 void tic_string_printf(tic_string *, const char * format, ...);
 
+// Internal name lookup library.
+
+typedef struct tic_name
+{
+  const char * name;
+  uint32_t code;
+} tic_name;
+
+bool tic_name_to_code(const tic_name * table, const char * name, uint32_t * code);
+bool tic_code_to_name(const tic_name * table, uint32_t code, const char ** name);
+
+extern tic_name tic_control_mode_names[];
 
 // Internal settings conversion functions.
 
