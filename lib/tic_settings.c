@@ -1,8 +1,5 @@
 #include "tic_internal.h"
 
-// TODO: consider changing these and the accessors to have larger types
-// for numeric values in order to simplify the code that works with settings
-
 struct tic_settings
 {
   uint32_t product;
@@ -64,11 +61,11 @@ void tic_settings_fill_with_defaults(tic_settings * settings)
     return;
   }
 
-  // TODO: finish filling in defaults
-
   // TODO: make automated test to ensure these defaults match the firmware;
   // could make a --fix-settings CLI feature I suppose, assuming we allow missing
   // params in settings files.  Or make a hidden CLI feature.
+
+  // TODO: finish filling in defaults
 }
 
 tic_error * tic_settings_create(tic_settings ** settings)
