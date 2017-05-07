@@ -50,6 +50,9 @@ tic_error * tic_settings_to_string(const tic_settings * settings, char ** string
   tic_string str;
   tic_string_setup(&str);
 
+  tic_sprintf(&str, "# Pololu Tic USB Stepper Controller settings file.\n");
+  tic_sprintf(&str, "# " DOCUMENTATION_URL "\n");
+
   {
     uint32_t product = tic_settings_product_get(settings);
     const char * product_str;

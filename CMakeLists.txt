@@ -9,7 +9,7 @@ set(ENABLE_GUI TRUE CACHE BOOL
 
 set (CLI_NAME "ticcmd")
 set (GUI_NAME "ticgui")
-set (DOCUMENTATION_URL "https://www.pololu.com/")  # TODO: link to guide
+set (DOCUMENTATION_URL "https://www.pololu.com/docs/0J71")
 
 set (SOFTWARE_VERSION_MAJOR 1)
 set (SOFTWARE_VERSION_MINOR 0)

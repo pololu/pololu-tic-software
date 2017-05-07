@@ -198,13 +198,13 @@ void tic_settings_fill_with_defaults(tic_settings * settings);
 TIC_API TIC_WARN_UNUSED
 tic_error * tic_settings_fix(tic_settings *, char ** warnings);
 
-/// Gets the settings as an XML string, also known as a settings file.  If this
+/// Gets the settings as a YAML string, also known as a settings file.  If this
 /// function is successful, the string must be freed by the caller using
 /// tic_string_free().
 TIC_API TIC_WARN_UNUSED
 tic_error * tic_settings_to_string(const tic_settings *, char ** string);
 
-/// Parses an XML settings string, also known as a settings file, and returns
+/// Parses an YAML settings string, also known as a settings file, and returns
 /// the corresponding settings object.  The settings returned might be invalid,
 /// so it is recommend to call tic_settings_fix() to fix the settings and warn
 /// the user.
