@@ -43,6 +43,7 @@ void tic_string_setup(tic_string *);
 void tic_string_setup_dummy(tic_string *);
 TIC_PRINTF(2, 3)
 void tic_string_printf(tic_string *, const char * format, ...);
+bool tic_string_to_i64(const char *, int64_t *);
 
 // Internal name lookup library.
 
@@ -55,8 +56,13 @@ typedef struct tic_name
 bool tic_name_to_code(const tic_name * table, const char * name, uint32_t * code);
 bool tic_code_to_name(const tic_name * table, uint32_t code, const char ** name);
 
-extern tic_name tic_product_names[];
-extern tic_name tic_control_mode_names[];
+extern const tic_name tic_bool_names[];
+extern const tic_name tic_product_names[];
+extern const tic_name tic_control_mode_names[];
+extern const tic_name tic_scaling_degree_names[];
+extern const tic_name tic_microstepping_mode_names[];
+extern const tic_name tic_decay_mode_names[];
+extern const tic_name tic_pin_config_names[];
 
 // Internal settings conversion functions.
 

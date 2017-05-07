@@ -50,7 +50,7 @@ tic_error * tic_settings_to_string(const tic_settings * settings, char ** string
   tic_string_setup(&str);
 
   {
-    char * product_str = "";
+    char * product_str = "";  // TODO: use name table
     switch (tic_settings_product_get(settings))
     {
     case TIC_PRODUCT_T825: product_str = "T825"; break;
@@ -59,7 +59,7 @@ tic_error * tic_settings_to_string(const tic_settings * settings, char ** string
   }
 
   {
-    char * mode_str = "";
+    char * mode_str = "";  // TODO: use name table
     switch (tic_settings_control_mode_get(settings))
     {
     case TIC_CONTROL_MODE_SERIAL: mode_str = "serial"; break;
@@ -169,12 +169,12 @@ tic_error * tic_settings_to_string(const tic_settings * settings, char ** string
   }
 
   {
-    const char * degree_str = "";
+    const char * degree_str = ""; // TODO: use name table
     switch(tic_settings_input_scaling_degree_get(settings))
     {
-    case TIC_INPUT_SCALING_DEGREE_LINEAR: degree_str = "linear"; break;
-    case TIC_INPUT_SCALING_DEGREE_QUADRATIC: degree_str = "quadratic"; break;
-    case TIC_INPUT_SCALING_DEGREE_CUBIC: degree_str = "cubic"; break;
+    case TIC_SCALING_DEGREE_LINEAR: degree_str = "linear"; break;
+    case TIC_SCALING_DEGREE_QUADRATIC: degree_str = "quadratic"; break;
+    case TIC_SCALING_DEGREE_CUBIC: degree_str = "cubic"; break;
     }
     tic_string_printf(&str, "input_scaling_degree: %s\n", degree_str);
   }
@@ -261,7 +261,7 @@ tic_error * tic_settings_to_string(const tic_settings * settings, char ** string
   }
 
   {
-    const char * mode_str = "";
+    const char * mode_str = "";  // TODO: use name table
     switch (tic_settings_microstepping_mode_get(settings))
     {
     case TIC_MICROSTEPPING_MODE_1: mode_str = "1"; break;
@@ -275,7 +275,7 @@ tic_error * tic_settings_to_string(const tic_settings * settings, char ** string
   }
 
   {
-    const char * decay_mode_str = "";
+    const char * decay_mode_str = "";  // TODO: use name table
     switch (tic_settings_decay_mode_get(settings))
     {
     case TIC_DECAY_MODE_MIXED: decay_mode_str = "mixed"; break;

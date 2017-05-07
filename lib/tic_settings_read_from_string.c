@@ -1,6 +1,38 @@
 #include "tic_internal.h"
 
 // TODO: add RSpec examples for every error in this file
+// TODO: add RSpec examples ot make sure tic_string_to_i64 is handling errors properly
+
+static bool tic_parse_pin_config(const char * input, uint8_t * pin_config)
+{
+  assert(input != NULL);
+  assert(pin_config != NULL);
+
+  *pin_config = 0;
+
+  if (strlen(input) > 255) { return false; }
+  char str[256];
+  strcpy(str, input);
+
+  uint8_t config = 0;
+  char * p = str;
+  while (true)
+  {
+    char * token = strtok(p, " ");
+    p = NULL;
+    if (token == NULL) { break; }
+
+    uint32_t partial_config;
+    if (!tic_name_to_code(tic_pin_config_names, token, &partial_config))
+    {
+      return false;
+    }
+    config |= partial_config;
+  }
+  *pin_config = config;
+
+  return true;
+}
 
 // We apply the product name from the settings file first, and use it to set the
 // defaults.
@@ -16,6 +48,10 @@ static tic_error * apply_product_name(tic_settings * settings, const char * prod
   return NULL;
 }
 
+// Note: The range checking we do in this function is solely to make sure the
+// value will fit in the argument to the tic_settings setter function.  If the
+// value is otherwise outside the allowed range, that will be checked in
+// tic_settings_fix.
 static tic_error * apply_string_pair(tic_settings * settings,
   const char * key, const char * value, uint32_t line)
 {
@@ -28,9 +64,526 @@ static tic_error * apply_string_pair(tic_settings * settings,
     uint32_t control_mode;
     if (!tic_name_to_code(tic_control_mode_names, value, &control_mode))
     {
-      return tic_error_create("Invalid control_mode.");
+      return tic_error_create("Unrecognized control_mode value.");
     }
     tic_settings_control_mode_set(settings, control_mode);
+  }
+  else if (!strcmp(key, "never_sleep"))
+  {
+    uint32_t never_sleep;
+    if (!tic_name_to_code(tic_bool_names, value, &never_sleep))
+    {
+      return tic_error_create("Unrecognized never_sleep value.");
+    }
+    tic_settings_never_sleep_set(settings, never_sleep);
+  }
+  else if (!strcmp(key, "disable_safe_start"))
+  {
+    uint32_t disable_safe_start;
+    if (!tic_name_to_code(tic_bool_names, value, &disable_safe_start))
+    {
+      return tic_error_create("Unrecognized disable_safe_start value.");
+    }
+    tic_settings_disable_safe_start_set(settings, disable_safe_start);
+  }
+  else if (!strcmp(key, "ignore_err_line_high"))
+  {
+    uint32_t ignore_err_line_high;
+    if (!tic_name_to_code(tic_bool_names, value, &ignore_err_line_high))
+    {
+      return tic_error_create("Unrecognized ignore_err_line_high value.");
+    }
+    tic_settings_ignore_err_line_high_set(settings, ignore_err_line_high);
+  }
+  else if (!strcmp(key, "serial_baud_rate"))
+  {
+    int64_t baud;
+    if (!tic_string_to_i64(value, &baud))
+    {
+      return tic_error_create("Invalid serial_baud_rate value.");
+    }
+    if (baud < 0 || baud >= UINT32_MAX)
+    {
+      return tic_error_create("The serial_baud_rate value is out of range.");
+    }
+    tic_settings_serial_baud_rate_set(settings, baud);
+  }
+  else if (!strcmp(key, "serial_device_number"))
+  {
+    int64_t num;
+    if (!tic_string_to_i64(value, &num))
+    {
+      return tic_error_create("Invalid serial_device_number value.");
+    }
+    if (num < 0 || num > 0xFF)
+    {
+      return tic_error_create("The serial_device_number value is out of range.");
+    }
+    tic_settings_serial_device_number_set(settings, num);
+  }
+  else if (!strcmp(key, "i2c_device_address"))
+  {
+    int64_t address;
+    if (!tic_string_to_i64(value, &address))
+    {
+      return tic_error_create("Invalid i2c_device_address value.");
+    }
+    if (address < 0 || address > 0xFF)
+    {
+      return tic_error_create("The i2c_device_address value is out of range.");
+    }
+    tic_settings_i2c_device_address_set(settings, address);
+  }
+  else if (!strcmp(key, "command_timeout"))
+  {
+    int64_t command_timeout;
+    if (!tic_string_to_i64(value, &command_timeout))
+    {
+      return tic_error_create("Invalid command_timeout value.");
+    }
+    if (command_timeout < 0 || command_timeout > 0xFFFF)
+    {
+      return tic_error_create("The command_timeout value is out of range.");
+    }
+    tic_settings_command_timeout_set(settings, command_timeout);
+  }
+  else if (!strcmp(key, "serial_crc_enabled"))
+  {
+    uint32_t serial_crc_enabled;
+    if (!tic_name_to_code(tic_bool_names, value, &serial_crc_enabled))
+    {
+      return tic_error_create("Unrecognized serial_crc_enabled value.");
+    }
+    tic_settings_serial_crc_enabled_set(settings, serial_crc_enabled);
+  }
+  else if (!strcmp(key, "low_vin_timeout"))
+  {
+    int64_t low_vin_timeout;
+    if (!tic_string_to_i64(value, &low_vin_timeout))
+    {
+      return tic_error_create("Invalid low_vin_timeout value.");
+    }
+    if (low_vin_timeout < 0 || low_vin_timeout > 0xFFFF)
+    {
+      return tic_error_create("The low_vin_timeout value is out of range.");
+    }
+    tic_settings_low_vin_timeout_set(settings, low_vin_timeout);
+  }
+  else if (!strcmp(key, "low_vin_shutoff_voltage"))
+  {
+    int64_t low_vin_shutoff_voltage;
+    if (!tic_string_to_i64(value, &low_vin_shutoff_voltage))
+    {
+      return tic_error_create("Invalid low_vin_shutoff_voltage value.");
+    }
+    if (low_vin_shutoff_voltage < 0 || low_vin_shutoff_voltage > 0xFFFF)
+    {
+      return tic_error_create(
+        "The low_vin_shutoff_voltage value is out of range.");
+    }
+    tic_settings_low_vin_shutoff_voltage_set(settings, low_vin_shutoff_voltage);
+  }
+  else if (!strcmp(key, "low_vin_startup_voltage"))
+  {
+    int64_t low_vin_startup_voltage;
+    if (!tic_string_to_i64(value, &low_vin_startup_voltage))
+    {
+      return tic_error_create("Invalid low_vin_startup_voltage value.");
+    }
+    if (low_vin_startup_voltage < 0 || low_vin_startup_voltage > 0xFFFF)
+    {
+      return tic_error_create(
+        "The low_vin_startup_voltage value is out of range.");
+    }
+    tic_settings_low_vin_startup_voltage_set(settings, low_vin_startup_voltage);
+  }
+  else if (!strcmp(key, "high_vin_shutoff_voltage"))
+  {
+    int64_t high_vin_shutoff_voltage;
+    if (!tic_string_to_i64(value, &high_vin_shutoff_voltage))
+    {
+      return tic_error_create("Invalid high_vin_shutoff_voltage value.");
+    }
+    if (high_vin_shutoff_voltage < 0 || high_vin_shutoff_voltage > 0xFFFF)
+    {
+      return tic_error_create(
+        "The high_vin_shutoff_voltage value is out of range.");
+    }
+    tic_settings_high_vin_shutoff_voltage_set(settings,
+      high_vin_shutoff_voltage);
+  }
+  else if (!strcmp(key, "vin_multiplier_offset"))
+  {
+    int64_t vin_multiplier_offset;
+    if (!tic_string_to_i64(value, &vin_multiplier_offset))
+    {
+      return tic_error_create("Invalid vin_multiplier_offset value.");
+    }
+    if (vin_multiplier_offset < INT16_MIN || vin_multiplier_offset > INT16_MAX)
+    {
+      return tic_error_create(
+        "The vin_multiplier_offset value is out of range.");
+    }
+    tic_settings_vin_multiplier_offset_set(settings, vin_multiplier_offset);
+  }
+  else if (!strcmp(key, "rc_max_pulse_period"))
+  {
+    int64_t rc_max_pulse_period;
+    if (!tic_string_to_i64(value, &rc_max_pulse_period))
+    {
+      return tic_error_create("Invalid rc_max_pulse_period value.");
+    }
+    if (rc_max_pulse_period < 0 || rc_max_pulse_period > 0xFFFF)
+    {
+      return tic_error_create(
+        "The rc_max_pulse_period value is out of range.");
+    }
+    tic_settings_rc_max_pulse_period_set(settings, rc_max_pulse_period);
+  }
+  else if (!strcmp(key, "rc_bad_signal_timeout"))
+  {
+    int64_t rc_bad_signal_timeout;
+    if (!tic_string_to_i64(value, &rc_bad_signal_timeout))
+    {
+      return tic_error_create("Invalid rc_bad_signal_timeout value.");
+    }
+    if (rc_bad_signal_timeout < 0 || rc_bad_signal_timeout > 0xFFFF)
+    {
+      return tic_error_create(
+        "The rc_bad_signal_timeout value is out of range.");
+    }
+    tic_settings_rc_bad_signal_timeout_set(settings, rc_bad_signal_timeout);
+  }
+  else if (!strcmp(key, "rc_consecutive_good_pulses"))
+  {
+    int64_t rc_consecutive_good_pulses;
+    if (!tic_string_to_i64(value, &rc_consecutive_good_pulses))
+    {
+      return tic_error_create("Invalid rc_consecutive_good_pulses value.");
+    }
+    if (rc_consecutive_good_pulses < 0 || rc_consecutive_good_pulses > 0xFF)
+    {
+      return tic_error_create(
+        "The rc_consecutive_good_pulses value is out of range.");
+    }
+    tic_settings_rc_consecutive_good_pulses_set(settings,
+      rc_consecutive_good_pulses);
+  }
+  else if (!strcmp(key, "input_play"))
+  {
+    int64_t input_play;
+    if (!tic_string_to_i64(value, &input_play))
+    {
+      return tic_error_create("Invalid input_play value.");
+    }
+    if (input_play < 0 || input_play > 0xFF)
+    {
+      return tic_error_create("The input_play value is out of range.");
+    }
+    tic_settings_input_play_set(settings, input_play);
+  }
+  else if (!strcmp(key, "input_error_min"))
+  {
+    int64_t input_error_min;
+    if (!tic_string_to_i64(value, &input_error_min))
+    {
+      return tic_error_create("Invalid input_error_min value.");
+    }
+    if (input_error_min < 0 || input_error_min > 0xFFFF)
+    {
+      return tic_error_create("The input_error_min value is out of range.");
+    }
+    tic_settings_input_error_min_set(settings, input_error_min);
+  }
+  else if (!strcmp(key, "input_error_max"))
+  {
+    int64_t input_error_max;
+    if (!tic_string_to_i64(value, &input_error_max))
+    {
+      return tic_error_create("Invalid input_error_max value.");
+    }
+    if (input_error_max < 0 || input_error_max > 0xFFFF)
+    {
+      return tic_error_create("The input_error_max value is out of range.");
+    }
+    tic_settings_input_error_max_set(settings, input_error_max);
+  }
+  else if (!strcmp(key, "input_scaling_degree"))
+  {
+    uint32_t input_scaling_degree;
+    if (!tic_name_to_code(tic_scaling_degree_names, value, &input_scaling_degree))
+    {
+      return tic_error_create("Unrecognized input_scaling_degree value.");
+    }
+    tic_settings_input_scaling_degree_set(settings, input_scaling_degree);
+  }
+  else if (!strcmp(key, "input_invert"))
+  {
+    uint32_t input_invert;
+    if (!tic_name_to_code(tic_bool_names, value, &input_invert))
+    {
+      return tic_error_create("Unrecognized input_invert value.");
+    }
+    tic_settings_input_invert_set(settings, input_invert);
+  }
+  else if (!strcmp(key, "input_min"))
+  {
+    int64_t input_min;
+    if (!tic_string_to_i64(value, &input_min))
+    {
+      return tic_error_create("Invalid input_min value.");
+    }
+    if (input_min < 0 || input_min > 0xFFFF)
+    {
+      return tic_error_create("The input_min value is out of range.");
+    }
+    tic_settings_input_min_set(settings, input_min);
+  }
+  else if (!strcmp(key, "input_neutral_min"))
+  {
+    int64_t input_neutral_min;
+    if (!tic_string_to_i64(value, &input_neutral_min))
+    {
+      return tic_error_create("Invalid input_neutral_min value.");
+    }
+    if (input_neutral_min < 0 || input_neutral_min > 0xFFFF)
+    {
+      return tic_error_create("The input_neutral_min value is out of range.");
+    }
+    tic_settings_input_neutral_min_set(settings, input_neutral_min);
+  }
+  else if (!strcmp(key, "input_neutral_max"))
+  {
+    int64_t input_neutral_max;
+    if (!tic_string_to_i64(value, &input_neutral_max))
+    {
+      return tic_error_create("Invalid input_neutral_max value.");
+    }
+    if (input_neutral_max < 0 || input_neutral_max > 0xFFFF)
+    {
+      return tic_error_create("The input_neutral_max value is out of range.");
+    }
+    tic_settings_input_neutral_max_set(settings, input_neutral_max);
+  }
+  else if (!strcmp(key, "input_max"))
+  {
+    int64_t input_max;
+    if (!tic_string_to_i64(value, &input_max))
+    {
+      return tic_error_create("Invalid input_max value.");
+    }
+    if (input_max < 0 || input_max > 0xFFFF)
+    {
+      return tic_error_create("The input_max value is out of range.");
+    }
+    tic_settings_input_max_set(settings, input_max);
+  }
+  else if (!strcmp(key, "output_min"))
+  {
+    int64_t output_min;
+    if (!tic_string_to_i64(value, &output_min))
+    {
+      return tic_error_create("Invalid output_min value.");
+    }
+    if (output_min < INT32_MIN || output_min > INT32_MAX)
+    {
+      return tic_error_create("The output_min value is out of range.");
+    }
+    tic_settings_output_min_set(settings, output_min);
+  }
+  else if (!strcmp(key, "output_neutral"))
+  {
+    int64_t output_neutral;
+    if (!tic_string_to_i64(value, &output_neutral))
+    {
+      return tic_error_create("Invalid output_neutral value.");
+    }
+    if (output_neutral < INT32_MIN || output_neutral > INT32_MAX)
+    {
+      return tic_error_create("The output_neutral value is out of range.");
+    }
+    tic_settings_output_neutral_set(settings, output_neutral);
+  }
+  else if (!strcmp(key, "output_max"))
+  {
+    int64_t output_max;
+    if (!tic_string_to_i64(value, &output_max))
+    {
+      return tic_error_create("Invalid output_max value.");
+    }
+    if (output_max < INT32_MIN || output_max > INT32_MAX)
+    {
+      return tic_error_create("The output_max value is out of range.");
+    }
+    tic_settings_output_max_set(settings, output_max);
+  }
+  else if (!strcmp(key, "encoder_prescaler"))
+  {
+    int64_t encoder_prescaler;
+    if (!tic_string_to_i64(value, &encoder_prescaler))
+    {
+      return tic_error_create("Invalid encoder_prescaler value.");
+    }
+    if (encoder_prescaler < 0 || encoder_prescaler > 0xFF)
+    {
+      return tic_error_create("The encoder_prescaler value is out of range.");
+    }
+    tic_settings_encoder_prescaler_set(settings, encoder_prescaler);
+  }
+  else if (!strcmp(key, "encoder_postscaler"))
+  {
+    int64_t encoder_postscaler;
+    if (!tic_string_to_i64(value, &encoder_postscaler))
+    {
+      return tic_error_create("Invalid encoder_postscaler value.");
+    }
+    if (encoder_postscaler < 0 || encoder_postscaler > UINT32_MAX)
+    {
+      return tic_error_create("The encoder_postscaler value is out of range.");
+    }
+    tic_settings_encoder_postscaler_set(settings, encoder_postscaler);
+  }
+  else if (!strcmp(key, "scl_config"))
+  {
+    uint8_t pin_config;
+    if (!tic_parse_pin_config(value, &pin_config))
+    {
+      return tic_error_create("Invalid scl_config value.");
+    }
+    tic_settings_scl_config_set(settings, pin_config);
+  }
+  else if (!strcmp(key, "sda_config"))
+  {
+    uint8_t pin_config;
+    if (!tic_parse_pin_config(value, &pin_config))
+    {
+      return tic_error_create("Invalid sda_config value.");
+    }
+    tic_settings_sda_config_set(settings, pin_config);
+  }
+  else if (!strcmp(key, "tx_config"))
+  {
+    uint8_t pin_config;
+    if (!tic_parse_pin_config(value, &pin_config))
+    {
+      return tic_error_create("Invalid tx_config value.");
+    }
+    tic_settings_tx_config_set(settings, pin_config);
+  }
+  else if (!strcmp(key, "rx_config"))
+  {
+    uint8_t pin_config;
+    if (!tic_parse_pin_config(value, &pin_config))
+    {
+      return tic_error_create("Invalid rx_config value.");
+    }
+    tic_settings_rx_config_set(settings, pin_config);
+  }
+  else if (!strcmp(key, "rc_config"))
+  {
+    uint8_t pin_config;
+    if (!tic_parse_pin_config(value, &pin_config))
+    {
+      return tic_error_create("Invalid rc_config value.");
+    }
+    tic_settings_rc_config_set(settings, pin_config);
+  }
+  else if (!strcmp(key, "current_limit"))
+  {
+    int64_t current_limit;
+    if (!tic_string_to_i64(value, &current_limit))
+    {
+      return tic_error_create("Invalid current_limit value.");
+    }
+    if (current_limit < 0 || current_limit > UINT32_MAX)
+    {
+      return tic_error_create("The current_limit value is out of range.");
+    }
+    tic_settings_current_limit_set(settings, current_limit);
+  }
+  else if (!strcmp(key, "microstepping_mode"))
+  {
+    uint32_t microstepping_mode;
+    if (!tic_name_to_code(tic_microstepping_mode_names, value, &microstepping_mode))
+    {
+      return tic_error_create("Invalid microstepping_mode value.");
+    }
+    tic_settings_microstepping_mode_set(settings, microstepping_mode);
+  }
+  else if (!strcmp(key, "decay_mode"))
+  {
+    uint32_t decay_mode;
+    if (!tic_name_to_code(tic_decay_mode_names, value, &decay_mode))
+    {
+      return tic_error_create("Invalid decay_mode value.");
+    }
+    tic_settings_decay_mode_set(settings, decay_mode);
+  }
+  else if (!strcmp(key, "speed_min"))
+  {
+    int64_t speed_min;
+    if (!tic_string_to_i64(value, &speed_min))
+    {
+      return tic_error_create("Invalid speed_min value.");
+    }
+    if (speed_min < 0 || speed_min > UINT32_MAX)
+    {
+      return tic_error_create("The speed_min value is out of range.");
+    }
+    tic_settings_speed_min_set(settings, speed_min);
+  }
+  else if (!strcmp(key, "speed_max"))
+  {
+    int64_t speed_max;
+    if (!tic_string_to_i64(value, &speed_max))
+    {
+      return tic_error_create("Invalid speed_max value.");
+    }
+    if (speed_max < 0 || speed_max > UINT32_MAX)
+    {
+      return tic_error_create("The speed_max value is out of range.");
+    }
+    tic_settings_speed_max_set(settings, speed_max);
+  }
+  else if (!strcmp(key, "decel_max"))
+  {
+    int64_t decel_max;
+    if (!tic_string_to_i64(value, &decel_max))
+    {
+      return tic_error_create("Invalid decel_max value.");
+    }
+    if (decel_max < 0 || decel_max > UINT32_MAX)
+    {
+      return tic_error_create("The decel_max value is out of range.");
+    }
+    tic_settings_decel_max_set(settings, decel_max);
+  }
+  else if (!strcmp(key, "accel_max"))
+  {
+    int64_t accel_max;
+    if (!tic_string_to_i64(value, &accel_max))
+    {
+      return tic_error_create("Invalid accel_max value.");
+    }
+    if (accel_max < 0 || accel_max > UINT32_MAX)
+    {
+      return tic_error_create("The accel_max value is out of range.");
+    }
+    tic_settings_accel_max_set(settings, accel_max);
+  }
+  else if (!strcmp(key, "decel_max_during_error"))
+  {
+    int64_t decel_max_during_error;
+    if (!tic_string_to_i64(value, &decel_max_during_error))
+    {
+      return tic_error_create("Invalid decel_max_during_error value.");
+    }
+    if (decel_max_during_error < 0 || decel_max_during_error > UINT32_MAX)
+    {
+      return tic_error_create(
+        "The decel_max_during_error value is out of range.");
+    }
+    tic_settings_decel_max_during_error_set(settings, decel_max_during_error);
   }
   else
   {

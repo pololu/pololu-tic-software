@@ -118,3 +118,34 @@ void tic_string_printf(tic_string * str, const char * format, ...)
   assert(str->length == strlen(str->data));
   va_end(ap);
 }
+
+// Converts a string to an int64_t, returning an error if there is non-number
+// junk in the string.
+//
+// Note: numbers that cannot be expressed in an int64_t will be silenty
+// converted LLONG_MIN or LLONG_MAX.  That's OK for our use cases because
+// LLONG_MIN and LLONG_MAX are always invalid in our application and so we will
+// catch the problem later.
+bool tic_string_to_i64(const char * str, int64_t * out)
+{
+  assert(str != NULL);
+  assert(out != NULL);
+  assert(sizeof(long long) == 8);
+
+  *out = 0;
+
+  char * end;
+  int64_t result = strtoll(str, &end, 10);
+  if (errno)
+  {
+    return false;
+  }
+  if (*end != 0)
+  {
+    // Non-number junk in the string.
+    return false;
+  }
+
+  *out = result;
+  return true;
+}
