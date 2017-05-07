@@ -8,7 +8,8 @@ never_sleep: false
 disable_safe_start: false
 ignore_err_line_high: false
 serial_baud_rate: 9600
-serial_device_number: 0
+serial_device_number: 14
+i2c_device_address: 74
 command_timeout: 0
 serial_crc_enabled: false
 low_vin_timeout: 250
@@ -58,6 +59,7 @@ disable_safe_start: true
 ignore_err_line_high: true
 serial_baud_rate: 115385
 serial_device_number: 40
+i2c_device_address: 2
 command_timeout: 2020
 serial_crc_enabled: true
 low_vin_timeout: 8000
@@ -100,11 +102,25 @@ END
 
 def test_cases_for_settings_fix(product)
   [
-    [ { 'serial_baud_rate' => 115200 }, { 'serial_baud_rate' => 115385 } ],
-    [ { 'serial_baud_rate' => 101 }, { 'serial_baud_rate' => 200 },
-      "Warning: The serial baud rate was too low, so it was changed to 200." ],
-    [ { 'serial_baud_rate' => 115386 }, { 'serial_baud_rate' => 115385 },
-      "Warning: The serial baud rate was too high, so it was changed to 115385." ],
+    [ { 'serial_baud_rate' => 115200 },
+      { 'serial_baud_rate' => 115385 }
+    ],
+    [ { 'serial_baud_rate' => 101 },
+      { 'serial_baud_rate' => 200 },
+      "Warning: The serial baud rate was too low so it was changed to 200."
+    ],
+    [ { 'serial_baud_rate' => 115386 },
+      { 'serial_baud_rate' => 115385 },
+      "Warning: The serial baud rate was too high so it was changed to 115385."
+    ],
+    [ { 'serial_device_number' => 128 },
+      { 'serial_device_number' => 127 },
+      "Warning: The serial device number was too high so it was changed to 127."
+    ],
+    [ { 'i2c_device_address' => 128 },
+      { 'i2c_device_address' => 127 },
+      "Warning: The I2C device address was too high so it was changed to 127."
+    ],
   ]
 end
 

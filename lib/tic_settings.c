@@ -184,13 +184,13 @@ static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings
     {
       baud = 200;
       tic_sprintf(warnings,
-        "Warning: The serial baud rate was too low, so it was changed to %d.", baud);
+        "Warning: The serial baud rate was too low so it was changed to %d.", baud);
     }
     if (baud > 115385)
     {
       baud = 115385;
       tic_sprintf(warnings,
-        "Warning: The serial baud rate was too high, so it was changed to %d.", baud);
+        "Warning: The serial baud rate was too high so it was changed to %d.", baud);
     }
 
     // Fix the baud rate to be a close approximation of what it will actually be.
@@ -201,7 +201,25 @@ static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings
   }
 
   {
-    
+    uint8_t serial_device_number = tic_settings_serial_device_number_get(settings);
+    if (serial_device_number > 127)
+    {
+      serial_device_number = 127;
+      tic_sprintf(warnings,
+        "Warning: The serial device number was too high so it was changed to 127.");
+    }
+    tic_settings_serial_device_number_set(settings, serial_device_number);
+  }
+
+  {
+    uint8_t i2c_device_address = tic_settings_i2c_device_address_get(settings);
+    if (i2c_device_address > 127)
+    {
+      i2c_device_address = 127;
+      tic_sprintf(warnings,
+        "Warning: The I2C device address was too high so it was changed to 127.");
+    }
+    tic_settings_i2c_device_address_set(settings, i2c_device_address);
   }
 
   // TODO: also put the baud rate in an acceptable range
