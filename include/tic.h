@@ -26,6 +26,8 @@
 ///
 /// - tic_get_settings()
 /// - tic_set_settings()
+/// - tic_restore_defaults()
+/// - tic_reinitialize()
 /// - tic_settings_free()
 ///
 /// Most library functions return a tic_error pointer if an error happens.  You
