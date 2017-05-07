@@ -99,28 +99,41 @@ END
 }
 
 describe 'settings' do
-  let (:model) { :T825 }
+  let (:product) { :T825 }
 
-  it 'settings test 1' do
+  specify 'settings test 1', usb: true do
+    # Set the settings to something kind of random.
     stdout, stderr, result = run_ticcmd('--set-settings -',
-      input: TestSettings1[model])
+      input: TestSettings1[product])
     expect(stderr).to eq ""
     expect(stdout).to eq ""
     expect(result).to eq 0
 
+    # Read the settings back and make sure they match.
     stdout, stderr, result = run_ticcmd('--get-settings -')
     expect(stderr).to eq ""
-    expect(YAML.load(stdout)).to eq YAML.load(TestSettings1[model])
+    expect(YAML.load(stdout)).to eq YAML.load(TestSettings1[product])
     expect(result). to eq 0
 
+    # Restore the device to its default settings.
     stdout, stderr, result = run_ticcmd('--restore-defaults')
     expect(stdout).to eq ""
     expect(stderr).to eq ""
     expect(result).to eq 0
 
+    # Check that the settings on the device match what we expect the default
+    # settings to be.
     stdout, stderr, result = run_ticcmd('--get-settings -')
     expect(stderr).to eq ""
-    expect(YAML.load(stdout)).to eq YAML.load(DefaultSettings[model])
+    expect(YAML.load(stdout)).to eq YAML.load(DefaultSettings[product])
+    expect(result). to eq 0
+  end
+
+  specify 'tic_settings_fill_with_defaults is correct' do
+    stdin = "product: #{product}"
+    stdout, stderr, result = run_ticcmd('--fix-settings - -', input: stdin)
+    expect(stderr).to eq ""
+    expect(YAML.load(stdout)).to eq YAML.load(DefaultSettings[product])
     expect(result). to eq 0
   end
 end

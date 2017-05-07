@@ -54,18 +54,49 @@ void tic_settings_fill_with_defaults(tic_settings * settings)
 {
   assert(settings != NULL);
 
+  uint32_t product = settings->product;
+
   // The product should be set beforehand, and if it is not then we should do
   // nothing.
-  if (settings->product != TIC_PRODUCT_T825)
+  if (product != TIC_PRODUCT_T825)
   {
     return;
   }
 
-  // TODO: make automated test to ensure these defaults match the firmware;
-  // could make a --fix-settings CLI feature I suppose, assuming we allow missing
-  // params in settings files.  Or make a hidden CLI feature.
+  // Reset all fields to zero.
+  memset(settings, 0, sizeof(tic_settings));
 
-  // TODO: finish filling in defaults
+  tic_settings_product_set(settings, product);
+
+  tic_settings_serial_baud_rate_set(settings, 9600);
+  tic_settings_low_vin_timeout_set(settings, 250);
+  tic_settings_low_vin_shutoff_voltage_set(settings, 6000);
+  tic_settings_low_vin_startup_voltage_set(settings, 6500);
+  tic_settings_high_vin_shutoff_voltage_set(settings, 35000);
+  tic_settings_rc_max_pulse_period_set(settings, 100);
+  tic_settings_rc_bad_signal_timeout_set(settings, 500);
+  tic_settings_rc_consecutive_good_pulses_set(settings, 2);
+  tic_settings_input_error_max_set(settings, 0xFFFF);
+  tic_settings_input_neutral_min_set(settings, 0x8000);
+  tic_settings_input_neutral_max_set(settings, 0x8000);
+  tic_settings_input_max_set(settings, 0xFFFF);
+  tic_settings_output_min_set(settings, -200);
+  tic_settings_output_max_set(settings, 200);
+  tic_settings_encoder_prescaler_set(settings, 2);
+  tic_settings_encoder_postscaler_set(settings, 1);
+  tic_settings_scl_config_set(settings,
+    (1 << TIC_PIN_SERIAL) | (1 << TIC_PIN_ACTIVE_HIGH));
+  tic_settings_sda_config_set(settings,
+    (1 << TIC_PIN_SERIAL) | (1 << TIC_PIN_ACTIVE_HIGH));
+  tic_settings_tx_config_set(settings,
+    (1 << TIC_PIN_SERIAL) | (1 << TIC_PIN_ACTIVE_HIGH));
+  tic_settings_rx_config_set(settings,
+    (1 << TIC_PIN_SERIAL) | (1 << TIC_PIN_ACTIVE_HIGH));
+  tic_settings_rc_config_set(settings,
+    1 <<TIC_PIN_ACTIVE_HIGH);
+  tic_settings_current_limit_set(settings, 192);
+  tic_settings_speed_max_set(settings, 2000000);
+  tic_settings_accel_max_set(settings, 40000);
 }
 
 tic_error * tic_settings_create(tic_settings ** settings)

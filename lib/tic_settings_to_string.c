@@ -7,7 +7,7 @@ static void print_pin_config_to_yaml(tic_string * str,
   assert(config_name != NULL);
 
   const char * serial_str = "";
-  if (value >> TIC_PIN_SERIAL_OR_I2C & 1) { serial_str = " serial"; }
+  if (value >> TIC_PIN_SERIAL & 1) { serial_str = " serial"; }
 
   const char * pullup_str = "";
   if (value >> TIC_PIN_PULLUP & 1) { pullup_str = " pullup"; }

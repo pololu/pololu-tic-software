@@ -28,6 +28,7 @@ static const char help[] =
   "  --restore-defaults          Restore device's factory settings\n"
   "  --settings FILE             Load settings file into device.\n"
   "  --get-settings FILE         Read device settings and write to file.\n"
+  "  --fix-settings IN OUT       Read settings from a file and fix them.\n"
   "  -h, --help                  Show this help screen.\n"
   "\n"
   "For more help, see: " DOCUMENTATION_URL "\n"
@@ -45,10 +46,14 @@ struct arguments
   bool restore_defaults = false;
 
   bool set_settings = false;
-  std::string input_settings_file_name;
+  std::string set_settings_filename;
 
   bool get_settings = false;
-  std::string output_settings_file_name;
+  std::string get_settings_filename;
+
+  bool fix_settings = false;
+  std::string fix_settings_input_filename;
+  std::string fix_settings_output_filename;
 
   bool show_help = false;
 
@@ -61,6 +66,7 @@ struct arguments
       restore_defaults ||
       set_settings ||
       get_settings ||
+      fix_settings ||
       show_help ||
       get_debug_data;
   }
@@ -133,12 +139,18 @@ static arguments parse_args(int argc, char ** argv)
     else if (arg == "--settings" || arg == "--set-settings" || arg == "--configure")
     {
       args.set_settings = true;
-      parse_arg_string(arg_reader, args.input_settings_file_name);
+      parse_arg_string(arg_reader, args.set_settings_filename);
     }
     else if (arg == "--get-settings" || arg == "--getconf")
     {
       args.get_settings = true;
-      parse_arg_string(arg_reader, args.output_settings_file_name);
+      parse_arg_string(arg_reader, args.get_settings_filename);
+    }
+    else if (arg == "--fix-settings")
+    {
+      args.fix_settings = true;
+      parse_arg_string(arg_reader, args.fix_settings_input_filename);
+      parse_arg_string(arg_reader, args.fix_settings_output_filename);
     }
     else if (arg == "--list")
     {
@@ -213,7 +225,6 @@ static void restore_defaults(device_selector & selector)
   std::this_thread::sleep_for(std::chrono::milliseconds(1500));
 }
 
-
 static void get_settings(device_selector & selector,
   const std::string & filename)
 {
@@ -243,6 +254,21 @@ static void set_settings(device_selector & selector,
 
   tic::device device = selector.select_device();
   tic::handle(device).set_settings(settings);
+}
+
+static void fix_settings(const std::string & input_filename,
+  const std::string & output_filename)
+{
+  std::string in_str = read_string_from_file(input_filename);
+
+  std::string warnings;
+  tic::settings settings = tic::settings::read_from_string(in_str, &warnings);
+  std::cerr << warnings;
+
+  settings.fix(&warnings);
+  std::cerr << warnings;
+
+  write_string_to_file(output_filename, settings.to_string());
 }
 
 static void print_debug_data(device_selector & selector)
@@ -289,9 +315,15 @@ static void run(int argc, char ** argv)
     print_status(selector);
   }
 
+  if (args.fix_settings)
+  {
+    fix_settings(args.fix_settings_input_filename,
+      args.fix_settings_output_filename);
+  }
+
   if (args.get_settings)
   {
-    get_settings(selector, args.output_settings_file_name);
+    get_settings(selector, args.get_settings_filename);
   }
 
   if (args.restore_defaults)
@@ -301,7 +333,7 @@ static void run(int argc, char ** argv)
 
   if (args.set_settings)
   {
-    set_settings(selector, args.input_settings_file_name);
+    set_settings(selector, args.set_settings_filename);
   }
 
   if (args.get_debug_data)

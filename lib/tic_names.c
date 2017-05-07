@@ -55,7 +55,7 @@ const tic_name tic_decay_mode_names[] =
 
 const tic_name tic_pin_config_names[] =
 {
-  { "serial", 1 << TIC_PIN_SERIAL_OR_I2C },
+  { "serial", 1 << TIC_PIN_SERIAL },
   { "pullup", 1 << TIC_PIN_PULLUP },
   { "analog", 1 << TIC_PIN_ANALOG },
   { "active_high", 1 << TIC_PIN_ACTIVE_HIGH },
