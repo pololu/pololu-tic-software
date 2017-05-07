@@ -587,7 +587,7 @@ static tic_error * apply_string_pair(tic_settings * settings,
   }
   else
   {
-    return tic_error_create("Unrecognized key at line %d.", line);
+    return tic_error_create("Unrecognized key on line %d: \"%s\".", line, key);
   }
 
   return NULL;

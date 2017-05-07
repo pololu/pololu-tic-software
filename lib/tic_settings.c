@@ -69,6 +69,8 @@ void tic_settings_fill_with_defaults(tic_settings * settings)
   tic_settings_product_set(settings, product);
 
   tic_settings_serial_baud_rate_set(settings, 9600);
+  tic_settings_serial_device_number_set(settings, 14);
+  tic_settings_i2c_device_address_set(settings, 74);
   tic_settings_low_vin_timeout_set(settings, 250);
   tic_settings_low_vin_shutoff_voltage_set(settings, 6000);
   tic_settings_low_vin_startup_voltage_set(settings, 6500);
@@ -196,6 +198,10 @@ static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings
     baud = tic_baud_rate_from_brg(brg);
 
     tic_settings_serial_baud_rate_set(settings, baud);
+  }
+
+  {
+    
   }
 
   // TODO: also put the baud rate in an acceptable range
