@@ -283,7 +283,7 @@ tic_error * tic_settings_fix(tic_settings * settings, char ** warnings)
 
   #ifndef NDEBUG
   {
-    // On Debug builds, assert that this function is idempotent.
+    // In debug builds, assert that this function is idempotent.
     tic_string str2;
     tic_string_setup(&str2);
     tic_settings_fix_core(settings, &str2);
