@@ -150,7 +150,7 @@ tic_error * tic_settings_to_string(const tic_settings * settings, char ** string
 
   {
     uint16_t pulses = tic_settings_rc_consecutive_good_pulses_get(settings);
-    tic_string_printf(&str, "rc_consecutive_good_pulses_get: %u\n", pulses);
+    tic_string_printf(&str, "rc_consecutive_good_pulses: %u\n", pulses);
   }
 
   {
