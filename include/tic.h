@@ -2,9 +2,8 @@
 
 /// \file tic.h
 ///
-/// This file provides the C API for libpololu-tic, a library for
-/// configuring and controlling the Pololu Tic USB Stepper Motor Controller over
-/// USB.
+/// This file provides the C API for libpololu-tic, a library for configuring
+/// and controlling the Pololu Tic USB Stepper Motor Controller over USB.
 ///
 /// If you want to communicate with the Tic over USB, you will need these
 /// functions:
