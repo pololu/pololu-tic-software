@@ -281,6 +281,17 @@ tic_error * tic_settings_fix(tic_settings * settings, char ** warnings)
 
   tic_settings_fix_core(settings, &str);
 
+  #ifndef NDEBUG
+  {
+    // On Debug builds, assert that this function is idempotent.
+    tic_string str2;
+    tic_string_setup(&str2);
+    tic_settings_fix_core(settings, &str2);
+    assert(str2.data != NULL && str2.data[0] == 0);
+    tic_string_free(str2.data);
+  }
+  #endif
+
   if (warnings && str.data == NULL)
   {
     // Memory allocation for the warning string failed at some point.
