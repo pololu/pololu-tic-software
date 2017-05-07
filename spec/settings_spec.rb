@@ -98,6 +98,16 @@ decel_max_during_error: 234333890
 END
 }
 
+def test_cases_for_settings_fix(product)
+  [
+    [ { 'serial_baud_rate' => 115200 }, { 'serial_baud_rate' => 115385 } ],
+    [ { 'serial_baud_rate' => 101 }, { 'serial_baud_rate' => 200 },
+      "Warning: The serial baud rate was too low, so it was changed to 200." ],
+    [ { 'serial_baud_rate' => 115386 }, { 'serial_baud_rate' => 115385 },
+      "Warning: The serial baud rate was too high, so it was changed to 115385." ],
+  ]
+end
+
 describe 'settings' do
   let (:product) { :T825 }
 
@@ -126,7 +136,7 @@ describe 'settings' do
     stdout, stderr, result = run_ticcmd('--get-settings -')
     expect(stderr).to eq ""
     expect(YAML.load(stdout)).to eq YAML.load(DefaultSettings[product])
-    expect(result). to eq 0
+    expect(result).to eq 0
   end
 
   specify 'tic_settings_fill_with_defaults is correct' do
@@ -134,6 +144,19 @@ describe 'settings' do
     stdout, stderr, result = run_ticcmd('--fix-settings - -', input: stdin)
     expect(stderr).to eq ""
     expect(YAML.load(stdout)).to eq YAML.load(DefaultSettings[product])
-    expect(result). to eq 0
+    expect(result).to eq 0
+  end
+
+  specify 'tic_settings_fix is correct' do
+    defaults = YAML.load(DefaultSettings[product])
+    test_cases_for_settings_fix(product).each do |input, output, warnings|
+      input_str = YAML.dump(defaults.merge(input))
+
+      stdout, stderr, result = run_ticcmd('--fix-settings - -',
+        input: input_str)
+      expect(stderr).to eq (warnings || "")
+      expect(YAML.load(stdout)).to eq defaults.merge(output)
+      expect(result).to eq 0
+    end
   end
 end

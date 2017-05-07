@@ -174,10 +174,31 @@ void tic_settings_free(tic_settings * settings)
 
 static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings)
 {
-  //tic_string_printf(warnings, "Warning: TODO: implement tic_settings_fix fully.\n");
-  //tic_string_printf(warnings, "Warning: TODO: implement tic_settings_fix fully!!\n");
-
   (void)settings; (void)warnings;  // tmphax
+
+  {
+    uint32_t baud = tic_settings_serial_baud_rate_get(settings);
+    if (baud < 200)
+    {
+      baud = 200;
+      tic_sprintf(warnings,
+        "Warning: The serial baud rate was too low, so it was changed to %d.", baud);
+    }
+    if (baud > 115385)
+    {
+      baud = 115385;
+      tic_sprintf(warnings,
+        "Warning: The serial baud rate was too high, so it was changed to %d.", baud);
+    }
+
+    // Fix the baud rate to be a close approximation of what it will actually be.
+    uint16_t brg = tic_baud_rate_to_brg(baud);
+    baud = tic_baud_rate_from_brg(brg);
+
+    tic_settings_serial_baud_rate_set(settings, baud);
+  }
+
+  // TODO: also put the baud rate in an acceptable range
 }
 
 tic_error * tic_settings_fix(tic_settings * settings, char ** warnings)
