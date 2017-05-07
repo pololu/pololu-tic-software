@@ -6,12 +6,14 @@
 #include "exception_with_exit_code.h"
 #include "file_utils.h"
 
-#include <iostream>
-#include <string>
-#include <limits>
-#include <iomanip>
 #include <bitset>
 #include <cassert>
+#include <chrono>
+#include <iomanip>
+#include <iostream>
+#include <limits>
+#include <string>
+#include <thread>
 
 // [all-settings]
 static const char help[] =
@@ -206,6 +208,9 @@ static void restore_defaults(device_selector & selector)
 {
   tic::device device = selector.select_device();
   tic::handle(device).restore_defaults();
+
+  // Give the Tic time to modify its settings.
+  std::this_thread::sleep_for(std::chrono::milliseconds(1500));
 }
 
 
