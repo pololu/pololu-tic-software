@@ -3,7 +3,29 @@
 /// \file tic.h
 ///
 /// This file provides the C API for libpololu-tic, a library supports
-/// communciating with the Pololu Tic USB Stepper Motor Controller.
+/// communicating with the Pololu Tic USB Stepper Motor Controller.
+///
+/// To list the Tic devices connected to your computer and open a handle for USB
+/// communication, see these functions:
+///
+/// - tic_list_connected_devices()
+/// - tic_handle_open()
+/// - tic_list_free()
+/// - tic_handle_close()
+/// - tic_device_free()
+///
+/// If you want to use this library to control the position or speed of a
+/// stepper motor over USB, see these functions:
+///
+/// - tic_set_target_speed()
+/// - tic_get_target_position()
+///
+/// If you want to use this library to change the settings of the Tic, see these
+/// functions:
+///
+/// - tic_get_settings()
+/// - tic_set_settings()
+/// - tic_settings_free()
 
 #pragma once
 
