@@ -224,7 +224,7 @@ static tic_error * write_setting_byte(tic_handle * handle,
   libusbp_generic_handle * usb_handle = tic_handle_get_usb_handle(handle);
 
   tic_error * error = tic_usb_error(libusbp_control_transfer(usb_handle,
-      0xC0, TIC_CMD_WRITE_SETTING, byte, address, NULL, 0, NULL));
+      0x40, TIC_CMD_WRITE_SETTING, byte, address, NULL, 0, NULL));
   return error;
 }
 
