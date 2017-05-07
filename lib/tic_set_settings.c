@@ -46,17 +46,22 @@ static void write_settings_to_buffer(const tic_settings * settings, uint8_t * bu
   }
 
   {
+    uint16_t voltage = tic_settings_low_vin_shutoff_voltage_get(settings);
+    buf[TIC_SETTING_LOW_VIN_SHUTOFF_VOLTAGE + 0] = voltage >> 0 & 0xFF;
+    buf[TIC_SETTING_LOW_VIN_SHUTOFF_VOLTAGE + 1] = voltage >> 8 & 0xFF;
+  }
+
+  {
     uint16_t voltage = tic_settings_low_vin_startup_voltage_get(settings);
     buf[TIC_SETTING_LOW_VIN_STARTUP_VOLTAGE + 0] = voltage >> 0 & 0xFF;
     buf[TIC_SETTING_LOW_VIN_STARTUP_VOLTAGE + 1] = voltage >> 8 & 0xFF;
   }
 
   {
-    uint16_t voltage = tic_settings_low_vin_shutoff_voltage_get(settings);
-    buf[TIC_SETTING_LOW_VIN_SHUTOFF_VOLTAGE + 0] = voltage >> 0 & 0xFF;
-    buf[TIC_SETTING_LOW_VIN_SHUTOFF_VOLTAGE + 1] = voltage >> 8 & 0xFF;
+    uint16_t voltage = tic_settings_high_vin_shutoff_voltage_get(settings);
+    buf[TIC_SETTING_HIGH_VIN_SHUTOFF_VOLTAGE + 0] = voltage >> 0 & 0xFF;
+    buf[TIC_SETTING_HIGH_VIN_SHUTOFF_VOLTAGE + 1] = voltage >> 8 & 0xFF;
   }
-
   {
     uint16_t offset = (uint16_t)tic_settings_vin_multiplier_offset_get(settings);
     buf[TIC_SETTING_VIN_MULTIPLIER_OFFSET + 0] = offset >> 0 & 0xFF;
@@ -170,6 +175,9 @@ static void write_settings_to_buffer(const tic_settings * settings, uint8_t * bu
 
   buf[TIC_SETTING_RC_CONFIG] = tic_settings_rc_config_get(settings);
 
+  buf[TIC_SETTING_CURRENT_LIMIT] =
+    tic_current_limit_to_code(tic_settings_current_limit_get(settings));
+
   buf[TIC_SETTING_MICROSTEPPING_MODE] =
     tic_settings_microstepping_mode_get(settings);
 
@@ -178,41 +186,41 @@ static void write_settings_to_buffer(const tic_settings * settings, uint8_t * bu
   {
     uint32_t speed = tic_settings_speed_min_get(settings);
     buf[TIC_SETTING_SPEED_MIN + 0] = speed >> 0 & 0xFF;
-    buf[TIC_SETTING_SPEED_MIN + 1] = speed >> 1 & 0xFF;
-    buf[TIC_SETTING_SPEED_MIN + 2] = speed >> 2 & 0xFF;
-    buf[TIC_SETTING_SPEED_MIN + 3] = speed >> 3 & 0xFF;
+    buf[TIC_SETTING_SPEED_MIN + 1] = speed >> 8 & 0xFF;
+    buf[TIC_SETTING_SPEED_MIN + 2] = speed >> 16 & 0xFF;
+    buf[TIC_SETTING_SPEED_MIN + 3] = speed >> 24 & 0xFF;
   }
 
   {
     uint32_t speed = tic_settings_speed_max_get(settings);
     buf[TIC_SETTING_SPEED_MAX + 0] = speed >> 0 & 0xFF;
-    buf[TIC_SETTING_SPEED_MAX + 1] = speed >> 1 & 0xFF;
-    buf[TIC_SETTING_SPEED_MAX + 2] = speed >> 2 & 0xFF;
-    buf[TIC_SETTING_SPEED_MAX + 3] = speed >> 3 & 0xFF;
+    buf[TIC_SETTING_SPEED_MAX + 1] = speed >> 8 & 0xFF;
+    buf[TIC_SETTING_SPEED_MAX + 2] = speed >> 16 & 0xFF;
+    buf[TIC_SETTING_SPEED_MAX + 3] = speed >> 24 & 0xFF;
   }
 
   {
     uint32_t decel = tic_settings_decel_max_get(settings);
     buf[TIC_SETTING_DECEL_MAX + 0] = decel >> 0 & 0xFF;
-    buf[TIC_SETTING_DECEL_MAX + 1] = decel >> 1 & 0xFF;
-    buf[TIC_SETTING_DECEL_MAX + 2] = decel >> 2 & 0xFF;
-    buf[TIC_SETTING_DECEL_MAX + 3] = decel >> 3 & 0xFF;
+    buf[TIC_SETTING_DECEL_MAX + 1] = decel >> 8 & 0xFF;
+    buf[TIC_SETTING_DECEL_MAX + 2] = decel >> 16 & 0xFF;
+    buf[TIC_SETTING_DECEL_MAX + 3] = decel >> 24 & 0xFF;
   }
 
   {
     uint32_t accel = tic_settings_accel_max_get(settings);
     buf[TIC_SETTING_ACCEL_MAX + 0] = accel >> 0 & 0xFF;
-    buf[TIC_SETTING_ACCEL_MAX + 1] = accel >> 1 & 0xFF;
-    buf[TIC_SETTING_ACCEL_MAX + 2] = accel >> 2 & 0xFF;
-    buf[TIC_SETTING_ACCEL_MAX + 3] = accel >> 3 & 0xFF;
+    buf[TIC_SETTING_ACCEL_MAX + 1] = accel >> 8 & 0xFF;
+    buf[TIC_SETTING_ACCEL_MAX + 2] = accel >> 16 & 0xFF;
+    buf[TIC_SETTING_ACCEL_MAX + 3] = accel >> 24 & 0xFF;
   }
 
   {
     uint32_t decel = tic_settings_decel_max_during_error_get(settings);
     buf[TIC_SETTING_DECEL_MAX_DURING_ERROR + 0] = decel >> 0 & 0xFF;
-    buf[TIC_SETTING_DECEL_MAX_DURING_ERROR + 1] = decel >> 1 & 0xFF;
-    buf[TIC_SETTING_DECEL_MAX_DURING_ERROR + 2] = decel >> 2 & 0xFF;
-    buf[TIC_SETTING_DECEL_MAX_DURING_ERROR + 3] = decel >> 3 & 0xFF;
+    buf[TIC_SETTING_DECEL_MAX_DURING_ERROR + 1] = decel >> 8 & 0xFF;
+    buf[TIC_SETTING_DECEL_MAX_DURING_ERROR + 2] = decel >> 16 & 0xFF;
+    buf[TIC_SETTING_DECEL_MAX_DURING_ERROR + 3] = decel >> 24 & 0xFF;
   }
 }
 

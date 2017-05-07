@@ -56,7 +56,7 @@ control_mode: rc_speed
 never_sleep: true
 disable_safe_start: true
 ignore_err_line_high: true
-serial_baud_rate: 115200
+serial_baud_rate: 115385
 serial_device_number: 40
 command_timeout: 2020
 serial_crc_enabled: true
@@ -84,10 +84,10 @@ encoder_prescaler: 5
 encoder_postscaler: 1000000000
 scl_config: pullup analog active_high limit_forward
 sda_config: analog limit_reverse
-tx_config: pullup kill
+tx_config: pullup analog kill
 rx_config: serial
 rc_config: pullup home
-current_limit: 2000
+current_limit: 1984
 microstepping_mode: 1
 decay_mode: fast
 speed_min: 10000
@@ -107,6 +107,11 @@ describe 'settings' do
     expect(stderr).to eq ""
     expect(stdout).to eq ""
     expect(result).to eq 0
+
+    stdout, stderr, result = run_ticcmd('--get-settings -')
+    expect(stderr).to eq ""
+    expect(YAML.load(stdout)).to eq YAML.load(TestSettings1[model])
+    expect(result). to eq 0
 
     stdout, stderr, result = run_ticcmd('--restore-defaults')
     expect(stdout).to eq ""

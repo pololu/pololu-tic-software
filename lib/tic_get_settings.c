@@ -5,7 +5,7 @@
 static void write_buffer_to_settings(const uint8_t * buf, tic_settings * settings)
 {
   {
-    bool control_mode = buf[TIC_SETTING_CONTROL_MODE] & 1;
+    uint8_t control_mode = buf[TIC_SETTING_CONTROL_MODE];
     tic_settings_control_mode_set(settings, control_mode);
   }
 
@@ -293,7 +293,7 @@ tic_error * tic_get_settings(tic_handle * handle, tic_settings ** settings)
   // Read all the settings from the device into a buffer.
   uint8_t buf[TIC_HIGHEST_SETTING_ADDRESS + 1];
   memset(buf, 0, sizeof(buf));
-  for (uint8_t i = 1; i < sizeof(buf) && error == NULL; i++)
+  for (size_t i = 1; i < sizeof(buf) && error == NULL; i++)
   {
     error = read_setting_byte(handle, i, buf + i);
   }

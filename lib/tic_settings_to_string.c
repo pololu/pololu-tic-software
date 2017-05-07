@@ -15,7 +15,7 @@ static void print_pin_config_to_yaml(tic_string * str, const char * config_name,
   if (value >> TIC_PIN_ANALOG & 1) { analog_str = " analog"; }
 
   const char * polarity_str = "";
-  if (value >> TIC_PIN_ACTIVE_HIGH & 1) { analog_str = " active_high"; }
+  if (value >> TIC_PIN_ACTIVE_HIGH & 1) { polarity_str = " active_high"; }
 
   const char * switch_str = "";
   switch(value >> TIC_PIN_SWITCH_POSN & TIC_PIN_SWITCH_MASK)
