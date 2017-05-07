@@ -184,13 +184,13 @@ static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings
     {
       baud = 200;
       tic_sprintf(warnings,
-        "Warning: The serial baud rate was too low so it was changed to %d.", baud);
+        "Warning: The serial baud rate was too low so it was changed to %u.\n", baud);
     }
     if (baud > 115385)
     {
       baud = 115385;
       tic_sprintf(warnings,
-        "Warning: The serial baud rate was too high so it was changed to %d.", baud);
+        "Warning: The serial baud rate was too high so it was changed to %u.\n", baud);
     }
 
     // Fix the baud rate to be a close approximation of what it will actually be.
@@ -206,7 +206,7 @@ static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings
     {
       serial_device_number = 127;
       tic_sprintf(warnings,
-        "Warning: The serial device number was too high so it was changed to 127.");
+        "Warning: The serial device number was too high so it was changed to 127.\n");
     }
     tic_settings_serial_device_number_set(settings, serial_device_number);
   }
@@ -217,12 +217,46 @@ static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings
     {
       i2c_device_address = 127;
       tic_sprintf(warnings,
-        "Warning: The I2C device address was too high so it was changed to 127.");
+        "Warning: The I2C device address was too high so it was changed to 127.\n");
     }
     tic_settings_i2c_device_address_set(settings, i2c_device_address);
   }
 
-  // TODO: also put the baud rate in an acceptable range
+  {
+    uint16_t low_shutoff = tic_settings_low_vin_shutoff_voltage_get(settings);
+    uint16_t low_startup = tic_settings_low_vin_startup_voltage_get(settings);
+    uint16_t high_shutoff = tic_settings_high_vin_shutoff_voltage_get(settings);
+
+    // Move low_shutoff down a little bit to prevent overflows below.
+    if (low_shutoff > 64000)
+    {
+      low_shutoff = 64000;
+      tic_sprintf(warnings,
+        "Warning: The low VIN shutoff voltage was changed to %u mV.\n",
+        low_shutoff);
+    }
+
+    if (low_startup < low_shutoff)
+    {
+      low_startup = low_shutoff + 500;
+      tic_sprintf(warnings,
+        "Warning: The low VIN startup voltage was changed to %u mV.\n",
+        low_startup);
+    }
+
+    if (high_shutoff < low_startup)
+    {
+      high_shutoff = low_startup + 500;
+      tic_sprintf(warnings,
+        "Warning: The high VIN shutoff voltage was changed to %u mV.\n",
+        high_shutoff);
+    }
+
+    tic_settings_low_vin_shutoff_voltage_set(settings, low_shutoff);
+    tic_settings_low_vin_startup_voltage_set(settings, low_startup);
+    tic_settings_high_vin_shutoff_voltage_set(settings, high_shutoff);
+  }
+
 }
 
 tic_error * tic_settings_fix(tic_settings * settings, char ** warnings)

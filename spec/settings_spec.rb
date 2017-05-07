@@ -101,25 +101,34 @@ END
 }
 
 def test_cases_for_settings_fix(product)
+  defaults = YAML.load(DefaultSettings.fetch(product))
+
   [
     [ { 'serial_baud_rate' => 115200 },
       { 'serial_baud_rate' => 115385 }
     ],
     [ { 'serial_baud_rate' => 101 },
       { 'serial_baud_rate' => 200 },
-      "Warning: The serial baud rate was too low so it was changed to 200."
+      "Warning: The serial baud rate was too low so it was changed to 200.\n"
     ],
     [ { 'serial_baud_rate' => 115386 },
       { 'serial_baud_rate' => 115385 },
-      "Warning: The serial baud rate was too high so it was changed to 115385."
+      "Warning: The serial baud rate was too high so it was changed to 115385.\n"
     ],
     [ { 'serial_device_number' => 128 },
       { 'serial_device_number' => 127 },
-      "Warning: The serial device number was too high so it was changed to 127."
+      "Warning: The serial device number was too high so it was changed to 127.\n"
     ],
     [ { 'i2c_device_address' => 128 },
       { 'i2c_device_address' => 127 },
-      "Warning: The I2C device address was too high so it was changed to 127."
+      "Warning: The I2C device address was too high so it was changed to 127.\n"
+    ],
+    [ { 'low_vin_shutoff_voltage' => 9001, 'low_vin_startup_voltage' => 9000,
+        'high_vin_shutoff_voltage' => 8999 },
+      { 'low_vin_shutoff_voltage' => 9001, 'low_vin_startup_voltage' => 9501,
+        'high_vin_shutoff_voltage' => 10001 },
+        "Warning: The low VIN startup voltage was changed to 9501 mV.\n" \
+        "Warning: The high VIN shutoff voltage was changed to 10001 mV.\n"
     ],
   ]
 end
