@@ -31,7 +31,7 @@ void tic_string_setup_dummy(tic_string * str)
   str->capacity = str->length = 0;
 }
 
-void tic_string_printf(tic_string * str, const char * format, ...)
+void tic_sprintf(tic_string * str, const char * format, ...)
 {
   assert(format != NULL);
 

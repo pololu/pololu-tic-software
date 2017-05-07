@@ -42,7 +42,7 @@ typedef struct tic_string
 void tic_string_setup(tic_string *);
 void tic_string_setup_dummy(tic_string *);
 TIC_PRINTF(2, 3)
-void tic_string_printf(tic_string *, const char * format, ...);
+void tic_sprintf(tic_string *, const char * format, ...);
 bool tic_string_to_i64(const char *, int64_t *);
 
 
