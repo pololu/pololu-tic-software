@@ -88,7 +88,7 @@ tx_config: pullup analog kill
 rx_config: serial
 rc_config: pullup home
 current_limit: 1984
-microstepping_mode: 1
+microstepping_mode: 32
 decay_mode: fast
 speed_min: 10000
 speed_max: 234567890

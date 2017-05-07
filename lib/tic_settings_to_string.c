@@ -18,7 +18,7 @@ static void print_pin_config_to_yaml(tic_string * str, const char * config_name,
   if (value >> TIC_PIN_ACTIVE_HIGH & 1) { polarity_str = " active_high"; }
 
   const char * switch_str = "";
-  switch(value >> TIC_PIN_SWITCH_POSN & TIC_PIN_SWITCH_MASK)
+  switch((value & TIC_PIN_SWITCH_MASK) >> TIC_PIN_SWITCH_POSN)
   {
   case TIC_PIN_SWITCH_LIMIT_FORWARD: switch_str = " limit_forward"; break;
   case TIC_PIN_SWITCH_LIMIT_REVERSE: switch_str = " limit_reverse"; break;
@@ -50,27 +50,16 @@ tic_error * tic_settings_to_string(const tic_settings * settings, char ** string
   tic_string_setup(&str);
 
   {
-    char * product_str = "";  // TODO: use name table
-    switch (tic_settings_product_get(settings))
-    {
-    case TIC_PRODUCT_T825: product_str = "T825"; break;
-    }
+    uint32_t product = tic_settings_product_get(settings);
+    const char * product_str;
+    tic_code_to_name(tic_product_names, product, &product_str);
     tic_string_printf(&str, "product: %s\n", product_str);
   }
 
   {
-    char * mode_str = "";  // TODO: use name table
-    switch (tic_settings_control_mode_get(settings))
-    {
-    case TIC_CONTROL_MODE_SERIAL: mode_str = "serial"; break;
-    case TIC_CONTROL_MODE_STEP_DIR: mode_str = "step_dir"; break;
-    case TIC_CONTROL_MODE_RC_POSITION: mode_str = "rc_position"; break;
-    case TIC_CONTROL_MODE_RC_SPEED: mode_str = "rc_speed"; break;
-    case TIC_CONTROL_MODE_ANALOG_POSITION: mode_str = "analog_position"; break;
-    case TIC_CONTROL_MODE_ANALOG_SPEED: mode_str = "analog_speed"; break;
-    case TIC_CONTROL_MODE_ENCODER_POSITION: mode_str = "encoder_position"; break;
-    case TIC_CONTROL_MODE_ENCODER_SPEED: mode_str = "encoder_speed"; break;
-    }
+    uint8_t control_mode = tic_settings_control_mode_get(settings);
+    const char * mode_str;
+    tic_code_to_name(tic_control_mode_names, control_mode, &mode_str);
     tic_string_printf(&str, "control_mode: %s\n", mode_str);
   }
 
@@ -169,20 +158,16 @@ tic_error * tic_settings_to_string(const tic_settings * settings, char ** string
   }
 
   {
-    const char * degree_str = ""; // TODO: use name table
-    switch(tic_settings_input_scaling_degree_get(settings))
-    {
-    case TIC_SCALING_DEGREE_LINEAR: degree_str = "linear"; break;
-    case TIC_SCALING_DEGREE_QUADRATIC: degree_str = "quadratic"; break;
-    case TIC_SCALING_DEGREE_CUBIC: degree_str = "cubic"; break;
-    }
+    uint8_t degree = tic_settings_input_scaling_degree_get(settings);
+    const char * degree_str;
+    tic_code_to_name(tic_scaling_degree_names, degree, &degree_str);
     tic_string_printf(&str, "input_scaling_degree: %s\n", degree_str);
   }
 
   {
     bool input_invert = tic_settings_input_invert_get(settings);
-    tic_string_printf(&str, "input_invert: %s\n",
-      input_invert ? "true" : "false");
+    tic_string_printf(&str, "input_invert: %s\n", input_invert ? "true" : "false");
+    // TODO: rename tic_string_printf to tic_sprintf
   }
 
   {
@@ -261,27 +246,16 @@ tic_error * tic_settings_to_string(const tic_settings * settings, char ** string
   }
 
   {
-    const char * mode_str = "";  // TODO: use name table
-    switch (tic_settings_microstepping_mode_get(settings))
-    {
-    case TIC_MICROSTEPPING_MODE_1: mode_str = "1"; break;
-    case TIC_MICROSTEPPING_MODE_2: mode_str = "2"; break;
-    case TIC_MICROSTEPPING_MODE_4: mode_str = "4"; break;
-    case TIC_MICROSTEPPING_MODE_8: mode_str = "8"; break;
-    case TIC_MICROSTEPPING_MODE_16: mode_str = "16"; break;
-    case TIC_MICROSTEPPING_MODE_32: mode_str = "32"; break;
-    }
+    uint8_t mode = tic_settings_microstepping_mode_get(settings);
+    const char * mode_str;
+    tic_code_to_name(tic_microstepping_mode_names, mode, &mode_str);
     tic_string_printf(&str, "microstepping_mode: %s\n", mode_str);
   }
 
   {
-    const char * decay_mode_str = "";  // TODO: use name table
-    switch (tic_settings_decay_mode_get(settings))
-    {
-    case TIC_DECAY_MODE_MIXED: decay_mode_str = "mixed"; break;
-    case TIC_DECAY_MODE_SLOW: decay_mode_str = "slow"; break;
-    case TIC_DECAY_MODE_FAST: decay_mode_str = "fast"; break;
-    }
+    uint8_t decay_mode = tic_settings_decay_mode_get(settings);
+    const char * decay_mode_str = "";
+    tic_code_to_name(tic_decay_mode_names, decay_mode, &decay_mode_str);
     tic_string_printf(&str, "decay_mode: %s\n", decay_mode_str);
   }
 

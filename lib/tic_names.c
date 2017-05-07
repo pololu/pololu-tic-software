@@ -92,7 +92,7 @@ bool tic_code_to_name(const tic_name * table, uint32_t code, const char ** name)
   assert(table != NULL);
   assert(name != NULL);
 
-  *name = NULL;
+  *name = "";
 
   for (const tic_name * p = table; p->name; p++)
   {
