@@ -259,32 +259,6 @@ static void write_buffer_to_settings(const uint8_t * buf, tic_settings * setting
   }
 }
 
-static tic_error * read_setting_byte(tic_handle * handle,
-  uint8_t address, uint8_t * output)
-{
-  assert(handle != NULL);
-  assert(output != NULL);
-  *output = 0;
-
-  libusbp_generic_handle * usb_handle = tic_handle_get_usb_handle(handle);
-
-  size_t transferred;
-  tic_error * error = tic_usb_error(libusbp_control_transfer(usb_handle,
-      0xC0, TIC_CMD_READ_SETTING, 0, address, output, 1, &transferred));
-  if (error != NULL)
-  {
-    return error;
-  }
-
-  if (transferred != 1)
-  {
-    return tic_error_create(
-      "Failed to read a setting.  Expected 1 byte, got %d.\n", transferred);
-  }
-
-  return NULL;
-}
-
 tic_error * tic_get_settings(tic_handle * handle, tic_settings ** settings)
 {
   if (settings == NULL)
@@ -338,6 +312,12 @@ tic_error * tic_get_settings(tic_handle * handle, tic_settings ** settings)
   }
 
   tic_settings_free(new_settings);
+
+  if (error != NULL)
+  {
+    error = tic_error_add(error,
+      "There was an error reading settings from the device.");
+  }
 
   return error;
 }

@@ -164,6 +164,83 @@ const char * tic_get_firmware_version_string(tic_handle * handle)
   return new_string;
 }
 
+tic_error * tic_write_setting_byte(tic_handle * handle,
+  uint8_t address, uint8_t byte)
+{
+  assert(handle != NULL);
+
+  tic_error * error = tic_usb_error(libusbp_control_transfer(handle->usb_handle,
+      0x40, TIC_CMD_WRITE_SETTING, byte, address, NULL, 0, NULL));
+  return error;
+}
+
+tic_error * read_setting_byte(tic_handle * handle,
+  uint8_t address, uint8_t * output)
+{
+  assert(handle != NULL);
+  assert(output != NULL);
+  *output = 0;
+
+  size_t transferred;
+  tic_error * error = tic_usb_error(libusbp_control_transfer(handle->usb_handle,
+      0xC0, TIC_CMD_READ_SETTING, 0, address, output, 1, &transferred));
+  if (error != NULL)
+  {
+    return error;
+  }
+
+  if (transferred != 1)
+  {
+    return tic_error_create(
+      "Failed to read a setting.  Expected 1 byte, got %d.\n", transferred);
+  }
+
+  return NULL;
+}
+
+tic_error * tic_restore_defaults(tic_handle * handle)
+{
+  if (handle == NULL)
+  {
+    return tic_error_create("Handle is NULL.");
+  }
+
+  tic_error * error = NULL;
+  error = tic_write_setting_byte(handle, TIC_SETTING_NOT_INITIALIZED, 1);
+
+  if (error != NULL)
+  {
+    error = tic_error_add(error,
+      "There was an error restoring default settings.");
+  }
+
+  if (error == NULL)
+  {
+    error = tic_reinitialize(handle);
+  }
+
+  return error;
+}
+
+tic_error * tic_reinitialize(tic_handle * handle)
+{
+  if (handle == NULL)
+  {
+    return tic_error_create("Handle is NULL.");
+  }
+
+  tic_error * error = tic_usb_error(libusbp_control_transfer(handle->usb_handle,
+    0x40, TIC_CMD_REINITIALIZE, 0, 0, NULL, 0, NULL));
+
+  if (error != NULL)
+  {
+    error = tic_error_add(error,
+      "There was an error reinitializing the device.");
+  }
+
+  return error;
+}
+
 tic_error * tic_get_debug_data(tic_handle * handle, uint8_t * data, size_t * size)
 {
   if (handle == NULL)
@@ -196,18 +273,6 @@ tic_error * tic_get_debug_data(tic_handle * handle, uint8_t * data, size_t * siz
 
   return NULL;
 }
-
-libusbp_generic_handle * tic_handle_get_usb_handle(tic_handle * handle)
-{
-  if (handle == NULL) { return NULL; }
-  return handle->usb_handle;
-}
-
-// TODO: tic_get_settings
-// TODO: tic_validate_settings
-// TODO: tic_apply_settings
-// TODO: tic_restore_defaults
-// TODO: tic_get_variables
 
 /** TODO: std::string Tic::convertDeviceResetToString(uint8_t deviceReset)
     {

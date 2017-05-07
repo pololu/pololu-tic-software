@@ -4,12 +4,13 @@ require 'yaml'
 
 Valgrind = false
 
-def run_ticcmd(args)
-  env = { }
+def run_ticcmd(args, opts = {})
+  env = {}
   cmd = 'ticcmd ' + args.to_s
   cmd = 'validgrind ' + cmd if Valgrind
-  opts = { }
-  stdout, stderr, status = Open3.capture3(env, cmd, opts)
+  open3_opts = {}
+  open3_opts[:stdin_data] = opts[:input] if opts.has_key?(:input)
+  stdout, stderr, status = Open3.capture3(env, cmd, open3_opts)
 
   stdout.gsub!("\r\n", "\n")
 

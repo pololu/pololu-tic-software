@@ -202,12 +202,12 @@ static void print_status(device_selector & selector)
   //          << std::endl;
 }
 
-static void fix_settings_and_warn_user(tic::settings & settings)
+static void restore_defaults(device_selector & selector)
 {
-  std::string warnings;
-  settings.fix(&warnings);
-  std::cerr << warnings;
+  tic::device device = selector.select_device();
+  tic::handle(device).restore_defaults();
 }
+
 
 static void get_settings(device_selector & selector,
   const std::string & filename)
@@ -215,7 +215,10 @@ static void get_settings(device_selector & selector,
   tic::device device = selector.select_device();
   tic::settings settings = tic::handle(device).get_settings();
   std::string settings_string = settings.to_string();
-  fix_settings_and_warn_user(settings);
+
+  std::string warnings;
+  settings.fix(&warnings);
+  std::cerr << warnings;
 
   write_string_to_file(filename, settings_string);
 }
@@ -229,7 +232,9 @@ static void set_settings(device_selector & selector,
   tic::settings settings = tic::settings::read_from_string(
     settings_string, &warnings);
   std::cerr << warnings;
-  fix_settings_and_warn_user(settings);
+
+  settings.fix(&warnings);
+  std::cerr << warnings;
 
   tic::device device = selector.select_device();
   tic::handle(device).set_settings(settings);
@@ -282,6 +287,11 @@ static void run(int argc, char ** argv)
   if (args.get_settings)
   {
     get_settings(selector, args.output_settings_file_name);
+  }
+
+  if (args.restore_defaults)
+  {
+    restore_defaults(selector);
   }
 
   if (args.set_settings)

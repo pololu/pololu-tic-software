@@ -216,18 +216,6 @@ static void write_settings_to_buffer(const tic_settings * settings, uint8_t * bu
   }
 }
 
-static tic_error * write_setting_byte(tic_handle * handle,
-  uint8_t address, uint8_t byte)
-{
-  assert(handle != NULL);
-
-  libusbp_generic_handle * usb_handle = tic_handle_get_usb_handle(handle);
-
-  tic_error * error = tic_usb_error(libusbp_control_transfer(usb_handle,
-      0x40, TIC_CMD_WRITE_SETTING, byte, address, NULL, 0, NULL));
-  return error;
-}
-
 tic_error * tic_set_settings(tic_handle * handle, const tic_settings * settings)
 {
   if (handle == NULL)
@@ -267,10 +255,16 @@ tic_error * tic_set_settings(tic_handle * handle, const tic_settings * settings)
   // Write the bytes to the device.
   for (uint8_t i = 1; i < sizeof(buf) && error == NULL; i++)
   {
-    error = write_setting_byte(handle, i, buf[i]);
+    error = tic_write_setting_byte(handle, i, buf[i]);
   }
 
   tic_settings_free(fixed_settings);
+
+  if (error != NULL)
+  {
+    error = tic_error_add(error,
+      "There was an error applying settings to the device.");
+  }
 
   return error;
 }

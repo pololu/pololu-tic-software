@@ -813,13 +813,30 @@ const char * tic_get_firmware_version_string(tic_handle *);
 TIC_API TIC_WARN_UNUSED
 tic_error * tic_get_settings(tic_handle *, tic_settings ** settings);
 
-/// Writes all of the Tic's non-volatile settings.  Internally, this function
-/// copies the settings and calls tic_settings_fix() to make sure that the
-/// settings will be valid when they are written to the device.  If you want to
-/// get warnings about what was changed, you should call tic_settings_fix()
-/// yourself beforehand.
+/// Writes all of the Tic's non-volatile settings.
+///
+/// Internally, this function copies the settings and calls tic_settings_fix()
+/// to make sure that the settings will be valid when they are written to the
+/// device.  If you want to get warnings about what was changed, you should call
+/// tic_settings_fix() yourself beforehand.
+///
+/// After calling this function, to make the settings actually take effect, you
+/// should call tic_reinitialize().
 TIC_API TIC_WARN_UNUSED
 tic_error * tic_set_settings(tic_handle *, const tic_settings *);
+
+/// Resets the Tic's settings to their factory default values.
+///
+/// Since many bytes of EEPROM might need to change, the Tic might be unable to
+/// respond to USB requests for a while.  We recommend sleeping for 1500
+/// milliseconds after calling this function.
+TIC_API TIC_WARN_UNUSED
+tic_error * tic_restore_defaults(tic_handle * handle);
+
+/// Causes the Tic to reload all of its settings from EEPROM and make them take
+/// effect.
+TIC_API TIC_WARN_UNUSED
+tic_error * tic_reinitialize(tic_handle * handle);
 
 /// \cond
 TIC_API TIC_WARN_UNUSED

@@ -45,6 +45,7 @@ TIC_PRINTF(2, 3)
 void tic_string_printf(tic_string *, const char * format, ...);
 bool tic_string_to_i64(const char *, int64_t *);
 
+
 // Internal name lookup library.
 
 typedef struct tic_name
@@ -64,6 +65,7 @@ extern const tic_name tic_microstepping_mode_names[];
 extern const tic_name tic_decay_mode_names[];
 extern const tic_name tic_pin_config_names[];
 
+
 // Internal settings conversion functions.
 
 uint32_t tic_baud_rate_from_brg(uint16_t brg);
@@ -80,7 +82,11 @@ tic_device_get_generic_interface(const tic_device * device);
 
 // Internal tic_handle functions.
 
-libusbp_generic_handle * tic_handle_get_usb_handle(tic_handle *);
+tic_error * tic_write_setting_byte(tic_handle * handle,
+  uint8_t address, uint8_t byte);
+
+tic_error * read_setting_byte(tic_handle * handle,
+  uint8_t address, uint8_t * output);
 
 
 // Error creation functions.

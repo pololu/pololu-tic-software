@@ -392,6 +392,18 @@ namespace tic
       throw_if_needed(tic_set_settings(pointer, settings.pointer_get()));
     }
 
+    /// Wrapper for tic_restore_defaults().
+    void restore_defaults()
+    {
+      throw_if_needed(tic_restore_defaults(pointer));
+    }
+
+    /// Wrapper for tic_reinitialize().
+    void reinitialize()
+    {
+      throw_if_needed(tic_reinitialize(pointer));
+    }
+
     /// \cond
     void get_debug_data(std::vector<uint8_t> & data)
     {
