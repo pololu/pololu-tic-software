@@ -78,6 +78,9 @@ extern "C" {
 #  endif
 #endif
 
+// TODO: uint32_t tic_ez_disable_safe_start(); ?
+// TODO: uint32_t tic_ez_set_target_speed(int32_t);
+// TODO: uint32_t tic_ez_set_target_position(int32_t);
 
 /// Certain functions in the library return a string and require the caller to
 /// call this function to free the string.  Passing a NULL pointer to this

@@ -257,6 +257,169 @@ static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings
     tic_settings_high_vin_shutoff_voltage_set(settings, high_shutoff);
   }
 
+  {
+    uint16_t error_min = tic_settings_input_error_min_get(settings);
+    uint16_t min = tic_settings_input_min_get(settings);
+    uint16_t neutral_min = tic_settings_input_neutral_min_get(settings);
+    uint16_t neutral_max = tic_settings_input_neutral_max_get(settings);
+    uint16_t max = tic_settings_input_max_get(settings);
+    uint16_t error_max = tic_settings_input_error_max_get(settings);
+
+    if (error_min > min || min > neutral_min || neutral_min > neutral_max ||
+      neutral_max > max || max > error_max)
+    {
+      error_min = 0;
+      min = 0;
+      neutral_min = 0x8000;
+      neutral_max = 0x8000;
+      max = 0xFFFF;
+      error_max = 0xFFFF;
+
+      tic_sprintf(warnings,
+        "Warning: The input scaling values were out of order "
+        "so they will be reset to their default values.\n");
+    }
+
+    tic_settings_input_error_min_set(settings, error_min);
+    tic_settings_input_min_set(settings, min);
+    tic_settings_input_neutral_min_set(settings, neutral_min);
+    tic_settings_input_neutral_max_set(settings, neutral_max);
+    tic_settings_input_max_set(settings, max);
+    tic_settings_input_error_max_set(settings, error_max);
+  }
+
+  {
+    int32_t output_min = tic_settings_output_min_get(settings);
+    int32_t output_neutral = tic_settings_output_neutral_get(settings);
+    int32_t output_max = tic_settings_output_max_get(settings);
+
+    if (output_min > output_neutral || output_neutral > output_max)
+    {
+      output_min = -200;
+      output_neutral = 0;
+      output_max = 200;
+      tic_sprintf(warnings,
+        "Warning: The output scaling values were out of order "
+        "so they will be reset to their default values.\n");
+    }
+
+    tic_settings_output_min_set(settings, output_min);
+    tic_settings_output_neutral_set(settings, output_neutral);
+    tic_settings_output_max_set(settings, output_max);
+  }
+
+  if (tic_settings_output_neutral_get(settings) != 0)
+  {
+    uint8_t control_mode = tic_settings_control_mode_get(settings);
+    if (control_mode == TIC_CONTROL_MODE_RC_SPEED)
+    {
+      tic_settings_output_neutral_set(settings, 0);
+      tic_sprintf(warnings,
+        "Warning: The output neutral value must be 0 in RC speed control mode "
+        "so it will be changed to 0.");
+    }
+    if (control_mode == TIC_CONTROL_MODE_ANALOG_SPEED)
+    {
+      tic_settings_output_neutral_set(settings, 0);
+      tic_sprintf(warnings,
+        "Warning: The output neutral value must be 0 in analog speed control mode "
+        "so it will be changed to 0.");
+    }
+  }
+
+  {
+    uint32_t speed_max = tic_settings_speed_max_get(settings);
+    uint32_t speed_min = tic_settings_speed_min_get(settings);
+
+    if (speed_max > TIC_MAX_ALLOWED_SPEED)
+    {
+      speed_max = TIC_MAX_ALLOWED_SPEED;
+      uint32_t speed_max_khz = speed_max / TIC_SPEED_UNITS_PER_HZ / 1000;
+      tic_sprintf(warnings,
+        "Warning: The maximum speed was too high so it will be lowered to %u (%u kHz).\n",
+        speed_max, speed_max_khz);
+    }
+
+    if (speed_min > speed_max)
+    {
+      speed_min = speed_max;
+      tic_sprintf(warnings,
+        "Warning: The minimum speed was greater than the maximum speed "
+        "so it will be lowered to %u.\n", speed_min);
+    }
+
+    tic_settings_speed_max_set(settings, speed_max);
+    tic_settings_speed_min_set(settings, speed_min);
+  }
+
+  {
+    uint32_t decel_max = tic_settings_decel_max_get(settings);
+
+    if (decel_max > TIC_MAX_ALLOWED_ACCEL)
+    {
+      decel_max = TIC_MAX_ALLOWED_ACCEL;
+      tic_sprintf(warnings,
+        "Warning: The maximum deceleration was too high "
+        "so it will be lowered to %u.\n", decel_max);
+    }
+
+    if (decel_max != 0 && decel_max < TIC_MIN_ALLOWED_ACCEL)
+    {
+      decel_max = TIC_MIN_ALLOWED_ACCEL;
+      tic_sprintf(warnings,
+        "Warning: The maximum deceleration was too low "
+        "so it will be raised to %u.\n", decel_max);
+    }
+
+    tic_settings_decel_max_set(settings, decel_max);
+  }
+
+  {
+    uint32_t accel_max = tic_settings_accel_max_get(settings);
+
+    if (accel_max > TIC_MAX_ALLOWED_ACCEL)
+    {
+      accel_max = TIC_MAX_ALLOWED_ACCEL;
+      tic_sprintf(warnings,
+        "Warning: The maximum acceleration was too high "
+        "so it will be lowered to %u.\n", accel_max);
+    }
+
+    if (accel_max < TIC_MIN_ALLOWED_ACCEL)
+    {
+      accel_max = TIC_MIN_ALLOWED_ACCEL;
+      tic_sprintf(warnings,
+        "Warning: The maximum acceleration was too low "
+        "so it will be raised to %u.\n", accel_max);
+    }
+
+    tic_settings_accel_max_set(settings, accel_max);
+  }
+
+  {
+    uint32_t decel_max_during_error = tic_settings_decel_max_during_error_get(settings);
+
+    if (decel_max_during_error > TIC_MAX_ALLOWED_ACCEL)
+    {
+      decel_max_during_error = TIC_MAX_ALLOWED_ACCEL;
+      tic_sprintf(warnings,
+        "Warning: The maximum deceleration during error was too high "
+        "so it will be lowered to %u.\n", decel_max_during_error);
+    }
+
+    if (decel_max_during_error != 0 &&
+      decel_max_during_error < TIC_MIN_ALLOWED_ACCEL)
+    {
+      decel_max_during_error = TIC_MIN_ALLOWED_ACCEL;
+      tic_sprintf(warnings,
+        "Warning: The maximum deceleration during error was too low "
+        "so it will be raised to %u.\n", decel_max_during_error);
+    }
+
+    tic_settings_decel_max_during_error_set(settings, decel_max_during_error);
+  }
+
+  // TODO: fix pin configs
 }
 
 tic_error * tic_settings_fix(tic_settings * settings, char ** warnings)

@@ -53,7 +53,7 @@ END
 TestSettings1 = {
   T825: <<END
 product: T825
-control_mode: rc_speed
+control_mode: rc_position
 never_sleep: true
 disable_safe_start: true
 ignore_err_line_high: true
@@ -72,7 +72,7 @@ rc_bad_signal_timeout: 909
 rc_consecutive_good_pulses: 9
 input_play: 255
 input_error_min: 303
-input_error_max: 5050
+input_error_max: 50050
 input_scaling_degree: quadratic
 input_invert: true
 input_min: 404
@@ -130,6 +130,82 @@ def test_cases_for_settings_fix(product)
         "Warning: The low VIN startup voltage was changed to 9501 mV.\n" \
         "Warning: The high VIN shutoff voltage was changed to 10001 mV.\n"
     ],
+    [ { 'input_error_min' => 10, 'input_min' => 9, 'input_neutral_min' => 8,
+        'input_neutral_max' => 7, 'input_max' => 6, 'input_error_max' => 5 },
+      { 'input_error_min' => 0, 'input_min' => 0, 'input_neutral_min' => 0x8000,
+        'input_neutral_max' => 0x8000, 'input_max' => 0xFFFF,
+        'input_error_max' => 0xFFFF },
+      "Warning: The input scaling values were out of order " \
+      "so they will be reset to their default values.\n"
+    ],
+    [ { 'output_min' => -1, 'output_neutral' => -2, 'output_max' => -3 },
+      { 'output_min' => -200, 'output_neutral' => 0, 'output_max' => 200 },
+      "Warning: The output scaling values were out of order " \
+      "so they will be reset to their default values.\n"
+    ],
+    [ { 'control_mode' => 'rc_speed', 'output_neutral' => 100 },
+      { 'output_neutral' => 0 },
+      "Warning: The output neutral value must be 0 in RC speed control mode " \
+      "so it will be changed to 0."
+    ],
+    [ { 'control_mode' => 'analog_speed', 'output_neutral' => 100 },
+      { 'output_neutral' => 0 },
+      "Warning: The output neutral value must be 0 in analog speed control mode " \
+      "so it will be changed to 0."
+    ],
+    [ { 'speed_max' => 70000_0000 },
+      { 'speed_max' => 50000_0000 },
+      "Warning: The maximum speed was too high " \
+      "so it will be lowered to 500000000 (50 kHz).\n"
+    ],
+    [ { 'speed_min' => 500_0000 },
+      { 'speed_min' => 200_0000 },
+      "Warning: The minimum speed was greater than the maximum speed " \
+      "so it will be lowered to 2000000.\n"
+    ],
+    [ { 'decel_max' => 0x80000000 },
+      { 'decel_max' => 0x7FFFFFFF },
+      "Warning: The maximum deceleration was too high " \
+      "so it will be lowered to 2147483647.\n"
+    ],
+    [ { 'decel_max' => 99 },
+      { 'decel_max' => 100 },
+      "Warning: The maximum deceleration was too low " \
+      "so it will be raised to 100.\n"
+    ],
+    [ { 'decel_max' => 0 },  # 0 means same as accel_max
+      { },
+      ""
+    ],
+    [ { 'accel_max' => 0x80000000 },
+      { 'accel_max' => 0x7FFFFFFF },
+      "Warning: The maximum acceleration was too high " \
+      "so it will be lowered to 2147483647.\n"
+    ],
+    [ { 'accel_max' => 99 },
+      { 'accel_max' => 100 },
+      "Warning: The maximum acceleration was too low " \
+      "so it will be raised to 100.\n"
+    ],
+    [ { 'accel_max' => 0 },
+      { 'accel_max' => 100 },
+      "Warning: The maximum acceleration was too low " \
+      "so it will be raised to 100.\n"
+    ],
+    [ { 'decel_max_during_error' => 0x80000000 },
+      { 'decel_max_during_error' => 0x7FFFFFFF },
+      "Warning: The maximum deceleration during error was too high " \
+      "so it will be lowered to 2147483647.\n"
+    ],
+    [ { 'decel_max_during_error' => 99 },
+      { 'decel_max_during_error' => 100 },
+      "Warning: The maximum deceleration during error was too low " \
+      "so it will be raised to 100.\n"
+    ],
+    [ { 'decel_max_during_error' => 0 },  # 0 means same as accel_max
+      { },
+      ""
+    ],
   ]
 end
 
@@ -174,13 +250,14 @@ describe 'settings' do
 
   specify 'tic_settings_fix is correct' do
     defaults = YAML.load(DefaultSettings[product])
-    test_cases_for_settings_fix(product).each do |input, output, warnings|
-      input_str = YAML.dump(defaults.merge(input))
+    test_cases_for_settings_fix(product).each do |input_part, output_part, warnings|
+      input = defaults.merge(input_part)
+      output = input.merge(output_part)
 
       stdout, stderr, result = run_ticcmd('--fix-settings - -',
-        input: input_str)
+        input: YAML.dump(input))
       expect(stderr).to eq (warnings || "")
-      expect(YAML.load(stdout)).to eq defaults.merge(output)
+      expect(YAML.load(stdout)).to eq output
       expect(result).to eq 0
     end
   end
