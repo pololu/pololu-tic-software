@@ -174,8 +174,7 @@ def test_cases_for_settings_fix(product)
       "so it will be raised to 100.\n"
     ],
     [ { 'decel_max' => 0 },  # 0 means same as accel_max
-      { },
-      ""
+      { }
     ],
     [ { 'accel_max' => 0x80000000 },
       { 'accel_max' => 0x7FFFFFFF },
@@ -203,8 +202,102 @@ def test_cases_for_settings_fix(product)
       "so it will be raised to 100.\n"
     ],
     [ { 'decel_max_during_error' => 0 },  # 0 means same as accel_max
-      { },
-      ""
+      { }
+    ],
+    [ { 'control_mode' => 'analog_position', 'sda_config' => 'home active_high' },
+      { 'sda_config' => 'default active_high' },
+      "Warning: The SDA pin must be used as an analog input " \
+      "so its function will be changed to the default.\n"
+    ],
+    [ { 'control_mode' => 'analog_speed', 'sda_config' => 'home pullup' },
+      { 'sda_config' => 'default pullup' },
+      "Warning: The SDA pin must be used as an analog input " \
+      "so its function will be changed to the default.\n"
+    ],
+    [ { 'control_mode' => 'analog_speed', 'sda_config' => 'general pullup' },
+      { }
+    ],
+    [ { 'control_mode' => 'rc_position', 'rc_config' => 'home active_high' },
+      { 'rc_config' => 'default active_high' },
+      "Warning: The RC pin must be used as an RC input " \
+      "so its function will be changed to the default.\n"
+    ],
+    [ { 'control_mode' => 'rc_speed', 'rc_config' => 'general pullup' },
+      { 'rc_config' => 'default pullup' },
+      "Warning: The RC pin must be used as an RC input " \
+      "so its function will be changed to the default.\n"
+    ],
+    [ { 'control_mode' => 'rc_speed', 'rc_config' => 'rc pullup' },
+      { }
+    ],
+    [ { 'control_mode' => 'encoder_speed', 'tx_config' => 'limit_forward active_high' },
+      { 'tx_config' => 'default active_high' },
+      "Warning: The TX pin must be used as an encoder input " \
+      "so its function will be changed to the default.\n"
+    ],
+    [ { 'control_mode' => 'encoder_position', 'rx_config' => 'limit_reverse pullup',
+        'tx_config' => 'encoder analog' },
+      { 'rx_config' => 'default pullup' },
+      "Warning: The RX pin must be used as an encoder input " \
+      "so its function will be changed to the default.\n"
+    ],
+    [ { 'rc_config' => 'serial pullup active_high' },
+      { 'rc_config' => 'default pullup active_high' },
+      "Warning: The RC pin cannot be a serial pin " \
+      "so its function will be changed to the default.\n"
+    ],
+    [ { 'rc_config' => 'general analog' },
+      { 'rc_config' => 'general' },
+      "Warning: The RC pin cannot be an analog input " \
+      "so that feature will be disabled.\n"
+    ],
+    [ { 'sda_config' => 'rc analog' },
+      { 'sda_config' => 'default analog' },
+      "Warning: The SDA pin cannot be used as an RC input " \
+      "so its function will be changed to the default.\n"
+    ],
+    [ { 'scl_config' => 'rc pullup' },
+      { 'scl_config' => 'default pullup' },
+      "Warning: The SCL pin cannot be used as an RC input " \
+      "so its function will be changed to the default.\n"
+    ],
+    [ { 'tx_config' => 'rc active_high' },
+      { 'tx_config' => 'default active_high' },
+      "Warning: The TX pin cannot be used as an RC input " \
+      "so its function will be changed to the default.\n"
+    ],
+    [ { 'rx_config' => 'rc pullup active_high' },
+      { 'rx_config' => 'default pullup active_high' },
+      "Warning: The RX pin cannot be used as an RC input " \
+      "so its function will be changed to the default.\n"
+    ],
+    [ { 'scl_config' => 'encoder analog' },
+      { 'scl_config' => 'default analog' },
+      "Warning: The SCL pin cannot be used as an encoder input " \
+      "so its function will be changed to the default.\n"
+    ],
+    [ { 'sda_config' => 'encoder active_high' },
+      { 'sda_config' => 'default active_high' },
+      "Warning: The SDA pin cannot be used as an encoder input " \
+      "so its function will be changed to the default.\n"
+    ],
+    [ { 'rc_config' => 'encoder pullup' },
+      { 'rc_config' => 'default pullup' },
+      "Warning: The RC pin cannot be used as an encoder input " \
+      "so its function will be changed to the default.\n"
+    ],
+    [ { 'scl_config' => 'general analog' },
+      { 'scl_config' => 'default analog' },
+      "Warning: The SCL pin must be used for I2C if the SDA pin is " \
+      "so the SCL and SDA pin functions will be changed to the default.\n"
+    ],
+    [ { 'sda_config' => 'general pullup' },
+      { 'sda_config' => 'default pullup' },
+      "Warning: The SDA pin must be used for I2C if the SCL pin is " \
+      "so the SCL and SDA pin functions will be changed to the default.\n"
+    ],
+    [ { 'control_mode' => 'analog_speed', 'scl_config' => 'general' },
+      { }
     ],
   ]
 end
