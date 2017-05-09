@@ -86,16 +86,6 @@ void tic_settings_fill_with_defaults(tic_settings * settings)
   tic_settings_output_max_set(settings, 200);
   tic_settings_encoder_prescaler_set(settings, 2);
   tic_settings_encoder_postscaler_set(settings, 1);
-  tic_settings_scl_config_set(settings,
-    (1 << TIC_PIN_SERIAL) | (1 << TIC_PIN_ACTIVE_HIGH));
-  tic_settings_sda_config_set(settings,
-    (1 << TIC_PIN_SERIAL) | (1 << TIC_PIN_ACTIVE_HIGH));
-  tic_settings_tx_config_set(settings,
-    (1 << TIC_PIN_SERIAL) | (1 << TIC_PIN_ACTIVE_HIGH));
-  tic_settings_rx_config_set(settings,
-    (1 << TIC_PIN_SERIAL) | (1 << TIC_PIN_ACTIVE_HIGH));
-  tic_settings_rc_config_set(settings,
-    1 <<TIC_PIN_ACTIVE_HIGH);
   tic_settings_current_limit_set(settings, 192);
   tic_settings_speed_max_set(settings, 2000000);
   tic_settings_accel_max_set(settings, 40000);

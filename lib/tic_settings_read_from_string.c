@@ -28,6 +28,7 @@ static bool tic_parse_pin_config(const char * input, uint8_t * pin_config)
       return false;
     }
     config |= partial_config;
+    // TODO: error if two different functions specified
   }
   *pin_config = config;
 

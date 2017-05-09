@@ -6,9 +6,6 @@ static void print_pin_config_to_yaml(tic_string * str,
   assert(str != NULL);
   assert(config_name != NULL);
 
-  const char * serial_str = "";
-  if (value >> TIC_PIN_SERIAL & 1) { serial_str = " serial"; }
-
   const char * pullup_str = "";
   if (value >> TIC_PIN_PULLUP & 1) { pullup_str = " pullup"; }
 
@@ -18,17 +15,22 @@ static void print_pin_config_to_yaml(tic_string * str,
   const char * polarity_str = "";
   if (value >> TIC_PIN_ACTIVE_HIGH & 1) { polarity_str = " active_high"; }
 
-  const char * switch_str = "";
-  switch((value & TIC_PIN_SWITCH_MASK) >> TIC_PIN_SWITCH_POSN)
+  const char * func_str = "";
+  switch((value & TIC_PIN_FUNC_MASK) >> TIC_PIN_FUNC_POSN)
   {
-  case TIC_PIN_SWITCH_LIMIT_FORWARD: switch_str = " limit_forward"; break;
-  case TIC_PIN_SWITCH_LIMIT_REVERSE: switch_str = " limit_reverse"; break;
-  case TIC_PIN_SWITCH_HOME: switch_str = " home"; break;
-  case TIC_PIN_SWITCH_KILL: switch_str = " kill"; break;
+  case TIC_PIN_FUNC_DEFAULT: func_str = "default"; break;
+  case TIC_PIN_FUNC_GENERAL: func_str = "general"; break;
+  case TIC_PIN_FUNC_SERIAL: func_str = "serial"; break;
+  case TIC_PIN_FUNC_RC: func_str = "rc"; break;
+  case TIC_PIN_FUNC_ENCODER: func_str = "encoder"; break;
+  case TIC_PIN_FUNC_LIMIT_FORWARD: func_str = "limit_forward"; break;
+  case TIC_PIN_FUNC_LIMIT_REVERSE: func_str = "limit_reverse"; break;
+  case TIC_PIN_FUNC_HOME: func_str = "home"; break;
+  case TIC_PIN_FUNC_KILL: func_str = "kill"; break;
   }
 
-  tic_sprintf(str, "%s:%s%s%s%s%s\n", config_name,
-    serial_str, pullup_str, analog_str, polarity_str, switch_str);
+  tic_sprintf(str, "%s: %s%s%s%s\n", config_name, func_str,
+    pullup_str, analog_str, polarity_str);
 }
 
 tic_error * tic_settings_to_string(const tic_settings * settings, char ** string)

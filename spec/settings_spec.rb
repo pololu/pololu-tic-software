@@ -34,11 +34,11 @@ output_neutral: 0
 output_max: 200
 encoder_prescaler: 2
 encoder_postscaler: 1
-scl_config: serial active_high
-sda_config: serial active_high
-tx_config: serial active_high
-rx_config: serial active_high
-rc_config: active_high
+scl_config: default
+sda_config: default
+tx_config: default
+rx_config: default
+rc_config: default
 current_limit: 192
 microstepping_mode: 1
 decay_mode: mixed
@@ -84,11 +84,11 @@ output_neutral: 12
 output_max: 999
 encoder_prescaler: 5
 encoder_postscaler: 1000000000
-scl_config: pullup analog active_high limit_forward
-sda_config: analog limit_reverse
-tx_config: pullup analog kill
+scl_config: limit_forward pullup active_high
+sda_config: limit_reverse analog
+tx_config: kill pullup analog
 rx_config: serial
-rc_config: pullup home
+rc_config: general pullup
 current_limit: 1984
 microstepping_mode: 32
 decay_mode: fast
