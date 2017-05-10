@@ -88,7 +88,7 @@ scl_config: limit_forward pullup active_high
 sda_config: limit_reverse analog
 tx_config: kill pullup analog
 rx_config: serial
-rc_config: general pullup
+rc_config: rc pullup
 current_limit: 1984
 microstepping_mode: 32
 decay_mode: fast
