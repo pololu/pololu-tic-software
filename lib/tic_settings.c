@@ -166,7 +166,7 @@ void tic_settings_free(tic_settings * settings)
 
 static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings)
 {
-  (void)settings; (void)warnings;  // tmphax
+  // TODO: fix current_limit just like serial_baud_rate
 
   uint8_t control_mode = tic_settings_control_mode_get(settings);
 

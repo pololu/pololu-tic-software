@@ -132,8 +132,7 @@ const char * tic_get_firmware_version_string(tic_handle * handle)
   // Get the firmware modification string from the device.
   size_t transferred = 0;
   uint8_t buffer[256];
-  libusbp_error * usb_error = libusbp_control_transfer(
-    handle->usb_handle,
+  libusbp_error * usb_error = libusbp_control_transfer(handle->usb_handle,
     0x80, USB_REQUEST_GET_DESCRIPTOR,
     (USB_DESCRIPTOR_TYPE_STRING << 8) | TIC_FIRMWARE_MODIFICATION_STRING_INDEX,
     0,
@@ -170,7 +169,7 @@ tic_error * tic_write_setting_byte(tic_handle * handle,
   assert(handle != NULL);
 
   tic_error * error = tic_usb_error(libusbp_control_transfer(handle->usb_handle,
-      0x40, TIC_CMD_WRITE_SETTING, byte, address, NULL, 0, NULL));
+    0x40, TIC_CMD_WRITE_SETTING, byte, address, NULL, 0, NULL));
   return error;
 }
 
@@ -183,7 +182,7 @@ tic_error * read_setting_byte(tic_handle * handle,
 
   size_t transferred;
   tic_error * error = tic_usb_error(libusbp_control_transfer(handle->usb_handle,
-      0xC0, TIC_CMD_READ_SETTING, 0, address, output, 1, &transferred));
+    0xC0, TIC_CMD_READ_SETTING, 0, address, output, 1, &transferred));
   if (error != NULL)
   {
     return error;
@@ -259,10 +258,8 @@ tic_error * tic_get_debug_data(tic_handle * handle, uint8_t * data, size_t * siz
   }
 
   size_t transferred;
-  libusbp_error * usb_error = libusbp_control_transfer(
-    handle->usb_handle,
-    0xC0, TIC_CMD_GET_DEBUG_DATA, 0, 0,
-    data, *size, &transferred);
+  libusbp_error * usb_error = libusbp_control_transfer(handle->usb_handle,
+    0xC0, TIC_CMD_GET_DEBUG_DATA, 0, 0, data, *size, &transferred);
   if (usb_error)
   {
     *size = 0;
