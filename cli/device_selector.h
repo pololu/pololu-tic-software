@@ -37,7 +37,7 @@ public:
   {
     if (device) { return device; }
 
-    auto list = tic::list_connected_devices();
+    auto list = list_devices();
     if (list.size() == 0)
     {
       throw device_not_found_error();

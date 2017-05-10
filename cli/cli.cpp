@@ -300,7 +300,6 @@ static void run(int argc, char ** argv)
   device_selector selector;
   if (args.serial_number_specified)
   {
-    // TODO: why is the "-d" option not working?
     selector.specify_serial_number(args.serial_number);
   }
 
