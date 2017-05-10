@@ -146,12 +146,33 @@ def test_cases_for_settings_fix(product)
     [ { 'control_mode' => 'rc_speed', 'output_neutral' => 100 },
       { 'output_neutral' => 0 },
       "Warning: The output neutral value must be 0 in RC speed control mode " \
-      "so it will be changed to 0."
+      "so it will be changed to 0.\n"
     ],
     [ { 'control_mode' => 'analog_speed', 'output_neutral' => 100 },
       { 'output_neutral' => 0 },
       "Warning: The output neutral value must be 0 in analog speed control mode " \
-      "so it will be changed to 0."
+      "so it will be changed to 0.\n"
+    ],
+    [ { 'encoder_prescaler' => 9 },
+      { 'encoder_prescaler' => 8 },
+      "Warning: The encoder prescaler was too high " \
+      "so it will be lowered to 8.\n"
+    ],
+    [ { 'encoder_postscaler' => 2147483648 },
+      { 'encoder_postscaler' => 2147483647 },
+      "Warning: The encoder postscaler was too high " \
+      "so it will be lowered to 2147483647.\n"
+    ],
+    [ { 'current_limit' => 0 },
+      { }
+    ],
+    [ { 'current_limit' => 209 },
+      { 'current_limit' => 192 },
+    ],
+    [ { 'current_limit' => 3969 },
+      { 'current_limit' => 3968 },
+      "Warning: The current limit was too high " \
+      "so it will be lowered to 3968 mA.\n"
     ],
     [ { 'speed_max' => 70000_0000 },
       { 'speed_max' => 50000_0000 },

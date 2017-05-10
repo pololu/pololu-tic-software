@@ -168,19 +168,20 @@ static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings
 {
   // TODO: fix current_limit just like serial_baud_rate
 
+  uint32_t product = tic_settings_product_get(settings);
   uint8_t control_mode = tic_settings_control_mode_get(settings);
 
   {
     uint32_t baud = tic_settings_serial_baud_rate_get(settings);
-    if (baud < 200)
+    if (baud < TIC_MIN_ALLOWED_BAUD_RATE)
     {
-      baud = 200;
+      baud = TIC_MIN_ALLOWED_BAUD_RATE;
       tic_sprintf(warnings,
         "Warning: The serial baud rate was too low so it was changed to %u.\n", baud);
     }
-    if (baud > 115385)
+    if (baud > TIC_MAX_ALLOWED_BAUD_RATE)
     {
-      baud = 115385;
+      baud = TIC_MAX_ALLOWED_BAUD_RATE;
       tic_sprintf(warnings,
         "Warning: The serial baud rate was too high so it was changed to %u.\n", baud);
     }
@@ -307,15 +308,91 @@ static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings
       tic_settings_output_neutral_set(settings, 0);
       tic_sprintf(warnings,
         "Warning: The output neutral value must be 0 in RC speed control mode "
-        "so it will be changed to 0.");
+        "so it will be changed to 0.\n");
     }
     if (control_mode == TIC_CONTROL_MODE_ANALOG_SPEED)
     {
       tic_settings_output_neutral_set(settings, 0);
       tic_sprintf(warnings,
         "Warning: The output neutral value must be 0 in analog speed control mode "
-        "so it will be changed to 0.");
+        "so it will be changed to 0.\n");
     }
+  }
+
+  {
+    uint8_t prescaler = tic_settings_encoder_prescaler_get(settings);
+
+    if (prescaler > TIC_MAX_ALLOWED_ENCODER_PRESCALER)
+    {
+      prescaler = TIC_MAX_ALLOWED_ENCODER_PRESCALER;
+      tic_sprintf(warnings,
+        "Warning: The encoder prescaler was too high "
+        "so it will be lowered to %u.\n", prescaler);
+    }
+
+    tic_settings_encoder_prescaler_set(settings, prescaler);
+  }
+
+  {
+    uint32_t postscaler = tic_settings_encoder_postscaler_get(settings);
+
+    if (postscaler > TIC_MAX_ALLOWED_ENCODER_POSTSCALER)
+    {
+      postscaler = TIC_MAX_ALLOWED_ENCODER_POSTSCALER;
+      tic_sprintf(warnings,
+        "Warning: The encoder postscaler was too high "
+        "so it will be lowered to %u.\n", postscaler);
+    }
+
+    tic_settings_encoder_postscaler_set(settings, postscaler);
+  }
+
+  {
+    uint32_t current_limit = tic_settings_current_limit_get(settings);
+
+    if (current_limit > TIC_MAX_ALLOWED_CURRENT)
+    {
+      current_limit = TIC_MAX_ALLOWED_CURRENT;
+      tic_sprintf(warnings,
+        "Warning: The current limit was too high "
+        "so it will be lowered to %u mA.\n", current_limit);
+    }
+
+    uint8_t code = tic_current_limit_to_code(current_limit);
+    current_limit = tic_current_limit_from_code(code);
+
+    tic_settings_current_limit_set(settings, current_limit);
+  }
+
+  {
+    uint8_t decay_mode = tic_settings_decay_mode_get(settings);
+    if (decay_mode != TIC_DECAY_MODE_MIXED &&
+      decay_mode != TIC_DECAY_MODE_SLOW &&
+      decay_mode != TIC_DECAY_MODE_FAST)
+    {
+      decay_mode = TIC_DECAY_MODE_MIXED;
+      tic_sprintf(warnings,
+        "Warning: The decay mode was invalid "
+        "so it will be changed to mixed.\n");
+    }
+  }
+
+  {
+    uint8_t mode = tic_settings_microstepping_mode_get(settings);
+    if (mode != TIC_MICROSTEPPING_MODE_1 &&
+      mode != TIC_MICROSTEPPING_MODE_2 &&
+      mode != TIC_MICROSTEPPING_MODE_4 &&
+      mode != TIC_MICROSTEPPING_MODE_8 &&
+      mode != TIC_MICROSTEPPING_MODE_16 &&
+      mode != TIC_MICROSTEPPING_MODE_32)
+    {
+      mode = TIC_MICROSTEPPING_MODE_1;
+      tic_sprintf(warnings,
+        "Warning: The microstepping mode was invalid "
+        "so it will be changed to 1.\n");
+    }
+
+    tic_settings_microstepping_mode_set(settings, mode);
   }
 
   {
