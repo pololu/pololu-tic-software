@@ -166,9 +166,6 @@ void tic_settings_free(tic_settings * settings)
 
 static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings)
 {
-  // TODO: fix current_limit just like serial_baud_rate
-
-  uint32_t product = tic_settings_product_get(settings);
   uint8_t control_mode = tic_settings_control_mode_get(settings);
 
   {

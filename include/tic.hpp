@@ -292,7 +292,7 @@ namespace tic
     explicit device(tic_device * p = NULL) noexcept :
       unique_pointer_wrapper_with_copy(p)
     {
-    } // TODO: try to use "using" instead
+    }
 
     /// Gets the name of the device as an ASCII-encoded string.
     /// If the device is null, returns an empty string.
@@ -352,7 +352,7 @@ namespace tic
     explicit handle(tic_handle * p = NULL) noexcept
       : unique_pointer_wrapper(p)
     {
-    } // TODO: is this needed?  can we implement it with "using"?
+    }
 
     /// Constructor that opens a handle to the specified device.
     explicit handle(const device & device)

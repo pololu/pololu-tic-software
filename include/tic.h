@@ -78,7 +78,7 @@ extern "C" {
 #  endif
 #endif
 
-// TODO: uint32_t tic_ez_disable_safe_start(); ?
+// TODO: uint32_t tic_ez_enable_driver(); ?
 // TODO: uint32_t tic_ez_set_target_speed(int32_t);
 // TODO: uint32_t tic_ez_set_target_position(int32_t);
 
