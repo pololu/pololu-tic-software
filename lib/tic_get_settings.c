@@ -292,10 +292,19 @@ tic_error * tic_get_settings(tic_handle * handle, tic_settings ** settings)
 
   // Read all the settings from the device into a buffer.
   uint8_t buf[TIC_HIGHEST_SETTING_ADDRESS + 1];
-  memset(buf, 0, sizeof(buf));
-  for (size_t i = 1; i < sizeof(buf) && error == NULL; i++)
   {
-    error = read_setting_byte(handle, i, buf + i);
+    memset(buf, 0, sizeof(buf));
+    size_t index = 1;
+    while (index < sizeof(buf) && error == NULL)
+    {
+      size_t length = 32;
+      if (index + length > sizeof(buf))
+      {
+        length = sizeof(buf) - index;
+      }
+      error = read_settings(handle, index, length, buf + index);
+      index += length;
+    }
   }
 
   // Store the in the new settings object.

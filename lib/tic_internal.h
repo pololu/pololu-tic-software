@@ -85,8 +85,8 @@ tic_device_get_generic_interface(const tic_device * device);
 tic_error * tic_write_setting_byte(tic_handle * handle,
   uint8_t address, uint8_t byte);
 
-tic_error * read_setting_byte(tic_handle * handle,
-  uint8_t address, uint8_t * output);
+tic_error * read_settings(tic_handle * handle,
+  uint8_t address, size_t length, uint8_t * output);
 
 
 // Error creation functions.
