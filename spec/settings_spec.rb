@@ -9,7 +9,7 @@ disable_safe_start: false
 ignore_err_line_high: false
 serial_baud_rate: 9600
 serial_device_number: 14
-i2c_device_address: 74
+i2c_device_address: 14
 command_timeout: 0
 serial_crc_enabled: false
 low_vin_timeout: 250
