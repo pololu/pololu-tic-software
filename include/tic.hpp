@@ -5,6 +5,9 @@
 /// This file provides the C++ API for libpololu-tic, a library supports
 /// communciating with the Pololu Tic USB Stepper Motor Controller.  The classes
 /// and functions here are just thin wrappers around the C API defined in tic.h.
+///
+/// Note: There are some C functions in libpololu-tic that are not wrapped here
+/// because they can easily be called from C++.
 
 #pragma once
 
@@ -39,6 +42,20 @@ namespace tic
     return tic_error_copy(p);
   }
 
+  /// Wrapper for tic_variables_free().
+  inline void pointer_free(tic_variables * p) noexcept
+  {
+    tic_variables_free(p);
+  }
+
+  /// Wrapper for tic_variables_copy().
+  inline tic_variables * pointer_copy(const tic_variables * p)
+  {
+    tic_variables * copy;
+    throw_if_needed(tic_variables_copy(p, &copy));
+    return copy;
+  }
+
   /// Wrapper for tic_settings_free().
   inline void pointer_free(tic_settings * p) noexcept
   {
@@ -46,7 +63,7 @@ namespace tic
   }
 
   /// Wrapper for tic_settings_copy().
-  inline tic_settings * pointer_copy(const tic_settings * p) noexcept
+  inline tic_settings * pointer_copy(const tic_settings * p)
   {
     tic_settings * copy;
     throw_if_needed(tic_settings_copy(p, &copy));
@@ -228,6 +245,168 @@ namespace tic
   }
   /*! \endcond */
 
+  /// Represents the variables read from a Tic.  This object just stores plain
+  /// old data; it does not have any pointer or handles for other resources.
+  class variables : public unique_pointer_wrapper_with_copy<tic_variables>
+  {
+  public:
+    /// Constructor that takes a pointer from the C API.
+    explicit variables(tic_variables * p = NULL) noexcept :
+      unique_pointer_wrapper_with_copy(p)
+    {
+    }
+
+    /// Wrapper for tic_variables_get_operation_state().
+    uint8_t get_operation_state() const noexcept
+    {
+      return tic_variables_get_operation_state(pointer);
+    }
+
+    /// Wrapper for tic_variables_get_error_status().
+    uint16_t get_error_status() const noexcept
+    {
+      return tic_variables_get_error_status(pointer);
+    }
+
+    /// Wrapper for tic_variables_get_error_occurred().
+    uint32_t get_error_occurred() const noexcept
+    {
+      return tic_variables_get_error_occurred(pointer);
+    }
+
+    /// Wrapper for tic_variables_get_planning_mode().
+    uint8_t get_planning_mode() const noexcept
+    {
+      return tic_variables_get_planning_mode(pointer);
+    }
+
+    /// Wrapper for tic_variables_get_target_position().
+    int32_t get_target_position() const noexcept
+    {
+      return tic_variables_get_target_position(pointer);
+    }
+
+    /// Wrapper for tic_variables_get_target_velocity().
+    int32_t get_target_velocity() const noexcept
+    {
+      return tic_variables_get_target_velocity(pointer);
+    }
+
+    /// Wrapper for tic_variables_get_speed_min().
+    uint32_t get_speed_min() const noexcept
+    {
+      return tic_variables_get_speed_min(pointer);
+    }
+
+    /// Wrapper for tic_variables_get_speed_max().
+    uint32_t get_speed_max() const noexcept
+    {
+      return tic_variables_get_speed_max(pointer);
+    }
+
+    /// Wrapper for tic_variables_get_decel_max().
+    uint32_t get_decel_max() const noexcept
+    {
+      return tic_variables_get_decel_max(pointer);
+    }
+
+    /// Wrapper for tic_variables_get_accel_max().
+    uint32_t get_accel_max() const noexcept
+    {
+      return tic_variables_get_accel_max(pointer);
+    }
+
+    /// Wrapper for tic_variables_get_current_position().
+    int32_t get_current_position() const noexcept
+    {
+      return tic_variables_get_current_position(pointer);
+    }
+
+    /// Wrapper for tic_variables_get_current_velocity().
+    int32_t get_current_velocity() const noexcept
+    {
+      return tic_variables_get_current_velocity(pointer);
+    }
+
+    /// Wrapper for tic_variables_get_acting_target_position().
+    int32_t get_acting_target_position() const noexcept
+    {
+      return tic_variables_get_acting_target_position(pointer);
+    }
+
+    /// Wrapper for tic_variables_get_time_since_last_step().
+    int32_t get_time_since_last_step() const noexcept
+    {
+      return tic_variables_get_time_since_last_step(pointer);
+    }
+
+    /// Wrapper for tic_variables_get_device_reset().
+    uint8_t get_device_reset() const noexcept
+    {
+      return tic_variables_get_device_reset(pointer);
+    }
+
+    /// Wrapper for tic_variables_get_vin_voltage().
+    uint32_t get_vin_voltage() const noexcept
+    {
+      return tic_variables_get_vin_voltage(pointer);
+    }
+
+    /// Wrapper for tic_variables_get_up_time().
+    uint32_t get_up_time() const noexcept
+    {
+      return tic_variables_get_up_time(pointer);
+    }
+
+    /// Wrapper for tic_variables_get_encoder_position().
+    int32_t get_encoder_position() const noexcept
+    {
+      return tic_variables_get_encoder_position(pointer);
+    }
+
+    /// Wrapper for tic_variables_get_rc_pulse_width().
+    uint16_t get_rc_pulse_width() const noexcept
+    {
+      return tic_variables_get_rc_pulse_width(pointer);
+    }
+
+    /// Wrapper for tic_variables_get_analog_reading().
+    uint16_t get_analog_reading(uint8_t pin) const noexcept
+    {
+      return tic_variables_get_analog_reading(pointer, pin);
+    }
+
+    /// Wrapper for tic_variables_get_digital_reading().
+    bool get_digital_reading(uint8_t pin) const noexcept
+    {
+      return tic_variables_get_digital_reading(pointer, pin);
+    }
+
+    /// Wrapper for tic_variables_get_switch_status().
+    bool get_switch_status(uint8_t pin) const noexcept
+    {
+      return tic_variables_get_switch_status(pointer, pin);
+    }
+
+    /// Wrapper for tic_variables_get_pin_state().
+    uint16_t get_pin_state(uint8_t pin) const noexcept
+    {
+      return tic_variables_get_pin_state(pointer, pin);
+    }
+
+    /// Wrapper for tic_variables_get_step_mode().
+    uint8_t get_step_mode() const noexcept
+    {
+      return tic_variables_get_step_mode(pointer);
+    }
+
+    /// Wrapper for tic_variables_get_decay_mode().
+    uint8_t get_decay_mode() const noexcept
+    {
+      return tic_variables_get_decay_mode(pointer);
+    }
+  };
+
   /// Represets the settings for a Tic.  This object just stores plain old data;
   /// it does not have any pointers or handles for other resources.
   class settings : public unique_pointer_wrapper_with_copy<tic_settings>
@@ -376,6 +555,14 @@ namespace tic
     std::string get_firmware_version_string()
     {
       return tic_get_firmware_version_string(pointer);
+    }
+
+    /// Wrapper for tic_get_variables().
+    variables get_variables(bool clear_events)
+    {
+      tic_variables * v;
+      throw_if_needed(tic_get_variables(pointer, &v, clear_events));
+      return variables(v);
     }
 
     /// Wrapper for tic_get_settings().

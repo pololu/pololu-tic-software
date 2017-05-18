@@ -264,8 +264,7 @@ tic_error * tic_settings_to_string(const tic_settings * settings, char ** string
 
   {
     uint8_t decay_mode = tic_settings_decay_mode_get(settings);
-    const char * decay_mode_str = "";
-    tic_code_to_name(tic_decay_mode_names, decay_mode, &decay_mode_str);
+    const char * decay_mode_str = tic_convert_decay_mode_to_string(decay_mode);
     tic_sprintf(&str, "decay_mode: %s\n", decay_mode_str);
   }
 

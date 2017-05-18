@@ -34,14 +34,16 @@ const tic_name tic_scaling_degree_names[] =
   { NULL, 0 },
 };
 
-const tic_name tic_microstepping_mode_names[] =
+const tic_name tic_microstepping_mode_names[] = // TODO: rename table to tic_step_mode_names
 {
-  { "1", TIC_MICROSTEPPING_MODE_1 },
-  { "2", TIC_MICROSTEPPING_MODE_2 },
-  { "4", TIC_MICROSTEPPING_MODE_4 },
-  { "8", TIC_MICROSTEPPING_MODE_8 },
-  { "16", TIC_MICROSTEPPING_MODE_16 },
-  { "32", TIC_MICROSTEPPING_MODE_32 },
+  { "1", TIC_STEP_MODE_MICROSTEP1 },
+  { "2", TIC_STEP_MODE_MICROSTEP2 },
+  { "4", TIC_STEP_MODE_MICROSTEP4 },
+  { "8", TIC_STEP_MODE_MICROSTEP8 },
+  { "16", TIC_STEP_MODE_MICROSTEP16 },
+  { "32", TIC_STEP_MODE_MICROSTEP32 },
+  { "full", TIC_STEP_MODE_FULL },
+  { "half", TIC_STEP_MODE_HALF },
   { NULL, 0 },
 };
 
@@ -70,6 +72,19 @@ const tic_name tic_pin_config_names[] =
   { NULL, 0 },
 };
 
+const char * tic_convert_decay_mode_to_string(uint8_t decay_mode)
+{
+  const char * str;
+  tic_code_to_name(tic_decay_mode_names, decay_mode, &r);
+  return str;
+}
+
+const char * tic_convert_device_reset_to_string(uint8_t device_reset)
+{
+  const char * str;
+  tic_code_to_name(tic_device_reset_names, device_reset, &str);
+  return str;
+}
 
 bool tic_name_to_code(const tic_name * table, const char * name, uint32_t * code)
 {

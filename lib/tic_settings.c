@@ -166,6 +166,8 @@ void tic_settings_free(tic_settings * settings)
 
 static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings)
 {
+  // TODO: fix i2c_device_address to avoid reserved addresses
+
   uint8_t control_mode = tic_settings_control_mode_get(settings);
 
   {
@@ -376,17 +378,17 @@ static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings
 
   {
     uint8_t mode = tic_settings_microstepping_mode_get(settings);
-    if (mode != TIC_MICROSTEPPING_MODE_1 &&
-      mode != TIC_MICROSTEPPING_MODE_2 &&
-      mode != TIC_MICROSTEPPING_MODE_4 &&
-      mode != TIC_MICROSTEPPING_MODE_8 &&
-      mode != TIC_MICROSTEPPING_MODE_16 &&
-      mode != TIC_MICROSTEPPING_MODE_32)
+    if (mode != TIC_STEP_MODE_MICROSTEP1 &&
+      mode != TIC_STEP_MODE_MICROSTEP2 &&
+      mode != TIC_STEP_MODE_MICROSTEP4 &&
+      mode != TIC_STEP_MODE_MICROSTEP8 &&
+      mode != TIC_STEP_MODE_MICROSTEP16 &&
+      mode != TIC_STEP_MODE_MICROSTEP32)
     {
-      mode = TIC_MICROSTEPPING_MODE_1;
+      mode = TIC_STEP_MODE_MICROSTEP1;
       tic_sprintf(warnings,
-        "Warning: The microstepping mode was invalid "
-        "so it will be changed to 1.\n");
+        "Warning: The step mode was invalid "
+        "so it will be changed to 1 (full step).\n");
     }
 
     tic_settings_microstepping_mode_set(settings, mode);
