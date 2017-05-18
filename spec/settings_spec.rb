@@ -40,7 +40,7 @@ tx_config: default
 rx_config: default
 rc_config: default
 current_limit: 192
-microstepping_mode: 1
+step_mode: 1
 decay_mode: mixed
 speed_min: 0
 speed_max: 2000000
@@ -90,7 +90,7 @@ tx_config: kill pullup analog
 rx_config: serial
 rc_config: rc pullup
 current_limit: 1984
-microstepping_mode: 32
+step_mode: 32
 decay_mode: fast
 speed_min: 10000
 speed_max: 234567890
