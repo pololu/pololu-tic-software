@@ -41,7 +41,7 @@ struct tic_settings
   uint8_t rx_config;
   uint8_t rc_config;
   uint32_t current_limit;
-  uint8_t microstepping_mode;
+  uint8_t step_mode;
   uint8_t decay_mode;
   uint32_t speed_min;
   uint32_t speed_max;
@@ -377,7 +377,7 @@ static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings
   }
 
   {
-    uint8_t mode = tic_settings_microstepping_mode_get(settings);
+    uint8_t mode = tic_settings_step_mode_get(settings);
     if (mode != TIC_STEP_MODE_MICROSTEP1 &&
       mode != TIC_STEP_MODE_MICROSTEP2 &&
       mode != TIC_STEP_MODE_MICROSTEP4 &&
@@ -391,7 +391,7 @@ static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings
         "so it will be changed to 1 (full step).\n");
     }
 
-    tic_settings_microstepping_mode_set(settings, mode);
+    tic_settings_step_mode_set(settings, mode);
   }
 
   {
@@ -1185,17 +1185,16 @@ uint32_t tic_settings_current_limit_get(const tic_settings * settings)
   return settings->current_limit;
 }
 
-void tic_settings_microstepping_mode_set(tic_settings * settings,
-  uint8_t microstepping_mode)
+void tic_settings_step_mode_set(tic_settings * settings, uint8_t step_mode)
 {
   if (!settings) { return; }
-  settings->microstepping_mode = microstepping_mode;
+  settings->step_mode = step_mode;
 }
 
-uint8_t tic_settings_microstepping_mode_get(const tic_settings * settings)
+uint8_t tic_settings_step_mode_get(const tic_settings * settings)
 {
   if (!settings) { return 1; }
-  return settings->microstepping_mode;
+  return settings->step_mode;
 }
 
 void tic_settings_decay_mode_set(tic_settings * settings, uint8_t decay_mode)

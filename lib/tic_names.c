@@ -13,6 +13,85 @@ const tic_name tic_product_names[] =
   { NULL, 0 },
 };
 
+const tic_name tic_error_names[] =
+{
+  { "safe_start_violation", 1 << TIC_ERROR_SAFE_START_VIOLATION },
+  { "required_input_invalid", 1 << TIC_ERROR_REQUIRED_INPUT_INVALID },
+  { "serial_error", 1 << TIC_ERROR_SERIAL_ERROR },
+  { "command_timeout", 1 << TIC_ERROR_COMMAND_TIMEOUT },
+  { "motor_driver_error", 1 << TIC_ERROR_MOTOR_DRIVER_ERROR },
+  { "low_vin", 1 << TIC_ERROR_LOW_VIN },
+  { "high_vin", 1 << TIC_ERROR_HIGH_VIN },
+  { "err_line_high", 1 << TIC_ERROR_ERR_LINE_HIGH },
+  { "kill_switch", 1 << TIC_ERROR_KILL_SWITCH },
+  { "intentionally_disabled", 1 << TIC_ERROR_INTENTIONALLY_DISABLED },
+  { "intentionally_disabled_from_usb", 1 << TIC_ERROR_INTENTIONALLY_DISABLED_FROM_USB },
+  { "serial_framing", 1 << TIC_ERROR_SERIAL_FRAMING },
+  { "serial_format", 1 << TIC_ERROR_SERIAL_FORMAT },
+  { "serial_crc", 1 << TIC_ERROR_SERIAL_CRC },
+  { "encoder_skip", 1 << TIC_ERROR_ENCODER_SKIP },
+  { NULL, 0 },
+};
+
+const tic_name tic_decay_mode_names[] =
+{
+  { "mixed", TIC_DECAY_MODE_MIXED },
+  { "slow", TIC_DECAY_MODE_SLOW },
+  { "fast", TIC_DECAY_MODE_FAST },
+  { NULL, 0 },
+};
+
+const tic_name tic_device_reset_names[] =
+{
+  { "power_up", TIC_RESET_POWER_UP },
+  { "brownout", TIC_RESET_BROWNOUT },
+  { "reset_line", TIC_RESET_RESET_LINE },
+  { "watchdog", TIC_RESET_WATCHDOG },
+  { "software", TIC_RESET_SOFTWARE },
+  { "stack_overflow", TIC_RESET_STACK_OVERFLOW },
+  { "stack_underflow", TIC_RESET_STACK_UNDERFLOW },
+  { NULL, 0 },
+};
+
+const tic_name tic_operation_state_names[] =
+{
+  { "disabled", TIC_OPERATION_STATE_DISABLED },
+  { "holding", TIC_OPERATION_STATE_HOLDING },
+  { "waiting_for_err_line", TIC_OPERATION_STATE_WAITING_FOR_ERR_LINE },
+  { "active", TIC_OPERATION_STATE_ACTIVE },
+  { NULL, 0 },
+};
+
+const tic_name tic_step_mode_names[] =
+{
+  { "1", TIC_STEP_MODE_MICROSTEP1 },
+  { "2", TIC_STEP_MODE_MICROSTEP2 },
+  { "4", TIC_STEP_MODE_MICROSTEP4 },
+  { "8", TIC_STEP_MODE_MICROSTEP8 },
+  { "16", TIC_STEP_MODE_MICROSTEP16 },
+  { "32", TIC_STEP_MODE_MICROSTEP32 },
+  { "full", TIC_STEP_MODE_FULL },
+  { "half", TIC_STEP_MODE_HALF },
+  { NULL, 0 },
+};
+
+const tic_name tic_pin_state_names[] =
+{
+  { "high_impedance", TIC_PIN_STATE_HIGH_IMPEDANCE },
+  { "pulled_up", TIC_PIN_STATE_PULLED_UP },
+  { "output_low", TIC_PIN_STATE_OUTPUT_LOW },
+  { "output_high", TIC_PIN_STATE_OUTPUT_HIGH },
+  { NULL, 0},
+};
+
+const tic_name tic_planning_mode_names[] =
+{
+  { "off", TIC_PLANNING_MODE_OFF },
+  { "target_position", TIC_PLANNING_MODE_TARGET_POSITION },
+  { "target_velocity", TIC_PLANNING_MODE_TARGET_VELOCITY },
+  { NULL, 0 },
+};
+
 const tic_name tic_control_mode_names[] =
 {
   { "serial", TIC_CONTROL_MODE_SERIAL },
@@ -34,27 +113,6 @@ const tic_name tic_scaling_degree_names[] =
   { NULL, 0 },
 };
 
-const tic_name tic_microstepping_mode_names[] = // TODO: rename table to tic_step_mode_names
-{
-  { "1", TIC_STEP_MODE_MICROSTEP1 },
-  { "2", TIC_STEP_MODE_MICROSTEP2 },
-  { "4", TIC_STEP_MODE_MICROSTEP4 },
-  { "8", TIC_STEP_MODE_MICROSTEP8 },
-  { "16", TIC_STEP_MODE_MICROSTEP16 },
-  { "32", TIC_STEP_MODE_MICROSTEP32 },
-  { "full", TIC_STEP_MODE_FULL },
-  { "half", TIC_STEP_MODE_HALF },
-  { NULL, 0 },
-};
-
-const tic_name tic_decay_mode_names[] =
-{
-  { "mixed", TIC_DECAY_MODE_MIXED },
-  { "slow", TIC_DECAY_MODE_SLOW },
-  { "fast", TIC_DECAY_MODE_FAST },
-  { NULL, 0 },
-};
-
 const tic_name tic_pin_config_names[] =
 {
   { "pullup", 1 << TIC_PIN_PULLUP },
@@ -72,17 +130,52 @@ const tic_name tic_pin_config_names[] =
   { NULL, 0 },
 };
 
-const char * tic_convert_decay_mode_to_string(uint8_t decay_mode)
+const char * tic_look_up_error_string(uint32_t error)
 {
   const char * str;
-  tic_code_to_name(tic_decay_mode_names, decay_mode, &r);
+  tic_code_to_name(tic_error_names, error, &str);
   return str;
 }
 
-const char * tic_convert_device_reset_to_string(uint8_t device_reset)
+const char * tic_look_up_decay_mode_string(uint8_t decay_mode)
+{
+  const char * str;
+  tic_code_to_name(tic_decay_mode_names, decay_mode, &str);
+  return str;
+}
+
+const char * tic_look_up_device_reset_string(uint8_t device_reset)
 {
   const char * str;
   tic_code_to_name(tic_device_reset_names, device_reset, &str);
+  return str;
+}
+
+const char * tic_look_up_operation_state_string(uint8_t operation_state)
+{
+  const char * str;
+  tic_code_to_name(tic_operation_state_names, operation_state, &str);
+  return str;
+}
+
+const char * tic_look_up_step_mode_string(uint8_t step_mode)
+{
+  const char * str;
+  tic_code_to_name(tic_step_mode_names, step_mode, &str);
+  return str;
+}
+
+const char * tic_look_up_pin_state_string(uint8_t pin_state)
+{
+  const char * str;
+  tic_code_to_name(tic_pin_state_names, pin_state, &str);
+  return str;
+}
+
+const char * tic_look_up_planning_mode_string(uint8_t planning_mode)
+{
+  const char * str;
+  tic_code_to_name(tic_planning_mode_names, planning_mode, &str);
   return str;
 }
 

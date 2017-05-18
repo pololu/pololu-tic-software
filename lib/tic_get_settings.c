@@ -218,8 +218,8 @@ static void write_buffer_to_settings(const uint8_t * buf, tic_settings * setting
   }
 
   {
-    uint8_t microstepping_mode = buf[TIC_SETTING_MICROSTEPPING_MODE];
-    tic_settings_microstepping_mode_set(settings, microstepping_mode);
+    uint8_t step_mode = buf[TIC_SETTING_STEP_MODE];
+    tic_settings_step_mode_set(settings, step_mode);
   }
 
   {

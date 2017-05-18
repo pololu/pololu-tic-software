@@ -502,14 +502,14 @@ static tic_error * apply_string_pair(tic_settings * settings,
     }
     tic_settings_current_limit_set(settings, current_limit);
   }
-  else if (!strcmp(key, "microstepping_mode"))
+  else if (!strcmp(key, "step_mode"))
   {
-    uint32_t microstepping_mode;
-    if (!tic_name_to_code(tic_microstepping_mode_names, value, &microstepping_mode))
+    uint32_t step_mode;
+    if (!tic_name_to_code(tic_step_mode_names, value, &step_mode))
     {
-      return tic_error_create("Invalid microstepping_mode value.");
+      return tic_error_create("Invalid step_mode value.");
     }
-    tic_settings_microstepping_mode_set(settings, microstepping_mode);
+    tic_settings_step_mode_set(settings, step_mode);
   }
   else if (!strcmp(key, "decay_mode"))
   {

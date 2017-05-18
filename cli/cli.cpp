@@ -185,6 +185,19 @@ static void print_list(device_selector & selector)
   }
 }
 
+static void print_errors(uint32_t errors, const char * error_set_name)
+{
+  std::cout << error_set_name << ":" << std::endl;
+  for (uint32_t i = 0; i < 32; i++)
+  {
+    uint32_t error = (1 << i);
+    if (errors & error)
+    {
+      std::cout << tic_look_up_error_string(error) << std::endl;
+    }
+  }
+}
+
 static void print_status(device_selector & selector)
 {
   tic::device device = selector.select_device();
@@ -193,11 +206,11 @@ static void print_status(device_selector & selector)
   bool clear_events = true;
   tic::variables vars = handle.get_variables(clear_events);
 
-  // The output here is YAML so that people can more easily write scripts that
-  // use it.
-
   int left_column_width = 41;
   auto left_column = std::setw(left_column_width);
+
+  // The output here is YAML so that people can more easily write scripts that
+  // use it.
 
   std::cout << std::left << std::setfill(' ');
 
@@ -211,13 +224,13 @@ static void print_status(device_selector & selector)
             << firmware_version << std::endl;
 
   std::cout << left_column << "Last reset: "
-            << tic_convert_device_reset_to_string(vars.get_device_reset())
+            << tic_look_up_device_reset_string(vars.get_device_reset())
             << std::endl;
 
   std::cout << std::endl;
 
   std::cout << left_column << "Operation state:"
-            << tic_convert_operation_state_to_string(vars.get_operation_state())
+            << tic_look_up_operation_state_string(vars.get_operation_state())
             << std::endl;
 
   print_errors(vars.get_error_status(),
@@ -227,8 +240,8 @@ static void print_status(device_selector & selector)
 
   std::cout << std::endl;
 
-  std::cout << left_column << "Stepper mode:"
-            << tic_convert_stepper_mode_to_string(vars.get_stepper_mode())
+  std::cout << left_column << "Planning mode:"
+            << tic_look_up_planning_mode_string(vars.get_planning_mode())
             << std::endl;
 
   std::cout << left_column << "Target position:"
@@ -272,7 +285,7 @@ static void print_status(device_selector & selector)
             << std::endl;
 
   std::cout << left_column << "Encoder position: "
-            << vars.get_enoder_position()
+            << vars.get_encoder_position()
             << std::endl;
 
   std::cout << left_column << "RC pulse width: "
@@ -312,7 +325,7 @@ static void print_status(device_selector & selector)
             << std::endl;
 
   std::cout << left_column << "Digital reading on RC:"
-            << vars.get_digital_reading_rc(TIC_PIN_NUM_RC)
+            << vars.get_digital_reading(TIC_PIN_NUM_RC)
             << std::endl;
 
   std::cout << left_column << "Switch on SCL:"
@@ -336,32 +349,32 @@ static void print_status(device_selector & selector)
             << std::endl;
 
   std::cout << left_column << "Pin state for SCL:"
-            << tic_convert_pin_state_to_string(vars.get_pin_state(TIC_PIN_NUM_SCL))
+            << tic_look_up_pin_state_string(vars.get_pin_state(TIC_PIN_NUM_SCL))
             << std::endl;
 
   std::cout << left_column << "Pin state for SDA:"
-            << tic_convert_pin_state_to_string(vars.get_pin_state(TIC_PIN_NUM_SDA))
+            << tic_look_up_pin_state_string(vars.get_pin_state(TIC_PIN_NUM_SDA))
             << std::endl;
 
   std::cout << left_column << "Pin state for TX:"
-            << tic_convert_pin_state_to_string(vars.get_pin_state(TIC_PIN_NUM_TX))
+            << tic_look_up_pin_state_string(vars.get_pin_state(TIC_PIN_NUM_TX))
             << std::endl;
 
   std::cout << left_column << "Pin state for RX:"
-            << tic_convert_pin_state_to_string(vars.get_pin_state(TIC_PIN_NUM_RX))
+            << tic_look_up_pin_state_string(vars.get_pin_state(TIC_PIN_NUM_RX))
             << std::endl;
 
   // Even though it cannot actually be set, let's display it for the curious.
   std::cout << left_column << "Pin state for RC:"
-            << tic_convert_pin_state_to_string(vars.get_pin_state(TIC_PIN_NUM_RC))
+            << tic_look_up_pin_state_string(vars.get_pin_state(TIC_PIN_NUM_RC))
             << std::endl;
 
   std::cout << left_column << "Step mode:"
-            << tic_convert_step_mode_to_string(vars.get_step_mode())
+            << tic_look_up_step_mode_string(vars.get_step_mode())
             << std::endl;
 
   std::cout << left_column << "Decay mode:"
-            << tic_convert_decay_mode_to_string(vars.get_decay_mode())
+            << tic_look_up_decay_mode_string(vars.get_decay_mode())
             << std::endl;
 
   std::cout << std::endl;

@@ -256,15 +256,14 @@ tic_error * tic_settings_to_string(const tic_settings * settings, char ** string
   }
 
   {
-    uint8_t mode = tic_settings_microstepping_mode_get(settings);
-    const char * mode_str;
-    tic_code_to_name(tic_microstepping_mode_names, mode, &mode_str);
-    tic_sprintf(&str, "microstepping_mode: %s\n", mode_str);
+    uint8_t mode = tic_settings_step_mode_get(settings);
+    const char * mode_str = tic_look_up_step_mode_string(mode);
+    tic_sprintf(&str, "step_mode: %s\n", mode_str);
   }
 
   {
     uint8_t decay_mode = tic_settings_decay_mode_get(settings);
-    const char * decay_mode_str = tic_convert_decay_mode_to_string(decay_mode);
+    const char * decay_mode_str = tic_look_up_decay_mode_string(decay_mode);
     tic_sprintf(&str, "decay_mode: %s\n", decay_mode_str);
   }
 

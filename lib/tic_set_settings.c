@@ -178,8 +178,8 @@ static void write_settings_to_buffer(const tic_settings * settings, uint8_t * bu
   buf[TIC_SETTING_CURRENT_LIMIT] =
     tic_current_limit_to_code(tic_settings_current_limit_get(settings));
 
-  buf[TIC_SETTING_MICROSTEPPING_MODE] =
-    tic_settings_microstepping_mode_get(settings);
+  buf[TIC_SETTING_STEP_MODE] =
+    tic_settings_step_mode_get(settings);
 
   buf[TIC_SETTING_DECAY_MODE] = tic_settings_decay_mode_get(settings);
 

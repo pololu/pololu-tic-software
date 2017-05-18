@@ -92,16 +92,67 @@ extern "C" {
 // TODO: uint32_t tic_ez_set_target_speed(int32_t);
 // TODO: uint32_t tic_ez_set_target_position(int32_t);
 
-/// Looks up the string corresponding to the specified decay mode, e.g. "mixed".
-/// The decay_mode argument should be one of the TIC_DECAY_MODE_* macros, but if
-/// it is not, this function returns an empty string.  The returned string will
-/// be valid indefinitely and should not be freed.
-const char * tic_convert_decay_mode_to_string(uint8_t decay_mode);
-
 /// Certain functions in the library return a newly-created string and require
 /// the caller to call this function to free the string.  Passing a NULL pointer
 /// to this function is OK.  Do not free the same non-NULL string twice.
 void tic_string_free(char *);
+
+
+// Name lookup //////////////////////////////////////////////////////////////////
+
+/// Looks up the string corresponding to the specified error bit,
+/// e.g. "safe_start_violation".  The error argument should be of the form (1 <<
+/// x) where x is one of the TIC_ERROR_* macros, but if it is not, this function
+/// returns an empty string.  The returned string will be valid indefinitely and
+/// should not be freed.
+TIC_API
+const char * tic_look_up_error_string(uint32_t error);
+
+/// Looks up the string corresponding to the specified decay mode, e.g. "mixed".
+/// The decay_mode argument should be one of the TIC_DECAY_MODE_* macros, but if
+/// it is not, this function returns an empty string.  The returned string will
+/// be valid indefinitely and should not be freed.
+TIC_API
+const char * tic_look_up_decay_mode_string(uint8_t decay_mode);
+
+/// Looks up the string corresponding to the specified device reset,
+/// e.g. "stack_underflow".  The device_reset argument should be one of the
+/// TIC_RESET_* macros, but if it is not, this function returns an empty string.
+/// The returned string will be valid indefinitely and should not be freed.
+TIC_API
+const char * tic_look_up_device_reset_string(uint8_t device_reset);
+
+/// Looks up the string corresponding to the specified operation state,
+/// e.g. "holding".  The operation_state argument should be one of the
+/// TIC_OPERATION_STATE_* macros, but if it is not, this function returns an
+/// empty string.  The returned string will be valid indefinitely and should not
+/// be freed.
+TIC_API
+const char * tic_look_up_operation_state_string(uint8_t operation_state);
+
+/// Looks up the string corresponding to the specified step mode,
+/// e.g. "microstep32".  The step_mode argument should be one of the
+/// TIC_STEP_MODE_* macros, but if it is not, this functions returns an empty
+/// string.  The returned string will be valid indefinitely and should not be
+/// freed.
+TIC_API
+const char * tic_look_up_step_mode_string(uint8_t step_mode);
+
+/// Looks up the string corresponding to the specified pin state,
+/// e.g. "output_low".  The pin_state argument should be one of the
+/// TIC_PIN_STATE_* macros, but if it is not, this functions returns an empty
+/// string.  The returned string will be valid indefinitely and should not be
+/// freed.
+TIC_API
+const char * tic_look_up_pin_state_string(uint8_t pin_state);
+
+/// Looks up the string corresponding to the specified planning mode,
+/// e.g. "target_position".  The pin_state argument should be one of the
+/// TIC_PLANNING_MODE_* macros, but if it is not, this functions returns an empty
+/// string.  The returned string will be valid indefinitely and should not be
+/// freed.
+TIC_API
+const char * tic_look_up_planning_mode_string(uint8_t planning_mode);
 
 
 // tic_error ////////////////////////////////////////////////////////////////////
@@ -880,18 +931,17 @@ void tic_settings_current_limit_set(tic_settings *, uint32_t);
 TIC_API
 uint32_t tic_settings_current_limit_get(const tic_settings *);
 
-/// Sets the microstepping mode, which is the number of microsteps that
-/// corresponds to one step.  This should be one of the TIC_MICROSTEPPING_MODE_*
-/// macros, but not all microstepping modes are supported on all products.  If you
-/// specify an invalid or unsupported mode to this function, you can fix it with
-/// tic_settings_fix().
+/// Sets the step mode, also known as the microstepping mode.  This should be
+/// one of the TIC_STEP_MODE_* macros, but not all step modes
+/// are supported on all products.  If you specify an invalid or unsupported
+/// mode to this function, you can fix it with tic_settings_fix().
 TIC_API
-void tic_settings_microstepping_mode_set(tic_settings *, uint8_t);
+void tic_settings_step_mode_set(tic_settings *, uint8_t);
 
-/// Gets the microstepping mode described in
-/// tic_settings_microstepping_mode_set().
+/// Gets the step mode described in
+/// tic_settings_step_mode_set().
 TIC_API
-uint8_t tic_settings_microstepping_mode_get(const tic_settings *);
+uint8_t tic_settings_step_mode_get(const tic_settings *);
 
 /// Sets the decay mode.  The argument should be TIC_DECAY_MIXED,
 /// TIC_DELAY_SLOW, or TIC_DECAY_FAST.
