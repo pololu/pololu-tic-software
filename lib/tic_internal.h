@@ -66,6 +66,11 @@ extern const tic_name tic_decay_mode_names[];
 extern const tic_name tic_pin_config_names[];
 
 
+// Intenral variables functions.
+
+void tic_variables_set_from_device(tic_variables *, const uint8_t * buffer);
+
+
 // Internal settings conversion functions.
 
 uint32_t tic_baud_rate_from_brg(uint16_t brg);
@@ -82,11 +87,14 @@ tic_device_get_generic_interface(const tic_device * device);
 
 // Internal tic_handle functions.
 
-tic_error * tic_write_setting_byte(tic_handle * handle,
+tic_error * tic_set_setting_byte(tic_handle * handle,
   uint8_t address, uint8_t byte);
 
-tic_error * read_settings(tic_handle * handle,
+tic_error * tic_get_setting_segment(tic_handle * handle,
   uint8_t address, size_t length, uint8_t * output);
+
+tic_error * tic_get_variable_segment(tic_handle *handle,
+  bool clear_errors_occurred, size_t index, size_t length, uint8_t * buf);
 
 
 // Error creation functions.

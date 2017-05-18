@@ -37,7 +37,7 @@ tic_error * tic_variables_create(tic_variables ** variables)
 {
   if (variables == NULL)
   {
-    return tic_error_create("Variables output pointer is NULL.");
+    return tic_error_create("Variables output pointer is null.");
   }
 
   *variables = NULL;
@@ -66,7 +66,7 @@ tic_error * tic_variables_copy(const tic_variables * source, tic_variables ** de
 {
   if (dest == NULL)
   {
-    return tic_error_create("Variables output pointer is NULL.");
+    return tic_error_create("Variables output pointer is null.");
   }
 
   *dest = NULL;
@@ -105,6 +105,71 @@ void tic_variables_free(tic_variables * variables)
 {
   free(variables);
 }
+
+static void write_buffer_to_variables(const uint8_t * buf, tic_variables * variables)
+{
+  assert(variables != NULL);
+  assert(buf != NULL);
+
+  // TODO:
+}
+
+tic_error * tic_get_variables(tic_handle * handle, tic_variables ** variables,
+  bool clear_errors_occurred)
+{
+  if (variables == NULL)
+  {
+    return tic_error_create("Variables output pointer is null.");
+  }
+
+  *variables = NULL;
+
+  if (handle == NULL)
+  {
+    return tic_error_create("Handle is null.");
+  }
+
+  tic_error * error = NULL;
+
+  // Create a variables object.
+  tic_variables * new_variables = NULL;
+  if (error == NULL)
+  {
+    error = tic_variables_create(&new_variables);
+  }
+
+  // Read all the variables from the device.
+  uint8_t buf[TIC_VARIABLES_SIZE];
+  if (error == NULL)
+  {
+    size_t index = 0;
+    error = tic_get_variable_segment(handle, clear_errors_occurred, index, sizeof(buf), buf);
+  }
+
+  // Store the variables in the new variables object.
+  if (error == NULL)
+  {
+    write_buffer_to_variables(buf, new_variables);
+  }
+
+  // Pass the new variables to the caller.
+  if (error == NULL)
+  {
+    *variables = new_variables;
+    new_variables = NULL;
+  }
+
+  tic_variables_free(new_variables);
+
+  if (error != NULL)
+  {
+    error = tic_error_add(error,
+      "There was an error reading variables from the device.");
+  }
+
+  return error;
+}
+
 
 uint8_t tic_variables_get_operation_state(const tic_variables * variables)
 {

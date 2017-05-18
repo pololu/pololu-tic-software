@@ -95,7 +95,7 @@ tic_error * tic_settings_create(tic_settings ** settings)
 {
   if (settings == NULL)
   {
-    return tic_error_create("Settings output pointer is NULL.");
+    return tic_error_create("Settings output pointer is null.");
   }
 
   *settings = NULL;
@@ -129,7 +129,7 @@ tic_error * tic_settings_copy(const tic_settings * source, tic_settings ** dest)
 {
   if (dest == NULL)
   {
-    return tic_error_create("Settings output pointer is NULL.");
+    return tic_error_create("Settings output pointer is null.");
   }
 
   *dest = NULL;
@@ -661,7 +661,7 @@ tic_error * tic_settings_fix(tic_settings * settings, char ** warnings)
 
   if (settings == NULL)
   {
-    return tic_error_create("Tic settings pointer is NULL.");
+    return tic_error_create("Tic settings pointer is null.");
   }
 
   // Make a string to store the warnings we accumulate in this function.

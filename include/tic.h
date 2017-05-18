@@ -1114,7 +1114,7 @@ const char * tic_get_firmware_version_string(tic_handle *);
 /// functions.
 TIC_API TIC_WARN_UNUSED
 tic_error * tic_get_variables(tic_handle *, tic_variables ** variables,
-  bool clear_events);
+  bool clear_errors_occurred);
 
 /// Reads all of the Tic's non-volatile settings and returns them as an object.
 ///

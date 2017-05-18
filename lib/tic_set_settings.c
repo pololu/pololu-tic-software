@@ -1,6 +1,6 @@
 #include "tic_internal.h"
 
-static void write_settings_to_buffer(const tic_settings * settings, uint8_t * buf)
+static void tic_write_settings_to_buffer(const tic_settings * settings, uint8_t * buf)
 {
   assert(settings != NULL);
   assert(buf != NULL);
@@ -228,12 +228,12 @@ tic_error * tic_set_settings(tic_handle * handle, const tic_settings * settings)
 {
   if (handle == NULL)
   {
-    return tic_error_create("Handle is NULL.");
+    return tic_error_create("Handle is null.");
   }
 
   if (settings == NULL)
   {
-    return tic_error_create("Settings object is NULL.");
+    return tic_error_create("Settings object is null.");
   }
 
   tic_error * error = NULL;
@@ -256,14 +256,14 @@ tic_error * tic_set_settings(tic_handle * handle, const tic_settings * settings)
   }
 
   // Construct a buffer holding the bytes we want to write.
-  uint8_t buf[TIC_HIGHEST_SETTING_ADDRESS + 1];
+  uint8_t buf[TIC_SETTINGS_SIZE];
   memset(buf, 0, sizeof(buf));
-  write_settings_to_buffer(fixed_settings, buf);
+  tic_write_settings_to_buffer(fixed_settings, buf);
 
   // Write the bytes to the device.
   for (uint8_t i = 1; i < sizeof(buf) && error == NULL; i++)
   {
-    error = tic_write_setting_byte(handle, i, buf[i]);
+    error = tic_set_setting_byte(handle, i, buf[i]);
   }
 
   tic_settings_free(fixed_settings);

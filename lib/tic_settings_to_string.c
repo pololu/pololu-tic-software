@@ -37,14 +37,14 @@ tic_error * tic_settings_to_string(const tic_settings * settings, char ** string
 {
   if (string == NULL)
   {
-    return tic_error_create("String output pointer is NULL.");
+    return tic_error_create("String output pointer is null.");
   }
 
   *string = NULL;
 
   if (settings == NULL)
   {
-    return tic_error_create("Settings pointer is NULL.");
+    return tic_error_create("Settings pointer is null.");
   }
 
   tic_error * error = NULL;

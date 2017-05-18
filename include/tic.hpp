@@ -558,10 +558,10 @@ namespace tic
     }
 
     /// Wrapper for tic_get_variables().
-    variables get_variables(bool clear_events)
+    variables get_variables(bool clear_errors_occurred)
     {
       tic_variables * v;
-      throw_if_needed(tic_get_variables(pointer, &v, clear_events));
+      throw_if_needed(tic_get_variables(pointer, &v, clear_errors_occurred));
       return variables(v);
     }
 

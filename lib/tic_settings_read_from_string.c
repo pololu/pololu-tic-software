@@ -743,12 +743,12 @@ tic_error * tic_settings_read_from_string(const char * string,
 
   if (string == NULL)
   {
-    return tic_error_create("Settings input string is NULL.");
+    return tic_error_create("Settings input string is null.");
   }
 
   if (settings == NULL)
   {
-    return tic_error_create("Settings output pointer is NULL.");
+    return tic_error_create("Settings output pointer is null.");
   }
 
   tic_error * error = NULL;

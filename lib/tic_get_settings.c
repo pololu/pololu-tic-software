@@ -263,14 +263,14 @@ tic_error * tic_get_settings(tic_handle * handle, tic_settings ** settings)
 {
   if (settings == NULL)
   {
-    return tic_error_create("Settings output pointer is NULL.");
+    return tic_error_create("Settings output pointer is null.");
   }
 
   *settings = NULL;
 
   if (handle == NULL)
   {
-    return tic_error_create("Handle is NULL.");
+    return tic_error_create("Handle is null.");
   }
 
   tic_error * error = NULL;
@@ -291,23 +291,23 @@ tic_error * tic_get_settings(tic_handle * handle, tic_settings ** settings)
   }
 
   // Read all the settings from the device into a buffer.
-  uint8_t buf[TIC_HIGHEST_SETTING_ADDRESS + 1];
+  uint8_t buf[TIC_SETTINGS_SIZE];
   {
     memset(buf, 0, sizeof(buf));
     size_t index = 1;
     while (index < sizeof(buf) && error == NULL)
     {
-      size_t length = 32;
+      size_t length = TIC_MAX_USB_RESPONSE_SIZE;
       if (index + length > sizeof(buf))
       {
         length = sizeof(buf) - index;
       }
-      error = read_settings(handle, index, length, buf + index);
+      error = tic_get_setting_segment(handle, index, length, buf + index);
       index += length;
     }
   }
 
-  // Store the in the new settings object.
+  // Store the settings in the new settings object.
   if (error == NULL)
   {
     write_buffer_to_settings(buf, new_settings);

@@ -11,7 +11,7 @@ tic_error * tic_handle_open(const tic_device * device, tic_handle ** handle)
 {
   if (handle == NULL)
   {
-    return tic_error_create("Handle output pointer is NULL.");
+    return tic_error_create("Handle output pointer is null.");
   }
 
   *handle = NULL;
@@ -163,26 +163,26 @@ const char * tic_get_firmware_version_string(tic_handle * handle)
   return new_string;
 }
 
-tic_error * tic_write_setting_byte(tic_handle * handle,
+tic_error * tic_set_setting_byte(tic_handle * handle,
   uint8_t address, uint8_t byte)
 {
   assert(handle != NULL);
 
   tic_error * error = tic_usb_error(libusbp_control_transfer(handle->usb_handle,
-    0x40, TIC_CMD_WRITE_SETTING, byte, address, NULL, 0, NULL));
+    0x40, TIC_CMD_SET_SETTING, byte, address, NULL, 0, NULL));
   return error;
 }
 
-tic_error * read_settings(tic_handle * handle,
-  uint8_t address, size_t length, uint8_t * output)
+tic_error * tic_get_setting_segment(tic_handle * handle,
+  uint8_t index, size_t length, uint8_t * output)
 {
   assert(handle != NULL);
   assert(output != NULL);
-  assert(length && length <= 32);
+  assert(length && length <= TIC_MAX_USB_RESPONSE_SIZE);
 
   size_t transferred;
   tic_error * error = tic_usb_error(libusbp_control_transfer(handle->usb_handle,
-    0xC0, TIC_CMD_READ_SETTING, 0, address, output, length, &transferred));
+    0xC0, TIC_CMD_GET_SETTING, 0, index, output, length, &transferred));
   if (error != NULL)
   {
     return error;
@@ -198,15 +198,47 @@ tic_error * read_settings(tic_handle * handle,
   return NULL;
 }
 
+tic_error * tic_get_variable_segment(tic_handle *handle,
+  bool clear_errors_occurred, size_t index, size_t length, uint8_t * output)
+{
+  assert(handle != NULL);
+  assert(output != NULL);
+  assert(length && length <= TIC_MAX_USB_RESPONSE_SIZE);
+
+  uint8_t cmd = TIC_CMD_GET_VARIABLE;
+  if (clear_errors_occurred)
+  {
+    cmd = TIC_CMD_GET_VARIABLE_AND_CLEAR_ERRORS_OCCURRED;
+  }
+
+  size_t transferred;
+  tic_error * error = tic_usb_error(libusbp_control_transfer(handle->usb_handle,
+    0xC0, cmd, 0, index, output, length, &transferred));
+  if (error != NULL)
+  {
+    return error;
+  }
+
+  if (transferred != length)
+  {
+    return tic_error_create(
+      "Failed to read variables with command 0x%x.  Expected %u bytes, got %u.\n",
+      cmd, (unsigned int)length, (unsigned int)transferred);
+  }
+
+  return NULL;
+}
+
+
 tic_error * tic_restore_defaults(tic_handle * handle)
 {
   if (handle == NULL)
   {
-    return tic_error_create("Handle is NULL.");
+    return tic_error_create("Handle is null.");
   }
 
   tic_error * error = NULL;
-  error = tic_write_setting_byte(handle, TIC_SETTING_NOT_INITIALIZED, 1);
+  error = tic_set_setting_byte(handle, TIC_SETTING_NOT_INITIALIZED, 1);
 
   if (error != NULL)
   {
@@ -226,7 +258,7 @@ tic_error * tic_reinitialize(tic_handle * handle)
 {
   if (handle == NULL)
   {
-    return tic_error_create("Handle is NULL.");
+    return tic_error_create("Handle is null.");
   }
 
   tic_error * error = tic_usb_error(libusbp_control_transfer(handle->usb_handle,
