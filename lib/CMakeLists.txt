@@ -39,6 +39,7 @@ add_library (lib SHARED
   tic_settings_read_from_string.c
   tic_settings_to_string.c
   tic_string.c
+  tic_variables.c
 )
 
 #include_directories (

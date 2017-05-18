@@ -14,21 +14,20 @@
 /// - tic_handle_close()
 /// - tic_device_free()
 ///
-/// If you want to use this library to control the position or speed of a
-/// stepper motor over USB, see these functions:
+/// If you want to control the position or speed of a stepper motor over USB,
+/// see these functions:
 ///
 /// - tic_set_target_speed()
 /// - tic_get_target_position()
 ///
-/// If you want to use this library to get the current status of the Tic,
-/// include analog and digital readings from its pins, the current position of
-/// the stepper motor, and any errors, see these functions:
+/// If you want to get the current status of the Tic, include analog and digital
+/// readings from its pins, the current position of the stepper motor, and any
+/// errors, see these functions:
 ///
 /// - tic_get_variables()
 /// - tic_variables_free()
 ///
-/// If you want to use this library to change the settings of the Tic, see these
-/// functions:
+/// If you want to change the settings of the Tic, see these functions:
 ///
 /// - tic_get_settings()
 /// - tic_set_settings()
@@ -36,9 +35,9 @@
 /// - tic_reinitialize()
 /// - tic_settings_free()
 ///
-/// Most library functions return a tic_error pointer if an error happens.  You
-/// can use these functions to get detailed error information and free the
-/// error:
+/// Most library functions return a tic_error pointer if an error happens.  To
+/// avoid memory leaks, you must free the error when that happens.  You can use
+/// these functions to get detailed error information and free the error:
 ///
 /// - tic_error_get_message()
 /// - tic_error_has_code()
@@ -328,7 +327,7 @@ int32_t tic_variables_get_acting_target_position(const tic_variables *);
 /// Each timer tick represents one third of a microsecond.  The Tic only updates
 /// this variable every 5 milliseconds or so.
 TIC_API
-int32_t tic_variables_get_time_since_last_step(const tic_variables *);
+uint32_t tic_variables_get_time_since_last_step(const tic_variables *);
 
 /// Gets the cause of the controller's last reset.
 ///
@@ -351,6 +350,24 @@ int32_t tic_variables_get_encoder_position(const tic_variables *);
 /// Gets the reading from the RC pulse input, in units of twelfth microseconds.
 TIC_API
 uint16_t tic_variables_get_rc_pulse_width(const tic_variables *);
+
+/// Gets the current step mode of the Tic.
+///
+/// Note that this is the current mode.  To get the default mode at startup,
+/// see tic_settings_get_step_mode().
+///
+/// The return value is one of the TIC_STEP_MODE_* macros.
+TIC_API
+uint8_t tic_variables_get_step_mode(const tic_variables *);
+
+/// Gets the current decay mode of the Tic.
+///
+/// Note that this is the current decay mode.  To get the default decay mode at
+/// startup, see tic_settings_get_decay_mode().
+///
+/// The return value is one of the TIC_DECAY_MODE_* macros.
+TIC_API
+uint8_t tic_variables_get_decay_mode(const tic_variables *);
 
 /// Gets the analog reading from the specified pin, if analog readings are
 /// enabled for that pin.
@@ -384,25 +401,7 @@ bool tic_variables_get_switch_status(const tic_variables *, uint8_t pin);
 ///
 /// The return value is one of the TIC_PIN_STATE_* macros.
 TIC_API
-uint16_t tic_variables_get_pin_state(const tic_variables *, uint8_t pin);
-
-/// Gets the current step mode of the Tic.
-///
-/// Note that this is the current mode.  To get the default mode at startup,
-/// see tic_settings_get_step_mode().
-///
-/// The return value is one of the TIC_STEP_MODE_* macros.
-TIC_API
-uint8_t tic_variables_get_step_mode(const tic_variables *);
-
-/// Gets the current decay mode of the Tic.
-///
-/// Note that this is the current decay mode.  To get the default decay mode at
-/// startup, see tic_settings_get_decay_mode().
-///
-/// The return value is one of the TIC_DECAY_MODE_* macros.
-TIC_API
-uint8_t tic_variables_get_decay_mode(const tic_variables *);
+uint8_t tic_variables_get_pin_state(const tic_variables *, uint8_t pin);
 
 
 // tic_settings ////////////////////////////////////////////////////////////////

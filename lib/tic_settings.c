@@ -120,6 +120,11 @@ tic_error * tic_settings_create(tic_settings ** settings)
   return error;
 }
 
+void tic_settings_free(tic_settings * settings)
+{
+  free(settings);
+}
+
 tic_error * tic_settings_copy(const tic_settings * source, tic_settings ** dest)
 {
   if (dest == NULL)
@@ -157,11 +162,6 @@ tic_error * tic_settings_copy(const tic_settings * source, tic_settings ** dest)
   tic_settings_free(new_settings);
 
   return error;
-}
-
-void tic_settings_free(tic_settings * settings)
-{
-  free(settings);
 }
 
 static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings)
