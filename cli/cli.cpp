@@ -212,6 +212,8 @@ static void print_status(device_selector & selector)
   // The output here is YAML so that people can more easily write scripts that
   // use it.
 
+  // TODO: make it pretty, or make it ugly, just make it consistent
+
   std::cout << std::left << std::setfill(' ');
 
   std::cout << left_column << "Model: "
@@ -229,49 +231,49 @@ static void print_status(device_selector & selector)
 
   std::cout << std::endl;
 
-  std::cout << left_column << "Operation state:"
+  std::cout << left_column << "Operation state: "
             << tic_look_up_operation_state_string(vars.get_operation_state())
             << std::endl;
 
   print_errors(vars.get_error_status(),
     "Errors currently stopping the motor");
-  print_errors(vars.get_error_occurred(),
+  print_errors(vars.get_errors_occurred(),
     "Errors that occurred since last check");
 
   std::cout << std::endl;
 
-  std::cout << left_column << "Planning mode:"
+  std::cout << left_column << "Planning mode: "
             << tic_look_up_planning_mode_string(vars.get_planning_mode())
             << std::endl;
 
-  std::cout << left_column << "Target position:"
+  std::cout << left_column << "Target position: "
             << vars.get_target_position() << std::endl;
 
-  std::cout << left_column << "Target velocity:"
+  std::cout << left_column << "Target velocity: "
             << vars.get_target_velocity() << std::endl;
 
-  std::cout << left_column << "Speed min:"
+  std::cout << left_column << "Speed min: "
             << vars.get_speed_min() << std::endl;
 
-  std::cout << left_column << "Speed max:"
+  std::cout << left_column << "Speed max: "
             << vars.get_speed_max() << std::endl;
 
-  std::cout << left_column << "Decel max:"
+  std::cout << left_column << "Decel max: "
             << vars.get_decel_max() << std::endl;
 
-  std::cout << left_column << "Accel max:"
+  std::cout << left_column << "Accel max: "
             << vars.get_accel_max() << std::endl;
 
-  std::cout << left_column << "Current position:"
+  std::cout << left_column << "Current position: "
             << vars.get_current_position() << std::endl;
 
-  std::cout << left_column << "Current velocity:"
+  std::cout << left_column << "Current velocity: "
             << vars.get_current_velocity() << std::endl;
 
-  std::cout << left_column << "Acting target position:"
+  std::cout << left_column << "Acting target position: "
             << vars.get_acting_target_position() << std::endl;
 
-  std::cout << left_column << "Time since last step:"
+  std::cout << left_column << "Time since last step: "
             << vars.get_time_since_last_step() << std::endl;
 
   std::cout << std::endl;
@@ -308,72 +310,72 @@ static void print_status(device_selector & selector)
             << vars.get_analog_reading(TIC_PIN_NUM_RX)
             << std::endl;
 
-  std::cout << left_column << "Digital reading on SCL:"
+  std::cout << left_column << "Digital reading on SCL: "
             << vars.get_digital_reading(TIC_PIN_NUM_SCL)
             << std::endl;
 
-  std::cout << left_column << "Digital reading on SDA:"
+  std::cout << left_column << "Digital reading on SDA: "
             << vars.get_digital_reading(TIC_PIN_NUM_SDA)
             << std::endl;
 
-  std::cout << left_column << "Digital reading on TX:"
+  std::cout << left_column << "Digital reading on TX: "
             << vars.get_digital_reading(TIC_PIN_NUM_TX)
             << std::endl;
 
-  std::cout << left_column << "Digital reading on RX:"
+  std::cout << left_column << "Digital reading on RX: "
             << vars.get_digital_reading(TIC_PIN_NUM_RX)
             << std::endl;
 
-  std::cout << left_column << "Digital reading on RC:"
+  std::cout << left_column << "Digital reading on RC: "
             << vars.get_digital_reading(TIC_PIN_NUM_RC)
             << std::endl;
 
-  std::cout << left_column << "Switch on SCL:"
+  std::cout << left_column << "Switch on SCL: "
             << vars.get_switch_status(TIC_PIN_NUM_SCL)
             << std::endl;
 
-  std::cout << left_column << "Switch on SDA:"
+  std::cout << left_column << "Switch on SDA: "
             << vars.get_switch_status(TIC_PIN_NUM_SDA)
             << std::endl;
 
-  std::cout << left_column << "Switch on TX:"
+  std::cout << left_column << "Switch on TX: "
             << vars.get_switch_status(TIC_PIN_NUM_TX)
             << std::endl;
 
-  std::cout << left_column << "Switch on RX:"
+  std::cout << left_column << "Switch on RX: "
             << vars.get_switch_status(TIC_PIN_NUM_RX)
             << std::endl;
 
-  std::cout << left_column << "Switch on RC:"
+  std::cout << left_column << "Switch on RC: "
             << vars.get_switch_status(TIC_PIN_NUM_RC)
             << std::endl;
 
-  std::cout << left_column << "Pin state for SCL:"
+  std::cout << left_column << "Pin state for SCL: "
             << tic_look_up_pin_state_string(vars.get_pin_state(TIC_PIN_NUM_SCL))
             << std::endl;
 
-  std::cout << left_column << "Pin state for SDA:"
+  std::cout << left_column << "Pin state for SDA: "
             << tic_look_up_pin_state_string(vars.get_pin_state(TIC_PIN_NUM_SDA))
             << std::endl;
 
-  std::cout << left_column << "Pin state for TX:"
+  std::cout << left_column << "Pin state for TX: "
             << tic_look_up_pin_state_string(vars.get_pin_state(TIC_PIN_NUM_TX))
             << std::endl;
 
-  std::cout << left_column << "Pin state for RX:"
+  std::cout << left_column << "Pin state for RX: "
             << tic_look_up_pin_state_string(vars.get_pin_state(TIC_PIN_NUM_RX))
             << std::endl;
 
   // Even though it cannot actually be set, let's display it for the curious.
-  std::cout << left_column << "Pin state for RC:"
+  std::cout << left_column << "Pin state for RC: "
             << tic_look_up_pin_state_string(vars.get_pin_state(TIC_PIN_NUM_RC))
             << std::endl;
 
-  std::cout << left_column << "Step mode:"
+  std::cout << left_column << "Step mode: "
             << tic_look_up_step_mode_string(vars.get_step_mode())
             << std::endl;
 
-  std::cout << left_column << "Decay mode:"
+  std::cout << left_column << "Decay mode: "
             << tic_look_up_decay_mode_string(vars.get_decay_mode())
             << std::endl;
 

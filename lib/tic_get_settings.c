@@ -25,8 +25,7 @@ static void write_buffer_to_settings(const uint8_t * buf, tic_settings * setting
   }
 
   {
-    const uint8_t * p = buf + TIC_SETTING_SERIAL_BAUD_RATE_GENERATOR;
-    uint16_t brg = p[0] + (p[1] << 8);
+    uint16_t brg = read_u16(buf + TIC_SETTING_SERIAL_BAUD_RATE_GENERATOR);
     uint32_t baud_rate = tic_baud_rate_from_brg(brg);
     tic_settings_serial_baud_rate_set(settings, baud_rate);
   }

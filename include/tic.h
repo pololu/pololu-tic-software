@@ -246,7 +246,7 @@ uint16_t tic_variables_get_error_status(const tic_variables *);
 /// This is a bitmask, and the bits are defined by the TIC_ERROR_* macros.  To
 /// learn more about what the different errors mean, see the Tic user's guide.
 TIC_API
-uint32_t tic_variables_get_error_occurred(const tic_variables *);
+uint32_t tic_variables_get_errors_occurred(const tic_variables *);
 
 /// Gets the current planning mode.
 ///
@@ -1107,7 +1107,7 @@ const char * tic_get_firmware_version_string(tic_handle *);
 /// calling tic_variables_free().
 ///
 /// The clear_events parameter should be true if you want to clear the error
-/// occurred bits (see tic_variables_get_error_occurred()) as a side effect of
+/// occurred bits (see tic_variables_get_errors_occurred()) as a side effect of
 /// getting the variables.
 ///
 /// To read information from the variables object, see the tic_variables_get_*

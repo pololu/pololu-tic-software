@@ -110,3 +110,21 @@ tic_error * tic_error_create(const char * format, ...);
 tic_error * tic_usb_error(libusbp_error *);
 
 extern tic_error tic_error_no_memory;
+
+
+// Static helper functions
+
+static inline uint32_t read_u32(const uint8_t * p)
+{
+  return p[0] + (p[1] << 8) + (p[2] << 16) + (p[3] << 24);
+}
+
+static inline int32_t read_i32(const uint8_t * p)
+{
+  return (int32_t)read_u32(p);
+}
+
+static inline uint32_t read_u16(const uint8_t * p)
+{
+  return p[0] + (p[1] << 8);
+}

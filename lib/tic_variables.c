@@ -6,7 +6,7 @@ struct tic_variables
 {
   uint8_t operation_state;
   uint16_t error_status;
-  uint32_t error_occurred;
+  uint32_t errors_occurred;
   uint8_t planning_mode;
   int32_t target_position;
   int32_t target_velocity;
@@ -106,12 +106,72 @@ void tic_variables_free(tic_variables * variables)
   free(variables);
 }
 
-static void write_buffer_to_variables(const uint8_t * buf, tic_variables * variables)
+static void write_buffer_to_variables(const uint8_t * buf, tic_variables * vars)
 {
-  assert(variables != NULL);
+  assert(vars != NULL);
   assert(buf != NULL);
 
-  // TODO:
+  vars->operation_state = buf[TIC_VAR_OPERATION_STATE];
+  vars->error_status = read_u16(buf + TIC_VAR_ERROR_STATUS);
+  vars->errors_occurred = read_u32(buf + TIC_VAR_ERRORS_OCCURRED);
+  vars->planning_mode = buf[TIC_VAR_PLANNING_MODE];
+  vars->target_position = read_i32(buf + TIC_VAR_TARGET_POSITION);
+  vars->target_velocity = read_i32(buf + TIC_VAR_TARGET_VELOCITY);
+  vars->speed_min = read_u32(buf + TIC_VAR_SPEED_MIN);
+  vars->speed_max = read_u32(buf + TIC_VAR_SPEED_MAX);
+  vars->decel_max = read_u32(buf + TIC_VAR_DECEL_MAX);
+  vars->accel_max = read_u32(buf + TIC_VAR_ACCEL_MAX);
+  vars->current_position = read_i32(buf + TIC_VAR_CURRENT_POSITION);
+  vars->current_velocity = read_i32(buf + TIC_VAR_CURRENT_VELOCITY);
+  vars->acting_target_position = read_i32(buf + TIC_VAR_ACTING_TARGET_POSITION);
+  vars->time_since_last_step = read_i32(buf + TIC_VAR_TIME_SINCE_LAST_STEP);
+  vars->device_reset = buf[TIC_VAR_DEVICE_RESET];
+  vars->vin_voltage = read_u16(buf + TIC_VAR_VIN_VOLTAGE);
+  vars->up_time = read_u32(buf + TIC_VAR_UP_TIME);
+  vars->encoder_position = read_i32(buf + TIC_VAR_ENCODER_POSITION);
+  vars->rc_pulse_width = read_u16(buf + TIC_VAR_RC_PULSE_WIDTH);
+  vars->step_mode = buf[TIC_VAR_STEP_MODE];
+  vars->decay_mode = buf[TIC_VAR_DECAY_MODE];
+
+  {
+    uint8_t s = buf[TIC_VAR_SWITCH_STATUS];
+    vars->pin_info[TIC_PIN_NUM_SCL].switch_status = s >> TIC_PIN_NUM_SCL & 1;
+    vars->pin_info[TIC_PIN_NUM_SDA].switch_status = s >> TIC_PIN_NUM_SDA & 1;
+    vars->pin_info[TIC_PIN_NUM_TX].switch_status = s >> TIC_PIN_NUM_TX & 1;
+    vars->pin_info[TIC_PIN_NUM_RX].switch_status = s >> TIC_PIN_NUM_RX & 1;
+    vars->pin_info[TIC_PIN_NUM_RC].switch_status = s >> TIC_PIN_NUM_RC & 1;
+  }
+
+  {
+    uint8_t d = buf[TIC_VAR_DIGITAL_READINGS];
+    vars->pin_info[TIC_PIN_NUM_SCL].digital_reading = d >> TIC_PIN_NUM_SCL & 1;
+    vars->pin_info[TIC_PIN_NUM_SDA].digital_reading = d >> TIC_PIN_NUM_SDA & 1;
+    vars->pin_info[TIC_PIN_NUM_TX].digital_reading = d >> TIC_PIN_NUM_TX & 1;
+    vars->pin_info[TIC_PIN_NUM_RX].digital_reading = d >> TIC_PIN_NUM_RX & 1;
+    vars->pin_info[TIC_PIN_NUM_RC].digital_reading = d >> TIC_PIN_NUM_RC & 1;
+  }
+
+  {
+    uint8_t s = buf[TIC_VAR_PIN_STATES];
+    vars->pin_info[TIC_PIN_NUM_SCL].digital_reading = s >> TIC_PIN_NUM_SCL * 2 & 1;
+    vars->pin_info[TIC_PIN_NUM_SDA].digital_reading = s >> TIC_PIN_NUM_SDA * 2 & 1;
+    vars->pin_info[TIC_PIN_NUM_TX].digital_reading = s >> TIC_PIN_NUM_TX * 2 & 1;
+    vars->pin_info[TIC_PIN_NUM_RX].digital_reading = s >> TIC_PIN_NUM_RX * 2 & 1;
+  }
+
+  vars->pin_info[TIC_PIN_NUM_SCL].analog_reading =
+    read_u16(buf + TIC_VAR_ANALOG_READING_SCL);
+  vars->pin_info[TIC_PIN_NUM_SDA].analog_reading =
+    read_u16(buf + TIC_VAR_ANALOG_READING_SDA);
+  vars->pin_info[TIC_PIN_NUM_TX].analog_reading =
+    read_u16(buf + TIC_VAR_ANALOG_READING_TX);
+  vars->pin_info[TIC_PIN_NUM_RX].analog_reading =
+    read_u16(buf + TIC_VAR_ANALOG_READING_RX);
+
+  // Because of hardware limitations, the RC pin is always a pulled-up input and
+  // it cannot do analog readings.
+  vars->pin_info[TIC_PIN_NUM_RC].digital_reading = TIC_PIN_STATE_PULLED_UP;
+  vars->pin_info[TIC_PIN_NUM_RC].analog_reading = 0;
 }
 
 tic_error * tic_get_variables(tic_handle * handle, tic_variables ** variables,
@@ -183,10 +243,10 @@ uint16_t tic_variables_get_error_status(const tic_variables * variables)
   return variables->error_status;
 }
 
-uint32_t tic_variables_get_error_occurred(const tic_variables * variables)
+uint32_t tic_variables_get_errors_occurred(const tic_variables * variables)
 {
   if (variables == NULL) { return 0; }
-  return variables->error_occurred;
+  return variables->errors_occurred;
 }
 
 uint8_t tic_variables_get_planning_mode(const tic_variables * variables)

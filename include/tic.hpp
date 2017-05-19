@@ -268,10 +268,10 @@ namespace tic
       return tic_variables_get_error_status(pointer);
     }
 
-    /// Wrapper for tic_variables_get_error_occurred().
-    uint32_t get_error_occurred() const noexcept
+    /// Wrapper for tic_variables_get_errors_occurred().
+    uint32_t get_errors_occurred() const noexcept
     {
-      return tic_variables_get_error_occurred(pointer);
+      return tic_variables_get_errors_occurred(pointer);
     }
 
     /// Wrapper for tic_variables_get_planning_mode().
