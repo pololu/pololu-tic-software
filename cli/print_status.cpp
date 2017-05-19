@@ -9,7 +9,7 @@ static std::string pretty_enum(const char * c_str)
 
   if (str == "")
   {
-    return std::string("?");
+    return std::string("(unknown)");
   }
 
   // Replace underscores with spaces.
@@ -25,7 +25,7 @@ static void print_errors(uint32_t errors, const char * error_set_name)
     uint32_t error = (1 << i);
     if (errors & error)
     {
-      std::cout << pretty_enum(tic_look_up_error_string(error)) << std::endl;
+      std::cout << "  - " << pretty_enum(tic_look_up_nice_error_string(error)) << std::endl;
     }
   }
 }
@@ -34,19 +34,21 @@ static void print_pin_info(const tic::variables & vars,
   uint8_t pin, const char * pin_name)
 {
   std::cout<< pin_name << " pin:" << std::endl;
-  std::cout << left_column << "  digital reading: "
+  std::cout << left_column << "  Digital reading: "
     << vars.get_digital_reading(pin) << std::endl;
-  std::cout << left_column << "  switch status: "
+  std::cout << left_column << "  Switch status: "
     << vars.get_switch_status(pin) << std::endl;
-  std::cout << left_column << "  analog_reading: "
+  std::cout << left_column << "  Analog reading: "
     << vars.get_analog_reading(pin) << std::endl;
-  std::cout << left_column << "  state: "
+  std::cout << left_column << "  State: "
     << pretty_enum(tic_look_up_pin_state_string(vars.get_pin_state(pin)))
     << std::endl;
 }
 
 void print_status(const tic::variables & vars,
-  const tic::device & device, const std::string & firmware_version)
+  const std::string & name,
+  const std::string & serial_number,
+  const std::string & firmware_version)
 {
   // The output here is YAML so that people can more easily write scripts that
   // use it.
@@ -55,11 +57,11 @@ void print_status(const tic::variables & vars,
 
   std::cout << std::left << std::setfill(' ');
 
-  std::cout << left_column << "Model: "
-    << device.get_name() << std::endl;
+  std::cout << left_column << "Name: "
+    << name << std::endl;
 
   std::cout << left_column << "Serial number: "
-    << device.get_serial_number() << std::endl;
+    << serial_number << std::endl;
 
   std::cout << left_column << "Firmware version: "
     << firmware_version << std::endl;
@@ -73,12 +75,14 @@ void print_status(const tic::variables & vars,
   std::cout << left_column << "Operation state: "
     << pretty_enum(tic_look_up_operation_state_string(vars.get_operation_state()))
     << std::endl;
+  std::cout << std::endl;
 
   print_errors(vars.get_error_status(),
     "Errors currently stopping the motor");
+  std::cout << std::endl;
+
   print_errors(vars.get_errors_occurred(),
     "Errors that occurred since last check");
-
   std::cout << std::endl;
 
   std::cout << left_column << "Planning mode: "
@@ -146,6 +150,4 @@ void print_status(const tic::variables & vars,
   print_pin_info(vars, TIC_PIN_NUM_TX, "TX");
   print_pin_info(vars, TIC_PIN_NUM_RX, "RX");
   print_pin_info(vars, TIC_PIN_NUM_RC, "RC");
-
-  std::cout << std::endl;
 }

@@ -56,7 +56,7 @@ namespace
     return file;
   }
 
-  void write_string_to_file(std::string filename, std::string contents)
+  inline void write_string_to_file(std::string filename, std::string contents)
   {
     auto stream = open_file_or_pipe_output(filename);
     *stream << contents;
@@ -67,7 +67,7 @@ namespace
     }
   }
 
-  std::string read_string_from_file(std::string filename)
+  inline std::string read_string_from_file(std::string filename)
   {
     auto stream = open_file_or_pipe_input(filename);
     std::string contents =

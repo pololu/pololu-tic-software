@@ -13,23 +13,24 @@ const tic_name tic_product_names[] =
   { NULL, 0 },
 };
 
-const tic_name tic_error_names[] =
+const tic_name tic_nice_error_names[] =
 {
-  { "safe_start_violation", 1 << TIC_ERROR_SAFE_START_VIOLATION },
-  { "required_input_invalid", 1 << TIC_ERROR_REQUIRED_INPUT_INVALID },
-  { "serial_error", 1 << TIC_ERROR_SERIAL_ERROR },
-  { "command_timeout", 1 << TIC_ERROR_COMMAND_TIMEOUT },
-  { "motor_driver_error", 1 << TIC_ERROR_MOTOR_DRIVER_ERROR },
-  { "low_vin", 1 << TIC_ERROR_LOW_VIN },
-  { "high_vin", 1 << TIC_ERROR_HIGH_VIN },
-  { "err_line_high", 1 << TIC_ERROR_ERR_LINE_HIGH },
-  { "kill_switch", 1 << TIC_ERROR_KILL_SWITCH },
-  { "intentionally_disabled", 1 << TIC_ERROR_INTENTIONALLY_DISABLED },
-  { "intentionally_disabled_from_usb", 1 << TIC_ERROR_INTENTIONALLY_DISABLED_FROM_USB },
-  { "serial_framing", 1 << TIC_ERROR_SERIAL_FRAMING },
-  { "serial_format", 1 << TIC_ERROR_SERIAL_FORMAT },
-  { "serial_crc", 1 << TIC_ERROR_SERIAL_CRC },
-  { "encoder_skip", 1 << TIC_ERROR_ENCODER_SKIP },
+  { "Safe start violation", 1 << TIC_ERROR_SAFE_START_VIOLATION },
+  { "Required input invalid", 1 << TIC_ERROR_REQUIRED_INPUT_INVALID },
+  { "Serial error", 1 << TIC_ERROR_SERIAL_ERROR },
+  { "Command timeout", 1 << TIC_ERROR_COMMAND_TIMEOUT },
+  { "Motor driver error", 1 << TIC_ERROR_MOTOR_DRIVER_ERROR },
+  { "Low VIN", 1 << TIC_ERROR_LOW_VIN },
+  { "High VIN", 1 << TIC_ERROR_HIGH_VIN },
+  { "ERR line high", 1 << TIC_ERROR_ERR_LINE_HIGH },
+  { "Kill switch", 1 << TIC_ERROR_KILL_SWITCH },
+  { "Intentionally disabled", 1 << TIC_ERROR_INTENTIONALLY_DISABLED },
+  { "Intentionally disabled from USB", 1 << TIC_ERROR_INTENTIONALLY_DISABLED_FROM_USB },
+  { "Serial framing", 1 << TIC_ERROR_SERIAL_FRAMING },
+  { "Serial RX overrun", 1 << TIC_ERROR_SERIAL_RX_OVERRUN },
+  { "Serial format", 1 << TIC_ERROR_SERIAL_FORMAT },
+  { "Serial CRC", 1 << TIC_ERROR_SERIAL_CRC },
+  { "Encoder skip", 1 << TIC_ERROR_ENCODER_SKIP },
   { NULL, 0 },
 };
 
@@ -130,10 +131,10 @@ const tic_name tic_pin_config_names[] =
   { NULL, 0 },
 };
 
-const char * tic_look_up_error_string(uint32_t error)
+const char * tic_look_up_nice_error_string(uint32_t error)
 {
   const char * str;
-  tic_code_to_name(tic_error_names, error, &str);
+  tic_code_to_name(tic_nice_error_names, error, &str);
   return str;
 }
 

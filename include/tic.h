@@ -99,13 +99,13 @@ void tic_string_free(char *);
 
 // Name lookup //////////////////////////////////////////////////////////////////
 
-/// Looks up the string corresponding to the specified error bit,
-/// e.g. "safe_start_violation".  The error argument should be of the form (1 <<
+/// Looks up a user-friendly string corresponding to the specified error bit,
+/// e.g. "Safe start violation".  The error argument should be of the form (1 <<
 /// x) where x is one of the TIC_ERROR_* macros, but if it is not, this function
 /// returns an empty string.  The returned string will be valid indefinitely and
 /// should not be freed.
 TIC_API
-const char * tic_look_up_error_string(uint32_t error);
+const char * tic_look_up_nice_error_string(uint32_t error);
 
 /// Looks up the string corresponding to the specified decay mode, e.g. "mixed".
 /// The decay_mode argument should be one of the TIC_DECAY_MODE_* macros, but if

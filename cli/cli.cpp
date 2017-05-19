@@ -44,6 +44,8 @@ struct arguments
 
   bool get_debug_data = false;
 
+  uint32_t test_procedure = 0;
+
   bool action_specified() const
   {
     return show_status ||
@@ -53,7 +55,8 @@ struct arguments
       get_settings ||
       fix_settings ||
       show_help ||
-      get_debug_data;
+      get_debug_data ||
+      test_procedure;
   }
 };
 
@@ -92,6 +95,47 @@ static void parse_arg_string(arg_reader & arg_reader, std::string & str)
         std::string(arg_reader.last()) + "'.");
     }
     str = value_c;
+}
+
+static bool nice_str_to_num(std::string string, uint32_t & out, int base = 10)
+{
+  out = 0;
+  try
+  {
+    size_t pos;
+    out = stoul(string, &pos, base);
+    return pos != string.size();
+  }
+  catch(const std::invalid_argument & e) { }
+  catch(const std::out_of_range & e) { }
+  return true;
+}
+
+template <typename T>
+static void parse_arg_int(arg_reader & arg_reader, T & out, int base = 10)
+{
+  const char * value_c = arg_reader.next();
+  if (value_c == NULL)
+  {
+    throw exception_with_exit_code(EXIT_BAD_ARGS,
+      "Expected a number after '" +
+      std::string(arg_reader.last()) + "'.");
+  }
+
+  uint32_t value;
+  if (nice_str_to_num(value_c, value, base))
+  {
+    throw exception_with_exit_code(EXIT_BAD_ARGS,
+      "The number after '" + std::string(arg_reader.last()) + "' is invalid.");
+  }
+
+  if (value > std::numeric_limits<T>::max())
+  {
+    throw exception_with_exit_code(EXIT_BAD_ARGS,
+      "The number after '" + std::string(arg_reader.last()) + "' is too large.");
+  }
+
+  out = value;
 }
 
 static arguments parse_args(int argc, char ** argv)
@@ -148,7 +192,14 @@ static arguments parse_args(int argc, char ** argv)
     }
     else if (arg == "--debug")
     {
+      // This is an unadvertized option for helping customers troubleshoot
+      // issues with their device.
       args.get_debug_data = true;
+    }
+    else if (arg == "--test")
+    {
+      // This is an unadvertized option that helps us test the software.
+      parse_arg_int(arg_reader, args.test_procedure);
     }
     else
     {
@@ -176,8 +227,10 @@ static void get_status(device_selector & selector)
   tic::handle handle(device);
   bool clear_events = true;
   tic::variables vars = handle.get_variables(clear_events);
+  std::string name = device.get_name();
+  std::string serial_number = device.get_serial_number();
   std::string firmware_version = handle.get_firmware_version_string();
-  print_status(vars, device, firmware_version);
+  print_status(vars, name, serial_number, firmware_version);
 }
 
 static void restore_defaults(device_selector & selector)
@@ -251,6 +304,26 @@ static void print_debug_data(device_selector & selector)
   std::cout << std::endl;
 }
 
+static void test_procedure(uint32_t procedure)
+{
+  if (procedure == 1)
+  {
+    // Let's print some fake variable data to test our print_status().  This
+    // test invokes all sorts of undefined behavior but it's the easiest way to
+    // put fake data into a tic::variables object without modifying
+    // libpololu-tic.
+    uint8_t fake_data[4096];
+    memset(fake_data, 0xFF, sizeof(fake_data));
+    tic::variables fake_vars((tic_variables *)fake_data);
+    print_status(fake_vars, "Fake name", "123", "9.99");
+    fake_vars.pointer_release();
+  }
+  else
+  {
+    throw std::runtime_error("Unknown test procedure.");
+  }
+}
+
 static void run(int argc, char ** argv)
 {
   arguments args = parse_args(argc, argv);
@@ -302,6 +375,11 @@ static void run(int argc, char ** argv)
   if (args.get_debug_data)
   {
     print_debug_data(selector);
+  }
+
+  if (args.test_procedure)
+  {
+    test_procedure(args.test_procedure);
   }
 }
 
