@@ -236,7 +236,7 @@ static void print_status(device_selector & selector)
   print_errors(vars.get_error_status(),
     "Errors currently stopping the motor");
   print_errors(vars.get_error_occurred(),
-    "Errors that occured since last check");
+    "Errors that occurred since last check");
 
   std::cout << std::endl;
 
