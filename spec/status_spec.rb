@@ -78,6 +78,7 @@ Encoder position:             -1
 RC pulse width:               65535
 Step mode:                    (unknown)
 Decay mode:                   (unknown)
+
 SCL pin:
   Digital reading:            255
   Switch status:              255
@@ -101,7 +102,6 @@ RX pin:
 RC pin:
   Digital reading:            255
   Switch status:              255
-  Analog reading:             65535
   State:                      (unknown)
 END
 
@@ -125,5 +125,4 @@ describe 'print_status' do
     YAML.load(stdout)
     expect(stdout).to eq FakeStatus
   end
-
 end

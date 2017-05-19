@@ -38,8 +38,11 @@ static void print_pin_info(const tic::variables & vars,
     << vars.get_digital_reading(pin) << std::endl;
   std::cout << left_column << "  Switch status: "
     << vars.get_switch_status(pin) << std::endl;
-  std::cout << left_column << "  Analog reading: "
-    << vars.get_analog_reading(pin) << std::endl;
+  if (pin != TIC_PIN_NUM_RC)
+  {
+    std::cout << left_column << "  Analog reading: "
+      << vars.get_analog_reading(pin) << std::endl;
+  }
   std::cout << left_column << "  State: "
     << pretty_enum(tic_look_up_pin_state_string(vars.get_pin_state(pin)))
     << std::endl;
@@ -144,6 +147,7 @@ void print_status(const tic::variables & vars,
   std::cout << left_column << "Decay mode: "
     << pretty_enum(tic_look_up_decay_mode_string(vars.get_decay_mode()))
     << std::endl;
+  std::cout << std::endl;
 
   print_pin_info(vars, TIC_PIN_NUM_SCL, "SCL");
   print_pin_info(vars, TIC_PIN_NUM_SDA, "SDA");
