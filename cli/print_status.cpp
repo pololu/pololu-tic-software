@@ -19,6 +19,12 @@ static std::string pretty_enum(const char * c_str)
 
 static void print_errors(uint32_t errors, const char * error_set_name)
 {
+  if (!errors)
+  {
+    std::cout << error_set_name << ": None" << std::endl;
+    return;
+  }
+
   std::cout << error_set_name << ":" << std::endl;
   for (uint32_t i = 0; i < 32; i++)
   {
@@ -56,8 +62,6 @@ void print_status(const tic::variables & vars,
   // The output here is YAML so that people can more easily write scripts that
   // use it.
 
-  // TODO: make it pretty, or make it ugly, just make it consistent
-
   std::cout << std::left << std::setfill(' ');
 
   std::cout << left_column << "Name: "
@@ -88,15 +92,24 @@ void print_status(const tic::variables & vars,
     "Errors that occurred since last check");
   std::cout << std::endl;
 
-  std::cout << left_column << "Planning mode: "
-    << pretty_enum(tic_look_up_planning_mode_string(vars.get_planning_mode()))
-    << std::endl;
+  uint8_t planning_mode = vars.get_planning_mode();
 
-  std::cout << left_column << "Target position: "
-    << vars.get_target_position() << std::endl;
-
-  std::cout << left_column << "Target velocity: "
-    << vars.get_target_velocity() << std::endl;
+  if (planning_mode == TIC_PLANNING_MODE_TARGET_POSITION)
+  {
+    std::cout << left_column << "Target position: "
+      << vars.get_target_position() << std::endl;
+  }
+  else if (planning_mode == TIC_PLANNING_MODE_TARGET_VELOCITY)
+  {
+    std::cout << left_column << "Target velocity: "
+      << vars.get_target_velocity() << std::endl;
+  }
+  else
+  {
+    std::cout << left_column << "Planning mode: "
+      << pretty_enum(tic_look_up_planning_mode_string(planning_mode))
+      << std::endl;
+  }
 
   std::cout << left_column << "Speed min: "
     << vars.get_speed_min() << std::endl;

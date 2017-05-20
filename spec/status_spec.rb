@@ -61,8 +61,6 @@ Errors that occurred since last check:
   - (unknown)
 
 Planning mode:                (unknown)
-Target position:              -1
-Target velocity:              -1
 Speed min:                    4294967295
 Speed max:                    4294967295
 Decel max:                    4294967295
@@ -113,7 +111,14 @@ describe '--status' do
     expect(stdout).to_not include '(unknown)'
     expect(stdout).to_not include '_'
     status = YAML.load(stdout)
-    expect(status.keys.sort).to eq YAML.load(FakeStatus).keys.sort
+
+    # These keys are not always in the output
+    unreliable_keys = ["Planning mode", "Target velocity", "Target position"]
+
+    actual_keys = status.keys.sort - unreliable_keys
+    expected_keys = YAML.load(FakeStatus).keys.sort - unreliable_keys
+
+    expect(actual_keys).to eq expected_keys
   end
 end
 
