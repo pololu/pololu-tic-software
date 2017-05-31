@@ -27,8 +27,8 @@ static void tic_write_settings_to_buffer(const tic_settings * settings, uint8_t 
   buf[TIC_SETTING_SERIAL_DEVICE_NUMBER] =
     tic_settings_serial_device_number_get(settings);
 
-  buf[TIC_SETTING_I2C_DEVICE_ADDRESS] =
-    tic_settings_i2c_device_address_get(settings);
+  buf[TIC_SETTING_I2C_ADDRESS] =
+    tic_settings_i2c_address_get(settings);
 
   {
     uint16_t command_timeout = tic_settings_command_timeout_get(settings);

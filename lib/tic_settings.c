@@ -10,7 +10,7 @@ struct tic_settings
   bool ignore_err_line_high;
   uint32_t serial_baud_rate;
   uint8_t serial_device_number;
-  uint8_t i2c_device_address;
+  uint8_t i2c_address;
   uint16_t command_timeout;
   bool serial_crc_enabled;
   uint16_t low_vin_timeout;
@@ -70,7 +70,7 @@ void tic_settings_fill_with_defaults(tic_settings * settings)
 
   tic_settings_serial_baud_rate_set(settings, 9600);
   tic_settings_serial_device_number_set(settings, 14);
-  tic_settings_i2c_device_address_set(settings, 14);
+  tic_settings_i2c_address_set(settings, 14);
   tic_settings_low_vin_timeout_set(settings, 250);
   tic_settings_low_vin_shutoff_voltage_set(settings, 6000);
   tic_settings_low_vin_startup_voltage_set(settings, 6500);
@@ -166,7 +166,7 @@ tic_error * tic_settings_copy(const tic_settings * source, tic_settings ** dest)
 
 static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings)
 {
-  // TODO: fix i2c_device_address to avoid reserved addresses
+  // TODO: fix i2c_address to avoid reserved addresses
 
   uint8_t control_mode = tic_settings_control_mode_get(settings);
 
@@ -204,14 +204,14 @@ static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings
   }
 
   {
-    uint8_t i2c_device_address = tic_settings_i2c_device_address_get(settings);
-    if (i2c_device_address > 127)
+    uint8_t i2c_address = tic_settings_i2c_address_get(settings);
+    if (i2c_address > 127)
     {
-      i2c_device_address = 127;
+      i2c_address = 127;
       tic_sprintf(warnings,
-        "Warning: The I2C device address was too high so it was changed to 127.\n");
+        "Warning: The I2C address was too high so it was changed to 127.\n");
     }
-    tic_settings_i2c_device_address_set(settings, i2c_device_address);
+    tic_settings_i2c_address_set(settings, i2c_address);
   }
 
   {
@@ -647,6 +647,13 @@ static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings
       }
     }
 
+    // TODO: force the pull-up bool to be true for RX, TX, RC pins?
+
+    // TODO: only SCL can be POT_POWER and it can't be any other non-default function
+    // if the control mode is analog.
+
+    // TODO: if the control mode is analog, SDA must be *input* (general is not allowed)
+
     tic_settings_scl_config_set(settings, scl_config);
     tic_settings_sda_config_set(settings, sda_config);
     tic_settings_tx_config_set(settings, tx_config);
@@ -791,17 +798,17 @@ uint8_t tic_settings_serial_device_number_get(const tic_settings * settings)
   return settings->serial_device_number;
 }
 
-void tic_settings_i2c_device_address_set(tic_settings * settings,
-  uint8_t i2c_device_address)
+void tic_settings_i2c_address_set(tic_settings * settings,
+  uint8_t i2c_address)
 {
   if (!settings) { return; }
-  settings->i2c_device_address = i2c_device_address;
+  settings->i2c_address = i2c_address;
 }
 
-uint8_t tic_settings_i2c_device_address_get(const tic_settings * settings)
+uint8_t tic_settings_i2c_address_get(const tic_settings * settings)
 {
   if (!settings) { return 0; }
-  return settings->i2c_device_address;
+  return settings->i2c_address;
 }
 
 void tic_settings_command_timeout_set(tic_settings * settings,

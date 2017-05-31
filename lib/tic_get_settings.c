@@ -36,8 +36,8 @@ static void write_buffer_to_settings(const uint8_t * buf, tic_settings * setting
   }
 
   {
-    uint8_t i2c_device_address = buf[TIC_SETTING_I2C_DEVICE_ADDRESS];
-    tic_settings_i2c_device_address_set(settings, i2c_device_address);
+    uint8_t i2c_address = buf[TIC_SETTING_I2C_ADDRESS];
+    tic_settings_i2c_address_set(settings, i2c_address);
   }
 
   {

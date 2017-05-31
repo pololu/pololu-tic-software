@@ -562,13 +562,13 @@ void tic_settings_serial_device_number_set(tic_settings *, uint8_t);
 TIC_API
 uint8_t tic_settings_serial_device_number_get(const tic_settings *);
 
-/// Sets the I2C device address to use for I2C slave communication.
+/// Sets the I2C address to use for I2C slave communication.
 TIC_API
-void tic_settings_i2c_device_address_set(tic_settings *, uint8_t);
+void tic_settings_i2c_address_set(tic_settings *, uint8_t);
 
-/// Gets the I2C device address to use for I2C slave communication.
+/// Gets the I2C address to use for I2C slave communication.
 TIC_API
-uint8_t tic_settings_i2c_device_address_get(const tic_settings *);
+uint8_t tic_settings_i2c_address_get(const tic_settings *);
 
 /// Sets the command timeout, the time in milliseconds before the device
 /// considers it to be an error if we have not received certain commands.  A

@@ -9,7 +9,7 @@ disable_safe_start: false
 ignore_err_line_high: false
 serial_baud_rate: 9600
 serial_device_number: 14
-i2c_device_address: 14
+i2c_address: 14
 command_timeout: 0
 serial_crc_enabled: false
 low_vin_timeout: 250
@@ -59,7 +59,7 @@ disable_safe_start: true
 ignore_err_line_high: true
 serial_baud_rate: 115385
 serial_device_number: 40
-i2c_device_address: 2
+i2c_address: 2
 command_timeout: 2020
 serial_crc_enabled: true
 low_vin_timeout: 8000
@@ -119,9 +119,9 @@ def test_cases_for_settings_fix(product)
       { 'serial_device_number' => 127 },
       "Warning: The serial device number was too high so it was changed to 127.\n"
     ],
-    [ { 'i2c_device_address' => 128 },
-      { 'i2c_device_address' => 127 },
-      "Warning: The I2C device address was too high so it was changed to 127.\n"
+    [ { 'i2c_address' => 128 },
+      { 'i2c_address' => 127 },
+      "Warning: The I2C address was too high so it was changed to 127.\n"
     ],
     [ { 'low_vin_shutoff_voltage' => 9001, 'low_vin_startup_voltage' => 9000,
         'high_vin_shutoff_voltage' => 8999 },
