@@ -1,10 +1,10 @@
 require_relative 'spec_helper'
 
 describe 'int32_t parsing' do
-  def test_reject(num)
+  def test_reject(num, error_message)
     stdout, stderr, result = run_ticcmd("-d x -p #{num}")
     expect(stdout).to eq ''
-    expect(stderr).to eq "Error: The number after '-p' is invalid.\n"
+    expect(stderr).to eq "Error: The number after '-p' is #{error_message}.\n"
     expect(result).to eq 1
   end
 
@@ -24,7 +24,7 @@ describe 'int32_t parsing' do
   end
 
   it 'rejects the minium minus 1' do
-    test_reject(-2147483648 - 1)
+    test_reject(-2147483648 - 1, 'too small')
   end
 
   it 'accepts the maximum' do
@@ -32,6 +32,10 @@ describe 'int32_t parsing' do
   end
 
   it 'rejects the minium plus 1' do
-    test_reject(2147483647 + 1)
+    test_reject(2147483647 + 1, 'too large')
+  end
+
+  it 'rejects junk after the number' do
+    test_reject('123abc', 'invalid')
   end
 end
