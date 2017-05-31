@@ -9,8 +9,7 @@
 #include "exit_codes.h"
 #include "exception_with_exit_code.h"
 
-// Note: This will only work correctly for integer types T that have fewer than
-// 64 bits.
+// Note: This will not work correctly if T is uint64_t.
 template <typename T>
 static T parse_arg_int(arg_reader & arg_reader, int base = 10)
 {

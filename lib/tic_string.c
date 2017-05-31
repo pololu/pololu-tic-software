@@ -120,12 +120,7 @@ void tic_sprintf(tic_string * str, const char * format, ...)
 }
 
 // Converts a string to an int64_t, returning an error if there is non-number
-// junk in the string.
-//
-// Note: numbers that cannot be expressed in an int64_t will be silenty
-// converted LLONG_MIN or LLONG_MAX.  That's OK for our use cases because
-// LLONG_MIN and LLONG_MAX are always invalid in our application and so we will
-// catch the problem later.
+// junk in the string or the number is out of range.
 bool tic_string_to_i64(const char * str, int64_t * out)
 {
   assert(str != NULL);
