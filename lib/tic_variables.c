@@ -153,10 +153,10 @@ static void write_buffer_to_variables(const uint8_t * buf, tic_variables * vars)
 
   {
     uint8_t s = buf[TIC_VAR_PIN_STATES];
-    vars->pin_info[TIC_PIN_NUM_SCL].digital_reading = s >> TIC_PIN_NUM_SCL * 2 & 1;
-    vars->pin_info[TIC_PIN_NUM_SDA].digital_reading = s >> TIC_PIN_NUM_SDA * 2 & 1;
-    vars->pin_info[TIC_PIN_NUM_TX].digital_reading = s >> TIC_PIN_NUM_TX * 2 & 1;
-    vars->pin_info[TIC_PIN_NUM_RX].digital_reading = s >> TIC_PIN_NUM_RX * 2 & 1;
+    vars->pin_info[TIC_PIN_NUM_SCL].pin_state = s >> TIC_PIN_NUM_SCL * 2 & 1;
+    vars->pin_info[TIC_PIN_NUM_SDA].pin_state = s >> TIC_PIN_NUM_SDA * 2 & 1;
+    vars->pin_info[TIC_PIN_NUM_TX].pin_state = s >> TIC_PIN_NUM_TX * 2 & 1;
+    vars->pin_info[TIC_PIN_NUM_RX].pin_state = s >> TIC_PIN_NUM_RX * 2 & 1;
   }
 
   vars->pin_info[TIC_PIN_NUM_SCL].analog_reading =
@@ -168,9 +168,9 @@ static void write_buffer_to_variables(const uint8_t * buf, tic_variables * vars)
   vars->pin_info[TIC_PIN_NUM_RX].analog_reading =
     read_u16(buf + TIC_VAR_ANALOG_READING_RX);
 
-  // Because of hardware limitations, the RC pin is always a pulled-up input and
-  // it cannot do analog readings.
-  vars->pin_info[TIC_PIN_NUM_RC].digital_reading = TIC_PIN_STATE_PULLED_UP;
+  // Because of hardware limitations, the RC pin is always an input and it
+  // cannot do analog readings.
+  vars->pin_info[TIC_PIN_NUM_RC].pin_state = TIC_PIN_STATE_HIGH_IMPEDANCE;
   vars->pin_info[TIC_PIN_NUM_RC].analog_reading = 0;
 }
 
