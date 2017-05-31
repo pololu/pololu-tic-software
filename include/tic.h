@@ -1099,6 +1099,24 @@ const tic_device * tic_handle_get_device(const tic_handle *);
 TIC_API TIC_WARN_UNUSED
 const char * tic_get_firmware_version_string(tic_handle *);
 
+/// Sets the target position of the Tic, in microsteps.
+///
+/// This function sends a "Set Target Position" to the Tic.  If the Control Mode
+/// is set to Serial, the Tic will start moving the motor to reach the target
+/// position.  If the Control Mode is something other than Serial, this command
+/// will be silently ignored.
+TIC_API TIC_WARN_UNUSED
+tic_error * tic_set_target_position(tic_handle *, int32_t position);
+
+/// Sets the target velocity of the Tic, in microsteps per 10000 seconds.
+///
+/// This function sends a "Set Target Velocity" command to the Tic.  If the
+/// Control Mode is set to Serial, the Tic will start accelerating or
+/// decelerating to reach the target velocity.  If the Control Mode is something
+/// other than Serial, this command will be silently ignored.
+TIC_API TIC_WARN_UNUSED
+tic_error * tic_set_target_velocity(tic_handle *, int32_t velocity);
+
 /// Reads all of the Tic's status variables and returns them as an object.
 ///
 /// The variables parameter should be a non-null pointer to a tic_variables

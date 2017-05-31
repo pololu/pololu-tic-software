@@ -557,6 +557,18 @@ namespace tic
       return tic_get_firmware_version_string(pointer);
     }
 
+    /// Wrapper for tic_set_target_position().
+    void set_target_position(int32_t position)
+    {
+      throw_if_needed(tic_set_target_position(pointer, position));
+    }
+
+    /// Wrapper for tic_set_target_velocity().
+    void set_target_velocity(int32_t velocity)
+    {
+      throw_if_needed(tic_set_target_velocity(pointer, velocity));
+    }
+
     /// Wrapper for tic_get_variables().
     variables get_variables(bool clear_errors_occurred)
     {

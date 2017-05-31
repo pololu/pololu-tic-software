@@ -163,6 +163,52 @@ const char * tic_get_firmware_version_string(tic_handle * handle)
   return new_string;
 }
 
+tic_error * tic_set_target_position(tic_handle * handle, int32_t position)
+{
+  if (handle == NULL)
+  {
+    return tic_error_create("Handle is null.");
+  }
+
+  tic_error * error = NULL;
+
+  uint16_t wValue = (uint32_t)position & 0xFFFF;
+  uint16_t wIndex = (uint32_t)position >> 16 & 0xFFFF;
+  error = tic_usb_error(libusbp_control_transfer(handle->usb_handle,
+    0x40, TIC_CMD_SET_TARGET_POSITION, wValue, wIndex, NULL, 0, NULL));
+
+  if (error != NULL)
+  {
+    error = tic_error_add(error,
+      "There was an error setting the target position.");
+  }
+
+  return error;
+}
+
+tic_error * tic_set_target_velocity(tic_handle * handle, int32_t velocity)
+{
+  if (handle == NULL)
+  {
+    return tic_error_create("Handle is null.");
+  }
+
+  tic_error * error = NULL;
+
+  uint16_t wValue = (uint32_t)velocity & 0xFFFF;
+  uint16_t wIndex = (uint32_t)velocity >> 16 & 0xFFFF;
+  error = tic_usb_error(libusbp_control_transfer(handle->usb_handle,
+    0x40, TIC_CMD_SET_TARGET_VELOCITY, wValue, wIndex, NULL, 0, NULL));
+
+  if (error != NULL)
+  {
+    error = tic_error_add(error,
+      "There was an error setting the target velocity.");
+  }
+
+  return error;
+}
+
 tic_error * tic_set_setting_byte(tic_handle * handle,
   uint8_t address, uint8_t byte)
 {

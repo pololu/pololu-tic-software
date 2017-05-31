@@ -10,6 +10,8 @@ static const char help[] =
   "  -s, --status                Show device settings and info.\n"
   "  -d SERIALNUMBER             Specifies the serial number of the device.\n"
   "  --list                      List devices connected to computer.\n"
+  "  -p, --position NUM          Set target position in microsteps.\n"
+  "  -y, --velocity NUM          Set target velocity in microsteps / 10000 s.\n"
   "  --restore-defaults          Restore device's factory settings\n"
   "  --settings FILE             Load settings file into device.\n"
   "  --get-settings FILE         Read device settings and write to file.\n"
@@ -27,6 +29,12 @@ struct arguments
   std::string serial_number;
 
   bool show_list = false;
+
+  bool set_target_position = false;
+  int32_t target_position;
+
+  bool set_target_velocity = false;
+  int32_t target_velocity;
 
   bool restore_defaults = false;
 
@@ -50,6 +58,8 @@ struct arguments
   {
     return show_status ||
       show_list ||
+      set_target_position ||
+      set_target_velocity ||
       restore_defaults ||
       set_settings ||
       get_settings ||
@@ -60,26 +70,7 @@ struct arguments
   }
 };
 
-static void parse_arg_serial_number(arg_reader & arg_reader, arguments & args)
-{
-  const char * value_c = arg_reader.next();
-  if (value_c == NULL)
-  {
-    throw exception_with_exit_code(EXIT_BAD_ARGS,
-      "Expected a serial number after '"
-      + std::string(arg_reader.last()) + "'.");
-  }
-  if (value_c[0] == 0)
-  {
-    throw exception_with_exit_code(EXIT_BAD_ARGS,
-      "An empty serial number was specified.");
-  }
-
-  args.serial_number_specified = true;
-  args.serial_number = value_c;
-}
-
-static void parse_arg_string(arg_reader & arg_reader, std::string & str)
+static std::string parse_arg_string(arg_reader & arg_reader)
 {
     const char * value_c = arg_reader.next();
     if (value_c == NULL)
@@ -94,9 +85,10 @@ static void parse_arg_string(arg_reader & arg_reader, std::string & str)
         "Expected a non-empty argument after '" +
         std::string(arg_reader.last()) + "'.");
     }
-    str = value_c;
+    return std::string(value_c);
 }
 
+// TODO: do this ourselves with a templated function so it's cleaner
 static bool nice_str_to_num(std::string string, uint32_t & out, int base = 10)
 {
   out = 0;
@@ -111,8 +103,22 @@ static bool nice_str_to_num(std::string string, uint32_t & out, int base = 10)
   return true;
 }
 
+static bool nice_str_to_num(std::string string, int32_t & out, int base = 10)
+{
+  out = 0;
+  try
+  {
+    size_t pos;
+    out = stol(string, &pos, base);
+    return pos != string.size();
+  }
+  catch(const std::invalid_argument & e) { }
+  catch(const std::out_of_range & e) { }
+  return true;
+}
+
 template <typename T>
-static void parse_arg_int(arg_reader & arg_reader, T & out, int base = 10)
+static T parse_arg_int(arg_reader & arg_reader, int base = 10)
 {
   const char * value_c = arg_reader.next();
   if (value_c == NULL)
@@ -122,7 +128,7 @@ static void parse_arg_int(arg_reader & arg_reader, T & out, int base = 10)
       std::string(arg_reader.last()) + "'.");
   }
 
-  uint32_t value;
+  T value;
   if (nice_str_to_num(value_c, value, base))
   {
     throw exception_with_exit_code(EXIT_BAD_ARGS,
@@ -135,7 +141,7 @@ static void parse_arg_int(arg_reader & arg_reader, T & out, int base = 10)
       "The number after '" + std::string(arg_reader.last()) + "' is too large.");
   }
 
-  out = value;
+  return value;
 }
 
 static arguments parse_args(int argc, char ** argv)
@@ -159,7 +165,22 @@ static arguments parse_args(int argc, char ** argv)
     }
     else if (arg == "-d" || arg == "--serial")
     {
-      parse_arg_serial_number(arg_reader, args);
+      args.serial_number_specified = true;
+      args.serial_number = parse_arg_string(arg_reader);
+    }
+    else if (arg == "--list")
+    {
+      args.show_list = true;
+    }
+    else if (arg == "-p" || arg == "--position")
+    {
+      args.set_target_position = true;
+      args.target_position = parse_arg_int<int32_t>(arg_reader);
+    }
+    else if (arg == "-y" || arg == "--velocity")
+    {
+      args.set_target_velocity = true;
+      args.target_velocity = parse_arg_int<int32_t>(arg_reader);
     }
     else if (arg == "--restore-defaults" || arg == "--restoredefaults")
     {
@@ -168,22 +189,18 @@ static arguments parse_args(int argc, char ** argv)
     else if (arg == "--settings" || arg == "--set-settings" || arg == "--configure")
     {
       args.set_settings = true;
-      parse_arg_string(arg_reader, args.set_settings_filename);
+      args.set_settings_filename = parse_arg_string(arg_reader);
     }
     else if (arg == "--get-settings" || arg == "--getconf")
     {
       args.get_settings = true;
-      parse_arg_string(arg_reader, args.get_settings_filename);
+      args.get_settings_filename = parse_arg_string(arg_reader);
     }
     else if (arg == "--fix-settings")
     {
       args.fix_settings = true;
-      parse_arg_string(arg_reader, args.fix_settings_input_filename);
-      parse_arg_string(arg_reader, args.fix_settings_output_filename);
-    }
-    else if (arg == "--list")
-    {
-      args.show_list = true;
+      args.fix_settings_input_filename = parse_arg_string(arg_reader);
+      args.fix_settings_output_filename = parse_arg_string(arg_reader);
     }
     else if (arg == "-h" || arg == "--help" ||
       arg == "--h" || arg == "-help" || arg == "/help" || arg == "/h")
@@ -199,7 +216,7 @@ static arguments parse_args(int argc, char ** argv)
     else if (arg == "--test")
     {
       // This is an unadvertized option that helps us test the software.
-      parse_arg_int(arg_reader, args.test_procedure);
+      args.test_procedure = parse_arg_int<uint32_t>(arg_reader);
     }
     else
     {
@@ -219,6 +236,20 @@ static void print_list(device_selector & selector)
     std::cout << std::setw(45) << instance.get_name();
     std::cout << std::endl;
   }
+}
+
+static void set_target_position(device_selector & selector, int32_t position)
+{
+  tic::device device = selector.select_device();
+  tic::handle handle(device);
+  handle.set_target_position(position);
+}
+
+static void set_target_velocity(device_selector & selector, int32_t velocity)
+{
+  tic::device device = selector.select_device();
+  tic::handle handle(device);
+  handle.set_target_velocity(velocity);
 }
 
 static void get_status(device_selector & selector)
@@ -324,6 +355,9 @@ static void test_procedure(uint32_t procedure)
   }
 }
 
+// A note about ordering: We want to do all the setting stuff first because it
+// could affect subsequent options.  We want to shoe the status last, because it
+// could be affected by options before it.
 static void run(int argc, char ** argv)
 {
   arguments args = parse_args(argc, argv);
@@ -333,6 +367,8 @@ static void run(int argc, char ** argv)
     std::cout << help;
     return;
   }
+
+  // TODO: friendly error if they try to set target position and velocity
 
   device_selector selector;
   if (args.serial_number_specified)
@@ -344,11 +380,6 @@ static void run(int argc, char ** argv)
   {
     print_list(selector);
     return;
-  }
-
-  if (args.show_status)
-  {
-    get_status(selector);
   }
 
   if (args.fix_settings)
@@ -372,6 +403,16 @@ static void run(int argc, char ** argv)
     set_settings(selector, args.set_settings_filename);
   }
 
+  if (args.set_target_position)
+  {
+    set_target_position(selector, args.target_position);
+  }
+
+  if (args.set_target_velocity)
+  {
+    set_target_velocity(selector, args.target_velocity);
+  }
+
   if (args.get_debug_data)
   {
     print_debug_data(selector);
@@ -380,6 +421,11 @@ static void run(int argc, char ** argv)
   if (args.test_procedure)
   {
     test_procedure(args.test_procedure);
+  }
+
+  if (args.show_status)
+  {
+    get_status(selector);
   }
 }
 
