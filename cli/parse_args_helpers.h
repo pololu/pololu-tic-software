@@ -17,8 +17,7 @@ static T parse_arg_int(arg_reader & arg_reader, int base = 10)
   if (value_c == NULL)
   {
     throw exception_with_exit_code(EXIT_BAD_ARGS,
-      "Expected a number after '" +
-      std::string(arg_reader.last()) + "'.");
+      "Expected a number after '" + std::string(arg_reader.last()) + "'.");
   }
 
   char * end;
