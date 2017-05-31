@@ -1,8 +1,13 @@
 #pragma once
 
+#include <stdlib.h>
+
 #include <cstdint>
 #include <string>
 #include <limits>
+
+#include "exit_codes.h"
+#include "exception_with_exit_code.h"
 
 // Note: This will only work correctly for integer types T that have fewer than
 // 64 bits.
