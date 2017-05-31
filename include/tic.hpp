@@ -335,7 +335,7 @@ namespace tic
     }
 
     /// Wrapper for tic_variables_get_time_since_last_step().
-    int32_t get_time_since_last_step() const noexcept
+    uint32_t get_time_since_last_step() const noexcept
     {
       return tic_variables_get_time_since_last_step(pointer);
     }
