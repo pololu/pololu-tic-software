@@ -62,6 +62,8 @@ void print_status(const tic::variables & vars,
   // The output here is YAML so that people can more easily write scripts that
   // use it.
 
+  // TODO: probably want "nice" names with capitals for all enums here
+
   std::cout << std::left << std::setfill(' ');
 
   std::cout << left_column << "Name: "
