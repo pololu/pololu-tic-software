@@ -209,6 +209,33 @@ tic_error * tic_set_target_velocity(tic_handle * handle, int32_t velocity)
   return error;
 }
 
+tic_error * tic_set_current_limit(tic_handle * handle, uint32_t current_limit)
+{
+  if (handle == NULL)
+  {
+    return tic_error_create("Handle is null.");
+  }
+
+  if (current_limit > TIC_MAX_ALLOWED_CURRENT)
+  {
+    current_limit = TIC_MAX_ALLOWED_CURRENT;
+  }
+
+  tic_error * error = NULL;
+
+  uint16_t wValue = current_limit / TIC_CURRENT_LIMIT_UNITS_MA;
+  error = tic_usb_error(libusbp_control_transfer(handle->usb_handle,
+    0x40, TIC_CMD_SET_CURRENT_LIMIT, wValue, 0, NULL, 0, NULL));
+
+  if (error != NULL)
+  {
+    error = tic_error_add(error,
+      "There was an error setting the current limit.");
+  }
+
+  return error;
+}
+
 tic_error * tic_set_setting_byte(tic_handle * handle,
   uint8_t address, uint8_t byte)
 {

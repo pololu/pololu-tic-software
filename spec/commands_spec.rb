@@ -44,3 +44,24 @@ describe 'commands for controlling the motor', usb: true do
     end
   end
 end
+
+describe 'Set Current Limit command' do
+  it 'it prevents you from setting a current too high' do
+    stdout, stderr, result = run_ticcmd('-d x --current 10000')
+    expect(stderr).to eq \
+      "Warning: The current limit was too high so it will be lowered to 3968 mA.\n" \
+      "Error: No device was found with serial number 'x'.\n"
+    expect(stdout).to eq ''
+    expect(result).to eq EXIT_DEVICE_NOT_FOUND
+  end
+
+  it 'it works', usb: true do
+    [32, 64]. each do |limit|
+      stdout, stderr, result = run_ticcmd("--current #{limit}")
+      expect(stderr).to eq ''
+      expect(stdout).to eq ''
+      expect(result).to eq 0
+      expect(tic_get_status['Current limit']).to eq "#{limit} mA"
+    end
+  end
+end

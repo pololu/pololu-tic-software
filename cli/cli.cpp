@@ -12,6 +12,7 @@ static const char help[] =
   "  --list                      List devices connected to computer.\n"
   "  -p, --position NUM          Set target position in microsteps.\n"
   "  -y, --velocity NUM          Set target velocity in microsteps / 10000 s.\n"
+  "  --current NUM               Set the current limit in mA, temporarily.\n"
   "  --restore-defaults          Restore device's factory settings\n"
   "  --settings FILE             Load settings file into device.\n"
   "  --get-settings FILE         Read device settings and write to file.\n"
@@ -35,6 +36,9 @@ struct arguments
 
   bool set_target_velocity = false;
   int32_t target_velocity;
+
+  bool set_current_limit = false;
+  uint32_t current_limit;
 
   bool restore_defaults = false;
 
@@ -60,6 +64,7 @@ struct arguments
       show_list ||
       set_target_position ||
       set_target_velocity ||
+      set_current_limit ||
       restore_defaults ||
       set_settings ||
       get_settings ||
@@ -102,6 +107,11 @@ static arguments parse_args(int argc, char ** argv)
     {
       args.set_target_position = true;
       args.target_position = parse_arg_int<int32_t>(arg_reader);
+    }
+    else if (arg == "--current")
+    {
+      args.set_current_limit = true;
+      args.current_limit = parse_arg_int<uint32_t>(arg_reader);
     }
     else if (arg == "-y" || arg == "--velocity")
     {
@@ -170,6 +180,21 @@ static void set_target_position(device_selector & selector, int32_t position)
   tic::device device = selector.select_device();
   tic::handle handle(device);
   handle.set_target_position(position);
+}
+
+static void set_current_limit(device_selector & selector, uint32_t current_limit)
+{
+  if (current_limit > TIC_MAX_ALLOWED_CURRENT)
+  {
+    current_limit = TIC_MAX_ALLOWED_CURRENT;
+    std::cerr
+      << "Warning: The current limit was too high "
+      << "so it will be lowered to " << current_limit << " mA." << std::endl;
+  }
+
+  tic::device device = selector.select_device();
+  tic::handle handle(device);
+  handle.set_current_limit(current_limit);
 }
 
 static void set_target_velocity(device_selector & selector, int32_t velocity)
@@ -335,6 +360,11 @@ static void run(int argc, char ** argv)
   if (args.set_target_position)
   {
     set_target_position(selector, args.target_position);
+  }
+
+  if (args.set_current_limit)
+  {
+    set_current_limit(selector, args.current_limit);
   }
 
   if (args.set_target_velocity)

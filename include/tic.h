@@ -360,7 +360,7 @@ uint16_t tic_variables_get_rc_pulse_width(const tic_variables *);
 TIC_API
 uint8_t tic_variables_get_step_mode(const tic_variables *);
 
-/// Gets the stepper motor coil current limit of the Tic, in milliamps.
+/// Gets the stepper motor coil current limit in milliamps.
 ///
 /// Note that this is the current limit being used at the moment.  To get the
 /// default current limit at startup, see tic_settings_get_current_limit().
@@ -922,7 +922,7 @@ void tic_settings_rc_config_set(tic_settings *, uint8_t);
 TIC_API
 uint8_t tic_settings_rc_config_get(const tic_settings *);
 
-/// Sets the default stepper motor current limit in milliamps.
+/// Sets the default stepper motor coil current limit in milliamps.
 ///
 /// Like the baud rate setting, only certain current limit values are actually
 /// achievable.  This function will use the highest achievable current level
@@ -1108,7 +1108,7 @@ const char * tic_get_firmware_version_string(tic_handle *);
 
 /// Sets the target position of the Tic, in microsteps.
 ///
-/// This function sends a "Set Target Position" to the Tic.  If the Control Mode
+/// This function sends a Set Target Position to the Tic.  If the Control Mode
 /// is set to Serial, the Tic will start moving the motor to reach the target
 /// position.  If the Control Mode is something other than Serial, this command
 /// will be silently ignored.
@@ -1117,12 +1117,22 @@ tic_error * tic_set_target_position(tic_handle *, int32_t position);
 
 /// Sets the target velocity of the Tic, in microsteps per 10000 seconds.
 ///
-/// This function sends a "Set Target Velocity" command to the Tic.  If the
+/// This function sends a Set Target Velocity command to the Tic.  If the
 /// Control Mode is set to Serial, the Tic will start accelerating or
 /// decelerating to reach the target velocity.  If the Control Mode is something
 /// other than Serial, this command will be silently ignored.
 TIC_API TIC_WARN_UNUSED
 tic_error * tic_set_target_velocity(tic_handle *, int32_t velocity);
+
+/// Temporarily sets the stepper motor coil current limit in milliamps.
+///
+/// This function sends a Set Current Limit command to the Tic.  This current
+/// limit will stay in effect until the Tic is powered off, reset, or
+/// reinitialized, or another Set Current Limit command is issued.
+///
+/// To set the current limit permanently, see tic_settings_set_current_limit().
+TIC_API TIC_WARN_UNUSED
+tic_error * tic_set_current_limit(tic_handle *, uint32_t current_limit);
 
 /// Reads all of the Tic's status variables and returns them as an object.
 ///

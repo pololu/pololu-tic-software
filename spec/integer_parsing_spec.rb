@@ -5,14 +5,14 @@ describe 'int32_t parsing' do
     stdout, stderr, result = run_ticcmd("-d x -p #{num}")
     expect(stdout).to eq ''
     expect(stderr).to eq "Error: The number after '-p' is #{error_message}.\n"
-    expect(result).to eq 1
+    expect(result).to eq EXIT_BAD_ARGS
   end
 
   def test_accept(num)
     stdout, stderr, result = run_ticcmd("-d x -p #{num}")
     expect(stdout).to eq ''
     expect(stderr).to eq "Error: No device was found with serial number 'x'.\n"
-    expect(result).to eq 3
+    expect(result).to eq EXIT_DEVICE_NOT_FOUND
   end
 
   it 'accepts 0' do

@@ -575,6 +575,12 @@ namespace tic
       throw_if_needed(tic_set_target_velocity(pointer, velocity));
     }
 
+    /// Wrapper for tic_set_current_limit().
+    void set_current_limit(uint32_t current_limit)
+    {
+      throw_if_needed(tic_set_current_limit(pointer, current_limit));
+    }
+
     /// Wrapper for tic_get_variables().
     variables get_variables(bool clear_errors_occurred)
     {

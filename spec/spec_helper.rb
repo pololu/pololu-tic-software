@@ -2,6 +2,11 @@ require 'rspec'
 require 'open3'
 require 'yaml'
 
+EXIT_BAD_ARGS = 1
+EXIT_OPERATION_FAILED = 2
+EXIT_DEVICE_NOT_FOUND = 3
+EXIT_DEVICE_MULTIPLE_FOUND = 4
+
 def run_ticcmd(args, opts = {})
   env = {}
   cmd = 'ticcmd ' + args.to_s
