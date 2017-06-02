@@ -360,6 +360,13 @@ uint16_t tic_variables_get_rc_pulse_width(const tic_variables *);
 TIC_API
 uint8_t tic_variables_get_step_mode(const tic_variables *);
 
+/// Gets the stepper motor coil current limit of the Tic, in milliamps.
+///
+/// Note that this is the current limit being used at the moment.  To get the
+/// default current limit at startup, see tic_settings_get_current_limit().
+TIC_API
+uint32_t tic_variables_get_current_limit(const tic_variables *);
+
 /// Gets the current decay mode of the Tic.
 ///
 /// Note that this is the current decay mode.  To get the default decay mode at
@@ -915,7 +922,7 @@ void tic_settings_rc_config_set(tic_settings *, uint8_t);
 TIC_API
 uint8_t tic_settings_rc_config_get(const tic_settings *);
 
-/// Sets the stepper motor current limit in milliamps.
+/// Sets the default stepper motor current limit in milliamps.
 ///
 /// Like the baud rate setting, only certain current limit values are actually
 /// achievable.  This function will use the highest achievable current level
@@ -930,10 +937,10 @@ void tic_settings_current_limit_set(tic_settings *, uint32_t);
 TIC_API
 uint32_t tic_settings_current_limit_get(const tic_settings *);
 
-/// Sets the step mode, also known as the microstepping mode.  This should be
-/// one of the TIC_STEP_MODE_* macros, but not all step modes
-/// are supported on all products.  If you specify an invalid or unsupported
-/// mode to this function, you can fix it with tic_settings_fix().
+/// Sets the default step mode, also known as the microstepping mode.  This
+/// should be one of the TIC_STEP_MODE_* macros, but not all step modes are
+/// supported on all products.  If you specify an invalid or unsupported mode to
+/// this function, you can fix it with tic_settings_fix().
 TIC_API
 void tic_settings_step_mode_set(tic_settings *, uint8_t);
 

@@ -400,6 +400,12 @@ namespace tic
       return tic_variables_get_step_mode(pointer);
     }
 
+    /// Wrapper for tic_variables_get_current_limit().
+    uint32_t get_current_limit() const noexcept
+    {
+      return tic_variables_get_current_limit(pointer);
+    }
+
     /// Wrapper for tic_variables_get_decay_mode().
     uint8_t get_decay_mode() const noexcept
     {

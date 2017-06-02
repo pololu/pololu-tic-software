@@ -159,6 +159,10 @@ void print_status(const tic::variables & vars,
     << pretty_enum(tic_look_up_step_mode_string(vars.get_step_mode()))
     << std::endl;
 
+  std::cout << left_column << "Current limit: "
+    << vars.get_current_limit() << " mA"
+    << std::endl;
+
   std::cout << left_column << "Decay mode: "
     << pretty_enum(tic_look_up_decay_mode_string(vars.get_decay_mode()))
     << std::endl;

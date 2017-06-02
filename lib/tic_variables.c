@@ -30,6 +30,7 @@ struct tic_variables
     uint8_t pin_state;
   } pin_info[PIN_COUNT];
   uint8_t step_mode;
+  uint32_t current_limit;
   uint8_t decay_mode;
 };
 
@@ -131,6 +132,7 @@ static void write_buffer_to_variables(const uint8_t * buf, tic_variables * vars)
   vars->encoder_position = read_i32(buf + TIC_VAR_ENCODER_POSITION);
   vars->rc_pulse_width = read_u16(buf + TIC_VAR_RC_PULSE_WIDTH);
   vars->step_mode = buf[TIC_VAR_STEP_MODE];
+  vars->current_limit = TIC_CURRENT_LIMIT_UNITS_MA * buf[TIC_VAR_CURRENT_LIMIT];
   vars->decay_mode = buf[TIC_VAR_DECAY_MODE];
 
   {
@@ -349,6 +351,12 @@ uint8_t tic_variables_get_step_mode(const tic_variables * variables)
 {
   if (variables == NULL) { return 0; }
   return variables->step_mode;
+}
+
+uint32_t tic_variables_get_current_limit(const tic_variables * variables)
+{
+  if (variables == NULL) { return 0; }
+  return variables->current_limit;
 }
 
 uint8_t tic_variables_get_decay_mode(const tic_variables * variables)
