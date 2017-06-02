@@ -228,7 +228,9 @@ static void set_settings(device_selector & selector,
   std::cerr << warnings;
 
   tic::device device = selector.select_device();
-  tic::handle(device).set_settings(settings);
+  tic::handle handle(device);
+  handle.set_settings(settings);
+  handle.reinitialize();
 }
 
 static void fix_settings(const std::string & input_filename,
