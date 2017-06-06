@@ -90,7 +90,7 @@ add_subdirectory (lib)
 add_subdirectory (cli)
 
 if (ENABLE_GUI)
-  # TODO: add_subdirectory (gui)
+  add_subdirectory (gui)
 endif ()
 
 if (WIN32)
