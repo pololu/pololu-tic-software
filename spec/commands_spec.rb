@@ -65,3 +65,22 @@ describe 'Set Current Limit command' do
     end
   end
 end
+
+describe 'Set Decay Mode' do
+  it 'it complains if the decay mode is invalid' do
+    stdout, stderr, result = run_ticcmd('-d x --decay foobar')
+    expect(stderr).to eq "Error: The decay mode specified is invalid.\n"
+    expect(stdout).to eq ''
+    expect(result).to eq EXIT_BAD_ARGS
+  end
+
+  it 'it works', usb: true do
+    ['fast', 'slow', 'mixed']. each do |mode|
+      stdout, stderr, result = run_ticcmd("--decay #{mode}")
+      expect(stderr).to eq ''
+      expect(stdout).to eq ''
+      expect(result).to eq 0
+      expect(tic_get_status['Decay mode']).to eq "#{mode}"
+    end
+  end
+end

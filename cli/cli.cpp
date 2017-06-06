@@ -40,6 +40,9 @@ struct arguments
   bool set_current_limit = false;
   uint32_t current_limit;
 
+  bool set_decay_mode = false;
+  uint8_t decay_mode;
+
   bool restore_defaults = false;
 
   bool set_settings = false;
@@ -65,6 +68,7 @@ struct arguments
       set_target_position ||
       set_target_velocity ||
       set_current_limit ||
+      set_decay_mode ||
       restore_defaults ||
       set_settings ||
       get_settings ||
@@ -112,6 +116,12 @@ static arguments parse_args(int argc, char ** argv)
     {
       args.set_current_limit = true;
       args.current_limit = parse_arg_int<uint32_t>(arg_reader);
+    }
+    else if (arg == "--decay-mode")
+    {
+      args.set_decay_mode = true;
+      // TODO: args.decay_mode = parse_arg_decay_mode(arg_reader);
+      throw std::runtime_error("not implemented");
     }
     else if (arg == "-y" || arg == "--velocity")
     {
