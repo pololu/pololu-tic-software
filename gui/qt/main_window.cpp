@@ -292,8 +292,8 @@ void main_window::retranslate()
 
 void main_window::start_controller()
 {
-  assert(!model->connected());
-  
+  assert(!connected());
+
   bool successfully_updated_list = try_update_device_list();
   if (!successfully_updated_list)
   {
