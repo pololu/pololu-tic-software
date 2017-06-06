@@ -2,11 +2,13 @@
 
 #include <QGridLayout>
 #include <QGroupBox>
+#include <QHBoxLayout>
 #include <QLabel>
 #include <QMenuBar>
 #include <QMessageBox>
 #include <QPushButton>
 #include <QSpinBox>
+#include <QVBoxLayout>
 
 #include <cassert>
 
@@ -49,10 +51,45 @@ void main_window::set_connection_status(const std::string & status, bool error)
   connection_status_value->setText(QString(status.c_str()));
 }
 
+void main_window::set_input_min(uint32_t input_min)
+{
+  set_spin_box(input_min_value, input_min);
+}
+
+void main_window::set_input_neutral_min(uint32_t input_neutral_min)
+{
+  set_spin_box(input_neutral_min_value, input_neutral_min);
+}
+
+void main_window::set_input_neutral_max(uint32_t input_neutral_max)
+{
+  set_spin_box(input_neutral_max_value, input_neutral_max);
+}
+
+void main_window::set_input_max(uint32_t input_max)
+{
+  set_spin_box(input_max_value, input_max);
+}
+
+void main_window::set_output_min(uint32_t output_min)
+{
+  set_spin_box(output_min_value, output_min);
+}
+
+void main_window::set_output_max(uint32_t output_max)
+{
+  set_spin_box(output_max_value, output_max);
+}
+
 void main_window::set_accel_max(uint32_t accel_max)
 {
+  set_spin_box(accel_max_value, accel_max);
+}
+
+void main_window::set_spin_box(QSpinBox * spin, int value)
+{
   suppress_events = true;
-  accel_max_value->setValue(accel_max);
+  spin->setValue(value);
   suppress_events = false;
 }
 
@@ -74,6 +111,42 @@ void main_window::on_connect_action_triggered()
 void main_window::on_apply_settings_action_triggered()
 {
   apply_settings();
+}
+
+void main_window::on_input_min_value_valueChanged(int value)
+{
+    if (suppress_events) { return; }
+    handle_input_min_input(value);
+}
+
+void main_window::on_input_neutral_min_value_valueChanged(int value)
+{
+    if (suppress_events) { return; }
+    handle_input_neutral_min_input(value);
+}
+
+void main_window::on_input_neutral_max_value_valueChanged(int value)
+{
+    if (suppress_events) { return; }
+    handle_input_neutral_max_input(value);
+}
+
+void main_window::on_input_max_value_valueChanged(int value)
+{
+    if (suppress_events) { return; }
+    handle_input_max_input(value);
+}
+
+void main_window::on_output_min_value_valueChanged(int value)
+{
+    if (suppress_events) { return; }
+    handle_output_min_input(value);
+}
+
+void main_window::on_output_max_value_valueChanged(int value)
+{
+    if (suppress_events) { return; }
+    handle_output_max_input(value);
 }
 
 void main_window::on_accel_max_value_valueChanged(int value)
@@ -170,15 +243,21 @@ void main_window::setup_menu_bar()
 
 QWidget * main_window::setup_settings_widget()
 {
-  // todo: put box in layout in widget or get rid of the extra layer
-  return setup_settings_box();
+  settings_widget = new QWidget();
+  QVBoxLayout * layout = settings_widget_layout = new QVBoxLayout();
+  layout->addWidget(setup_scaling_settings_box());
+  layout->addWidget(setup_motor_settings_box());
+  
+  settings_widget->setLayout(layout);
+  return settings_widget;
 }
 
 // [all-settings]
-QWidget * main_window::setup_settings_box()
+
+QWidget * main_window::setup_motor_settings_box()
 {
-  settings_box = new QGroupBox();
-  QGridLayout * layout = settings_box_layout = new QGridLayout();
+  motor_settings_box = new QGroupBox();
+  QGridLayout * layout = motor_settings_box_layout = new QGridLayout();
   //layout->setColumnStretch(1, 1);
   int row = 0;
   
@@ -195,22 +274,88 @@ QWidget * main_window::setup_settings_box()
   
   //layout->setRowStretch(row, 1);
 
-  settings_box->setLayout(layout);
-  return settings_box;
+  motor_settings_box->setLayout(layout);
+  return motor_settings_box;
+}
+
+QWidget * main_window::setup_scaling_settings_box()
+{
+  scaling_settings_box = new QGroupBox();
+  QGridLayout * layout = scaling_settings_box_layout = new QGridLayout();
+  //layout->setColumnStretch(1, 1);
+  int row = 0;
+  
+  {
+    scaling_input_label = new QLabel();
+    scaling_target_label = new QLabel();
+    layout->addWidget(scaling_input_label, row, 1, Qt::AlignLeft);
+    layout->addWidget(scaling_target_label, row, 2, Qt::AlignLeft);
+    row++;
+  }
+  
+  {
+    scaling_max_label = new QLabel();
+    input_max_value = new QSpinBox();
+    input_max_value->setObjectName("input_max_value");
+    input_max_value->setRange(0, 0xFFFF);
+    output_max_value = new QSpinBox();
+    output_max_value->setObjectName("output_max_value");
+    output_max_value->setRange(0, 0x7FFFFFF);
+    layout->addWidget(scaling_max_label, row, 0, FIELD_LABEL_ALIGNMENT);
+    layout->addWidget(input_max_value, row, 1, Qt::AlignLeft);
+    layout->addWidget(output_max_value, row, 2, Qt::AlignLeft);
+    row++;
+  }
+
+  {
+    scaling_neutral_max_label = new QLabel();
+    input_neutral_max_value = new QSpinBox();
+    input_neutral_max_value->setObjectName("input_neutral_max_value");
+    input_neutral_max_value->setRange(0, 0xFFFF);
+    layout->addWidget(scaling_neutral_max_label, row, 0, FIELD_LABEL_ALIGNMENT);
+    layout->addWidget(input_neutral_max_value, row, 1, Qt::AlignLeft);
+    row++;
+  }
+
+  {
+    scaling_neutral_min_label = new QLabel();
+    input_neutral_min_value = new QSpinBox();
+    input_neutral_min_value->setObjectName("input_neutral_min_value");
+    input_neutral_min_value->setRange(0, 0xFFFF);
+    layout->addWidget(scaling_neutral_min_label, row, 0, FIELD_LABEL_ALIGNMENT);
+    layout->addWidget(input_neutral_min_value, row, 1, Qt::AlignLeft);
+    row++;
+  }
+  
+  {
+    scaling_min_label = new QLabel();
+    input_min_value = new QSpinBox();
+    input_min_value->setObjectName("input_min_value");
+    input_min_value->setRange(0, 0xFFFF);
+    output_min_value = new QSpinBox();
+    output_min_value->setObjectName("output_min_value");
+    output_min_value->setRange(-0x7FFFFFF, 0);
+    layout->addWidget(scaling_min_label, row, 0, FIELD_LABEL_ALIGNMENT);
+    layout->addWidget(input_min_value, row, 1, Qt::AlignLeft);
+    layout->addWidget(output_min_value, row, 2, Qt::AlignLeft);
+    row++;
+  }
+  
+  //layout->setRowStretch(row, 1);
+
+  scaling_settings_box->setLayout(layout);
+  return scaling_settings_box;
 }
 
 QWidget * main_window::setup_footer()
 {
   footer_widget = new QWidget();
-  QGridLayout * layout = footer_widget_layout = new QGridLayout();
+  QHBoxLayout * layout = footer_widget_layout = new QHBoxLayout();
   layout->setContentsMargins(0, 0, 0, 0);
 
-  int col = 0;
-  layout->addWidget(setup_connection_status(), 0, col++, Qt::AlignLeft);
-  layout->addWidget(setup_apply_button(), 0, col++, Qt::AlignRight);
-  
-  layout->setColumnStretch(0, 1);
-  
+  layout->addWidget(setup_connection_status(), 0, Qt::AlignLeft);
+  layout->addWidget(setup_apply_button(), 0, Qt::AlignRight);
+    
   footer_widget->setLayout(layout);
   return footer_widget;
 }
@@ -266,8 +411,17 @@ void main_window::retranslate()
   // currentRegulatorLevelLabel->setText(tr("VDD regulator set point") + FIELD_LABEL_SUFFIX);
 
   // [all-settings]
-  settings_box->setTitle(tr("Settings"));
+  scaling_settings_box->setTitle(tr("Scaling settings"));
+  scaling_input_label->setText(tr("Input"));
+  scaling_target_label->setText(tr("Target"));
+  scaling_min_label->setText(tr("Minimum:"));
+  scaling_neutral_min_label->setText(tr("Neutral Min:"));
+  scaling_neutral_max_label->setText(tr("Neutral Max:"));
+  scaling_max_label->setText(tr("Maximum:"));
+  
+  motor_settings_box->setTitle(tr("Motor settings"));
   accel_max_label->setText(tr("Max. acceleration:"));
+  
   // ispFrequencyLabel->setText(tr("ISP Frequency") + FIELD_LABEL_SUFFIX);
   // maxIspFrequencyLabel->setText(tr("Max ISP Frequency") + FIELD_LABEL_SUFFIX);
   // regulatorModeLabel->setText(tr("Regulator mode") + FIELD_LABEL_SUFFIX);
@@ -439,7 +593,61 @@ void main_window::handle_device_changed()
 void main_window::handle_settings_changed()
 {
   // [all-settings]
+  set_input_min(tic_settings_input_min_get(settings.pointer_get()));
+  set_input_neutral_min(tic_settings_input_neutral_min_get(settings.pointer_get()));
+  set_input_neutral_max(tic_settings_input_neutral_max_get(settings.pointer_get()));
+  set_input_max(tic_settings_input_max_get(settings.pointer_get()));
+  set_output_min(tic_settings_output_min_get(settings.pointer_get()));
+  set_output_max(tic_settings_output_max_get(settings.pointer_get()));
   set_accel_max(tic_settings_accel_max_get(settings.pointer_get()));
+}
+
+void main_window::handle_input_min_input(uint16_t input_min)
+{
+  if (!connected()) { return; }
+  tic_settings_input_min_set(settings.pointer_get(), input_min);
+  settings_modified = true;
+  handle_settings_changed();
+}
+
+void main_window::handle_input_neutral_min_input(uint16_t input_neutral_min)
+{
+  if (!connected()) { return; }
+  tic_settings_input_neutral_min_set(settings.pointer_get(), input_neutral_min);
+  settings_modified = true;
+  handle_settings_changed();
+}
+
+void main_window::handle_input_neutral_max_input(uint16_t input_neutral_max)
+{
+  if (!connected()) { return; }
+  tic_settings_input_neutral_max_set(settings.pointer_get(), input_neutral_max);
+  settings_modified = true;
+  handle_settings_changed();
+}
+
+void main_window::handle_input_max_input(uint16_t input_max)
+{
+  if (!connected()) { return; }
+  tic_settings_input_max_set(settings.pointer_get(), input_max);
+  settings_modified = true;
+  handle_settings_changed();
+}
+
+void main_window::handle_output_min_input(int32_t output_min)
+{
+  if (!connected()) { return; }
+  tic_settings_output_min_set(settings.pointer_get(), output_min);
+  settings_modified = true;
+  handle_settings_changed();
+}
+
+void main_window::handle_output_max_input(int32_t output_max)
+{
+  if (!connected()) { return; }
+  tic_settings_output_max_set(settings.pointer_get(), output_max);
+  settings_modified = true;
+  handle_settings_changed();
 }
 
 void main_window::handle_accel_max_input(uint32_t accel_max)
@@ -457,6 +665,8 @@ void main_window::apply_settings()
   try
   {
     assert(connected());
+    settings.fix();
+    handle_model_changed();
     device_handle.set_settings(settings);
     device_handle.reinitialize();
     settings_modified = false;  // this must be last in case exceptions are thrown
