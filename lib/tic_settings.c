@@ -166,8 +166,6 @@ tic_error * tic_settings_copy(const tic_settings * source, tic_settings ** dest)
 
 static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings)
 {
-  // TODO: fix i2c_address to avoid reserved addresses
-
   uint8_t control_mode = tic_settings_control_mode_get(settings);
 
   {
@@ -294,6 +292,8 @@ static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings
         "Warning: The output scaling values were out of order "
         "so they will be reset to their default values.\n");
     }
+
+    // TODO: enforce allowed range of output_min, output_max
 
     tic_settings_output_min_set(settings, output_min);
     tic_settings_output_neutral_set(settings, output_neutral);
