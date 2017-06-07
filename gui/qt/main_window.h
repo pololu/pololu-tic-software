@@ -35,7 +35,10 @@ public:
   void set_input_max(uint32_t input_max);
   void set_output_min(uint32_t output_min);
   void set_output_max(uint32_t output_max);
+  void set_speed_max(uint32_t speed_max);
+  void set_speed_min(uint32_t speed_min);
   void set_accel_max(uint32_t accel_max);
+  void set_decel_max(uint32_t decel_max);
 
 private:
   /** Helper method for setting the index of a combo box, given the desired
@@ -63,7 +66,10 @@ private slots:
   void on_input_max_value_valueChanged(int value);
   void on_output_min_value_valueChanged(int value);
   void on_output_max_value_valueChanged(int value);
+  void on_speed_max_value_valueChanged(int value);
+  void on_speed_min_value_valueChanged(int value);
   void on_accel_max_value_valueChanged(int value);
+  void on_decel_max_value_valueChanged(int value);
   
 private:
   bool start_event_reported = false;
@@ -116,8 +122,14 @@ private:
   
   QGroupBox * motor_settings_box;
   QGridLayout * motor_settings_box_layout;
+  QLabel * speed_max_label;
+  QSpinBox * speed_max_value;
+  QLabel * speed_min_label;
+  QSpinBox * speed_min_value;
   QLabel * accel_max_label;
   QSpinBox * accel_max_value;
+  QLabel * decel_max_label;
+  QSpinBox * decel_max_value;
   
   QGroupBox * scaling_settings_box;
   QGridLayout * scaling_settings_box_layout;
@@ -167,6 +179,9 @@ private:
   void handle_input_max_input(uint16_t input_max);
   void handle_output_min_input(int32_t output_min);
   void handle_output_max_input(int32_t output_max);
+  void handle_speed_max_input(uint32_t speed_max);
+  void handle_speed_min_input(uint32_t speed_min);
   void handle_accel_max_input(uint32_t accel_max);
+  void handle_decel_max_input(uint32_t decel_max);
   void apply_settings();
 };

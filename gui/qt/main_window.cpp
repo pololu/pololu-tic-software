@@ -87,9 +87,24 @@ void main_window::set_output_max(uint32_t output_max)
   set_spin_box(output_max_value, output_max);
 }
 
+void main_window::set_speed_max(uint32_t speed_max)
+{
+  set_spin_box(speed_max_value, speed_max);
+}
+
+void main_window::set_speed_min(uint32_t speed_min)
+{
+  set_spin_box(speed_min_value, speed_min);
+}
+
 void main_window::set_accel_max(uint32_t accel_max)
 {
   set_spin_box(accel_max_value, accel_max);
+}
+
+void main_window::set_decel_max(uint32_t decel_max)
+{
+  set_spin_box(decel_max_value, decel_max);
 }
 
 void main_window::set_u8_combo_box(QComboBox * combo, uint8_t value)
@@ -178,10 +193,28 @@ void main_window::on_output_max_value_valueChanged(int value)
     handle_output_max_input(value);
 }
 
+void main_window::on_speed_max_value_valueChanged(int value)
+{
+    if (suppress_events) { return; }
+    handle_speed_max_input(value);
+}
+
+void main_window::on_speed_min_value_valueChanged(int value)
+{
+    if (suppress_events) { return; }
+    handle_speed_min_input(value);
+}
+
 void main_window::on_accel_max_value_valueChanged(int value)
 {
     if (suppress_events) { return; }
     handle_accel_max_input(value);
+}
+
+void main_window::on_decel_max_value_valueChanged(int value)
+{
+    if (suppress_events) { return; }
+    handle_decel_max_input(value);
 }
 
 // On Mac OS X, field labels are usually right-aligned.
@@ -388,6 +421,28 @@ QWidget * main_window::setup_motor_settings_box()
   int row = 0;
   
   {
+    speed_max_value = new QSpinBox();
+    speed_max_value->setObjectName("speed_max_value");
+    speed_max_value->setRange(0, TIC_MAX_ALLOWED_SPEED);
+    speed_max_label = new QLabel();
+    speed_max_label->setBuddy(speed_max_value);
+    layout->addWidget(speed_max_label, row, 0, FIELD_LABEL_ALIGNMENT);
+    layout->addWidget(speed_max_value, row, 1, Qt::AlignLeft);
+    row++;
+  }
+  
+  {
+    speed_min_value = new QSpinBox();
+    speed_min_value->setObjectName("speed_min_value");
+    speed_min_value->setRange(0, TIC_MAX_ALLOWED_SPEED);
+    speed_min_label = new QLabel();
+    speed_min_label->setBuddy(speed_min_value);
+    layout->addWidget(speed_min_label, row, 0, FIELD_LABEL_ALIGNMENT);
+    layout->addWidget(speed_min_value, row, 1, Qt::AlignLeft);
+    row++;
+  }
+  
+  {
     accel_max_value = new QSpinBox();
     accel_max_value->setObjectName("accel_max_value");
     accel_max_value->setRange(TIC_MIN_ALLOWED_ACCEL, TIC_MAX_ALLOWED_ACCEL);
@@ -395,6 +450,17 @@ QWidget * main_window::setup_motor_settings_box()
     accel_max_label->setBuddy(accel_max_value);
     layout->addWidget(accel_max_label, row, 0, FIELD_LABEL_ALIGNMENT);
     layout->addWidget(accel_max_value, row, 1, Qt::AlignLeft);
+    row++;
+  }
+  
+  {
+    decel_max_value = new QSpinBox();
+    decel_max_value->setObjectName("decel_max_value");
+    decel_max_value->setRange(TIC_MIN_ALLOWED_ACCEL, TIC_MAX_ALLOWED_ACCEL);
+    decel_max_label = new QLabel();
+    decel_max_label->setBuddy(decel_max_value);
+    layout->addWidget(decel_max_label, row, 0, FIELD_LABEL_ALIGNMENT);
+    layout->addWidget(decel_max_value, row, 1, Qt::AlignLeft);
     row++;
   }
   
@@ -479,7 +545,10 @@ void main_window::retranslate()
   scaling_max_label->setText(tr("Maximum:"));
   
   motor_settings_box->setTitle(tr("Motor settings"));
+  speed_max_label->setText(tr("Max. speed:"));
+  speed_min_label->setText(tr("Min. speed:"));
   accel_max_label->setText(tr("Max. acceleration:"));
+  decel_max_label->setText(tr("Max. deceleration:"));
   
   // ispFrequencyLabel->setText(tr("ISP Frequency") + FIELD_LABEL_SUFFIX);
   // maxIspFrequencyLabel->setText(tr("Max ISP Frequency") + FIELD_LABEL_SUFFIX);
@@ -657,7 +726,10 @@ void main_window::handle_settings_changed()
   set_input_max(tic_settings_input_max_get(settings.pointer_get()));
   set_output_min(tic_settings_output_min_get(settings.pointer_get()));
   set_output_max(tic_settings_output_max_get(settings.pointer_get()));
+  set_speed_max(tic_settings_speed_max_get(settings.pointer_get()));
+  set_speed_min(tic_settings_speed_min_get(settings.pointer_get()));
   set_accel_max(tic_settings_accel_max_get(settings.pointer_get()));
+  set_decel_max(tic_settings_decel_max_get(settings.pointer_get()));
 }
 
 void main_window::handle_control_mode_input(uint8_t control_mode)
@@ -716,10 +788,34 @@ void main_window::handle_output_max_input(int32_t output_max)
   handle_settings_changed();
 }
 
+void main_window::handle_speed_max_input(uint32_t speed_max)
+{
+  if (!connected()) { return; }
+  tic_settings_speed_max_set(settings.pointer_get(), speed_max);
+  settings_modified = true;
+  handle_settings_changed();
+}
+
+void main_window::handle_speed_min_input(uint32_t speed_min)
+{
+  if (!connected()) { return; }
+  tic_settings_speed_min_set(settings.pointer_get(), speed_min);
+  settings_modified = true;
+  handle_settings_changed();
+}
+
 void main_window::handle_accel_max_input(uint32_t accel_max)
 {
   if (!connected()) { return; }
   tic_settings_accel_max_set(settings.pointer_get(), accel_max);
+  settings_modified = true;
+  handle_settings_changed();
+}
+
+void main_window::handle_decel_max_input(uint32_t decel_max)
+{
+  if (!connected()) { return; }
+  tic_settings_decel_max_set(settings.pointer_get(), decel_max);
   settings_modified = true;
   handle_settings_changed();
 }
