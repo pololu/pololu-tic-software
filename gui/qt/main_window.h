@@ -5,7 +5,7 @@
 #include <tic.hpp>
 
 // class QCheckBox;
-// class QComboBox;
+class QComboBox;
 class QGridLayout;
 class QGroupBox;
 class QHBoxLayout;
@@ -28,6 +28,7 @@ public:
     
   void set_connection_status(const std::string & status, bool error);
   
+  void set_control_mode(uint8_t control_mode);
   void set_input_min(uint32_t input_min);
   void set_input_neutral_min(uint32_t input_neutral_min);
   void set_input_neutral_max(uint32_t input_neutral_max);
@@ -37,6 +38,11 @@ public:
   void set_accel_max(uint32_t accel_max);
 
 private:
+  /** Helper method for setting the index of a combo box, given the desired
+   * uint8_t item value.  Defaults to using the first entry in the combo box if
+   * the specified value is not found. */
+  void set_u8_combo_box(QComboBox * combo, uint8_t value);
+
   void set_spin_box(QSpinBox * box, int value);
   
 protected:
@@ -50,6 +56,7 @@ private slots:
   /** This is called by Qt when the user wants to apply settings. */
   void on_apply_settings_action_triggered();
   
+  void on_control_mode_value_currentIndexChanged(int index);
   void on_input_min_value_valueChanged(int value);
   void on_input_neutral_min_value_valueChanged(int value);
   void on_input_neutral_max_value_valueChanged(int value);
@@ -72,8 +79,9 @@ private:
   // QWidget * setupProgrammingResultsBox();
   // QWidget * setupCurrentStatusBox();
   QWidget * setup_settings_widget();
-  QWidget * setup_motor_settings_box();
+  QWidget * setup_control_mode_widget();
   QWidget * setup_scaling_settings_box();
+  QWidget * setup_motor_settings_box();
   QWidget * setup_footer();
   QWidget * setup_connection_status();
   // QWidget * setupCancelChangesButton();
@@ -101,6 +109,11 @@ private:
   QVBoxLayout * settings_widget_layout;
 
   // [all-settings]
+  QWidget * control_mode_widget;
+  QGridLayout * control_mode_widget_layout;
+  QLabel * control_mode_label;
+  QComboBox * control_mode_value;
+  
   QGroupBox * motor_settings_box;
   QGridLayout * motor_settings_box_layout;
   QLabel * accel_max_label;
@@ -147,6 +160,7 @@ private:
   void handle_device_changed();
   //void handleVariablesChanged();
   void handle_settings_changed();
+  void handle_control_mode_input(uint8_t control_mode);
   void handle_input_min_input(uint16_t input_min);
   void handle_input_neutral_min_input(uint16_t input_neutral_min);
   void handle_input_neutral_max_input(uint16_t input_neutral_max);

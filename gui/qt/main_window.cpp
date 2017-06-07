@@ -1,5 +1,6 @@
 #include "main_window.h"
 
+#include <QComboBox>
 #include <QGridLayout>
 #include <QGroupBox>
 #include <QHBoxLayout>
@@ -51,6 +52,11 @@ void main_window::set_connection_status(const std::string & status, bool error)
   connection_status_value->setText(QString(status.c_str()));
 }
 
+void main_window::set_control_mode(uint8_t control_mode)
+{
+  set_u8_combo_box(control_mode_value, control_mode);
+}
+
 void main_window::set_input_min(uint32_t input_min)
 {
   set_spin_box(input_min_value, input_min);
@@ -86,6 +92,22 @@ void main_window::set_accel_max(uint32_t accel_max)
   set_spin_box(accel_max_value, accel_max);
 }
 
+void main_window::set_u8_combo_box(QComboBox * combo, uint8_t value)
+{
+    int index = 0;
+    for (int i = 0; i < combo->count(); i++)
+    {
+        if (value == combo->itemData(i).toUInt())
+        {
+            index = i;
+            break;
+        }
+    }
+    suppress_events = true;
+    combo->setCurrentIndex(index);
+    suppress_events = false;
+}
+
 void main_window::set_spin_box(QSpinBox * spin, int value)
 {
   suppress_events = true;
@@ -111,6 +133,13 @@ void main_window::on_connect_action_triggered()
 void main_window::on_apply_settings_action_triggered()
 {
   apply_settings();
+}
+
+void main_window::on_control_mode_value_currentIndexChanged(int index)
+{
+  if (suppress_events) { return; }
+  uint8_t control_mode = control_mode_value->itemData(index).toUInt();
+  handle_control_mode_input(control_mode);
 }
 
 void main_window::on_input_min_value_valueChanged(int value)
@@ -245,6 +274,8 @@ QWidget * main_window::setup_settings_widget()
 {
   settings_widget = new QWidget();
   QVBoxLayout * layout = settings_widget_layout = new QVBoxLayout();
+  
+  layout->addWidget(setup_control_mode_widget());
   layout->addWidget(setup_scaling_settings_box());
   layout->addWidget(setup_motor_settings_box());
   
@@ -254,28 +285,30 @@ QWidget * main_window::setup_settings_widget()
 
 // [all-settings]
 
-QWidget * main_window::setup_motor_settings_box()
+QWidget * main_window::setup_control_mode_widget()
 {
-  motor_settings_box = new QGroupBox();
-  QGridLayout * layout = motor_settings_box_layout = new QGridLayout();
+  control_mode_widget = new QWidget();
+  QGridLayout * layout = control_mode_widget_layout = new QGridLayout();
   //layout->setColumnStretch(1, 1);
   int row = 0;
   
   {
-    accel_max_value = new QSpinBox();
-    accel_max_value->setObjectName("accel_max_value");
-    accel_max_value->setRange(TIC_MIN_ALLOWED_ACCEL, TIC_MAX_ALLOWED_ACCEL);
-    accel_max_label = new QLabel();
-    accel_max_label->setBuddy(accel_max_value);
-    layout->addWidget(accel_max_label, row, 0, FIELD_LABEL_ALIGNMENT);
-    layout->addWidget(accel_max_value, row, 1, Qt::AlignLeft);
+    control_mode_value = new QComboBox();
+    control_mode_value->setObjectName("control_mode_value");
+    control_mode_value->addItem("Serial/I\u00B2C/USB", TIC_CONTROL_MODE_SERIAL);
+    control_mode_value->addItem("Analog position", TIC_CONTROL_MODE_ANALOG_POSITION);
+    control_mode_value->addItem("Analog speed", TIC_CONTROL_MODE_ANALOG_SPEED);
+    control_mode_label = new QLabel();
+    control_mode_label->setBuddy(control_mode_value);
+    layout->addWidget(control_mode_label, row, 0, FIELD_LABEL_ALIGNMENT);
+    layout->addWidget(control_mode_value, row, 1, Qt::AlignLeft);
     row++;
   }
   
   //layout->setRowStretch(row, 1);
 
-  motor_settings_box->setLayout(layout);
-  return motor_settings_box;
+  control_mode_widget->setLayout(layout);
+  return control_mode_widget;
 }
 
 QWidget * main_window::setup_scaling_settings_box()
@@ -347,6 +380,30 @@ QWidget * main_window::setup_scaling_settings_box()
   return scaling_settings_box;
 }
 
+QWidget * main_window::setup_motor_settings_box()
+{
+  motor_settings_box = new QGroupBox();
+  QGridLayout * layout = motor_settings_box_layout = new QGridLayout();
+  //layout->setColumnStretch(1, 1);
+  int row = 0;
+  
+  {
+    accel_max_value = new QSpinBox();
+    accel_max_value->setObjectName("accel_max_value");
+    accel_max_value->setRange(TIC_MIN_ALLOWED_ACCEL, TIC_MAX_ALLOWED_ACCEL);
+    accel_max_label = new QLabel();
+    accel_max_label->setBuddy(accel_max_value);
+    layout->addWidget(accel_max_label, row, 0, FIELD_LABEL_ALIGNMENT);
+    layout->addWidget(accel_max_value, row, 1, Qt::AlignLeft);
+    row++;
+  }
+  
+  //layout->setRowStretch(row, 1);
+
+  motor_settings_box->setLayout(layout);
+  return motor_settings_box;
+}
+
 QWidget * main_window::setup_footer()
 {
   footer_widget = new QWidget();
@@ -411,6 +468,8 @@ void main_window::retranslate()
   // currentRegulatorLevelLabel->setText(tr("VDD regulator set point") + FIELD_LABEL_SUFFIX);
 
   // [all-settings]
+  control_mode_label->setText(tr("Control mode:"));
+  
   scaling_settings_box->setTitle(tr("Scaling settings"));
   scaling_input_label->setText(tr("Input"));
   scaling_target_label->setText(tr("Target"));
@@ -441,8 +500,6 @@ void main_window::retranslate()
   // defaultsButton->setText("Defaults"); // TODO: use same name as menu item
   apply_settings_button->setText(apply_settings_action->text());
 }
-
-
 
 void main_window::start_controller()
 {
@@ -593,6 +650,7 @@ void main_window::handle_device_changed()
 void main_window::handle_settings_changed()
 {
   // [all-settings]
+  set_control_mode(tic_settings_control_mode_get(settings.pointer_get()));
   set_input_min(tic_settings_input_min_get(settings.pointer_get()));
   set_input_neutral_min(tic_settings_input_neutral_min_get(settings.pointer_get()));
   set_input_neutral_max(tic_settings_input_neutral_max_get(settings.pointer_get()));
@@ -600,6 +658,14 @@ void main_window::handle_settings_changed()
   set_output_min(tic_settings_output_min_get(settings.pointer_get()));
   set_output_max(tic_settings_output_max_get(settings.pointer_get()));
   set_accel_max(tic_settings_accel_max_get(settings.pointer_get()));
+}
+
+void main_window::handle_control_mode_input(uint8_t control_mode)
+{
+  if (!connected()) { return; }
+  tic_settings_control_mode_set(settings.pointer_get(), control_mode);
+  settings_modified = true;
+  handle_settings_changed();
 }
 
 void main_window::handle_input_min_input(uint16_t input_min)
