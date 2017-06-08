@@ -124,6 +124,21 @@ void main_window::set_decel_max(uint32_t decel_max)
   set_spin_box(decel_max_value, decel_max);
 }
 
+void main_window::set_step_mode(uint8_t step_mode)
+{
+  set_u8_combo_box(step_mode_value, step_mode);
+}
+
+void main_window::set_current_limit(uint32_t current_limit)
+{
+  set_spin_box(current_limit_value, current_limit);
+}
+
+void main_window::set_decay_mode(uint8_t decay_mode)
+{
+  set_u8_combo_box(decay_mode_value, decay_mode);
+}
+
 void main_window::set_u8_combo_box(QComboBox * combo, uint8_t value)
 {
     int index = 0;
@@ -232,6 +247,26 @@ void main_window::on_decel_max_value_editingFinished()
 {
   if (suppress_events) { return; }
   controller->handle_decel_max_input(decel_max_value->value());
+}
+
+void main_window::on_step_mode_value_currentIndexChanged(int index)
+{
+  if (suppress_events) { return; }
+  uint8_t step_mode = step_mode_value->itemData(index).toUInt();
+  controller->handle_step_mode_input(step_mode);
+}
+
+void main_window::on_current_limit_value_editingFinished()
+{
+  if (suppress_events) { return; }
+  controller->handle_current_limit_input(current_limit_value->value());
+}
+
+void main_window::on_decay_mode_value_currentIndexChanged(int index)
+{
+  if (suppress_events) { return; }
+  uint8_t decay_mode = decay_mode_value->itemData(index).toUInt();
+  controller->handle_decay_mode_input(decay_mode);
 }
 
 // On Mac OS X, field labels are usually right-aligned.
@@ -483,6 +518,47 @@ QWidget * main_window::setup_motor_settings_box()
     row++;
   }
   
+  {
+    step_mode_value = new QComboBox();
+    step_mode_value->setObjectName("step_mode_value");
+    step_mode_value->addItem("Full step", TIC_STEP_MODE_MICROSTEP1);
+    step_mode_value->addItem("1/2 step", TIC_STEP_MODE_MICROSTEP2);
+    step_mode_value->addItem("1/4 step", TIC_STEP_MODE_MICROSTEP4);
+    step_mode_value->addItem("1/8 step", TIC_STEP_MODE_MICROSTEP8);
+    step_mode_value->addItem("1/16 step", TIC_STEP_MODE_MICROSTEP16);
+    step_mode_value->addItem("1/32 step", TIC_STEP_MODE_MICROSTEP32);
+    step_mode_label = new QLabel();
+    step_mode_label->setBuddy(step_mode_value);
+    layout->addWidget(step_mode_label, row, 0, FIELD_LABEL_ALIGNMENT);
+    layout->addWidget(step_mode_value, row, 1, Qt::AlignLeft);
+    row++;
+  }
+  
+  {
+    current_limit_value = new QSpinBox();
+    current_limit_value->setObjectName("current_limit_value");
+    current_limit_value->setRange(0, 4000);
+    current_limit_value->setSuffix(" mA");
+    current_limit_label = new QLabel();
+    current_limit_label->setBuddy(current_limit_value);
+    layout->addWidget(current_limit_label, row, 0, FIELD_LABEL_ALIGNMENT);
+    layout->addWidget(current_limit_value, row, 1, Qt::AlignLeft);
+    row++;
+  }
+  
+  {
+    decay_mode_value = new QComboBox();
+    decay_mode_value->setObjectName("decay_mode_value");
+    decay_mode_value->addItem("Mixed", TIC_DECAY_MODE_MIXED);
+    decay_mode_value->addItem("Slow", TIC_DECAY_MODE_SLOW);
+    decay_mode_value->addItem("Fast", TIC_DECAY_MODE_FAST);
+    decay_mode_label = new QLabel();
+    decay_mode_label->setBuddy(decay_mode_value);
+    layout->addWidget(decay_mode_label, row, 0, FIELD_LABEL_ALIGNMENT);
+    layout->addWidget(decay_mode_value, row, 1, Qt::AlignLeft);
+    row++;
+  }
+  
   //layout->setRowStretch(row, 1);
 
   motor_settings_box->setLayout(layout);
@@ -549,6 +625,9 @@ void main_window::retranslate()
   speed_min_label->setText(tr("Min. speed:"));
   accel_max_label->setText(tr("Max. acceleration:"));
   decel_max_label->setText(tr("Max. deceleration:"));
+  step_mode_label->setText(tr("Step mode:"));
+  current_limit_label->setText(tr("Current limit:"));
+  decay_mode_label->setText(tr("Decay mode:"));
 
   // cancelChangesButton->setText("Cancel Changes"); // TODO: use same name as menu item
   // defaultsButton->setText("Defaults"); // TODO: use same name as menu item

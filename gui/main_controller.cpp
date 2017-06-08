@@ -175,6 +175,9 @@ void main_controller::handle_settings_changed()
   window->set_speed_min(tic_settings_speed_min_get(settings.pointer_get()));
   window->set_accel_max(tic_settings_accel_max_get(settings.pointer_get()));
   window->set_decel_max(tic_settings_decel_max_get(settings.pointer_get()));
+  window->set_step_mode(tic_settings_step_mode_get(settings.pointer_get()));
+  window->set_current_limit(tic_settings_current_limit_get(settings.pointer_get()));
+  window->set_decay_mode(tic_settings_decay_mode_get(settings.pointer_get()));
 }
 
 void main_controller::handle_control_mode_input(uint8_t control_mode)
@@ -261,6 +264,30 @@ void main_controller::handle_decel_max_input(uint32_t decel_max)
 {
   if (!connected()) { return; }
   tic_settings_decel_max_set(settings.pointer_get(), decel_max);
+  settings_modified = true;
+  handle_settings_changed();
+}
+
+void main_controller::handle_step_mode_input(uint8_t step_mode)
+{
+  if (!connected()) { return; }
+  tic_settings_step_mode_set(settings.pointer_get(), step_mode);
+  settings_modified = true;
+  handle_settings_changed();
+}
+
+void main_controller::handle_current_limit_input(uint32_t current_limit)
+{
+  if (!connected()) { return; }
+  tic_settings_current_limit_set(settings.pointer_get(), current_limit);
+  settings_modified = true;
+  handle_settings_changed();
+}
+
+void main_controller::handle_decay_mode_input(uint8_t decay_mode)
+{
+  if (!connected()) { return; }
+  tic_settings_decay_mode_set(settings.pointer_get(), decay_mode);
   settings_modified = true;
   handle_settings_changed();
 }

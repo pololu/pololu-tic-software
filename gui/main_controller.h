@@ -48,6 +48,9 @@ public:
   void handle_speed_min_input(uint32_t speed_min);
   void handle_accel_max_input(uint32_t accel_max);
   void handle_decel_max_input(uint32_t decel_max);
+  void handle_step_mode_input(uint8_t step_mode);
+  void handle_current_limit_input(uint32_t current_limit);
+  void handle_decay_mode_input(uint8_t decay_mode);
 
 private:
   /** This is called whenever it is possible that we have connected to a

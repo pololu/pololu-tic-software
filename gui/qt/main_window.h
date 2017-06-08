@@ -45,6 +45,9 @@ public:
   void set_speed_min(uint32_t speed_min);
   void set_accel_max(uint32_t accel_max);
   void set_decel_max(uint32_t decel_max);
+  void set_step_mode(uint8_t step_mode);
+  void set_current_limit(uint32_t current_limit);
+  void set_decay_mode(uint8_t decay_mode);
 
 private:
   /** Helper method for setting the index of a combo box, given the desired
@@ -76,6 +79,9 @@ private slots:
   void on_speed_min_value_editingFinished();
   void on_accel_max_value_editingFinished();
   void on_decel_max_value_editingFinished();
+  void on_step_mode_value_currentIndexChanged(int index);
+  void on_current_limit_value_editingFinished();
+  void on_decay_mode_value_currentIndexChanged(int index);
   
 private:
   bool start_event_reported = false;
@@ -127,17 +133,6 @@ private:
   QLabel * control_mode_label;
   QComboBox * control_mode_value;
   
-  QGroupBox * motor_settings_box;
-  QGridLayout * motor_settings_box_layout;
-  QLabel * speed_max_label;
-  QSpinBox * speed_max_value;
-  QLabel * speed_min_label;
-  QSpinBox * speed_min_value;
-  QLabel * accel_max_label;
-  QSpinBox * accel_max_value;
-  QLabel * decel_max_label;
-  QSpinBox * decel_max_value;
-  
   QGroupBox * scaling_settings_box;
   QGridLayout * scaling_settings_box_layout;
   QLabel * scaling_input_label;
@@ -152,6 +147,23 @@ private:
   QSpinBox * input_max_value;
   QSpinBox * output_min_value;
   QSpinBox * output_max_value;
+  
+  QGroupBox * motor_settings_box;
+  QGridLayout * motor_settings_box_layout;
+  QLabel * speed_max_label;
+  QSpinBox * speed_max_value;
+  QLabel * speed_min_label;
+  QSpinBox * speed_min_value;
+  QLabel * accel_max_label;
+  QSpinBox * accel_max_value;
+  QLabel * decel_max_label;
+  QSpinBox * decel_max_value;
+  QLabel * step_mode_label;
+  QComboBox * step_mode_value;
+  QLabel * current_limit_label;
+  QSpinBox * current_limit_value;
+  QLabel * decay_mode_label;
+  QComboBox * decay_mode_value;
   
   QWidget * footer_widget;
   QHBoxLayout * footer_widget_layout;
