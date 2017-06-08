@@ -273,15 +273,19 @@ void main_controller::apply_settings()
   {
     assert(connected());
     
-    //todo: is this in the right place?
+    tic::settings fixed_settings = settings;
     std::string warnings;
-    settings.fix(&warnings); 
-    if (!warnings.empty()) { window->show_warning_message(warnings); }
-    handle_model_changed();
+    fixed_settings.fix(&warnings); 
+    if (warnings.empty() ||
+      window->confirm(warnings.append("\nAccept these changes and apply settings?")))
+    {
+      settings = fixed_settings;
+      handle_model_changed();
     
-    device_handle.set_settings(settings);
-    device_handle.reinitialize();
-    settings_modified = false;  // this must be last in case exceptions are thrown
+      device_handle.set_settings(settings);
+      device_handle.reinitialize();
+      settings_modified = false;  // this must be last in case exceptions are thrown
+    }
   }
   catch (const std::exception & e)
   {

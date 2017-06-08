@@ -27,7 +27,11 @@ public:
   
   void show_error_message(const std::string & message);
   void show_warning_message(const std::string & message);
-    
+  void show_info_message(const std::string & message);
+  
+  /** Show an OK/Cancel dialog, return true if the user selects OK. */
+  bool confirm(const std::string & question);
+  
   void set_connection_status(const std::string & status, bool error);
   
   void set_control_mode(uint8_t control_mode);

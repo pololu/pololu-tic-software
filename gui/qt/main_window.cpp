@@ -29,16 +29,31 @@ void main_window::set_controller(main_controller * controller)
 
 void main_window::show_error_message(const std::string & message)
 {
-    QMessageBox mbox(QMessageBox::Critical, windowTitle(),
-      QString(message.c_str()));
-    mbox.exec();
+  QMessageBox mbox(QMessageBox::Critical, windowTitle(),
+    QString(message.c_str()));
+  mbox.exec();
 }
 
 void main_window::show_warning_message(const std::string & message)
 {
-    QMessageBox mbox(QMessageBox::Warning, windowTitle(),
-      QString(message.c_str()));
-    mbox.exec();
+  QMessageBox mbox(QMessageBox::Warning, windowTitle(),
+    QString(message.c_str()));
+  mbox.exec();
+}
+
+void main_window::show_info_message(const std::string & message)
+{
+  QMessageBox mbox(QMessageBox::Information, windowTitle(),
+    QString(message.c_str()));
+  mbox.exec();
+}
+
+bool main_window::confirm(const std::string & question)
+{
+  QMessageBox mbox(QMessageBox::Question, windowTitle(),
+    QString(question.c_str()), QMessageBox::Ok | QMessageBox::Cancel);
+  int button = mbox.exec();
+  return button == QMessageBox::Ok;
 }
 
 void main_window::set_connection_status(const std::string & status, bool error)
