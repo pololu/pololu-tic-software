@@ -218,8 +218,7 @@ static void get_status(device_selector & selector)
 {
   tic::device device = selector.select_device();
   tic::handle handle(device);
-  bool clear_events = true;
-  tic::variables vars = handle.get_variables(clear_events);
+  tic::variables vars = handle.get_variables();
   std::string name = device.get_name();
   std::string serial_number = device.get_serial_number();
   std::string firmware_version = handle.get_firmware_version_string();
@@ -299,7 +298,7 @@ static void print_debug_data(device_selector & selector)
   std::cout << std::endl;
 }
 
-static void test_procedure(uint32_t procedure)
+static void test_procedure(device_selector & selector, uint32_t procedure)
 {
   if (procedure == 1)
   {
@@ -312,6 +311,21 @@ static void test_procedure(uint32_t procedure)
     tic::variables fake_vars((tic_variables *)fake_data);
     print_status(fake_vars, "Fake name", "123", "9.99");
     fake_vars.pointer_release();
+  }
+  else if (procedure == 2)
+  {
+    tic::device device = selector.select_device();
+    tic::handle handle(device);
+    while (1)
+    {
+      tic::variables vars = handle.get_variables();
+      std::cout << vars.get_analog_reading(TIC_PIN_NUM_SDA) << ','
+                << vars.get_target_position() << ','
+                << vars.get_acting_target_position() << ','
+                << vars.get_current_position() << ','
+                << vars.get_current_velocity() << ','
+                << std::endl;
+    }
   }
   else
   {
@@ -389,7 +403,7 @@ static void run(int argc, char ** argv)
 
   if (args.test_procedure)
   {
-    test_procedure(args.test_procedure);
+    test_procedure(selector, args.test_procedure);
   }
 
   if (args.show_status)

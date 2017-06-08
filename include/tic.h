@@ -1141,15 +1141,10 @@ tic_error * tic_set_current_limit(tic_handle *, uint32_t current_limit);
 /// if this function is successful.  The caller must free the variables later by
 /// calling tic_variables_free().
 ///
-/// The clear_events parameter should be true if you want to clear the error
-/// occurred bits (see tic_variables_get_errors_occurred()) as a side effect of
-/// getting the variables.
-///
 /// To read information from the variables object, see the tic_variables_get_*
 /// functions.
 TIC_API TIC_WARN_UNUSED
-tic_error * tic_get_variables(tic_handle *, tic_variables ** variables,
-  bool clear_errors_occurred);
+tic_error * tic_get_variables(tic_handle *, tic_variables ** variables);
 
 /// Reads all of the Tic's non-volatile settings and returns them as an object.
 ///
