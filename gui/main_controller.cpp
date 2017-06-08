@@ -272,8 +272,13 @@ void main_controller::apply_settings()
   try
   {
     assert(connected());
-    settings.fix();
+    
+    //todo: is this in the right place?
+    std::string warnings;
+    settings.fix(&warnings); 
+    if (!warnings.empty()) { window->show_warning_message(warnings); }
     handle_model_changed();
+    
     device_handle.set_settings(settings);
     device_handle.reinitialize();
     settings_modified = false;  // this must be last in case exceptions are thrown

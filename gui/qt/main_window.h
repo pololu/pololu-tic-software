@@ -26,6 +26,7 @@ public:
   void set_controller(main_controller * controller);
   
   void show_error_message(const std::string & message);
+  void show_warning_message(const std::string & message);
     
   void set_connection_status(const std::string & status, bool error);
   
@@ -61,16 +62,16 @@ private slots:
   void on_apply_settings_action_triggered();
   
   void on_control_mode_value_currentIndexChanged(int index);
-  void on_input_min_value_valueChanged(int value);
-  void on_input_neutral_min_value_valueChanged(int value);
-  void on_input_neutral_max_value_valueChanged(int value);
-  void on_input_max_value_valueChanged(int value);
-  void on_output_min_value_valueChanged(int value);
-  void on_output_max_value_valueChanged(int value);
-  void on_speed_max_value_valueChanged(int value);
-  void on_speed_min_value_valueChanged(int value);
-  void on_accel_max_value_valueChanged(int value);
-  void on_decel_max_value_valueChanged(int value);
+  void on_input_min_value_editingFinished();
+  void on_input_neutral_min_value_editingFinished();
+  void on_input_neutral_max_value_editingFinished();
+  void on_input_max_value_editingFinished();
+  void on_output_min_value_editingFinished();
+  void on_output_max_value_editingFinished();
+  void on_speed_max_value_editingFinished();
+  void on_speed_min_value_editingFinished();
+  void on_accel_max_value_editingFinished();
+  void on_decel_max_value_editingFinished();
   
 private:
   bool start_event_reported = false;

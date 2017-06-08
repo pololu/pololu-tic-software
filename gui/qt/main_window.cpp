@@ -34,6 +34,13 @@ void main_window::show_error_message(const std::string & message)
     mbox.exec();
 }
 
+void main_window::show_warning_message(const std::string & message)
+{
+    QMessageBox mbox(QMessageBox::Warning, windowTitle(),
+      QString(message.c_str()));
+    mbox.exec();
+}
+
 void main_window::set_connection_status(const std::string & status, bool error)
 {
   if (error)
@@ -152,64 +159,64 @@ void main_window::on_control_mode_value_currentIndexChanged(int index)
   controller->handle_control_mode_input(control_mode);
 }
 
-void main_window::on_input_min_value_valueChanged(int value)
+void main_window::on_input_min_value_editingFinished()
 {
   if (suppress_events) { return; }
-  controller->handle_input_min_input(value);
+  controller->handle_input_min_input(input_min_value->value());
 }
 
-void main_window::on_input_neutral_min_value_valueChanged(int value)
+void main_window::on_input_neutral_min_value_editingFinished()
 {
   if (suppress_events) { return; }
-  controller->handle_input_neutral_min_input(value);
+  controller->handle_input_neutral_min_input(input_neutral_min_value->value());
 }
 
-void main_window::on_input_neutral_max_value_valueChanged(int value)
+void main_window::on_input_neutral_max_value_editingFinished()
 {
   if (suppress_events) { return; }
-  controller->handle_input_neutral_max_input(value);
+  controller->handle_input_neutral_max_input(input_neutral_max_value->value());
 }
 
-void main_window::on_input_max_value_valueChanged(int value)
+void main_window::on_input_max_value_editingFinished()
 {
   if (suppress_events) { return; }
-  controller->handle_input_max_input(value);
+  controller->handle_input_max_input(input_max_value->value());
 }
 
-void main_window::on_output_min_value_valueChanged(int value)
+void main_window::on_output_min_value_editingFinished()
 {
   if (suppress_events) { return; }
-  controller->handle_output_min_input(value);
+  controller->handle_output_min_input(output_min_value->value());
 }
 
-void main_window::on_output_max_value_valueChanged(int value)
+void main_window::on_output_max_value_editingFinished()
 {
   if (suppress_events) { return; }
-  controller->handle_output_max_input(value);
+  controller->handle_output_max_input(output_max_value->value());
 }
 
-void main_window::on_speed_max_value_valueChanged(int value)
+void main_window::on_speed_max_value_editingFinished()
 {
   if (suppress_events) { return; }
-  controller->handle_speed_max_input(value);
+  controller->handle_speed_max_input(speed_max_value->value());
 }
 
-void main_window::on_speed_min_value_valueChanged(int value)
+void main_window::on_speed_min_value_editingFinished()
 {
   if (suppress_events) { return; }
-  controller->handle_speed_min_input(value);
+  controller->handle_speed_min_input(speed_min_value->value());
 }
 
-void main_window::on_accel_max_value_valueChanged(int value)
+void main_window::on_accel_max_value_editingFinished()
 {
   if (suppress_events) { return; }
-  controller->handle_accel_max_input(value);
+  controller->handle_accel_max_input(accel_max_value->value());
 }
 
-void main_window::on_decel_max_value_valueChanged(int value)
+void main_window::on_decel_max_value_editingFinished()
 {
   if (suppress_events) { return; }
-  controller->handle_decel_max_input(value);
+  controller->handle_decel_max_input(decel_max_value->value());
 }
 
 // On Mac OS X, field labels are usually right-aligned.
@@ -451,7 +458,7 @@ QWidget * main_window::setup_motor_settings_box()
   {
     decel_max_value = new QSpinBox();
     decel_max_value->setObjectName("decel_max_value");
-    decel_max_value->setRange(TIC_MIN_ALLOWED_ACCEL, TIC_MAX_ALLOWED_ACCEL);
+    decel_max_value->setRange(0, TIC_MAX_ALLOWED_ACCEL);
     decel_max_label = new QLabel();
     decel_max_label->setBuddy(decel_max_value);
     layout->addWidget(decel_max_label, row, 0, FIELD_LABEL_ALIGNMENT);
@@ -509,25 +516,6 @@ void main_window::retranslate()
   documentation_action->setText(tr("&Online Documentation..."));
   about_action->setText(tr("&About..."));
 
-  // deviceInfoBox->setTitle(tr("Device info"));
-  // deviceNameLabel->setText(tr("Name") + FIELD_LABEL_SUFFIX);
-  // serialNumberLabel->setText(tr("Serial number") + FIELD_LABEL_SUFFIX);
-  // firmwareVersionLabel->setText(tr("Firmware version") + FIELD_LABEL_SUFFIX);
-  // progPortLabel->setText(tr("Programming port") + FIELD_LABEL_SUFFIX);
-  // ttlPortLabel->setText(tr("TTL port") + FIELD_LABEL_SUFFIX);
-  // lastDeviceResetLabel->setText(tr("Last device reset") + FIELD_LABEL_SUFFIX);
-
-  // programmingResultsBox->setTitle(tr("Results from last programming"));
-  // measuredVccMinLabel->setText(tr("Target VCC measured minimum") + FIELD_LABEL_SUFFIX);
-  // measuredVccMaxLabel->setText(tr("Target VCC measured maximum") + FIELD_LABEL_SUFFIX);
-  // measuredVddMinLabel->setText(tr("Programmer VDD measured minimum") + FIELD_LABEL_SUFFIX);
-  // measuredVddMaxLabel->setText(tr("Programmer VDD measured maximum") + FIELD_LABEL_SUFFIX);
-
-  // currentStatusBox->setTitle(tr("Current status"));
-  // currentVccLabel->setText(tr("Target VCC") + FIELD_LABEL_SUFFIX);
-  // currentVddLabel->setText(tr("Programmer VDD") + FIELD_LABEL_SUFFIX);
-  // currentRegulatorLevelLabel->setText(tr("VDD regulator set point") + FIELD_LABEL_SUFFIX);
-
   // [all-settings]
   control_mode_label->setText(tr("Control mode:"));
   
@@ -544,21 +532,6 @@ void main_window::retranslate()
   speed_min_label->setText(tr("Min. speed:"));
   accel_max_label->setText(tr("Max. acceleration:"));
   decel_max_label->setText(tr("Max. deceleration:"));
-  
-  // ispFrequencyLabel->setText(tr("ISP Frequency") + FIELD_LABEL_SUFFIX);
-  // maxIspFrequencyLabel->setText(tr("Max ISP Frequency") + FIELD_LABEL_SUFFIX);
-  // regulatorModeLabel->setText(tr("Regulator mode") + FIELD_LABEL_SUFFIX);
-  // vccOutputEnabledLabel->setText(tr("VCC output") + FIELD_LABEL_SUFFIX);
-  // vccOutputIndicatorLabel->setText(tr("VCC output indicator") + FIELD_LABEL_SUFFIX);
-  // lineAFunctionLabel->setText(tr("Line A function") + FIELD_LABEL_SUFFIX);
-  // lineBFunctionLabel->setText(tr("Line B function") + FIELD_LABEL_SUFFIX);
-  // vccVddMaxRangeLabel->setText(tr("VCC/VDD maximum range") + FIELD_LABEL_SUFFIX);
-  // vcc3v3MinLabel->setText(tr("VCC 3.3 V minimum") + FIELD_LABEL_SUFFIX);
-  // vcc3v3MaxLabel->setText(tr("VCC 3.3 V maximum") + FIELD_LABEL_SUFFIX);
-  // vcc5vMinLabel->setText(tr("VCC 5 V minimum") + FIELD_LABEL_SUFFIX);
-  // vcc5vMaxLabel->setText(tr("VCC 5 V maximum") + FIELD_LABEL_SUFFIX);
-  // stk500HardwareVersionLabel->setText(tr("STK500 hardware version") + FIELD_LABEL_SUFFIX);
-  // stk500SoftwareVersionLabel->setText(tr("STK500 software version") + FIELD_LABEL_SUFFIX);
 
   // cancelChangesButton->setText("Cancel Changes"); // TODO: use same name as menu item
   // defaultsButton->setText("Defaults"); // TODO: use same name as menu item
