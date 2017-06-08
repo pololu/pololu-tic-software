@@ -26,9 +26,7 @@ endif ()
 
 add_executable (gui
   main.cpp
-#  main_view.cpp
-#  main_controller.cpp
-#  main_model.cpp
+  main_controller.cpp
   qt/main_window.cpp
   ${CMAKE_CURRENT_BINARY_DIR}/gui_info.rc
   ${ICON_QRC}

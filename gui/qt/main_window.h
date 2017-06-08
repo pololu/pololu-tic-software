@@ -2,8 +2,7 @@
 
 #include <QMainWindow>
 
-#include <tic.hpp>
-
+// todo remove unnecessary lines
 // class QCheckBox;
 class QComboBox;
 class QGridLayout;
@@ -14,6 +13,7 @@ class QMainWindow;
 class QPushButton;
 class QSpinBox;
 class QVBoxLayout;
+class main_controller;
 
 class main_window : public QMainWindow
 {
@@ -22,9 +22,10 @@ class main_window : public QMainWindow
 public:
   main_window(QWidget *parent = 0);
   
+  /** Stores a pointer to the main_controller object so that we can report events. **/
+  void set_controller(main_controller * controller);
+  
   void show_error_message(const std::string & message);
-  void show_exception(const std::exception & e,
-    const std::string & context = "");
     
   void set_connection_status(const std::string & status, bool error);
   
@@ -81,6 +82,7 @@ private:
   
   void setup_window();
   void setup_menu_bar();
+  // todo remove unnecessary lines
   // QWidget * setupDeviceInfoBox();
   // QWidget * setupProgrammingResultsBox();
   // QWidget * setupCurrentStatusBox();
@@ -150,38 +152,6 @@ private:
   QHBoxLayout * footer_widget_layout;
   QLabel * connection_status_value;
   QPushButton * apply_settings_button;
-
   
-  // todo: comment nicely
-  std::vector<tic::device> device_list;
-  tic::handle device_handle;
-  bool connection_error = false;
-  std::string connection_error_message;
-  bool disconnected_by_user = false;
-  
-  tic::settings settings;
-  
-  bool settings_modified = false;
-  
-  void start_controller();
-  bool connected() { return device_handle; }
-  void connect_to_device();
-  void really_connect();
-  bool try_update_device_list();
-  void handle_model_changed();
-  void handle_device_changed();
-  //void handleVariablesChanged();
-  void handle_settings_changed();
-  void handle_control_mode_input(uint8_t control_mode);
-  void handle_input_min_input(uint16_t input_min);
-  void handle_input_neutral_min_input(uint16_t input_neutral_min);
-  void handle_input_neutral_max_input(uint16_t input_neutral_max);
-  void handle_input_max_input(uint16_t input_max);
-  void handle_output_min_input(int32_t output_min);
-  void handle_output_max_input(int32_t output_max);
-  void handle_speed_max_input(uint32_t speed_max);
-  void handle_speed_min_input(uint32_t speed_min);
-  void handle_accel_max_input(uint32_t accel_max);
-  void handle_decel_max_input(uint32_t decel_max);
-  void apply_settings();
+  main_controller * controller;
 };

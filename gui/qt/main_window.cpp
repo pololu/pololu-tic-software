@@ -1,4 +1,7 @@
 #include "main_window.h"
+#include "main_controller.h"
+
+#include "tic.hpp"
 
 #include <QComboBox>
 #include <QGridLayout>
@@ -19,24 +22,16 @@ main_window::main_window(QWidget *parent)
   setup_window();
 }
 
+void main_window::set_controller(main_controller * controller)
+{
+  this->controller = controller;
+}
+
 void main_window::show_error_message(const std::string & message)
 {
     QMessageBox mbox(QMessageBox::Critical, windowTitle(),
       QString(message.c_str()));
     mbox.exec();
-}
-
-void main_window::show_exception(const std::exception & e,
-    const std::string & context)
-{
-    std::string message;
-    if (context.size() > 0)
-    {
-      message += context;
-      message += "  ";
-    }
-    message += e.what();
-    show_error_message(message);
 }
 
 void main_window::set_connection_status(const std::string & status, bool error)
@@ -136,85 +131,85 @@ void main_window::showEvent(QShowEvent * event)
   if (!start_event_reported)
   {
     start_event_reported = true;
-    start_controller();
+    controller->start();
   }
 }
 
 void main_window::on_connect_action_triggered()
 {
-  connect_to_device();
+  controller->connect_device();
 }
 
 void main_window::on_apply_settings_action_triggered()
 {
-  apply_settings();
+  controller->apply_settings();
 }
 
 void main_window::on_control_mode_value_currentIndexChanged(int index)
 {
   if (suppress_events) { return; }
   uint8_t control_mode = control_mode_value->itemData(index).toUInt();
-  handle_control_mode_input(control_mode);
+  controller->handle_control_mode_input(control_mode);
 }
 
 void main_window::on_input_min_value_valueChanged(int value)
 {
-    if (suppress_events) { return; }
-    handle_input_min_input(value);
+  if (suppress_events) { return; }
+  controller->handle_input_min_input(value);
 }
 
 void main_window::on_input_neutral_min_value_valueChanged(int value)
 {
-    if (suppress_events) { return; }
-    handle_input_neutral_min_input(value);
+  if (suppress_events) { return; }
+  controller->handle_input_neutral_min_input(value);
 }
 
 void main_window::on_input_neutral_max_value_valueChanged(int value)
 {
-    if (suppress_events) { return; }
-    handle_input_neutral_max_input(value);
+  if (suppress_events) { return; }
+  controller->handle_input_neutral_max_input(value);
 }
 
 void main_window::on_input_max_value_valueChanged(int value)
 {
-    if (suppress_events) { return; }
-    handle_input_max_input(value);
+  if (suppress_events) { return; }
+  controller->handle_input_max_input(value);
 }
 
 void main_window::on_output_min_value_valueChanged(int value)
 {
-    if (suppress_events) { return; }
-    handle_output_min_input(value);
+  if (suppress_events) { return; }
+  controller->handle_output_min_input(value);
 }
 
 void main_window::on_output_max_value_valueChanged(int value)
 {
-    if (suppress_events) { return; }
-    handle_output_max_input(value);
+  if (suppress_events) { return; }
+  controller->handle_output_max_input(value);
 }
 
 void main_window::on_speed_max_value_valueChanged(int value)
 {
-    if (suppress_events) { return; }
-    handle_speed_max_input(value);
+  if (suppress_events) { return; }
+  controller->handle_speed_max_input(value);
 }
 
 void main_window::on_speed_min_value_valueChanged(int value)
 {
-    if (suppress_events) { return; }
-    handle_speed_min_input(value);
+  if (suppress_events) { return; }
+  controller->handle_speed_min_input(value);
 }
 
 void main_window::on_accel_max_value_valueChanged(int value)
 {
-    if (suppress_events) { return; }
-    handle_accel_max_input(value);
+  if (suppress_events) { return; }
+  controller->handle_accel_max_input(value);
 }
 
 void main_window::on_decel_max_value_valueChanged(int value)
 {
-    if (suppress_events) { return; }
-    handle_decel_max_input(value);
+  if (suppress_events) { return; }
+  controller->handle_decel_max_input(value);
 }
 
 // On Mac OS X, field labels are usually right-aligned.
@@ -568,275 +563,4 @@ void main_window::retranslate()
   // cancelChangesButton->setText("Cancel Changes"); // TODO: use same name as menu item
   // defaultsButton->setText("Defaults"); // TODO: use same name as menu item
   apply_settings_button->setText(apply_settings_action->text());
-}
-
-void main_window::start_controller()
-{
-  assert(!connected());
-
-  bool successfully_updated_list = try_update_device_list();
-  if (!successfully_updated_list)
-  {
-    handle_model_changed();
-    return;
-  }
-
-  if (device_list.size() > 0)
-  {
-    really_connect();
-  }
-  else
-  {
-    handle_model_changed();
-  }
-}
-
-void main_window::connect_to_device()
-{
-  if (connected())
-  {
-    // todo: figure out what to do with multiple devices
-    return;
-  }
-  
-  bool successfully_updated_list = try_update_device_list();
-  if (!successfully_updated_list)
-  {
-    return;
-  }
-
-  if (device_list.size() > 0)
-  {
-    really_connect();
-  }
-  else
-  {
-    show_error_message(
-      "No Tic was found.  "
-      "Please verify that the Tic is connected to the computer via USB."
-      );
-  }
-}
-
-void main_window::really_connect()
-{
-  assert(device_list.size() > 0);
-
-  try
-  {
-    // Close the old handle in case one is already open.
-    device_handle.close();
-
-    connection_error = false;
-    //disconnectedByUser = false;
-
-    // Open a handle to the specified programmer.
-    device_handle = tic::handle(device_list.at(0));
-
-  }
-  catch (const std::exception & e)
-  {
-    //setConnectionError("Failed to connect to device.");
-    show_exception(e, "There was an error connecting to the device.");
-    handle_model_changed();
-    return;
-  }
-
-  /*try
-  {
-      model->reloadFirmwareVersionString();
-  }
-  catch (const std::exception & e)
-  {
-      showException(e, "There was an error getting the firmware version.");
-  }*/
-
-  try
-  {
-    settings = device_handle.get_settings();
-  }
-  catch (const std::exception & e)
-  {
-    show_exception(e, "There was an error loading settings from the device.");
-  }
-
-  /*try
-  {
-      model->reloadVariables();
-  }
-  catch (const std::exception & e)
-  {
-      showException(e, "There was an error getting the status of the device.");
-  }*/
-
-  handle_model_changed();
-}
-
-bool main_window::try_update_device_list()
-{
-  try
-  {
-    device_list = tic::list_connected_devices();
-    return true;
-  }
-  catch (const std::exception & e)
-  {
-    // model->setConnectionError("Failed to get the list of devices.");
-    show_exception(e, "There was an error getting the list of devices.");
-    return false;
-  }
-}
-
-void main_window::handle_model_changed()
-{
-  handle_device_changed();
-  //handleVariablesChanged();
-  handle_settings_changed();
-}
-
-void main_window::handle_device_changed()
-{
-  if (connected())
-  {
-    set_connection_status("Connected.", false);
-  }
-  else if (connection_error)
-  {
-    set_connection_status(connection_error_message, true);
-  }
-  else if (disconnected_by_user)
-  {
-    set_connection_status("Not connected.", false);
-  }
-  else
-  {
-    // This is a subtle way of saying that we are not connected but we will
-    // auto-connect when we see a device available.
-    set_connection_status("Not connected yet...", false);
-  }
-}
-
-void main_window::handle_settings_changed()
-{
-  // [all-settings]
-  set_control_mode(tic_settings_control_mode_get(settings.pointer_get()));
-  set_input_min(tic_settings_input_min_get(settings.pointer_get()));
-  set_input_neutral_min(tic_settings_input_neutral_min_get(settings.pointer_get()));
-  set_input_neutral_max(tic_settings_input_neutral_max_get(settings.pointer_get()));
-  set_input_max(tic_settings_input_max_get(settings.pointer_get()));
-  set_output_min(tic_settings_output_min_get(settings.pointer_get()));
-  set_output_max(tic_settings_output_max_get(settings.pointer_get()));
-  set_speed_max(tic_settings_speed_max_get(settings.pointer_get()));
-  set_speed_min(tic_settings_speed_min_get(settings.pointer_get()));
-  set_accel_max(tic_settings_accel_max_get(settings.pointer_get()));
-  set_decel_max(tic_settings_decel_max_get(settings.pointer_get()));
-}
-
-void main_window::handle_control_mode_input(uint8_t control_mode)
-{
-  if (!connected()) { return; }
-  tic_settings_control_mode_set(settings.pointer_get(), control_mode);
-  settings_modified = true;
-  handle_settings_changed();
-}
-
-void main_window::handle_input_min_input(uint16_t input_min)
-{
-  if (!connected()) { return; }
-  tic_settings_input_min_set(settings.pointer_get(), input_min);
-  settings_modified = true;
-  handle_settings_changed();
-}
-
-void main_window::handle_input_neutral_min_input(uint16_t input_neutral_min)
-{
-  if (!connected()) { return; }
-  tic_settings_input_neutral_min_set(settings.pointer_get(), input_neutral_min);
-  settings_modified = true;
-  handle_settings_changed();
-}
-
-void main_window::handle_input_neutral_max_input(uint16_t input_neutral_max)
-{
-  if (!connected()) { return; }
-  tic_settings_input_neutral_max_set(settings.pointer_get(), input_neutral_max);
-  settings_modified = true;
-  handle_settings_changed();
-}
-
-void main_window::handle_input_max_input(uint16_t input_max)
-{
-  if (!connected()) { return; }
-  tic_settings_input_max_set(settings.pointer_get(), input_max);
-  settings_modified = true;
-  handle_settings_changed();
-}
-
-void main_window::handle_output_min_input(int32_t output_min)
-{
-  if (!connected()) { return; }
-  tic_settings_output_min_set(settings.pointer_get(), output_min);
-  settings_modified = true;
-  handle_settings_changed();
-}
-
-void main_window::handle_output_max_input(int32_t output_max)
-{
-  if (!connected()) { return; }
-  tic_settings_output_max_set(settings.pointer_get(), output_max);
-  settings_modified = true;
-  handle_settings_changed();
-}
-
-void main_window::handle_speed_max_input(uint32_t speed_max)
-{
-  if (!connected()) { return; }
-  tic_settings_speed_max_set(settings.pointer_get(), speed_max);
-  settings_modified = true;
-  handle_settings_changed();
-}
-
-void main_window::handle_speed_min_input(uint32_t speed_min)
-{
-  if (!connected()) { return; }
-  tic_settings_speed_min_set(settings.pointer_get(), speed_min);
-  settings_modified = true;
-  handle_settings_changed();
-}
-
-void main_window::handle_accel_max_input(uint32_t accel_max)
-{
-  if (!connected()) { return; }
-  tic_settings_accel_max_set(settings.pointer_get(), accel_max);
-  settings_modified = true;
-  handle_settings_changed();
-}
-
-void main_window::handle_decel_max_input(uint32_t decel_max)
-{
-  if (!connected()) { return; }
-  tic_settings_decel_max_set(settings.pointer_get(), decel_max);
-  settings_modified = true;
-  handle_settings_changed();
-}
-
-void main_window::apply_settings()
-{
-  if (!connected()) { return; }
-
-  try
-  {
-    assert(connected());
-    settings.fix();
-    handle_model_changed();
-    device_handle.set_settings(settings);
-    device_handle.reinitialize();
-    settings_modified = false;  // this must be last in case exceptions are thrown
-  }
-  catch (const std::exception & e)
-  {
-    show_exception(e, "There was an error applying settings.");
-  }
-
-  handle_settings_changed();
 }
