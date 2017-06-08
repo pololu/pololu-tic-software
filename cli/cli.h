@@ -8,7 +8,6 @@
 #include "exit_codes.h"
 #include "exception_with_exit_code.h"
 #include "file_utils.h"
-#include "parse_args_helpers.h"
 
 #include <algorithm>
 #include <bitset>

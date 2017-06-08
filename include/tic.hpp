@@ -581,6 +581,12 @@ namespace tic
       throw_if_needed(tic_set_current_limit(pointer, current_limit));
     }
 
+    /// Wrapper for tic_set_decay_mode().
+    void set_decay_mode(uint8_t decay_mode)
+    {
+      throw_if_needed(tic_set_decay_mode(pointer, decay_mode));
+    }
+
     /// Wrapper for tic_get_variables().
     variables get_variables()
     {

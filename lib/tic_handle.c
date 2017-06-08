@@ -236,6 +236,28 @@ tic_error * tic_set_current_limit(tic_handle * handle, uint32_t current_limit)
   return error;
 }
 
+tic_error * tic_set_decay_mode(tic_handle * handle, uint8_t decay_mode)
+{
+  if (handle == NULL)
+  {
+    return tic_error_create("Handle is null.");
+  }
+
+  tic_error * error = NULL;
+
+  uint16_t wValue = decay_mode;
+  error = tic_usb_error(libusbp_control_transfer(handle->usb_handle,
+    0x40, TIC_CMD_SET_DECAY_MODE, wValue, 0, NULL, 0, NULL));
+
+  if (error != NULL)
+  {
+    error = tic_error_add(error,
+      "There was an error setting the decay mode.");
+  }
+
+  return error;
+}
+
 tic_error * tic_set_setting_byte(tic_handle * handle,
   uint8_t address, uint8_t byte)
 {

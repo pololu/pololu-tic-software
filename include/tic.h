@@ -1128,11 +1128,22 @@ tic_error * tic_set_target_velocity(tic_handle *, int32_t velocity);
 ///
 /// This function sends a Set Current Limit command to the Tic.  This current
 /// limit will stay in effect until the Tic is powered off, reset, or
-/// reinitialized, or another Set Current Limit command is issued.
-///
-/// To set the current limit permanently, see tic_settings_set_current_limit().
+/// reinitialized, or another Set Current Limit command is issued.  To set the
+/// current limit permanently, see tic_settings_set_current_limit().
 TIC_API TIC_WARN_UNUSED
 tic_error * tic_set_current_limit(tic_handle *, uint32_t current_limit);
+
+/// Temporarily sets the stepper motor decay mode.
+///
+/// The decay_mode argument should be TIC_DECAY_MODE_MIXED, TIC_DECAY_MODE_SLOW,
+/// or TIC_DECAY_MODE_FAST.
+///
+/// This function sends a Set Decay Mode command to the Tic.  This decay mode
+/// will stay in effect until the Tic is powered off, reset, or reinitialized,
+/// or another Set Decay Mode command is issued.  To set the decay mode
+/// permanently, see tic_settings_set_decay_mode().
+TIC_API TIC_WARN_UNUSED
+tic_error * tic_set_decay_mode(tic_handle *, uint8_t decay_mode);
 
 /// Reads all of the Tic's status variables and returns them as an object.
 ///

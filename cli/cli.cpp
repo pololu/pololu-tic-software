@@ -13,6 +13,7 @@ static const char help[] =
   "  -p, --position NUM          Set target position in microsteps.\n"
   "  -y, --velocity NUM          Set target velocity in microsteps / 10000 s.\n"
   "  --current NUM               Set the current limit in mA, temporarily.\n"
+  "  --decay MODE                Set decay mode: mixed, slow, or fast.\n"
   "  --restore-defaults          Restore device's factory settings\n"
   "  --settings FILE             Load settings file into device.\n"
   "  --get-settings FILE         Read device settings and write to file.\n"
@@ -79,6 +80,80 @@ struct arguments
   }
 };
 
+// Note: This will not work correctly if T is uint64_t.
+template <typename T>
+static T parse_arg_int(arg_reader & arg_reader, int base = 10)
+{
+  const char * value_c = arg_reader.next();
+  if (value_c == NULL)
+  {
+    throw exception_with_exit_code(EXIT_BAD_ARGS,
+      "Expected a number after '" + std::string(arg_reader.last()) + "'.");
+  }
+
+  char * end;
+  int64_t result = strtoll(value_c, &end, base);
+  if (errno || *end)
+  {
+    throw exception_with_exit_code(EXIT_BAD_ARGS,
+      "The number after '" + std::string(arg_reader.last()) + "' is invalid.");
+  }
+
+  if (result < std::numeric_limits<T>::min())
+  {
+    throw exception_with_exit_code(EXIT_BAD_ARGS,
+      "The number after '" + std::string(arg_reader.last()) + "' is too small.");
+  }
+
+  if (result > std::numeric_limits<T>::max())
+  {
+    throw exception_with_exit_code(EXIT_BAD_ARGS,
+      "The number after '" + std::string(arg_reader.last()) + "' is too large.");
+  }
+
+  return result;
+}
+
+static std::string parse_arg_string(arg_reader & arg_reader)
+{
+    const char * value_c = arg_reader.next();
+    if (value_c == NULL)
+    {
+      throw exception_with_exit_code(EXIT_BAD_ARGS,
+        "Expected an argument after '" +
+        std::string(arg_reader.last()) + "'.");
+    }
+    if (value_c[0] == 0)
+    {
+      throw exception_with_exit_code(EXIT_BAD_ARGS,
+        "Expected a non-empty argument after '" +
+        std::string(arg_reader.last()) + "'.");
+    }
+    return std::string(value_c);
+}
+
+static uint8_t parse_arg_decay_mode(arg_reader & arg_reader)
+{
+  std::string decay_str = parse_arg_string(arg_reader);
+  if (decay_str == "mixed")
+  {
+    return TIC_DECAY_MODE_MIXED;
+  }
+  else if (decay_str == "slow")
+  {
+    return TIC_DECAY_MODE_SLOW;
+  }
+  else if (decay_str == "fast")
+  {
+    return TIC_DECAY_MODE_FAST;
+  }
+  else
+  {
+    throw exception_with_exit_code(EXIT_BAD_ARGS,
+      "The decay mode specified is invalid.");
+  }
+}
+
 static arguments parse_args(int argc, char ** argv)
 {
   arg_reader arg_reader(argc, argv);
@@ -117,11 +192,10 @@ static arguments parse_args(int argc, char ** argv)
       args.set_current_limit = true;
       args.current_limit = parse_arg_int<uint32_t>(arg_reader);
     }
-    else if (arg == "--decay-mode")
+    else if (arg == "--decay" || arg == "--decay-mode")
     {
       args.set_decay_mode = true;
-      // TODO: args.decay_mode = parse_arg_decay_mode(arg_reader);
-      throw std::runtime_error("not implemented");
+      args.decay_mode = parse_arg_decay_mode(arg_reader);
     }
     else if (arg == "-y" || arg == "--velocity")
     {
@@ -205,6 +279,13 @@ static void set_current_limit(device_selector & selector, uint32_t current_limit
   tic::device device = selector.select_device();
   tic::handle handle(device);
   handle.set_current_limit(current_limit);
+}
+
+static void set_decay_mode(device_selector & selector, uint8_t decay_mode)
+{
+  tic::device device = selector.select_device();
+  tic::handle handle(device);
+  handle.set_decay_mode(decay_mode);
 }
 
 static void set_target_velocity(device_selector & selector, int32_t velocity)
@@ -389,6 +470,11 @@ static void run(int argc, char ** argv)
   if (args.set_current_limit)
   {
     set_current_limit(selector, args.current_limit);
+  }
+
+  if (args.set_decay_mode)
+  {
+    set_decay_mode(selector, args.decay_mode);
   }
 
   if (args.set_target_velocity)
