@@ -45,6 +45,26 @@ describe 'commands for controlling the motor', usb: true do
   end
 end
 
+describe 'Set Step Mode' do
+  it 'it complains if the step mode is invalid' do
+    stdout, stderr, result = run_ticcmd('-d x --step-mode foobar')
+    expect(stderr).to eq "Error: The step mode specified is invalid.\n"
+    expect(stdout).to eq ''
+    expect(result).to eq EXIT_BAD_ARGS
+  end
+
+  it 'it works', usb: true do
+    ['1', '2', '4', '8', '16', '32']. each do |mode|
+      stdout, stderr, result = run_ticcmd("--step-mode #{mode}")
+      expect(stderr).to eq ''
+      expect(stdout).to eq ''
+      expect(result).to eq 0
+      expect(tic_get_status['Step mode'].to_s).to eq mode
+    end
+  end
+end
+
+
 describe 'Set Current Limit command' do
   it 'it prevents you from setting a current too high' do
     stdout, stderr, result = run_ticcmd('-d x --current 10000')
@@ -80,7 +100,7 @@ describe 'Set Decay Mode' do
       expect(stderr).to eq ''
       expect(stdout).to eq ''
       expect(result).to eq 0
-      expect(tic_get_status['Decay mode']).to eq "#{mode}"
+      expect(tic_get_status['Decay mode']).to eq mode
     end
   end
 end

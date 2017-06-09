@@ -575,17 +575,29 @@ namespace tic
       throw_if_needed(tic_set_target_velocity(pointer, velocity));
     }
 
+    /// Wrapper for tic_set_step_mode().
+    void set_step_mode(uint8_t step_mode)
+    {
+      throw_if_needed(tic_set_step_mode(pointer, step_mode));
+    }
+
     /// Wrapper for tic_set_current_limit().
     void set_current_limit(uint32_t current_limit)
     {
       throw_if_needed(tic_set_current_limit(pointer, current_limit));
     }
 
+    /// Wrapper for tic_set_decay_mode().
+    void set_decay_mode(uint8_t decay_mode)
+    {
+      throw_if_needed(tic_set_decay_mode(pointer, decay_mode));
+    }
+
     /// Wrapper for tic_get_variables().
-    variables get_variables(bool clear_errors_occurred)
+    variables get_variables()
     {
       tic_variables * v;
-      throw_if_needed(tic_get_variables(pointer, &v, clear_errors_occurred));
+      throw_if_needed(tic_get_variables(pointer, &v));
       return variables(v);
     }
 

@@ -209,6 +209,28 @@ tic_error * tic_set_target_velocity(tic_handle * handle, int32_t velocity)
   return error;
 }
 
+tic_error * tic_set_step_mode(tic_handle * handle, uint8_t step_mode)
+{
+  if (handle == NULL)
+  {
+    return tic_error_create("Handle is null.");
+  }
+
+  tic_error * error = NULL;
+
+  uint16_t wValue = step_mode;
+  error = tic_usb_error(libusbp_control_transfer(handle->usb_handle,
+    0x40, TIC_CMD_SET_STEP_MODE, wValue, 0, NULL, 0, NULL));
+
+  if (error != NULL)
+  {
+    error = tic_error_add(error,
+      "There was an error setting the step mode.");
+  }
+
+  return error;
+}
+
 tic_error * tic_set_current_limit(tic_handle * handle, uint32_t current_limit)
 {
   if (handle == NULL)
@@ -231,6 +253,28 @@ tic_error * tic_set_current_limit(tic_handle * handle, uint32_t current_limit)
   {
     error = tic_error_add(error,
       "There was an error setting the current limit.");
+  }
+
+  return error;
+}
+
+tic_error * tic_set_decay_mode(tic_handle * handle, uint8_t decay_mode)
+{
+  if (handle == NULL)
+  {
+    return tic_error_create("Handle is null.");
+  }
+
+  tic_error * error = NULL;
+
+  uint16_t wValue = decay_mode;
+  error = tic_usb_error(libusbp_control_transfer(handle->usb_handle,
+    0x40, TIC_CMD_SET_DECAY_MODE, wValue, 0, NULL, 0, NULL));
+
+  if (error != NULL)
+  {
+    error = tic_error_add(error,
+      "There was an error setting the decay mode.");
   }
 
   return error;
@@ -271,19 +315,14 @@ tic_error * tic_get_setting_segment(tic_handle * handle,
   return NULL;
 }
 
-tic_error * tic_get_variable_segment(tic_handle *handle,
-  bool clear_errors_occurred, size_t index, size_t length, uint8_t * output)
+tic_error * tic_get_variable_segment(tic_handle * handle,
+  size_t index, size_t length, uint8_t * output)
 {
   assert(handle != NULL);
   assert(output != NULL);
   assert(length && length <= TIC_MAX_USB_RESPONSE_SIZE);
 
   uint8_t cmd = TIC_CMD_GET_VARIABLE;
-  if (clear_errors_occurred)
-  {
-    cmd = TIC_CMD_GET_VARIABLE_AND_CLEAR_ERRORS_OCCURRED;
-  }
-
   size_t transferred;
   tic_error * error = tic_usb_error(libusbp_control_transfer(handle->usb_handle,
     0xC0, cmd, 0, index, output, length, &transferred));

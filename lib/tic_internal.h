@@ -93,8 +93,8 @@ tic_error * tic_set_setting_byte(tic_handle * handle,
 tic_error * tic_get_setting_segment(tic_handle * handle,
   uint8_t address, size_t length, uint8_t * output);
 
-tic_error * tic_get_variable_segment(tic_handle *handle,
-  bool clear_errors_occurred, size_t index, size_t length, uint8_t * buf);
+tic_error * tic_get_variable_segment(tic_handle * handle,
+  size_t index, size_t length, uint8_t * buf);
 
 
 // Error creation functions.

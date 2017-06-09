@@ -12,7 +12,9 @@ static const char help[] =
   "  --list                      List devices connected to computer.\n"
   "  -p, --position NUM          Set target position in microsteps.\n"
   "  -y, --velocity NUM          Set target velocity in microsteps / 10000 s.\n"
+  "  --step-mode NUM             Set step mode: full, half, 1, 2, 4, 8, 16, 32.\n"
   "  --current NUM               Set the current limit in mA, temporarily.\n"
+  "  --decay MODE                Set decay mode: mixed, slow, or fast.\n"
   "  --restore-defaults          Restore device's factory settings\n"
   "  --settings FILE             Load settings file into device.\n"
   "  --get-settings FILE         Read device settings and write to file.\n"
@@ -36,6 +38,9 @@ struct arguments
 
   bool set_target_velocity = false;
   int32_t target_velocity;
+
+  bool set_step_mode = false;
+  uint8_t step_mode;
 
   bool set_current_limit = false;
   uint32_t current_limit;
@@ -67,6 +72,7 @@ struct arguments
       show_list ||
       set_target_position ||
       set_target_velocity ||
+      set_step_mode ||
       set_current_limit ||
       set_decay_mode ||
       restore_defaults ||
@@ -78,6 +84,114 @@ struct arguments
       test_procedure;
   }
 };
+
+// Note: This will not work correctly if T is uint64_t.
+template <typename T>
+static T parse_arg_int(arg_reader & arg_reader, int base = 10)
+{
+  const char * value_c = arg_reader.next();
+  if (value_c == NULL)
+  {
+    throw exception_with_exit_code(EXIT_BAD_ARGS,
+      "Expected a number after '" + std::string(arg_reader.last()) + "'.");
+  }
+
+  char * end;
+  int64_t result = strtoll(value_c, &end, base);
+  if (errno || *end)
+  {
+    throw exception_with_exit_code(EXIT_BAD_ARGS,
+      "The number after '" + std::string(arg_reader.last()) + "' is invalid.");
+  }
+
+  if (result < std::numeric_limits<T>::min())
+  {
+    throw exception_with_exit_code(EXIT_BAD_ARGS,
+      "The number after '" + std::string(arg_reader.last()) + "' is too small.");
+  }
+
+  if (result > std::numeric_limits<T>::max())
+  {
+    throw exception_with_exit_code(EXIT_BAD_ARGS,
+      "The number after '" + std::string(arg_reader.last()) + "' is too large.");
+  }
+
+  return result;
+}
+
+static std::string parse_arg_string(arg_reader & arg_reader)
+{
+    const char * value_c = arg_reader.next();
+    if (value_c == NULL)
+    {
+      throw exception_with_exit_code(EXIT_BAD_ARGS,
+        "Expected an argument after '" +
+        std::string(arg_reader.last()) + "'.");
+    }
+    if (value_c[0] == 0)
+    {
+      throw exception_with_exit_code(EXIT_BAD_ARGS,
+        "Expected a non-empty argument after '" +
+        std::string(arg_reader.last()) + "'.");
+    }
+    return std::string(value_c);
+}
+
+static uint8_t parse_arg_step_mode(arg_reader & arg_reader)
+{
+  std::string mode_str = parse_arg_string(arg_reader);
+  if (mode_str == "1" || mode_str == "full")
+  {
+    return TIC_STEP_MODE_MICROSTEP1;
+  }
+  else if (mode_str == "2" || mode_str == "half")
+  {
+    return TIC_STEP_MODE_MICROSTEP2;
+  }
+  else if (mode_str == "4")
+  {
+    return TIC_STEP_MODE_MICROSTEP4;
+  }
+  else if (mode_str == "8")
+  {
+    return TIC_STEP_MODE_MICROSTEP8;
+  }
+  else if (mode_str == "16")
+  {
+    return TIC_STEP_MODE_MICROSTEP16;
+  }
+  else if (mode_str == "32")
+  {
+    return TIC_STEP_MODE_MICROSTEP32;
+  }
+  else
+  {
+    throw exception_with_exit_code(EXIT_BAD_ARGS,
+      "The step mode specified is invalid.");
+  }
+}
+
+static uint8_t parse_arg_decay_mode(arg_reader & arg_reader)
+{
+  std::string decay_str = parse_arg_string(arg_reader);
+  if (decay_str == "mixed")
+  {
+    return TIC_DECAY_MODE_MIXED;
+  }
+  else if (decay_str == "slow")
+  {
+    return TIC_DECAY_MODE_SLOW;
+  }
+  else if (decay_str == "fast")
+  {
+    return TIC_DECAY_MODE_FAST;
+  }
+  else
+  {
+    throw exception_with_exit_code(EXIT_BAD_ARGS,
+      "The decay mode specified is invalid.");
+  }
+}
 
 static arguments parse_args(int argc, char ** argv)
 {
@@ -112,16 +226,20 @@ static arguments parse_args(int argc, char ** argv)
       args.set_target_position = true;
       args.target_position = parse_arg_int<int32_t>(arg_reader);
     }
+    else if (arg == "--step-mode")
+    {
+      args.set_step_mode = true;
+      args.step_mode = parse_arg_step_mode(arg_reader);
+    }
     else if (arg == "--current")
     {
       args.set_current_limit = true;
       args.current_limit = parse_arg_int<uint32_t>(arg_reader);
     }
-    else if (arg == "--decay-mode")
+    else if (arg == "--decay" || arg == "--decay-mode")
     {
       args.set_decay_mode = true;
-      // TODO: args.decay_mode = parse_arg_decay_mode(arg_reader);
-      throw std::runtime_error("not implemented");
+      args.decay_mode = parse_arg_decay_mode(arg_reader);
     }
     else if (arg == "-y" || arg == "--velocity")
     {
@@ -192,6 +310,13 @@ static void set_target_position(device_selector & selector, int32_t position)
   handle.set_target_position(position);
 }
 
+static void set_step_mode(device_selector & selector, uint8_t step_mode)
+{
+  tic::device device = selector.select_device();
+  tic::handle handle(device);
+  handle.set_step_mode(step_mode);
+}
+
 static void set_current_limit(device_selector & selector, uint32_t current_limit)
 {
   if (current_limit > TIC_MAX_ALLOWED_CURRENT)
@@ -207,6 +332,13 @@ static void set_current_limit(device_selector & selector, uint32_t current_limit
   handle.set_current_limit(current_limit);
 }
 
+static void set_decay_mode(device_selector & selector, uint8_t decay_mode)
+{
+  tic::device device = selector.select_device();
+  tic::handle handle(device);
+  handle.set_decay_mode(decay_mode);
+}
+
 static void set_target_velocity(device_selector & selector, int32_t velocity)
 {
   tic::device device = selector.select_device();
@@ -218,8 +350,7 @@ static void get_status(device_selector & selector)
 {
   tic::device device = selector.select_device();
   tic::handle handle(device);
-  bool clear_events = true;
-  tic::variables vars = handle.get_variables(clear_events);
+  tic::variables vars = handle.get_variables();
   std::string name = device.get_name();
   std::string serial_number = device.get_serial_number();
   std::string firmware_version = handle.get_firmware_version_string();
@@ -299,7 +430,7 @@ static void print_debug_data(device_selector & selector)
   std::cout << std::endl;
 }
 
-static void test_procedure(uint32_t procedure)
+static void test_procedure(device_selector & selector, uint32_t procedure)
 {
   if (procedure == 1)
   {
@@ -312,6 +443,21 @@ static void test_procedure(uint32_t procedure)
     tic::variables fake_vars((tic_variables *)fake_data);
     print_status(fake_vars, "Fake name", "123", "9.99");
     fake_vars.pointer_release();
+  }
+  else if (procedure == 2)
+  {
+    tic::device device = selector.select_device();
+    tic::handle handle(device);
+    while (1)
+    {
+      tic::variables vars = handle.get_variables();
+      std::cout << vars.get_analog_reading(TIC_PIN_NUM_SDA) << ','
+                << vars.get_target_position() << ','
+                << vars.get_acting_target_position() << ','
+                << vars.get_current_position() << ','
+                << vars.get_current_velocity() << ','
+                << std::endl;
+    }
   }
   else
   {
@@ -372,9 +518,19 @@ static void run(int argc, char ** argv)
     set_target_position(selector, args.target_position);
   }
 
+  if (args.set_step_mode)
+  {
+    set_step_mode(selector, args.step_mode);
+  }
+
   if (args.set_current_limit)
   {
     set_current_limit(selector, args.current_limit);
+  }
+
+  if (args.set_decay_mode)
+  {
+    set_decay_mode(selector, args.decay_mode);
   }
 
   if (args.set_target_velocity)
@@ -389,7 +545,7 @@ static void run(int argc, char ** argv)
 
   if (args.test_procedure)
   {
-    test_procedure(args.test_procedure);
+    test_procedure(selector, args.test_procedure);
   }
 
   if (args.show_status)

@@ -1124,15 +1124,37 @@ tic_error * tic_set_target_position(tic_handle *, int32_t position);
 TIC_API TIC_WARN_UNUSED
 tic_error * tic_set_target_velocity(tic_handle *, int32_t velocity);
 
+/// Temporarily sets the step mode.
+///
+/// The step_mode argument should be one of the TIC_STEP_MODE_* macros.
+///
+/// This function sends a Set Step Mode commands to the Tic.  The step mode will
+/// stay in effect until the Tic is powered off, reset, or reinitialized, or
+/// another Set Step Mode command is issued.  To set the step mode permanently,
+/// see tic_settings_set_step_mode().
+TIC_API TIC_WARN_UNUSED
+tic_error * tic_set_step_mode(tic_handle *, uint8_t step_mode);
+
 /// Temporarily sets the stepper motor coil current limit in milliamps.
 ///
 /// This function sends a Set Current Limit command to the Tic.  This current
 /// limit will stay in effect until the Tic is powered off, reset, or
-/// reinitialized, or another Set Current Limit command is issued.
-///
-/// To set the current limit permanently, see tic_settings_set_current_limit().
+/// reinitialized, or another Set Current Limit command is issued.  To set the
+/// current limit permanently, see tic_settings_set_current_limit().
 TIC_API TIC_WARN_UNUSED
 tic_error * tic_set_current_limit(tic_handle *, uint32_t current_limit);
+
+/// Temporarily sets the stepper motor decay mode.
+///
+/// The decay_mode argument should be TIC_DECAY_MODE_MIXED, TIC_DECAY_MODE_SLOW,
+/// or TIC_DECAY_MODE_FAST.
+///
+/// This function sends a Set Decay Mode command to the Tic.  This decay mode
+/// will stay in effect until the Tic is powered off, reset, or reinitialized,
+/// or another Set Decay Mode command is issued.  To set the decay mode
+/// permanently, see tic_settings_set_decay_mode().
+TIC_API TIC_WARN_UNUSED
+tic_error * tic_set_decay_mode(tic_handle *, uint8_t decay_mode);
 
 /// Reads all of the Tic's status variables and returns them as an object.
 ///
@@ -1141,15 +1163,10 @@ tic_error * tic_set_current_limit(tic_handle *, uint32_t current_limit);
 /// if this function is successful.  The caller must free the variables later by
 /// calling tic_variables_free().
 ///
-/// The clear_events parameter should be true if you want to clear the error
-/// occurred bits (see tic_variables_get_errors_occurred()) as a side effect of
-/// getting the variables.
-///
 /// To read information from the variables object, see the tic_variables_get_*
 /// functions.
 TIC_API TIC_WARN_UNUSED
-tic_error * tic_get_variables(tic_handle *, tic_variables ** variables,
-  bool clear_errors_occurred);
+tic_error * tic_get_variables(tic_handle *, tic_variables ** variables);
 
 /// Reads all of the Tic's non-volatile settings and returns them as an object.
 ///
