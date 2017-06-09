@@ -1106,14 +1106,6 @@ const tic_device * tic_handle_get_device(const tic_handle *);
 TIC_API TIC_WARN_UNUSED
 const char * tic_get_firmware_version_string(tic_handle *);
 
-/// Stops the Tic abruptly without respecting the deceleration limits.
-///
-/// This function sends a Stop command to the Tic.  If the Control mode is set
-/// to Serial, the Tic will stop abruptly.  If the control mode is something
-/// other than Serial, ths command will be silently ignored.
-TIC_API TIC_WARN_UNUSED
-tic_error * tic_stop(tic_handle *);
-
 /// Sets the target position of the Tic, in microsteps.
 ///
 /// This function sends a Set Target Position to the Tic.  If the Control mode
@@ -1141,6 +1133,64 @@ tic_error * tic_set_target_velocity(tic_handle *, int32_t velocity);
 /// unexpected behavior from the controller.
 TIC_API TIC_WARN_UNUSED
 tic_error * tic_set_current_position(tic_handle *, int32_t position);
+
+/// Stops the Tic abruptly without respecting the deceleration limits.
+///
+/// This function sends a Stop command to the Tic.  If the Control mode is set
+/// to Serial, the Tic will stop abruptly.  If the control mode is something
+/// other than Serial, ths command will be silently ignored.
+TIC_API TIC_WARN_UNUSED
+tic_error * tic_stop(tic_handle *);
+
+/// Enables the stepper motor driver.
+///
+/// This function sends an Enable Driver command to the Tic, causing it to
+/// enable its stepper driver if it was previously disabled.  This command only
+/// works if the control mode setting is set to Serial or STEP/DIR.  The effect
+/// only lasts until the Tic is powered off, reset, or reinitialized, or a
+/// Disable Driver command is issued.
+TIC_API TIC_WARN_UNUSED
+tic_error * tic_enable_driver(tic_handle *);
+
+/// Disables the stepper motor driver.
+///
+/// This function sends a Disable Driver command to the Tic, causing it to
+/// disable its stepper driver.  This command only works if the control mode
+/// setting is set to Serial or STEP/DIR.  The effect only lasts until the Tic
+/// is powered off, reset, or reinitialized, or an Enable Driver command is
+/// issued.
+TIC_API TIC_WARN_UNUSED
+tic_error * tic_disable_driver(tic_handle *);
+
+/// Temporarily sets the speed maximum.
+///
+/// This function sends a Set Speed Max command to the Tic.  For more
+/// information on what the Speed Max is, see tic_settings_get_speed_max().
+TIC_API TIC_WARN_UNUSED
+tic_error * tic_set_speed_max(tic_handle *, uint32_t speed_max);
+
+/// Temporarily sets the speed minimum.
+///
+/// This function sends a Set Speed Min command to the Tic.  For more
+/// information on what the Speed Min is, see tic_settings_get_speed_min().
+TIC_API TIC_WARN_UNUSED
+tic_error * tic_set_speed_min(tic_handle *, uint32_t speed_min);
+
+/// Temporarily sets the acceleration maximum.
+///
+/// This function sends a Set Acceleration Max command to the Tic.  For more
+/// information on what the Acceleration Max is, see
+/// tic_settings_get_accel_max().
+TIC_API TIC_WARN_UNUSED
+tic_error * tic_set_accel_max(tic_handle *, uint32_t accel_max);
+
+/// Temporarily sets the deceleration maximum.
+///
+/// This function sends a Set Deceleration Max command to the Tic.  For more
+/// information on what the Deceleration Max is, see
+/// tic_settings_get_decel_max().
+TIC_API TIC_WARN_UNUSED
+tic_error * tic_set_decel_max(tic_handle *, uint32_t decel_max);
 
 /// Temporarily sets the step mode.
 ///
@@ -1173,26 +1223,6 @@ tic_error * tic_set_current_limit(tic_handle *, uint32_t current_limit);
 /// permanently, see tic_settings_set_decay_mode().
 TIC_API TIC_WARN_UNUSED
 tic_error * tic_set_decay_mode(tic_handle *, uint8_t decay_mode);
-
-/// Enables the stepper motor driver.
-///
-/// This function sends an Enable Driver command to the Tic, causing it to
-/// enable its stepper driver if it was previously disabled.  This command only
-/// works if the control mode setting is set to Serial or STEP/DIR.  The effect
-/// only lasts until the Tic is powered off, reset, or reinitialized, or a
-/// Disable Driver command is issued.
-TIC_API TIC_WARN_UNUSED
-tic_error * tic_enable_driver(tic_handle *);
-
-/// Disables the stepper motor driver.
-///
-/// This function sends a Disable Driver command to the Tic, causing it to
-/// disable its stepper driver.  This command only works if the control mode
-/// setting is set to Serial or STEP/DIR.  The effect only lasts until the Tic
-/// is powered off, reset, or reinitialized, or an Enable Driver command is
-/// issued.
-TIC_API TIC_WARN_UNUSED
-tic_error * tic_disable_driver(tic_handle *);
 
 /// Reads all of the Tic's status variables and returns them as an object.
 ///

@@ -14,14 +14,20 @@ static const char help[] =
   "  -p, --position NUM          Set target position in microsteps.\n"
   "  -y, --velocity NUM          Set target velocity in microsteps / 10000 s.\n"
   "  --set-current-position NUM  Set where the controller thinks it currently is.\n"
+  "  --speed-max NUM             Set the speed maximum.\n"
+  "  --speed-min NUM             Set the speed minimum.\n"
+  "  --accel-max NUM             Set the acceleration maximum.\n"
+  "  --decel-max NUM             Set the deceleration maximum.\n"
   "  --step-mode NUM             Set step mode: full, half, 1, 2, 4, 8, 16, 32.\n"
-  "  --current NUM               Set the current limit in mA, temporarily.\n"
+  "  --current NUM               Set the current limit in mA.\n"
   "  --decay MODE                Set decay mode: mixed, slow, or fast.\n"
   "  --restore-defaults          Restore device's factory settings\n"
   "  --settings FILE             Load settings file into device.\n"
   "  --get-settings FILE         Read device settings and write to file.\n"
   "  --fix-settings IN OUT       Read settings from a file and fix them.\n"
   "  -h, --help                  Show this help screen.\n"
+  "\n"
+  "The only option that makes permanent changes to the device is --settings.\n"
   "\n"
   "For more help, see: " DOCUMENTATION_URL "\n"
   "\n";
@@ -35,8 +41,6 @@ struct arguments
 
   bool show_list = false;
 
-  bool stop = false;
-
   bool set_target_position = false;
   int32_t target_position;
 
@@ -46,6 +50,24 @@ struct arguments
   bool set_current_position = false;
   int32_t current_position;
 
+  bool stop = false;
+
+  bool enable_driver = false;
+
+  bool disable_driver = false;
+
+  bool set_speed_max = false;
+  uint32_t speed_max;
+
+  bool set_speed_min = false;
+  uint32_t speed_min;
+
+  bool set_accel_max = false;
+  uint32_t accel_max;
+
+  bool set_decel_max = false;
+  uint32_t decel_max;
+
   bool set_step_mode = false;
   uint8_t step_mode;
 
@@ -54,9 +76,6 @@ struct arguments
 
   bool set_decay_mode = false;
   uint8_t decay_mode;
-
-  bool disable_driver = false;
-  bool enable_driver = false;
 
   bool restore_defaults = false;
 
@@ -80,15 +99,19 @@ struct arguments
   {
     return show_status ||
       show_list ||
-      stop ||
       set_target_position ||
       set_target_velocity ||
       set_current_position ||
+      stop ||
+      enable_driver ||
+      disable_driver ||
+      set_speed_max ||
+      set_speed_min ||
+      set_accel_max ||
+      set_decel_max ||
       set_step_mode ||
       set_current_limit ||
       set_decay_mode ||
-      disable_driver ||
-      enable_driver ||
       restore_defaults ||
       set_settings ||
       get_settings ||
@@ -235,10 +258,6 @@ static arguments parse_args(int argc, char ** argv)
     {
       args.show_list = true;
     }
-    else if (arg == "--stop")
-    {
-      args.stop = true;
-    }
     else if (arg == "-p" || arg == "--position")
     {
       args.set_target_position = true;
@@ -254,6 +273,38 @@ static arguments parse_args(int argc, char ** argv)
       args.set_current_position = true;
       args.current_position = parse_arg_int<int32_t>(arg_reader);
     }
+    else if (arg == "--stop")
+    {
+      args.stop = true;
+    }
+    else if (arg == "--enable-driver")
+    {
+      args.enable_driver = true;
+    }
+    else if (arg == "--disable-driver")
+    {
+      args.disable_driver = true;
+    }
+    else if (arg == "--speed-max")
+    {
+      args.set_speed_max = true;
+      args.speed_max = parse_arg_int<uint32_t>(arg_reader);
+    }
+    else if (arg == "--speed-min")
+    {
+      args.set_speed_min = true;
+      args.speed_min = parse_arg_int<uint32_t>(arg_reader);
+    }
+    else if (arg == "--accel-max")
+    {
+      args.set_accel_max = true;
+      args.accel_max = parse_arg_int<uint32_t>(arg_reader);
+    }
+    else if (arg == "--decel-max")
+    {
+      args.set_decel_max = true;
+      args.decel_max = parse_arg_int<uint32_t>(arg_reader);
+    }
     else if (arg == "--step-mode")
     {
       args.set_step_mode = true;
@@ -268,14 +319,6 @@ static arguments parse_args(int argc, char ** argv)
     {
       args.set_decay_mode = true;
       args.decay_mode = parse_arg_decay_mode(arg_reader);
-    }
-    else if (arg == "--enable-driver")
-    {
-      args.enable_driver = true;
-    }
-    else if (arg == "--disable-driver")
-    {
-      args.disable_driver = true;
     }
     else if (arg == "--restore-defaults" || arg == "--restoredefaults")
     {
@@ -334,6 +377,27 @@ static void print_list(device_selector & selector)
   }
 }
 
+static void set_target_position(device_selector & selector, int32_t position)
+{
+  tic::device device = selector.select_device();
+  tic::handle handle(device);
+  handle.set_target_position(position);
+}
+
+static void set_target_velocity(device_selector & selector, int32_t velocity)
+{
+  tic::device device = selector.select_device();
+  tic::handle handle(device);
+  handle.set_target_velocity(velocity);
+}
+
+static void set_current_position(device_selector & selector, int32_t current_position)
+{
+  tic::device device = selector.select_device();
+  tic::handle handle(device);
+  handle.set_current_position(current_position);
+}
+
 static void stop(device_selector & selector)
 {
   tic::device device = selector.select_device();
@@ -341,11 +405,46 @@ static void stop(device_selector & selector)
   handle.stop();
 }
 
-static void set_target_position(device_selector & selector, int32_t position)
+static void enable_driver(device_selector & selector)
 {
   tic::device device = selector.select_device();
   tic::handle handle(device);
-  handle.set_target_position(position);
+  handle.enable_driver();
+}
+
+static void disable_driver(device_selector & selector)
+{
+  tic::device device = selector.select_device();
+  tic::handle handle(device);
+  handle.disable_driver();
+}
+
+static void set_speed_max(device_selector & selector, uint32_t speed_max)
+{
+  tic::device device = selector.select_device();
+  tic::handle handle(device);
+  handle.set_speed_max(speed_max);
+}
+
+static void set_speed_min(device_selector & selector, uint32_t speed_min)
+{
+  tic::device device = selector.select_device();
+  tic::handle handle(device);
+  handle.set_speed_min(speed_min);
+}
+
+static void set_accel_max(device_selector & selector, uint32_t accel_max)
+{
+  tic::device device = selector.select_device();
+  tic::handle handle(device);
+  handle.set_accel_max(accel_max);
+}
+
+static void set_decel_max(device_selector & selector, uint32_t decel_max)
+{
+  tic::device device = selector.select_device();
+  tic::handle handle(device);
+  handle.set_decel_max(decel_max);
 }
 
 static void set_step_mode(device_selector & selector, uint8_t step_mode)
@@ -375,34 +474,6 @@ static void set_decay_mode(device_selector & selector, uint8_t decay_mode)
   tic::device device = selector.select_device();
   tic::handle handle(device);
   handle.set_decay_mode(decay_mode);
-}
-
-static void enable_driver(device_selector & selector)
-{
-  tic::device device = selector.select_device();
-  tic::handle handle(device);
-  handle.enable_driver();
-}
-
-static void disable_driver(device_selector & selector)
-{
-  tic::device device = selector.select_device();
-  tic::handle handle(device);
-  handle.disable_driver();
-}
-
-static void set_target_velocity(device_selector & selector, int32_t velocity)
-{
-  tic::device device = selector.select_device();
-  tic::handle handle(device);
-  handle.set_target_velocity(velocity);
-}
-
-static void set_current_position(device_selector & selector, int32_t current_position)
-{
-  tic::device device = selector.select_device();
-  tic::handle handle(device);
-  handle.set_current_position(current_position);
 }
 
 static void get_status(device_selector & selector)
@@ -570,6 +641,26 @@ static void run(int argc, char ** argv)
   if (args.set_settings)
   {
     set_settings(selector, args.set_settings_filename);
+  }
+
+  if (args.set_speed_max)
+  {
+    set_speed_max(selector, args.speed_max);
+  }
+
+  if (args.set_speed_min)
+  {
+    set_speed_min(selector, args.speed_min);
+  }
+
+  if (args.set_accel_max)
+  {
+    set_accel_max(selector, args.accel_max);
+  }
+
+  if (args.set_decel_max)
+  {
+    set_decel_max(selector, args.decel_max);
   }
 
   if (args.stop)
