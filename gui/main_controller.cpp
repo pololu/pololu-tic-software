@@ -321,3 +321,35 @@ void main_controller::apply_settings()
 
   handle_settings_changed();
 }
+
+void main_controller::set_target_position(int32_t position)
+{
+  if (!connected()) { return; }
+
+  try
+  {
+    assert(connected());
+    
+    device_handle.set_target_position(position);
+  }
+  catch (const std::exception & e)
+  {
+    show_exception(e, "There was an error setting target position.");
+  }
+}
+
+void main_controller::set_target_velocity(int32_t velocity)
+{
+  if (!connected()) { return; }
+
+  try
+  {
+    assert(connected());
+    
+    device_handle.set_target_velocity(velocity);
+  }
+  catch (const std::exception & e)
+  {
+    show_exception(e, "There was an error setting target velocity.");
+  }
+}

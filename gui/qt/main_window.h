@@ -2,8 +2,7 @@
 
 #include <QMainWindow>
 
-// todo remove unnecessary lines
-// class QCheckBox;
+class QCheckBox;
 class QComboBox;
 class QGridLayout;
 class QGroupBox;
@@ -11,6 +10,8 @@ class QHBoxLayout;
 class QLabel;
 class QMainWindow;
 class QPushButton;
+class QRadioButton;
+class QScrollBar;
 class QSpinBox;
 class QVBoxLayout;
 class main_controller;
@@ -68,6 +69,8 @@ private slots:
   /** This is called by Qt when the user wants to apply settings. */
   void on_apply_settings_action_triggered();
   
+  void on_target_position_mode_radio_toggled(bool checked);
+  void on_set_target_button_clicked();
   void on_control_mode_value_currentIndexChanged(int index);
   void on_input_min_value_editingFinished();
   void on_input_neutral_min_value_editingFinished();
@@ -91,22 +94,29 @@ private:
    * the rest of the program. */
   bool suppress_events = false;
   
+  bool target_position_mode = true;
+  
   void setup_window();
   void setup_menu_bar();
   // todo remove unnecessary lines
   // QWidget * setupDeviceInfoBox();
   // QWidget * setupProgrammingResultsBox();
   // QWidget * setupCurrentStatusBox();
-  QWidget * setup_settings_widget();
+  QLayout * setup_left_column();
+  QLayout * setup_right_column();
+  QWidget * setup_target_box();
+  QLayout * setup_target_mode_layout();
+  QLayout * setup_target_range_layout();
   QWidget * setup_control_mode_widget();
   QWidget * setup_scaling_settings_box();
   QWidget * setup_motor_settings_box();
-  QWidget * setup_footer();
+  QLayout * setup_footer();
   QWidget * setup_connection_status();
   // QWidget * setupCancelChangesButton();
   QWidget * setup_defaults_button();
   QWidget * setup_apply_button();
   void retranslate();
+  void update_target_box(bool position_mode);
     
   QMenuBar * menu_bar;
   QMenu * file_menu;
@@ -124,9 +134,26 @@ private:
   QWidget * central_widget;
   QGridLayout * central_widget_layout;
   
-  QWidget * settings_widget;
-  QVBoxLayout * settings_widget_layout;
+  
+  //QWidget * settings_widget;
+  QVBoxLayout * left_column_layout;
+  QVBoxLayout * right_column_layout;
 
+  //QWidget * control_widget;
+  QGroupBox * target_box;
+  QVBoxLayout * target_box_layout;
+  QHBoxLayout * target_mode_layout;
+  QHBoxLayout * target_range_layout;
+  QRadioButton * target_position_mode_radio;
+  QRadioButton * target_speed_mode_radio;
+  QScrollBar * target_scrollbar;
+  QLabel * target_min_label;
+  QLabel * target_max_label;
+  QSpinBox * target_numeric_value;
+  QPushButton * set_target_button;
+  QCheckBox * auto_set_target_checkbox;
+  QCheckBox * auto_zero_target_checkbox;
+  
   // [all-settings]
   QWidget * control_mode_widget;
   QGridLayout * control_mode_widget_layout;
@@ -165,7 +192,7 @@ private:
   QLabel * decay_mode_label;
   QComboBox * decay_mode_value;
   
-  QWidget * footer_widget;
+  //QWidget * footer_widget;
   QHBoxLayout * footer_widget_layout;
   QLabel * connection_status_value;
   QPushButton * apply_settings_button;

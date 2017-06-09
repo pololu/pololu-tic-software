@@ -3,6 +3,7 @@
 
 #include "tic.hpp"
 
+#include <QCheckBox>
 #include <QComboBox>
 #include <QGridLayout>
 #include <QGroupBox>
@@ -11,6 +12,8 @@
 #include <QMenuBar>
 #include <QMessageBox>
 #include <QPushButton>
+#include <QRadioButton>
+#include <QScrollBar>
 #include <QSpinBox>
 #include <QVBoxLayout>
 
@@ -182,6 +185,23 @@ void main_window::on_apply_settings_action_triggered()
   controller->apply_settings();
 }
 
+void main_window::on_target_position_mode_radio_toggled(bool checked)
+{
+  update_target_box(checked);
+}
+
+void main_window::on_set_target_button_clicked()
+{
+  if (target_position_mode)
+  {
+    controller->set_target_position(target_numeric_value->value());
+  }
+  else
+  {
+    controller->set_target_velocity(target_numeric_value->value());
+  }
+}
+
 void main_window::on_control_mode_value_currentIndexChanged(int index)
 {
   if (suppress_events) { return; }
@@ -285,8 +305,9 @@ void main_window::setup_window()
   
   int row = 0;
   // todo: will require rework if we add more columns
-  layout->addWidget(setup_settings_widget(), row++, 0, 0);
-  layout->addWidget(setup_footer(), row++, 0, 0);
+  layout->addLayout(setup_left_column(), row, 0);
+  layout->addLayout(setup_right_column(), row++, 1);
+  layout->addLayout(setup_footer(), row++, 0, 1, 2);
   
   central_widget->setLayout(layout);
   setCentralWidget(central_widget);
@@ -355,17 +376,87 @@ void main_window::setup_menu_bar()
   setMenuBar(menu_bar);
 }
 
-QWidget * main_window::setup_settings_widget()
+QLayout * main_window::setup_left_column()
 {
-  settings_widget = new QWidget();
-  QVBoxLayout * layout = settings_widget_layout = new QVBoxLayout();
-  
+  QVBoxLayout * layout = left_column_layout = new QVBoxLayout();
+
+  layout->addStretch(1);
   layout->addWidget(setup_control_mode_widget());
+  layout->addWidget(setup_target_box());
+  
+  //settings_widget->setLayout(layout);
+  return left_column_layout;
+}
+
+QLayout * main_window::setup_right_column()
+{
+  //settings_widget = new QWidget();
+  QVBoxLayout * layout = right_column_layout = new QVBoxLayout();
+  
   layout->addWidget(setup_scaling_settings_box());
   layout->addWidget(setup_motor_settings_box());
+  layout->addStretch(1);
   
-  settings_widget->setLayout(layout);
-  return settings_widget;
+  //settings_widget->setLayout(layout);
+  return right_column_layout;
+}
+
+QWidget * main_window::setup_target_box()
+{
+  target_box = new QGroupBox();
+  QVBoxLayout * layout = target_box_layout = new QVBoxLayout();
+  
+  target_scrollbar = new QScrollBar(Qt::Horizontal);
+  target_scrollbar->setObjectName("target_scrollbar");
+  set_target_button = new QPushButton();
+  set_target_button->setObjectName("set_target_button");
+  auto_set_target_checkbox = new QCheckBox();
+  auto_zero_target_checkbox = new QCheckBox();
+  layout->addLayout(setup_target_mode_layout());
+  layout->addSpacing(central_widget->fontMetrics().height());
+  layout->addWidget(target_scrollbar);
+  layout->addLayout(setup_target_range_layout());
+  layout->addWidget(set_target_button, 0, Qt::AlignCenter);
+  layout->addSpacing(central_widget->fontMetrics().height());
+  layout->addWidget(auto_set_target_checkbox, 0, Qt::AlignLeft);
+  layout->addWidget(auto_zero_target_checkbox, 0, Qt::AlignLeft);
+  
+  target_box->setLayout(layout);
+  return target_box;
+}
+
+QLayout * main_window::setup_target_mode_layout()
+{
+  QHBoxLayout * layout = target_mode_layout = new QHBoxLayout();
+  
+  target_position_mode_radio = new QRadioButton();
+  target_position_mode_radio->setObjectName("target_position_mode_radio");
+  target_position_mode_radio->setChecked(true);
+  target_speed_mode_radio = new QRadioButton();
+  target_speed_mode_radio->setObjectName("target_speed_mode_radio");
+  layout->addStretch(1);
+  layout->addWidget(target_position_mode_radio);
+  layout->addSpacing(central_widget->fontMetrics().height());
+  layout->addWidget(target_speed_mode_radio);
+  layout->addStretch(1);
+  
+  return target_mode_layout;
+}
+
+QLayout * main_window::setup_target_range_layout()
+{
+  QHBoxLayout * layout = target_range_layout = new QHBoxLayout();
+
+  target_min_label = new QLabel();
+  target_max_label = new QLabel();
+  target_numeric_value = new QSpinBox();
+  target_numeric_value->setObjectName("target_numeric_value");
+  target_numeric_value->setRange(-0x7FFFFFF, 0x7FFFFFF);
+  layout->addWidget(target_min_label);
+  layout->addWidget(target_numeric_value, 1, Qt::AlignCenter);
+  layout->addWidget(target_max_label);
+  
+  return target_range_layout;
 }
 
 // [all-settings]
@@ -374,13 +465,13 @@ QWidget * main_window::setup_control_mode_widget()
 {
   control_mode_widget = new QWidget();
   QGridLayout * layout = control_mode_widget_layout = new QGridLayout();
-  //layout->setColumnStretch(1, 1);
+  layout->setColumnStretch(1, 1);
   int row = 0;
   
   {
     control_mode_value = new QComboBox();
     control_mode_value->setObjectName("control_mode_value");
-    control_mode_value->addItem("Serial/I\u00B2C/USB", TIC_CONTROL_MODE_SERIAL);
+    control_mode_value->addItem("Serial\u2009/\u2009I\u00B2C\u2009/\u2009USB", TIC_CONTROL_MODE_SERIAL);
     control_mode_value->addItem("RC position", TIC_CONTROL_MODE_RC_POSITION);
     control_mode_value->addItem("RC speed", TIC_CONTROL_MODE_RC_SPEED);
     control_mode_value->addItem("Analog position", TIC_CONTROL_MODE_ANALOG_POSITION);
@@ -402,7 +493,7 @@ QWidget * main_window::setup_scaling_settings_box()
 {
   scaling_settings_box = new QGroupBox();
   QGridLayout * layout = scaling_settings_box_layout = new QGridLayout();
-  //layout->setColumnStretch(1, 1);
+  layout->setColumnStretch(2, 1);
   int row = 0;
   
   {
@@ -471,9 +562,9 @@ QWidget * main_window::setup_motor_settings_box()
 {
   motor_settings_box = new QGroupBox();
   QGridLayout * layout = motor_settings_box_layout = new QGridLayout();
-  //layout->setColumnStretch(1, 1);
+  layout->setColumnStretch(1, 1);
   int row = 0;
-  
+
   {
     speed_max_value = new QSpinBox();
     speed_max_value->setObjectName("speed_max_value");
@@ -565,17 +656,17 @@ QWidget * main_window::setup_motor_settings_box()
   return motor_settings_box;
 }
 
-QWidget * main_window::setup_footer()
+QLayout * main_window::setup_footer()
 {
-  footer_widget = new QWidget();
+  //footer_widget = new QWidget();
   QHBoxLayout * layout = footer_widget_layout = new QHBoxLayout();
   layout->setContentsMargins(0, 0, 0, 0);
 
   layout->addWidget(setup_connection_status(), 0, Qt::AlignLeft);
   layout->addWidget(setup_apply_button(), 0, Qt::AlignRight);
     
-  footer_widget->setLayout(layout);
-  return footer_widget;
+  //footer_widget->setLayout(layout);
+  return footer_widget_layout;
 }
 
 QWidget * main_window::setup_connection_status()
@@ -597,6 +688,7 @@ void main_window::retranslate()
 {
   setWindowTitle(tr("Pololu Tic Configuration Utility"));
 
+  // todo fix cases
   file_menu->setTitle(tr("&File"));
   exit_action->setText(tr("E&xit"));
   device_menu->setTitle(tr("&Device"));
@@ -609,6 +701,13 @@ void main_window::retranslate()
   documentation_action->setText(tr("&Online Documentation..."));
   about_action->setText(tr("&About..."));
 
+  target_box->setTitle(tr("Set target (Serial\u2009/\u2009I\u00B2C\u2009/\u2009USB mode only)"));
+  target_position_mode_radio->setText(tr("Set position"));
+  target_speed_mode_radio->setText(tr("Set speed"));
+  update_target_box(target_position_mode_radio->isChecked());
+  auto_set_target_checkbox->setText(tr("Set target when slider or entry box are changed"));
+  auto_zero_target_checkbox->setText(tr("Return slider to zero when it is released"));
+  
   // [all-settings]
   control_mode_label->setText(tr("Control mode:"));
   
@@ -632,4 +731,20 @@ void main_window::retranslate()
   // cancelChangesButton->setText("Cancel Changes"); // TODO: use same name as menu item
   // defaultsButton->setText("Defaults"); // TODO: use same name as menu item
   apply_settings_button->setText(apply_settings_action->text());
+}
+
+void main_window::update_target_box(bool position_mode)
+{
+  target_position_mode = position_mode;
+  
+  if (target_position_mode)
+  {
+    set_target_button->setText(tr("Set position"));
+  }
+  else
+  {
+    set_target_button->setText(tr("Set speed"));
+  }
+  //target_min_label->setText();
+  //target_max_label->setText();
 }

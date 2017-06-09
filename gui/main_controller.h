@@ -33,6 +33,9 @@ private:
   void show_exception(const std::exception & e, const std::string & context = "");
 
 public:
+  void set_target_position(int32_t position);
+  void set_target_velocity(int32_t velocity);
+
   /** This is called when the user wants to apply the settings. */
   void apply_settings();
 
