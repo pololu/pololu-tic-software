@@ -8,6 +8,25 @@ describe 'commands for controlling the motor', usb: true do
     end
   end
 
+  describe 'Stop command' do
+    it 'lets you clear a target position or velocity' do
+      stdout, stderr, result = run_ticcmd('-p 230000')
+      expect(stderr).to eq ''
+      expect(stdout).to eq ''
+      expect(result).to eq 0
+
+      expect(tic_get_status['Target position']).to eq 230000
+
+      stdout, stderr, result = run_ticcmd('--stop')
+      expect(stderr).to eq ''
+      expect(stdout).to eq ''
+      expect(result).to eq 0
+
+      # Ruby converts 'off' to false
+      expect(tic_get_status['Planning mode']).to eq false
+    end
+  end
+
   describe 'Set Target Position command' do
     it 'lets you set the position' do
       stdout, stderr, result = run_ticcmd('-p 230000')
@@ -17,7 +36,7 @@ describe 'commands for controlling the motor', usb: true do
 
       expect(tic_get_status['Target position']).to eq 230000
 
-      run_ticcmd('--position -44')
+      stdout, stderr, result = run_ticcmd('--position -44')
       expect(stderr).to eq ''
       expect(stdout).to eq ''
       expect(result).to eq 0
@@ -35,7 +54,7 @@ describe 'commands for controlling the motor', usb: true do
 
       expect(tic_get_status['Target velocity']).to eq 100000
 
-      run_ticcmd('--velocity -1')
+      stderr, stdout, result = run_ticcmd('--velocity -1')
       expect(stderr).to eq ''
       expect(stdout).to eq ''
       expect(result).to eq 0

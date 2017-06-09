@@ -163,6 +163,27 @@ const char * tic_get_firmware_version_string(tic_handle * handle)
   return new_string;
 }
 
+tic_error * tic_stop(tic_handle * handle)
+{
+  if (handle == NULL)
+  {
+    return tic_error_create("Handle is null.");
+  }
+
+  tic_error * error = NULL;
+
+  error = tic_usb_error(libusbp_control_transfer(handle->usb_handle,
+    0x40, TIC_CMD_STOP, 0, 0, NULL, 0, NULL));
+
+  if (error != NULL)
+  {
+    error = tic_error_add(error,
+      "There was an error stopping the Tic.");
+  }
+
+  return error;
+}
+
 tic_error * tic_set_target_position(tic_handle * handle, int32_t position)
 {
   if (handle == NULL)

@@ -10,6 +10,7 @@ static const char help[] =
   "  -s, --status                Show device settings and info.\n"
   "  -d SERIALNUMBER             Specifies the serial number of the device.\n"
   "  --list                      List devices connected to computer.\n"
+  "  --stop                      Stop the motor.\n"
   "  -p, --position NUM          Set target position in microsteps.\n"
   "  -y, --velocity NUM          Set target velocity in microsteps / 10000 s.\n"
   "  --step-mode NUM             Set step mode: full, half, 1, 2, 4, 8, 16, 32.\n"
@@ -32,6 +33,8 @@ struct arguments
   std::string serial_number;
 
   bool show_list = false;
+
+  bool stop = false;
 
   bool set_target_position = false;
   int32_t target_position;
@@ -73,6 +76,7 @@ struct arguments
   {
     return show_status ||
       show_list ||
+      stop ||
       set_target_position ||
       set_target_velocity ||
       set_step_mode ||
@@ -226,10 +230,19 @@ static arguments parse_args(int argc, char ** argv)
     {
       args.show_list = true;
     }
+    else if (arg == "--stop")
+    {
+      args.stop = true;
+    }
     else if (arg == "-p" || arg == "--position")
     {
       args.set_target_position = true;
       args.target_position = parse_arg_int<int32_t>(arg_reader);
+    }
+    else if (arg == "-y" || arg == "--velocity")
+    {
+      args.set_target_velocity = true;
+      args.target_velocity = parse_arg_int<int32_t>(arg_reader);
     }
     else if (arg == "--step-mode")
     {
@@ -245,11 +258,6 @@ static arguments parse_args(int argc, char ** argv)
     {
       args.set_decay_mode = true;
       args.decay_mode = parse_arg_decay_mode(arg_reader);
-    }
-    else if (arg == "-y" || arg == "--velocity")
-    {
-      args.set_target_velocity = true;
-      args.target_velocity = parse_arg_int<int32_t>(arg_reader);
     }
     else if (arg == "--enable-driver")
     {
@@ -314,6 +322,13 @@ static void print_list(device_selector & selector)
     std::cout << std::setw(45) << instance.get_name();
     std::cout << std::endl;
   }
+}
+
+static void stop(device_selector & selector)
+{
+  tic::device device = selector.select_device();
+  tic::handle handle(device);
+  handle.stop();
 }
 
 static void set_target_position(device_selector & selector, int32_t position)
@@ -538,6 +553,11 @@ static void run(int argc, char ** argv)
   if (args.set_settings)
   {
     set_settings(selector, args.set_settings_filename);
+  }
+
+  if (args.stop)
+  {
+    stop(selector);
   }
 
   if (args.set_target_position)
