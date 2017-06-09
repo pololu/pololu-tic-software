@@ -581,6 +581,12 @@ namespace tic
       throw_if_needed(tic_set_target_velocity(pointer, velocity));
     }
 
+    /// Wrapper for tic_set_current_position().
+    void set_current_position(int32_t position)
+    {
+      throw_if_needed(tic_set_current_position(pointer, position));
+    }
+
     /// Wrapper for tic_set_step_mode().
     void set_step_mode(uint8_t step_mode)
     {

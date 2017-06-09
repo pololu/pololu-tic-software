@@ -13,6 +13,7 @@ static const char help[] =
   "  --stop                      Stop the motor.\n"
   "  -p, --position NUM          Set target position in microsteps.\n"
   "  -y, --velocity NUM          Set target velocity in microsteps / 10000 s.\n"
+  "  --set-current-position NUM  Set where the controller thinks it currently is.\n"
   "  --step-mode NUM             Set step mode: full, half, 1, 2, 4, 8, 16, 32.\n"
   "  --current NUM               Set the current limit in mA, temporarily.\n"
   "  --decay MODE                Set decay mode: mixed, slow, or fast.\n"
@@ -41,6 +42,9 @@ struct arguments
 
   bool set_target_velocity = false;
   int32_t target_velocity;
+
+  bool set_current_position = false;
+  int32_t current_position;
 
   bool set_step_mode = false;
   uint8_t step_mode;
@@ -79,6 +83,7 @@ struct arguments
       stop ||
       set_target_position ||
       set_target_velocity ||
+      set_current_position ||
       set_step_mode ||
       set_current_limit ||
       set_decay_mode ||
@@ -244,6 +249,11 @@ static arguments parse_args(int argc, char ** argv)
       args.set_target_velocity = true;
       args.target_velocity = parse_arg_int<int32_t>(arg_reader);
     }
+    else if (arg == "--set-current-position")
+    {
+      args.set_current_position = true;
+      args.current_position = parse_arg_int<int32_t>(arg_reader);
+    }
     else if (arg == "--step-mode")
     {
       args.set_step_mode = true;
@@ -386,6 +396,13 @@ static void set_target_velocity(device_selector & selector, int32_t velocity)
   tic::device device = selector.select_device();
   tic::handle handle(device);
   handle.set_target_velocity(velocity);
+}
+
+static void set_current_position(device_selector & selector, int32_t current_position)
+{
+  tic::device device = selector.select_device();
+  tic::handle handle(device);
+  handle.set_current_position(current_position);
 }
 
 static void get_status(device_selector & selector)
@@ -568,6 +585,11 @@ static void run(int argc, char ** argv)
   if (args.set_target_velocity)
   {
     set_target_velocity(selector, args.target_velocity);
+  }
+
+  if (args.set_current_position)
+  {
+    set_current_position(selector, args.current_position);
   }
 
   if (args.set_step_mode)

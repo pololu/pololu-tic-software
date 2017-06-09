@@ -1132,6 +1132,16 @@ tic_error * tic_set_target_position(tic_handle *, int32_t position);
 TIC_API TIC_WARN_UNUSED
 tic_error * tic_set_target_velocity(tic_handle *, int32_t velocity);
 
+/// Sets the current position, e.g. the position where the Tic currently thinks
+/// it is.
+///
+/// This functions sends a Set Current Position command to the Tic.
+///
+/// Do not call this if the stepper motor is moving, or else you could get
+/// unexpected behavior from the controller.
+TIC_API TIC_WARN_UNUSED
+tic_error * tic_set_current_position(tic_handle *, int32_t position);
+
 /// Temporarily sets the step mode.
 ///
 /// The step_mode argument should be one of the TIC_STEP_MODE_* macros.

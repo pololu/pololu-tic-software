@@ -63,6 +63,31 @@ describe 'commands for controlling the motor', usb: true do
     end
   end
 
+  describe 'Set Current Position command' do
+    it 'lets you set the current position' do
+      # Stop for a while to make sure we are not moving.
+      stdout, stderr, result = run_ticcmd('--stop')
+      expect(stderr).to eq ''
+      expect(stdout).to eq ''
+      expect(result).to eq 0
+      sleep 0.1
+
+      stdout, stderr, result = run_ticcmd('--set-current-position 2146054486')
+      expect(stderr).to eq ''
+      expect(stdout).to eq ''
+      expect(result).to eq 0
+
+      expect(tic_get_status['Current position']).to eq 2146054486
+
+      stderr, stdout, result = run_ticcmd('--set-current-position 10')
+      expect(stderr).to eq ''
+      expect(stdout).to eq ''
+      expect(result).to eq 0
+
+      expect(tic_get_status['Current position']).to eq 10
+    end
+  end
+
   describe 'Enable/Disable driver' do
     it 'works' do
       stdout, stderr, result = run_ticcmd('--disable-driver')
