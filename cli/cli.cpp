@@ -48,6 +48,9 @@ struct arguments
   bool set_decay_mode = false;
   uint8_t decay_mode;
 
+  bool disable_driver = false;
+  bool enable_driver = false;
+
   bool restore_defaults = false;
 
   bool set_settings = false;
@@ -75,6 +78,8 @@ struct arguments
       set_step_mode ||
       set_current_limit ||
       set_decay_mode ||
+      disable_driver ||
+      enable_driver ||
       restore_defaults ||
       set_settings ||
       get_settings ||
@@ -246,6 +251,14 @@ static arguments parse_args(int argc, char ** argv)
       args.set_target_velocity = true;
       args.target_velocity = parse_arg_int<int32_t>(arg_reader);
     }
+    else if (arg == "--enable-driver")
+    {
+      args.enable_driver = true;
+    }
+    else if (arg == "--disable-driver")
+    {
+      args.disable_driver = true;
+    }
     else if (arg == "--restore-defaults" || arg == "--restoredefaults")
     {
       args.restore_defaults = true;
@@ -337,6 +350,20 @@ static void set_decay_mode(device_selector & selector, uint8_t decay_mode)
   tic::device device = selector.select_device();
   tic::handle handle(device);
   handle.set_decay_mode(decay_mode);
+}
+
+static void enable_driver(device_selector & selector)
+{
+  tic::device device = selector.select_device();
+  tic::handle handle(device);
+  handle.enable_driver();
+}
+
+static void disable_driver(device_selector & selector)
+{
+  tic::device device = selector.select_device();
+  tic::handle handle(device);
+  handle.disable_driver();
 }
 
 static void set_target_velocity(device_selector & selector, int32_t velocity)
@@ -518,6 +545,11 @@ static void run(int argc, char ** argv)
     set_target_position(selector, args.target_position);
   }
 
+  if (args.set_target_velocity)
+  {
+    set_target_velocity(selector, args.target_velocity);
+  }
+
   if (args.set_step_mode)
   {
     set_step_mode(selector, args.step_mode);
@@ -533,9 +565,14 @@ static void run(int argc, char ** argv)
     set_decay_mode(selector, args.decay_mode);
   }
 
-  if (args.set_target_velocity)
+  if (args.enable_driver)
   {
-    set_target_velocity(selector, args.target_velocity);
+    enable_driver(selector);
+  }
+
+  if (args.disable_driver)
+  {
+    disable_driver(selector);
   }
 
   if (args.get_debug_data)

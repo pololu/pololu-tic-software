@@ -1156,6 +1156,26 @@ tic_error * tic_set_current_limit(tic_handle *, uint32_t current_limit);
 TIC_API TIC_WARN_UNUSED
 tic_error * tic_set_decay_mode(tic_handle *, uint8_t decay_mode);
 
+/// Enables the stepper motor driver.
+///
+/// This function sends an Enable Driver command to the Tic, causing it to
+/// enable its stepper driver if it was previously disabled.  This command only
+/// works if the control mode setting is set to Serial or STEP/DIR.  The effect
+/// only lasts until the Tic is powered off, reset, or reinitialized, or a
+/// Disable Driver command is issued.
+TIC_API TIC_WARN_UNUSED
+tic_error * tic_enable_driver(tic_handle *);
+
+/// Disables the stepper motor driver.
+///
+/// This function sends a Disable Driver command to the Tic, causing it to
+/// disable its stepper driver.  This command only works if the control mode
+/// setting is set to Serial or STEP/DIR.  The effect only lasts until the Tic
+/// is powered off, reset, or reinitialized, or an Enable Driver command is
+/// issued.
+TIC_API TIC_WARN_UNUSED
+tic_error * tic_disable_driver(tic_handle *);
+
 /// Reads all of the Tic's status variables and returns them as an object.
 ///
 /// The variables parameter should be a non-null pointer to a tic_variables

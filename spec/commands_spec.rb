@@ -43,6 +43,26 @@ describe 'commands for controlling the motor', usb: true do
       expect(tic_get_status['Target velocity']).to eq -1
     end
   end
+
+  describe 'Enable/Disable driver' do
+    it 'works' do
+      stdout, stderr, result = run_ticcmd('--disable-driver')
+      expect(stderr).to eq ''
+      expect(stdout).to eq ''
+      expect(result).to eq 0
+
+      errors = tic_get_status['Errors currently stopping the motor']
+      expect(errors).to be_include 'Intentionally disabled'
+
+      stdout, stderr, result = run_ticcmd('--enable-driver')
+      expect(stderr).to eq ''
+      expect(stdout).to eq ''
+      expect(result).to eq 0
+
+      errors = tic_get_status['Errors currently stopping the motor']
+      expect(errors).to_not be_include 'Intentionally disabled'
+    end
+  end
 end
 
 describe 'Set Step Mode' do
@@ -104,3 +124,5 @@ describe 'Set Decay Mode' do
     end
   end
 end
+
+

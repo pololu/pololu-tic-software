@@ -593,6 +593,18 @@ namespace tic
       throw_if_needed(tic_set_decay_mode(pointer, decay_mode));
     }
 
+    /// Wrapper for tic_enable_driver().
+    void enable_driver()
+    {
+      throw_if_needed(tic_enable_driver(pointer));
+    }
+
+    /// Wrapper for tic_disable_driver().
+    void disable_driver()
+    {
+      throw_if_needed(tic_disable_driver(pointer));
+    }
+
     /// Wrapper for tic_get_variables().
     variables get_variables()
     {
