@@ -12,6 +12,7 @@ static const char help[] =
   "  --list                      List devices connected to computer.\n"
   "  -p, --position NUM          Set target position in microsteps.\n"
   "  -y, --velocity NUM          Set target velocity in microsteps / 10000 s.\n"
+  "  --step-mode NUM             Set step mode: full, half, 1, 2, 4, 8, 16, 32.\n"
   "  --current NUM               Set the current limit in mA, temporarily.\n"
   "  --decay MODE                Set decay mode: mixed, slow, or fast.\n"
   "  --restore-defaults          Restore device's factory settings\n"
@@ -37,6 +38,9 @@ struct arguments
 
   bool set_target_velocity = false;
   int32_t target_velocity;
+
+  bool set_step_mode = false;
+  uint8_t step_mode;
 
   bool set_current_limit = false;
   uint32_t current_limit;
@@ -68,6 +72,7 @@ struct arguments
       show_list ||
       set_target_position ||
       set_target_velocity ||
+      set_step_mode ||
       set_current_limit ||
       set_decay_mode ||
       restore_defaults ||
@@ -132,6 +137,40 @@ static std::string parse_arg_string(arg_reader & arg_reader)
     return std::string(value_c);
 }
 
+static uint8_t parse_arg_step_mode(arg_reader & arg_reader)
+{
+  std::string mode_str = parse_arg_string(arg_reader);
+  if (mode_str == "1" || mode_str == "full")
+  {
+    return TIC_STEP_MODE_MICROSTEP1;
+  }
+  else if (mode_str == "2" || mode_str == "half")
+  {
+    return TIC_STEP_MODE_MICROSTEP2;
+  }
+  else if (mode_str == "4")
+  {
+    return TIC_STEP_MODE_MICROSTEP4;
+  }
+  else if (mode_str == "8")
+  {
+    return TIC_STEP_MODE_MICROSTEP8;
+  }
+  else if (mode_str == "16")
+  {
+    return TIC_STEP_MODE_MICROSTEP16;
+  }
+  else if (mode_str == "32")
+  {
+    return TIC_STEP_MODE_MICROSTEP32;
+  }
+  else
+  {
+    throw exception_with_exit_code(EXIT_BAD_ARGS,
+      "The step mode specified is invalid.");
+  }
+}
+
 static uint8_t parse_arg_decay_mode(arg_reader & arg_reader)
 {
   std::string decay_str = parse_arg_string(arg_reader);
@@ -186,6 +225,11 @@ static arguments parse_args(int argc, char ** argv)
     {
       args.set_target_position = true;
       args.target_position = parse_arg_int<int32_t>(arg_reader);
+    }
+    else if (arg == "--step-mode")
+    {
+      args.set_step_mode = true;
+      args.step_mode = parse_arg_step_mode(arg_reader);
     }
     else if (arg == "--current")
     {
@@ -264,6 +308,13 @@ static void set_target_position(device_selector & selector, int32_t position)
   tic::device device = selector.select_device();
   tic::handle handle(device);
   handle.set_target_position(position);
+}
+
+static void set_step_mode(device_selector & selector, uint8_t step_mode)
+{
+  tic::device device = selector.select_device();
+  tic::handle handle(device);
+  handle.set_step_mode(step_mode);
 }
 
 static void set_current_limit(device_selector & selector, uint32_t current_limit)
@@ -465,6 +516,11 @@ static void run(int argc, char ** argv)
   if (args.set_target_position)
   {
     set_target_position(selector, args.target_position);
+  }
+
+  if (args.set_step_mode)
+  {
+    set_step_mode(selector, args.step_mode);
   }
 
   if (args.set_current_limit)

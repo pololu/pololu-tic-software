@@ -1124,6 +1124,17 @@ tic_error * tic_set_target_position(tic_handle *, int32_t position);
 TIC_API TIC_WARN_UNUSED
 tic_error * tic_set_target_velocity(tic_handle *, int32_t velocity);
 
+/// Temporarily sets the step mode.
+///
+/// The step_mode argument should be one of the TIC_STEP_MODE_* macros.
+///
+/// This function sends a Set Step Mode commands to the Tic.  The step mode will
+/// stay in effect until the Tic is powered off, reset, or reinitialized, or
+/// another Set Step Mode command is issued.  To set the step mode permanently,
+/// see tic_settings_set_step_mode().
+TIC_API TIC_WARN_UNUSED
+tic_error * tic_set_step_mode(tic_handle *, uint8_t step_mode);
+
 /// Temporarily sets the stepper motor coil current limit in milliamps.
 ///
 /// This function sends a Set Current Limit command to the Tic.  This current

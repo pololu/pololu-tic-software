@@ -209,6 +209,28 @@ tic_error * tic_set_target_velocity(tic_handle * handle, int32_t velocity)
   return error;
 }
 
+tic_error * tic_set_step_mode(tic_handle * handle, uint8_t step_mode)
+{
+  if (handle == NULL)
+  {
+    return tic_error_create("Handle is null.");
+  }
+
+  tic_error * error = NULL;
+
+  uint16_t wValue = step_mode;
+  error = tic_usb_error(libusbp_control_transfer(handle->usb_handle,
+    0x40, TIC_CMD_SET_STEP_MODE, wValue, 0, NULL, 0, NULL));
+
+  if (error != NULL)
+  {
+    error = tic_error_add(error,
+      "There was an error setting the step mode.");
+  }
+
+  return error;
+}
+
 tic_error * tic_set_current_limit(tic_handle * handle, uint32_t current_limit)
 {
   if (handle == NULL)
