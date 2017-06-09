@@ -89,7 +89,7 @@ sda_config: limit_reverse analog
 tx_config: kill pullup analog
 rx_config: serial
 rc_config: rc pullup
-current_limit: 1984
+current_limit: 384
 step_mode: 32
 decay_mode: fast
 speed_min: 10000
