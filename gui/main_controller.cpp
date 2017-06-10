@@ -131,7 +131,7 @@ void main_controller::update()
         // Reload the variables from the device.
         try
         {
-          //todo reload_variables();
+          reload_variables();
         }
         catch (const std::exception & e)
         {
@@ -140,7 +140,7 @@ void main_controller::update()
           // not that useful since it is probably just a generic problem with
           // the USB connection.
         }
-        //view->handle_variables_changed();
+        handle_variables_changed();
     }
     else
     {
@@ -207,15 +207,6 @@ void main_controller::really_connect()
     return;
   }
 
-  /*try
-  {
-      model->reloadFirmwareVersionString();
-  }
-  catch (const std::exception & e)
-  {
-      showException(e, "There was an error getting the firmware version.");
-  }*/
-
   try
   {
     settings = device_handle.get_settings();
@@ -225,14 +216,14 @@ void main_controller::really_connect()
     show_exception(e, "There was an error loading settings from the device.");
   }
 
-  /*try
+  try
   {
-      model->reloadVariables();
+    reload_variables();
   }
   catch (const std::exception & e)
   {
-      showException(e, "There was an error getting the status of the device.");
-  }*/
+    show_exception(e, "There was an error getting the status of the device.");
+  }
 
   handle_model_changed();
 }
@@ -252,8 +243,8 @@ bool main_controller::try_update_device_list()
   }
 }
 
-void main_controller::show_exception(const std::exception & e,
-    const std::string & context)
+void main_controller::show_exception(std::exception const & e,
+    std::string const & context)
 {
     std::string message;
     if (context.size() > 0)
@@ -268,7 +259,7 @@ void main_controller::show_exception(const std::exception & e,
 void main_controller::handle_model_changed()
 {
   handle_device_changed();
-  //handleVariablesChanged();
+  handle_variables_changed();
   handle_settings_changed();
 }
 
@@ -305,6 +296,14 @@ void main_controller::handle_device_changed()
       window->set_connection_status("Not connected yet...", false);
     }
   }
+}
+
+void main_controller::handle_variables_changed()
+{
+  //todo get_device_reset()
+  
+  window->set_current_position(std::to_string(variables.get_current_position()));
+  window->set_current_velocity(std::to_string(variables.get_current_velocity()));
 }
 
 void main_controller::handle_settings_changed()
@@ -466,6 +465,22 @@ void main_controller::apply_settings()
   }
 
   handle_settings_changed();
+}
+
+void main_controller::reload_variables()
+{
+  assert(connected());
+
+  try
+  {
+    variables = device_handle.get_variables();
+    variables_update_failed = false;
+  }
+  catch (...)
+  {
+    variables_update_failed = true;
+    throw;
+  }
 }
 
 void main_controller::set_target_position(int32_t position)

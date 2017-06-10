@@ -49,7 +49,7 @@ private:
   /** Returns true for success, false for failure. */
   bool try_update_device_list();
   
-  void show_exception(const std::exception & e, const std::string & context = "");
+  void show_exception(std::exception const & e, std::string const & context = "");
 
 public:
   void set_target_position(int32_t position);
@@ -79,7 +79,7 @@ private:
    * different device. */
   void handle_device_changed();
 
-  //void handle_variables_changed();
+  void handle_variables_changed();
 
   void handle_settings_changed();  
   
@@ -107,7 +107,14 @@ private:
    * from what is on the device. */
   bool settings_modified = false;
   
-  // todo: variables
+  /** Holds the variables/status of the device. */
+  tic::variables variables;
+
+  /** True if the last attempt to update the variables failed (typically due
+   * to a USB error). */
+  bool variables_update_failed = false;
+  
+  void reload_variables();
 
   /** Returns true if we are currently connected to a device. */
   bool connected() const { return device_handle; }

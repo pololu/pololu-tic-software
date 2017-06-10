@@ -33,19 +33,21 @@ public:
    */
   void start_update_timer(uint32_t interval_ms);
   
-  void show_error_message(const std::string & message);
-  void show_warning_message(const std::string & message);
-  void show_info_message(const std::string & message);
+  void show_error_message(std::string const & message);
+  void show_warning_message(std::string const & message);
+  void show_info_message(std::string const & message);
   
   /** Show an OK/Cancel dialog, return true if the user selects OK. */
-  bool confirm(const std::string & question);
+  bool confirm(std::string const & question);
   
   /** Sets the label that shows the connection status/error. */
-  void set_connection_status(const std::string & status, bool error);
+  void set_connection_status(std::string const & status, bool error);
   
-  void set_device_name(const std::string & name, bool link_enabled);
-  void set_serial_number(const std::string & serial_number);
-  void set_firmware_version(const std::string & firmware_version);
+  void set_device_name(std::string const & name, bool link_enabled);
+  void set_serial_number(std::string const & serial_number);
+  void set_firmware_version(std::string const & firmware_version);
+  void set_current_position(std::string const & current_position);
+  void set_current_velocity(std::string const & current_velocity);
   
   void set_control_mode(uint8_t control_mode);
   
@@ -166,6 +168,10 @@ private:
     
   QGroupBox * status_box;
   QGridLayout * status_box_layout;
+  QLabel * current_position_label;
+  QLabel * current_position_value;
+  QLabel * current_velocity_label;
+  QLabel * current_velocity_value;
   
   QGroupBox * target_box;
   QVBoxLayout * target_box_layout;

@@ -37,28 +37,28 @@ void main_window::start_update_timer(uint32_t interval_ms)
   update_timer->start(interval_ms);
 }
 
-void main_window::show_error_message(const std::string & message)
+void main_window::show_error_message(std::string const & message)
 {
   QMessageBox mbox(QMessageBox::Critical, windowTitle(),
     QString(message.c_str()));
   mbox.exec();
 }
 
-void main_window::show_warning_message(const std::string & message)
+void main_window::show_warning_message(std::string const & message)
 {
   QMessageBox mbox(QMessageBox::Warning, windowTitle(),
     QString(message.c_str()));
   mbox.exec();
 }
 
-void main_window::show_info_message(const std::string & message)
+void main_window::show_info_message(std::string const & message)
 {
   QMessageBox mbox(QMessageBox::Information, windowTitle(),
     QString(message.c_str()));
   mbox.exec();
 }
 
-bool main_window::confirm(const std::string & question)
+bool main_window::confirm(std::string const & question)
 {
   QMessageBox mbox(QMessageBox::Question, windowTitle(),
     QString(question.c_str()), QMessageBox::Ok | QMessageBox::Cancel);
@@ -66,7 +66,7 @@ bool main_window::confirm(const std::string & question)
   return button == QMessageBox::Ok;
 }
 
-void main_window::set_connection_status(const std::string & status, bool error)
+void main_window::set_connection_status(std::string const & status, bool error)
 {
   if (error)
   {
@@ -79,7 +79,7 @@ void main_window::set_connection_status(const std::string & status, bool error)
   connection_status_value->setText(QString(status.c_str()));
 }
 
-void main_window::set_device_name(const std::string & name, bool link_enabled)
+void main_window::set_device_name(std::string const & name, bool link_enabled)
 {
   QString text = QString(name.c_str());
   if (link_enabled)
@@ -90,14 +90,24 @@ void main_window::set_device_name(const std::string & name, bool link_enabled)
   device_name_value->setText(text);
 }
 
-void main_window::set_serial_number(const std::string & serial_number)
+void main_window::set_serial_number(std::string const & serial_number)
 {
   serial_number_value->setText(QString(serial_number.c_str()));
 }
 
-void main_window::set_firmware_version(const std::string & firmware_version)
+void main_window::set_firmware_version(std::string const & firmware_version)
 {
   firmware_version_value->setText(QString(firmware_version.c_str()));
+}
+
+void main_window::set_current_position(std::string const & current_position)
+{
+  current_position_value->setText(QString(current_position.c_str()));
+}
+
+void main_window::set_current_velocity(std::string const & current_velocity)
+{
+  current_velocity_value->setText(QString(current_velocity.c_str()));
 }
 
 void main_window::set_control_mode(uint8_t control_mode)
@@ -491,6 +501,9 @@ QWidget * main_window::setup_status_box()
   layout->setColumnStretch(1, 1);
   int row = 0;
   
+  setup_read_only_text_field(layout, row++, &current_position_label, &current_position_value);
+  setup_read_only_text_field(layout, row++, &current_velocity_label, &current_velocity_value);
+  
   status_box->setLayout(layout);
   return status_box;
 }
@@ -800,6 +813,8 @@ void main_window::retranslate()
   firmware_version_label->setText(tr("Firmware version:"));
     
   status_box->setTitle(tr("Status"));
+  current_position_label->setText(tr("Current position:"));
+  current_velocity_label->setText(tr("Current velocity:"));
   
   target_box->setTitle(tr("Set target (Serial\u2009/\u2009I\u00B2C\u2009/\u2009USB mode only)"));
   target_position_mode_radio->setText(tr("Set position"));
