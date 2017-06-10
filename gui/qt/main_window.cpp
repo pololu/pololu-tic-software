@@ -79,6 +79,27 @@ void main_window::set_connection_status(const std::string & status, bool error)
   connection_status_value->setText(QString(status.c_str()));
 }
 
+void main_window::set_device_name(const std::string & name, bool link_enabled)
+{
+  QString text = QString(name.c_str());
+  if (link_enabled)
+  {
+      text = "<a href=\"#doc\">" + text + "</a>";
+  }
+
+  device_name_value->setText(text);
+}
+
+void main_window::set_serial_number(const std::string & serial_number)
+{
+  serial_number_value->setText(QString(serial_number.c_str()));
+}
+
+void main_window::set_firmware_version(const std::string & firmware_version)
+{
+  firmware_version_value->setText(QString(firmware_version.c_str()));
+}
+
 void main_window::set_control_mode(uint8_t control_mode)
 {
   set_u8_combo_box(control_mode_value, control_mode);
@@ -313,6 +334,22 @@ void main_window::on_decay_mode_value_currentIndexChanged(int index)
 #define FIELD_LABEL_ALIGNMENT Qt::AlignLeft
 #endif
 
+static void setup_read_only_text_field(QGridLayout * layout, int row,
+  QLabel ** label, QLabel ** value)
+{
+  QLabel * new_value = new QLabel();
+  new_value->setTextInteractionFlags(Qt::TextSelectableByMouse);
+
+  QLabel * new_label = new QLabel();
+  new_label->setBuddy(new_value);
+
+  layout->addWidget(new_label, row, 0, FIELD_LABEL_ALIGNMENT);
+  layout->addWidget(new_value, row, 1);
+
+  if (label) { *label = new_label; }
+  if (value) { *value = new_value; }
+}
+
 void main_window::setup_window()
 {
   setup_menu_bar();
@@ -359,9 +396,6 @@ void main_window::setup_menu_bar()
   connect_action = new QAction(this);
   connect_action->setObjectName("connect_action");
   connect_action->setShortcut(Qt::CTRL + Qt::Key_N);
-  // todo: connect by name?
-  //connect(connect_action, SIGNAL(triggered()),
-  //  this, SLOT(on_connect_action_triggered()));
   device_menu->addAction(connect_action);
 
   disconnect_action = new QAction(this);
@@ -403,25 +437,62 @@ QLayout * main_window::setup_left_column()
 {
   QVBoxLayout * layout = left_column_layout = new QVBoxLayout();
 
-  layout->addStretch(1);
+  layout->addWidget(setup_device_info_box());
+  layout->addWidget(setup_status_box());
   layout->addWidget(setup_control_mode_widget());
   layout->addWidget(setup_target_box());
   
-  //settings_widget->setLayout(layout);
   return left_column_layout;
 }
 
 QLayout * main_window::setup_right_column()
 {
-  //settings_widget = new QWidget();
   QVBoxLayout * layout = right_column_layout = new QVBoxLayout();
   
   layout->addWidget(setup_scaling_settings_box());
   layout->addWidget(setup_motor_settings_box());
   layout->addStretch(1);
   
-  //settings_widget->setLayout(layout);
   return right_column_layout;
+}
+
+QWidget * main_window::setup_device_info_box()
+{
+  device_info_box = new QGroupBox();
+  QGridLayout * layout = device_info_box_layout = new QGridLayout();
+  layout->setColumnStretch(1, 1);
+  int row = 0;
+  
+  setup_read_only_text_field(layout, row++, &device_name_label, &device_name_value);
+  device_name_value->setObjectName("device_name_value");
+  device_name_value->setTextInteractionFlags(Qt::TextBrowserInteraction);
+  
+  setup_read_only_text_field(layout, row++, &serial_number_label, &serial_number_value);
+  setup_read_only_text_field(layout, row++, &firmware_version_label, &firmware_version_value);
+  
+  // Make the right column wide enough to display the name of the Tic,
+  // which should be the widest thing that needs to fit in that column.
+  // This is important for making sure that the sizeHint of the overall main
+  // window has a good width before we set the window to be a fixed size.
+  {
+    QLabel tmpLabel;
+    tmpLabel.setText("Tic USB Stepper Motor Controller TXXXXX");
+    layout->setColumnMinimumWidth(1, tmpLabel.sizeHint().width());
+  }
+  
+  device_info_box->setLayout(layout);
+  return device_info_box;
+}
+
+QWidget * main_window::setup_status_box()
+{
+  status_box = new QGroupBox();
+  QGridLayout * layout = status_box_layout = new QGridLayout();
+  layout->setColumnStretch(1, 1);
+  int row = 0;
+  
+  status_box->setLayout(layout);
+  return status_box;
 }
 
 QWidget * main_window::setup_target_box()
@@ -711,19 +782,25 @@ void main_window::retranslate()
 {
   setWindowTitle(tr("Pololu Tic Configuration Utility"));
 
-  // todo fix cases
   file_menu->setTitle(tr("&File"));
   exit_action->setText(tr("E&xit"));
   device_menu->setTitle(tr("&Device"));
   connect_action->setText(tr("&Connect"));
   disconnect_action->setText(tr("&Disconnect"));
-  reload_settings_action->setText(tr("Re&load Settings from Device"));
-  restore_defaults_action->setText(tr("&Restore Default Settings"));
-  apply_settings_action->setText(tr("&Apply Settings"));
+  reload_settings_action->setText(tr("Re&load settings from device"));
+  restore_defaults_action->setText(tr("&Restore default settings"));
+  apply_settings_action->setText(tr("&Apply settings"));
   help_menu->setTitle(tr("&Help"));
-  documentation_action->setText(tr("&Online Documentation..."));
+  documentation_action->setText(tr("&Online documentation..."));
   about_action->setText(tr("&About..."));
 
+  device_info_box->setTitle(tr("Device info"));
+  device_name_label->setText(tr("Name:"));
+  serial_number_label->setText(tr("Serial number:"));
+  firmware_version_label->setText(tr("Firmware version:"));
+    
+  status_box->setTitle(tr("Status"));
+  
   target_box->setTitle(tr("Set target (Serial\u2009/\u2009I\u00B2C\u2009/\u2009USB mode only)"));
   target_position_mode_radio->setText(tr("Set position"));
   target_speed_mode_radio->setText(tr("Set speed"));

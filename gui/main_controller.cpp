@@ -276,21 +276,34 @@ void main_controller::handle_device_changed()
 {
   if (connected())
   {
+    tic::device const & device = device_handle.get_device();
+    window->set_device_name(device.get_name(), true);
+    window->set_serial_number(device.get_serial_number());
+    window->set_firmware_version(device_handle.get_firmware_version_string());
+    
     window->set_connection_status("Connected.", false);
   }
-  else if (connection_error)
+  else 
   {
-    window->set_connection_status(connection_error_message, true);
-  }
-  else if (disconnected_by_user)
-  {
-    window->set_connection_status("Not connected.", false);
-  }
-  else
-  {
-    // This is a subtle way of saying that we are not connected but we will
-    // auto-connect when we see a device available.
-    window->set_connection_status("Not connected yet...", false);
+    std::string value = "N/A";
+    window->set_device_name(value, false);
+    window->set_serial_number(value);
+    window->set_firmware_version(value);
+    
+    if (connection_error)
+    {
+      window->set_connection_status(connection_error_message, true);
+    }
+    else if (disconnected_by_user)
+    {
+      window->set_connection_status("Not connected.", false);
+    }
+    else
+    {
+      // This is a subtle way of saying that we are not connected but we will
+      // auto-connect when we see a device available.
+      window->set_connection_status("Not connected yet...", false);
+    }
   }
 }
 

@@ -40,9 +40,15 @@ public:
   /** Show an OK/Cancel dialog, return true if the user selects OK. */
   bool confirm(const std::string & question);
   
+  /** Sets the label that shows the connection status/error. */
   void set_connection_status(const std::string & status, bool error);
   
+  void set_device_name(const std::string & name, bool link_enabled);
+  void set_serial_number(const std::string & serial_number);
+  void set_firmware_version(const std::string & firmware_version);
+  
   void set_control_mode(uint8_t control_mode);
+  
   void set_input_min(uint32_t input_min);
   void set_input_neutral_min(uint32_t input_neutral_min);
   void set_input_neutral_max(uint32_t input_neutral_max);
@@ -111,6 +117,8 @@ private:
   void setup_menu_bar();
   QLayout * setup_left_column();
   QLayout * setup_right_column();
+  QWidget * setup_device_info_box();
+  QWidget * setup_status_box();
   QWidget * setup_target_box();
   QLayout * setup_target_mode_layout();
   QLayout * setup_target_range_layout();
@@ -147,6 +155,18 @@ private:
   QVBoxLayout * left_column_layout;
   QVBoxLayout * right_column_layout;
 
+  QGroupBox * device_info_box;
+  QGridLayout * device_info_box_layout;
+  QLabel * device_name_label;
+  QLabel * device_name_value;
+  QLabel * serial_number_label;
+  QLabel * serial_number_value;
+  QLabel * firmware_version_label;
+  QLabel * firmware_version_value;
+    
+  QGroupBox * status_box;
+  QGridLayout * status_box_layout;
+  
   QGroupBox * target_box;
   QVBoxLayout * target_box_layout;
   QHBoxLayout * target_mode_layout;
