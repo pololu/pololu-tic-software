@@ -43,6 +43,26 @@ public:
   /** Sets the label that shows the connection status/error. */
   void set_connection_status(std::string const & status, bool error);
   
+  /** Controls whether the main controls of the application are enabled or
+   * disabled. **/
+  void set_main_boxes_enabled(bool enabled);
+
+  /** Controls whether the apply settings action/button is enabled or
+   * disabled. */
+  void set_apply_settings_enabled(bool enabled);
+
+  /** Controls whether the connect action is enabled or disabled. */
+  void set_connect_enabled(bool enabled);
+
+  /** Controls whether the disconnect action is enabled or disabled. */
+  void set_disconnect_enabled(bool enabled);
+
+  /** Controls whether the reload settings from device action is enabled. */
+  void set_reload_settings_enabled(bool enabled);
+
+  /** Controls whether the restore defaults option is enabled. */
+  void set_restore_defaults_enabled(bool enabled);
+    
   void set_device_name(std::string const & name, bool link_enabled);
   void set_serial_number(std::string const & serial_number);
   void set_firmware_version(std::string const & firmware_version);
@@ -85,8 +105,13 @@ protected:
 private slots:
   void on_connect_action_triggered();
   void on_disconnect_action_triggered();
+  void on_reload_settings_action_triggered();
+  void on_restore_defaults_action_triggered();
   void on_update_timer_timeout();
-  
+  void on_device_name_value_linkActivated();
+  void on_documentation_action_triggered();
+  void on_about_action_triggered();
+
   /** This is called by Qt when the user wants to apply settings. */
   void on_apply_settings_action_triggered();
   
@@ -125,10 +150,10 @@ private:
   QLayout * setup_right_column();
   QWidget * setup_device_info_box();
   QWidget * setup_status_box();
+  QWidget * setup_control_mode_widget();
   QWidget * setup_manual_target_box();
   QLayout * setup_manual_target_mode_layout();
   QLayout * setup_manual_target_range_layout();
-  QWidget * setup_control_mode_widget();
   QWidget * setup_scaling_settings_box();
   QWidget * setup_motor_settings_box();
   QLayout * setup_footer();

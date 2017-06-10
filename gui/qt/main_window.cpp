@@ -1,10 +1,12 @@
 #include "main_window.h"
 #include "main_controller.h"
+#include "config.h"
 
 #include "tic.hpp"
 
 #include <QCheckBox>
 #include <QComboBox>
+#include <QDesktopServices>
 #include <QGridLayout>
 #include <QGroupBox>
 #include <QHBoxLayout>
@@ -16,6 +18,7 @@
 #include <QScrollBar>
 #include <QSpinBox>
 #include <QTimer>
+#include <QUrl>
 #include <QVBoxLayout>
 
 #include <cassert>
@@ -77,6 +80,42 @@ void main_window::set_connection_status(std::string const & status, bool error)
     connection_status_value->setStyleSheet("");
   }
   connection_status_value->setText(QString(status.c_str()));
+}
+
+void main_window::set_main_boxes_enabled(bool enabled)
+{
+  device_info_box->setEnabled(enabled);
+  status_box->setEnabled(enabled);
+  control_mode_widget->setEnabled(enabled);
+  manual_target_box->setEnabled(enabled);
+  scaling_settings_box->setEnabled(enabled);
+  motor_settings_box->setEnabled(enabled);
+}
+
+void main_window::set_apply_settings_enabled(bool enabled)
+{
+  apply_settings_button->setEnabled(enabled);
+  apply_settings_action->setEnabled(enabled);
+}
+
+void main_window::set_connect_enabled(bool enabled)
+{
+  connect_action->setEnabled(enabled);
+}
+
+void main_window::set_disconnect_enabled(bool enabled)
+{
+  disconnect_action->setEnabled(enabled);
+}
+
+void main_window::set_reload_settings_enabled(bool enabled)
+{
+  reload_settings_action->setEnabled(enabled);
+}
+
+void main_window::set_restore_defaults_enabled(bool enabled)
+{
+  restore_defaults_action->setEnabled(enabled);
 }
 
 void main_window::set_device_name(std::string const & name, bool link_enabled)
@@ -240,9 +279,40 @@ void main_window::on_disconnect_action_triggered()
    controller->disconnect_device();
 }
 
+void main_window::on_reload_settings_action_triggered()
+{
+  controller->reload_settings();
+}
+
+void main_window::on_restore_defaults_action_triggered()
+{
+  controller->restore_default_settings();
+}
+
 void main_window::on_update_timer_timeout()
 {
     controller->update();
+}
+
+void main_window::on_device_name_value_linkActivated()
+{
+    on_documentation_action_triggered();
+}
+
+void main_window::on_documentation_action_triggered()
+{
+    QDesktopServices::openUrl(QUrl(DOCUMENTATION_URL));
+}
+
+void main_window::on_about_action_triggered()
+{
+  QMessageBox::about(this, tr("About") + " " + windowTitle(),
+    QString("<h2>") + windowTitle() + "</h2>" +
+    tr("<h4>Version %1</h4>"
+      "<h4>Copyright &copy; %2 Pololu Corporation</h4>"
+      "<p>See LICENSE.html for copyright and license information.</p>"
+      "<p><a href=\"%3\">Online documentation</a></p>")
+    .arg(SOFTWARE_VERSION_STRING, SOFTWARE_YEAR, DOCUMENTATION_URL));
 }
 
 void main_window::on_apply_settings_action_triggered()

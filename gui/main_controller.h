@@ -21,11 +21,11 @@ public:
 
   /** This is called when the user issues a command to reload settings from
    * the device. */
-  //todo void reload_settings();
+  void reload_settings();
 
   /** This is called when the user wants to restore the device to its default
    * settings. */
-  //todo void restore_default_settings();
+  void restore_default_settings();
 
   /** This is called when it is time to check if the status of the device has
    * changed. */
