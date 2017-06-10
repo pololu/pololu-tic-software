@@ -17,7 +17,23 @@ public:
   void connect_device();
 
   /** This is called when the user issues a disconnect command. */
-  //TODO void disconnect_device();
+  void disconnect_device();
+
+  /** This is called when the user issues a command to reload settings from
+   * the device. */
+  //todo void reload_settings();
+
+  /** This is called when the user wants to restore the device to its default
+   * settings. */
+  //todo void restore_default_settings();
+
+  /** This is called when it is time to check if the status of the device has
+   * changed. */
+  void update();
+
+  /** This is called when the user tries to exit the program.  Returns true if
+   * the program is actually allowed to exit. */
+  //todo bool exit();
   
   /** This is called whenever something in the model has changed that might
    * require the window to be updated.  It includes no details about what
@@ -26,6 +42,9 @@ public:
 
 private:
   void really_connect();
+  
+  void disconnect_device_by_error(std::string error_message);
+  void set_connection_error(std::string error_message);
 
   /** Returns true for success, false for failure. */
   bool try_update_device_list();

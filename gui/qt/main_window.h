@@ -8,12 +8,12 @@ class QGridLayout;
 class QGroupBox;
 class QHBoxLayout;
 class QLabel;
-class QMainWindow;
 class QPushButton;
 class QRadioButton;
 class QScrollBar;
 class QSpinBox;
 class QVBoxLayout;
+
 class main_controller;
 
 class main_window : public QMainWindow
@@ -25,6 +25,13 @@ public:
   
   /** Stores a pointer to the main_controller object so that we can report events. **/
   void set_controller(main_controller * controller);
+  
+  /** This causes the window to call the controller's update() function
+   * periodically, on the same thread as everything else.
+   *
+   * interval_ms is the amount of time between updates, in milliseconds.
+   */
+  void start_update_timer(uint32_t interval_ms);
   
   void show_error_message(const std::string & message);
   void show_warning_message(const std::string & message);
@@ -65,6 +72,8 @@ protected:
   
 private slots:
   void on_connect_action_triggered();
+  void on_disconnect_action_triggered();
+  void on_update_timer_timeout();
   
   /** This is called by Qt when the user wants to apply settings. */
   void on_apply_settings_action_triggered();
@@ -94,14 +103,12 @@ private:
    * the rest of the program. */
   bool suppress_events = false;
   
-  bool target_position_mode = true;
-  
+  QTimer * update_timer;
+
+  // These are low-level functions called in the constructor that set up the
+  // GUI elements.
   void setup_window();
   void setup_menu_bar();
-  // todo remove unnecessary lines
-  // QWidget * setupDeviceInfoBox();
-  // QWidget * setupProgrammingResultsBox();
-  // QWidget * setupCurrentStatusBox();
   QLayout * setup_left_column();
   QLayout * setup_right_column();
   QWidget * setup_target_box();
@@ -112,11 +119,14 @@ private:
   QWidget * setup_motor_settings_box();
   QLayout * setup_footer();
   QWidget * setup_connection_status();
-  // QWidget * setupCancelChangesButton();
   QWidget * setup_defaults_button();
   QWidget * setup_apply_button();
   void retranslate();
+  
+  bool target_position_mode = true;
   void update_target_box(bool position_mode);
+  
+  QIcon program_icon;
     
   QMenuBar * menu_bar;
   QMenu * file_menu;
@@ -134,12 +144,9 @@ private:
   QWidget * central_widget;
   QGridLayout * central_widget_layout;
   
-  
-  //QWidget * settings_widget;
   QVBoxLayout * left_column_layout;
   QVBoxLayout * right_column_layout;
 
-  //QWidget * control_widget;
   QGroupBox * target_box;
   QVBoxLayout * target_box_layout;
   QHBoxLayout * target_mode_layout;
@@ -192,7 +199,6 @@ private:
   QLabel * decay_mode_label;
   QComboBox * decay_mode_value;
   
-  //QWidget * footer_widget;
   QHBoxLayout * footer_widget_layout;
   QLabel * connection_status_value;
   QPushButton * apply_settings_button;

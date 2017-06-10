@@ -3,6 +3,9 @@
 
 #include <cassert>
 
+/** This is how often we fetch the variables from the device. */
+static const uint32_t UPDATE_INTERVAL_MS = 100;
+
 void main_controller::set_window(main_window * window)
 {
   this->window = window;
@@ -11,6 +14,12 @@ void main_controller::set_window(main_window * window)
 void main_controller::start()
 {
   assert(!connected());
+  
+  // Start the update timer so that update() will be called regularly.
+  // todo: use longer update period when disconnected
+  window->start_update_timer(UPDATE_INTERVAL_MS);
+
+  // The program has just started, so try to connect to a device.
 
   bool successfully_updated_list = try_update_device_list();
   if (successfully_updated_list && device_list.size() > 0)
@@ -50,6 +59,130 @@ void main_controller::connect_device()
   }
 }
 
+void main_controller::disconnect_device()
+{
+  if (!connected()) { return; }
+  device_handle.close();
+  settings_modified = false;
+  disconnected_by_user = true;
+  connection_error = false;
+  handle_model_changed();
+}
+
+void main_controller::disconnect_device_by_error(std::string error_message)
+{
+  device_handle.close();
+  settings_modified = false;
+  disconnected_by_user = false;
+  set_connection_error(error_message);
+}
+
+void main_controller::set_connection_error(std::string error_message)
+{
+  connection_error = true;
+  connection_error_message = error_message;
+}
+
+/** Returns true if the device list includes the specified device. */
+static bool device_list_includes(
+  const std::vector<tic::device> & device_list,
+  const tic::device & device)
+{
+  std::string id = device.get_os_id();
+  for (const tic::device & candidate : device_list)
+  {
+    if (candidate.get_os_id() == id)
+    {
+      return true;
+    }
+  }
+  return false;
+}
+
+void main_controller::update()
+{
+  // This is called regularly by the view when it is time to check for updates
+  // to the state of the USB devices.  This runs on the same thread as
+  // everything else, so we should be careful not to do anything too slow
+  // here.  If the user tries to use the UI at all while this function is
+  // running, the UI cannot respond until this function returns.
+
+  if (connected())
+  {
+    // First, see if the programmer we are connected to is still available.
+    // Note: It would be nice if the libusbp::generic_handle class had a
+    // function that tests if the actual handle we are using is still valid.
+    // This would be better for tricky cases like if someone unplugs and
+    // plugs the same programmer in very fast.
+
+    bool successfully_updated_list = try_update_device_list();
+    if (!successfully_updated_list)
+    {
+        // Ignore this unexpected error.  We are already successfully
+        // connected to the device, so it will still be on our list, and we
+        // will try to keep using it if we can.
+    }
+
+    bool device_still_present = device_list_includes(
+      device_list, device_handle.get_device());
+
+    if (device_still_present)
+    {
+        // Reload the variables from the device.
+        try
+        {
+          //todo reload_variables();
+        }
+        catch (const std::exception & e)
+        {
+          // Ignore the exception.  The model provides other ways to tell that
+          // the variable update failed, and the exact message is probably
+          // not that useful since it is probably just a generic problem with
+          // the USB connection.
+        }
+        //view->handle_variables_changed();
+    }
+    else
+    {
+        // The device is gone.
+        disconnect_device_by_error("The connection to the device was lost.");
+        handle_model_changed();
+    }
+  }
+  else
+  {
+    // We are not connected, so consider auto-connecting to a device.
+
+    if (connection_error)
+    {
+      // There is an error related to a previous connection or connection
+      // attempt, so don't automatically reconnect.  That would be
+      // confusing, because the user might be looking away and not notice
+      // that the connection was lost and then regained, or they could be
+      // trying to read the error message.
+    }
+    else if (disconnected_by_user)
+    {
+      // The user explicitly disconnected the last connection, so don't
+      // automatically reconnect.
+    }
+    else
+    {
+      bool successfully_updated_list = try_update_device_list();
+      if (!successfully_updated_list)
+      {
+        // Since this is a background update, don't report
+        // this error to the user.
+      }
+
+      if (successfully_updated_list && device_list.size() > 0)
+      {
+        really_connect();
+      }
+    }
+  }
+}
+
 void main_controller::really_connect()
 {
   assert(device_list.size() > 0);
@@ -60,7 +193,7 @@ void main_controller::really_connect()
     device_handle.close();
 
     connection_error = false;
-    //disconnectedByUser = false;
+    disconnected_by_user = false;
 
     // Open a handle to the specified programmer.
     device_handle = tic::handle(device_list.at(0));
@@ -68,7 +201,7 @@ void main_controller::really_connect()
   }
   catch (const std::exception & e)
   {
-    //setConnectionError("Failed to connect to device.");
+    set_connection_error("Failed to connect to device.");
     show_exception(e, "There was an error connecting to the device.");
     handle_model_changed();
     return;
@@ -113,7 +246,7 @@ bool main_controller::try_update_device_list()
   }
   catch (const std::exception & e)
   {
-    // model->setConnectionError("Failed to get the list of devices.");
+    set_connection_error("Failed to get the list of devices.");
     show_exception(e, "There was an error getting the list of devices.");
     return false;
   }

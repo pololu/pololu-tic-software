@@ -15,6 +15,7 @@
 #include <QRadioButton>
 #include <QScrollBar>
 #include <QSpinBox>
+#include <QTimer>
 #include <QVBoxLayout>
 
 #include <cassert>
@@ -28,6 +29,12 @@ main_window::main_window(QWidget *parent)
 void main_window::set_controller(main_controller * controller)
 {
   this->controller = controller;
+}
+
+void main_window::start_update_timer(uint32_t interval_ms)
+{
+  assert(interval_ms <= std::numeric_limits<int>::max());
+  update_timer->start(interval_ms);
 }
 
 void main_window::show_error_message(const std::string & message)
@@ -180,6 +187,16 @@ void main_window::on_connect_action_triggered()
   controller->connect_device();
 }
 
+void main_window::on_disconnect_action_triggered()
+{
+   controller->disconnect_device();
+}
+
+void main_window::on_update_timer_timeout()
+{
+    controller->update();
+}
+
 void main_window::on_apply_settings_action_triggered()
 {
   controller->apply_settings();
@@ -316,6 +333,12 @@ void main_window::setup_window()
   
   // Make the window non-resizable.
   setFixedSize(sizeHint());
+  
+  program_icon = QIcon(":app_icon");
+  setWindowIcon(program_icon);
+  
+  update_timer = new QTimer(this);
+  update_timer->setObjectName("update_timer");
   
   QMetaObject::connectSlotsByName(this);
 }
@@ -715,15 +738,15 @@ void main_window::retranslate()
   scaling_input_label->setText(tr("Input"));
   scaling_target_label->setText(tr("Target"));
   scaling_min_label->setText(tr("Minimum:"));
-  scaling_neutral_min_label->setText(tr("Neutral Min:"));
-  scaling_neutral_max_label->setText(tr("Neutral Max:"));
+  scaling_neutral_min_label->setText(tr("Neutral min:"));
+  scaling_neutral_max_label->setText(tr("Neutral max:"));
   scaling_max_label->setText(tr("Maximum:"));
   
   motor_settings_box->setTitle(tr("Motor settings"));
-  speed_max_label->setText(tr("Max. speed:"));
-  speed_min_label->setText(tr("Min. speed:"));
-  accel_max_label->setText(tr("Max. acceleration:"));
-  decel_max_label->setText(tr("Max. deceleration:"));
+  speed_max_label->setText(tr("Speed max:"));
+  speed_min_label->setText(tr("Speed min:"));
+  accel_max_label->setText(tr("Acceleration max:"));
+  decel_max_label->setText(tr("Deceleration max:"));
   step_mode_label->setText(tr("Step mode:"));
   current_limit_label->setText(tr("Current limit:"));
   decay_mode_label->setText(tr("Decay mode:"));
