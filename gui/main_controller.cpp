@@ -302,6 +302,17 @@ void main_controller::handle_variables_changed()
 {
   //todo get_device_reset()
   
+  window->set_vin_voltage(std::to_string(variables.get_vin_voltage()) + " mV");
+  
+  if (variables.get_planning_mode() == TIC_PLANNING_MODE_TARGET_POSITION)
+  {
+    window->set_target_position(std::to_string(variables.get_target_position()));
+  }
+  else if (variables.get_planning_mode() == TIC_PLANNING_MODE_TARGET_VELOCITY)
+  {
+    window->set_target_velocity(std::to_string(variables.get_target_velocity()));
+  }
+  
   window->set_current_position(std::to_string(variables.get_current_position()));
   window->set_current_velocity(std::to_string(variables.get_current_velocity()));
 }

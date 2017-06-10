@@ -46,6 +46,10 @@ public:
   void set_device_name(std::string const & name, bool link_enabled);
   void set_serial_number(std::string const & serial_number);
   void set_firmware_version(std::string const & firmware_version);
+  
+  void set_vin_voltage(std::string const & vin_voltage);
+  void set_target_position(std::string const & target_position);
+  void set_target_velocity(std::string const & target_velocity);
   void set_current_position(std::string const & current_position);
   void set_current_velocity(std::string const & current_velocity);
   
@@ -86,7 +90,7 @@ private slots:
   /** This is called by Qt when the user wants to apply settings. */
   void on_apply_settings_action_triggered();
   
-  void on_target_position_mode_radio_toggled(bool checked);
+  void on_manual_target_position_mode_radio_toggled(bool checked);
   void on_set_target_button_clicked();
   void on_control_mode_value_currentIndexChanged(int index);
   void on_input_min_value_editingFinished();
@@ -121,9 +125,9 @@ private:
   QLayout * setup_right_column();
   QWidget * setup_device_info_box();
   QWidget * setup_status_box();
-  QWidget * setup_target_box();
-  QLayout * setup_target_mode_layout();
-  QLayout * setup_target_range_layout();
+  QWidget * setup_manual_target_box();
+  QLayout * setup_manual_target_mode_layout();
+  QLayout * setup_manual_target_range_layout();
   QWidget * setup_control_mode_widget();
   QWidget * setup_scaling_settings_box();
   QWidget * setup_motor_settings_box();
@@ -133,8 +137,8 @@ private:
   QWidget * setup_apply_button();
   void retranslate();
   
-  bool target_position_mode = true;
-  void update_target_box(bool position_mode);
+  bool manual_target_position_mode = true;
+  void update_manual_target_box(bool position_mode);
   
   QIcon program_icon;
     
@@ -168,21 +172,25 @@ private:
     
   QGroupBox * status_box;
   QGridLayout * status_box_layout;
+  QLabel * vin_voltage_label;
+  QLabel * vin_voltage_value;
+  QLabel * target_label;
+  QLabel * target_value;
   QLabel * current_position_label;
   QLabel * current_position_value;
   QLabel * current_velocity_label;
   QLabel * current_velocity_value;
   
-  QGroupBox * target_box;
-  QVBoxLayout * target_box_layout;
-  QHBoxLayout * target_mode_layout;
-  QHBoxLayout * target_range_layout;
-  QRadioButton * target_position_mode_radio;
-  QRadioButton * target_speed_mode_radio;
-  QScrollBar * target_scrollbar;
-  QLabel * target_min_label;
-  QLabel * target_max_label;
-  QSpinBox * target_numeric_value;
+  QGroupBox * manual_target_box;
+  QVBoxLayout * manual_target_box_layout;
+  QHBoxLayout * manual_target_mode_layout;
+  QHBoxLayout * manual_target_range_layout;
+  QRadioButton * manual_target_position_mode_radio;
+  QRadioButton * manual_target_speed_mode_radio;
+  QScrollBar * manual_target_scrollbar;
+  QLabel * manual_target_min_label;
+  QLabel * manual_target_max_label;
+  QSpinBox * manual_target_numeric_value;
   QPushButton * set_target_button;
   QCheckBox * auto_set_target_checkbox;
   QCheckBox * auto_zero_target_checkbox;

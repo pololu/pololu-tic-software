@@ -100,6 +100,23 @@ void main_window::set_firmware_version(std::string const & firmware_version)
   firmware_version_value->setText(QString(firmware_version.c_str()));
 }
 
+void main_window::set_vin_voltage(std::string const & vin_voltage)
+{
+  vin_voltage_value->setText(QString(vin_voltage.c_str()));
+}
+
+void main_window::set_target_position(std::string const & target_position)
+{
+  target_label->setText(tr("Target position:"));
+  target_value->setText(QString(target_position.c_str()));
+}
+
+void main_window::set_target_velocity(std::string const & target_velocity)
+{
+  target_label->setText(tr("Target velocity:"));
+  target_value->setText(QString(target_velocity.c_str()));
+}
+
 void main_window::set_current_position(std::string const & current_position)
 {
   current_position_value->setText(QString(current_position.c_str()));
@@ -233,20 +250,20 @@ void main_window::on_apply_settings_action_triggered()
   controller->apply_settings();
 }
 
-void main_window::on_target_position_mode_radio_toggled(bool checked)
+void main_window::on_manual_target_position_mode_radio_toggled(bool checked)
 {
-  update_target_box(checked);
+  update_manual_target_box(checked);
 }
 
 void main_window::on_set_target_button_clicked()
 {
-  if (target_position_mode)
+  if (manual_target_position_mode)
   {
-    controller->set_target_position(target_numeric_value->value());
+    controller->set_target_position(manual_target_numeric_value->value());
   }
   else
   {
-    controller->set_target_velocity(target_numeric_value->value());
+    controller->set_target_velocity(manual_target_numeric_value->value());
   }
 }
 
@@ -450,7 +467,7 @@ QLayout * main_window::setup_left_column()
   layout->addWidget(setup_device_info_box());
   layout->addWidget(setup_status_box());
   layout->addWidget(setup_control_mode_widget());
-  layout->addWidget(setup_target_box());
+  layout->addWidget(setup_manual_target_box());
   
   return left_column_layout;
 }
@@ -501,6 +518,8 @@ QWidget * main_window::setup_status_box()
   layout->setColumnStretch(1, 1);
   int row = 0;
   
+  setup_read_only_text_field(layout, row++, &vin_voltage_label, &vin_voltage_value);
+  setup_read_only_text_field(layout, row++, &target_label, &target_value);
   setup_read_only_text_field(layout, row++, &current_position_label, &current_position_value);
   setup_read_only_text_field(layout, row++, &current_velocity_label, &current_velocity_value);
   
@@ -508,62 +527,62 @@ QWidget * main_window::setup_status_box()
   return status_box;
 }
 
-QWidget * main_window::setup_target_box()
+QWidget * main_window::setup_manual_target_box()
 {
-  target_box = new QGroupBox();
-  QVBoxLayout * layout = target_box_layout = new QVBoxLayout();
+  manual_target_box = new QGroupBox();
+  QVBoxLayout * layout = manual_target_box_layout = new QVBoxLayout();
   
-  target_scrollbar = new QScrollBar(Qt::Horizontal);
-  target_scrollbar->setObjectName("target_scrollbar");
+  manual_target_scrollbar = new QScrollBar(Qt::Horizontal);
+  manual_target_scrollbar->setObjectName("manual_target_scrollbar");
   set_target_button = new QPushButton();
   set_target_button->setObjectName("set_target_button");
   auto_set_target_checkbox = new QCheckBox();
   auto_zero_target_checkbox = new QCheckBox();
-  layout->addLayout(setup_target_mode_layout());
+  layout->addLayout(setup_manual_target_mode_layout());
   layout->addSpacing(central_widget->fontMetrics().height());
-  layout->addWidget(target_scrollbar);
-  layout->addLayout(setup_target_range_layout());
+  layout->addWidget(manual_target_scrollbar);
+  layout->addLayout(setup_manual_target_range_layout());
   layout->addWidget(set_target_button, 0, Qt::AlignCenter);
   layout->addSpacing(central_widget->fontMetrics().height());
   layout->addWidget(auto_set_target_checkbox, 0, Qt::AlignLeft);
   layout->addWidget(auto_zero_target_checkbox, 0, Qt::AlignLeft);
   
-  target_box->setLayout(layout);
-  return target_box;
+  manual_target_box->setLayout(layout);
+  return manual_target_box;
 }
 
-QLayout * main_window::setup_target_mode_layout()
+QLayout * main_window::setup_manual_target_mode_layout()
 {
-  QHBoxLayout * layout = target_mode_layout = new QHBoxLayout();
+  QHBoxLayout * layout = manual_target_mode_layout = new QHBoxLayout();
   
-  target_position_mode_radio = new QRadioButton();
-  target_position_mode_radio->setObjectName("target_position_mode_radio");
-  target_position_mode_radio->setChecked(true);
-  target_speed_mode_radio = new QRadioButton();
-  target_speed_mode_radio->setObjectName("target_speed_mode_radio");
+  manual_target_position_mode_radio = new QRadioButton();
+  manual_target_position_mode_radio->setObjectName("manual_target_position_mode_radio");
+  manual_target_position_mode_radio->setChecked(true);
+  manual_target_speed_mode_radio = new QRadioButton();
+  manual_target_speed_mode_radio->setObjectName("manual_target_speed_mode_radio");
   layout->addStretch(1);
-  layout->addWidget(target_position_mode_radio);
+  layout->addWidget(manual_target_position_mode_radio);
   layout->addSpacing(central_widget->fontMetrics().height());
-  layout->addWidget(target_speed_mode_radio);
+  layout->addWidget(manual_target_speed_mode_radio);
   layout->addStretch(1);
   
-  return target_mode_layout;
+  return manual_target_mode_layout;
 }
 
-QLayout * main_window::setup_target_range_layout()
+QLayout * main_window::setup_manual_target_range_layout()
 {
-  QHBoxLayout * layout = target_range_layout = new QHBoxLayout();
+  QHBoxLayout * layout = manual_target_range_layout = new QHBoxLayout();
 
-  target_min_label = new QLabel();
-  target_max_label = new QLabel();
-  target_numeric_value = new QSpinBox();
-  target_numeric_value->setObjectName("target_numeric_value");
-  target_numeric_value->setRange(-0x7FFFFFF, 0x7FFFFFF);
-  layout->addWidget(target_min_label);
-  layout->addWidget(target_numeric_value, 1, Qt::AlignCenter);
-  layout->addWidget(target_max_label);
+  manual_target_min_label = new QLabel();
+  manual_target_max_label = new QLabel();
+  manual_target_numeric_value = new QSpinBox();
+  manual_target_numeric_value->setObjectName("manual_target_numeric_value");
+  manual_target_numeric_value->setRange(-0x7FFFFFF, 0x7FFFFFF);
+  layout->addWidget(manual_target_min_label);
+  layout->addWidget(manual_target_numeric_value, 1, Qt::AlignCenter);
+  layout->addWidget(manual_target_max_label);
   
-  return target_range_layout;
+  return manual_target_range_layout;
 }
 
 // [all-settings]
@@ -813,13 +832,15 @@ void main_window::retranslate()
   firmware_version_label->setText(tr("Firmware version:"));
     
   status_box->setTitle(tr("Status"));
+  vin_voltage_label->setText(tr("VIN voltage:"));
+  target_label->setText(tr("Target position:"));
   current_position_label->setText(tr("Current position:"));
   current_velocity_label->setText(tr("Current velocity:"));
   
-  target_box->setTitle(tr("Set target (Serial\u2009/\u2009I\u00B2C\u2009/\u2009USB mode only)"));
-  target_position_mode_radio->setText(tr("Set position"));
-  target_speed_mode_radio->setText(tr("Set speed"));
-  update_target_box(target_position_mode_radio->isChecked());
+  manual_target_box->setTitle(tr("Set target (Serial\u2009/\u2009I\u00B2C\u2009/\u2009USB mode only)"));
+  manual_target_position_mode_radio->setText(tr("Set position"));
+  manual_target_speed_mode_radio->setText(tr("Set speed"));
+  update_manual_target_box(manual_target_position_mode_radio->isChecked());
   auto_set_target_checkbox->setText(tr("Set target when slider or entry box are changed"));
   auto_zero_target_checkbox->setText(tr("Return slider to zero when it is released"));
   
@@ -848,17 +869,17 @@ void main_window::retranslate()
   apply_settings_button->setText(apply_settings_action->text());
 }
 
-void main_window::update_target_box(bool position_mode)
+void main_window::update_manual_target_box(bool position_mode)
 {
-  target_position_mode = position_mode;
+  manual_target_position_mode = position_mode;
   
-  if (target_position_mode)
+  if (position_mode)
   {
-    set_target_button->setText(tr("Set position"));
+    set_target_button->setText(tr("Set target position"));
   }
   else
   {
-    set_target_button->setText(tr("Set speed"));
+    set_target_button->setText(tr("Set target speed"));
   }
   //target_min_label->setText();
   //target_max_label->setText();
