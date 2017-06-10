@@ -1108,9 +1108,9 @@ const char * tic_get_firmware_version_string(tic_handle *);
 
 /// Sets the target position of the Tic, in microsteps.
 ///
-/// This function sends a Set Target Position to the Tic.  If the Control Mode
+/// This function sends a Set Target Position to the Tic.  If the Control mode
 /// is set to Serial, the Tic will start moving the motor to reach the target
-/// position.  If the Control Mode is something other than Serial, this command
+/// position.  If the control mode is something other than Serial, this command
 /// will be silently ignored.
 TIC_API TIC_WARN_UNUSED
 tic_error * tic_set_target_position(tic_handle *, int32_t position);
@@ -1118,11 +1118,79 @@ tic_error * tic_set_target_position(tic_handle *, int32_t position);
 /// Sets the target velocity of the Tic, in microsteps per 10000 seconds.
 ///
 /// This function sends a Set Target Velocity command to the Tic.  If the
-/// Control Mode is set to Serial, the Tic will start accelerating or
-/// decelerating to reach the target velocity.  If the Control Mode is something
+/// Control mode is set to Serial, the Tic will start accelerating or
+/// decelerating to reach the target velocity.  If the control mode is something
 /// other than Serial, this command will be silently ignored.
 TIC_API TIC_WARN_UNUSED
 tic_error * tic_set_target_velocity(tic_handle *, int32_t velocity);
+
+/// Sets the current position, e.g. the position where the Tic currently thinks
+/// it is.
+///
+/// This functions sends a Set Current Position command to the Tic.
+///
+/// Do not call this if the stepper motor is moving, or else you could get
+/// unexpected behavior from the controller.
+TIC_API TIC_WARN_UNUSED
+tic_error * tic_set_current_position(tic_handle *, int32_t position);
+
+/// Stops the Tic abruptly without respecting the deceleration limits.
+///
+/// This function sends a Stop command to the Tic.  If the Control mode is set
+/// to Serial, the Tic will stop abruptly.  If the control mode is something
+/// other than Serial, ths command will be silently ignored.
+TIC_API TIC_WARN_UNUSED
+tic_error * tic_stop(tic_handle *);
+
+/// Enables the stepper motor driver.
+///
+/// This function sends an Enable Driver command to the Tic, causing it to
+/// enable its stepper driver if it was previously disabled.  This command only
+/// works if the control mode setting is set to Serial or STEP/DIR.  The effect
+/// only lasts until the Tic is powered off, reset, or reinitialized, or a
+/// Disable Driver command is issued.
+TIC_API TIC_WARN_UNUSED
+tic_error * tic_enable_driver(tic_handle *);
+
+/// Disables the stepper motor driver.
+///
+/// This function sends a Disable Driver command to the Tic, causing it to
+/// disable its stepper driver.  This command only works if the control mode
+/// setting is set to Serial or STEP/DIR.  The effect only lasts until the Tic
+/// is powered off, reset, or reinitialized, or an Enable Driver command is
+/// issued.
+TIC_API TIC_WARN_UNUSED
+tic_error * tic_disable_driver(tic_handle *);
+
+/// Temporarily sets the speed maximum.
+///
+/// This function sends a Set Speed Max command to the Tic.  For more
+/// information on what the Speed Max is, see tic_settings_get_speed_max().
+TIC_API TIC_WARN_UNUSED
+tic_error * tic_set_speed_max(tic_handle *, uint32_t speed_max);
+
+/// Temporarily sets the speed minimum.
+///
+/// This function sends a Set Speed Min command to the Tic.  For more
+/// information on what the Speed Min is, see tic_settings_get_speed_min().
+TIC_API TIC_WARN_UNUSED
+tic_error * tic_set_speed_min(tic_handle *, uint32_t speed_min);
+
+/// Temporarily sets the acceleration maximum.
+///
+/// This function sends a Set Acceleration Max command to the Tic.  For more
+/// information on what the Acceleration Max is, see
+/// tic_settings_get_accel_max().
+TIC_API TIC_WARN_UNUSED
+tic_error * tic_set_accel_max(tic_handle *, uint32_t accel_max);
+
+/// Temporarily sets the deceleration maximum.
+///
+/// This function sends a Set Deceleration Max command to the Tic.  For more
+/// information on what the Deceleration Max is, see
+/// tic_settings_get_decel_max().
+TIC_API TIC_WARN_UNUSED
+tic_error * tic_set_decel_max(tic_handle *, uint32_t decel_max);
 
 /// Temporarily sets the step mode.
 ///

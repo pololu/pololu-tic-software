@@ -575,6 +575,54 @@ namespace tic
       throw_if_needed(tic_set_target_velocity(pointer, velocity));
     }
 
+    /// Wrapper for tic_set_current_position().
+    void set_current_position(int32_t position)
+    {
+      throw_if_needed(tic_set_current_position(pointer, position));
+    }
+
+    /// Wrapper for tic_stop().
+    void stop()
+    {
+      throw_if_needed(tic_stop(pointer));
+    }
+
+    /// Wrapper for tic_enable_driver().
+    void enable_driver()
+    {
+      throw_if_needed(tic_enable_driver(pointer));
+    }
+
+    /// Wrapper for tic_disable_driver().
+    void disable_driver()
+    {
+      throw_if_needed(tic_disable_driver(pointer));
+    }
+
+    /// Wrapper for tic_set_speed_max().
+    void set_speed_max(uint32_t speed_max)
+    {
+      throw_if_needed(tic_set_speed_max(pointer, speed_max));
+    }
+
+    /// Wrapper for tic_set_speed_min().
+    void set_speed_min(uint32_t speed_min)
+    {
+      throw_if_needed(tic_set_speed_min(pointer, speed_min));
+    }
+
+    /// Wrapper for tic_set_speed_min().
+    void set_accel_max(uint32_t accel_max)
+    {
+      throw_if_needed(tic_set_accel_max(pointer, accel_max));
+    }
+
+    /// Wrapper for tic_set_speed_min().
+    void set_decel_max(uint32_t decel_max)
+    {
+      throw_if_needed(tic_set_decel_max(pointer, decel_max));
+    }
+
     /// Wrapper for tic_set_step_mode().
     void set_step_mode(uint8_t step_mode)
     {

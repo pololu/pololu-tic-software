@@ -209,6 +209,184 @@ tic_error * tic_set_target_velocity(tic_handle * handle, int32_t velocity)
   return error;
 }
 
+tic_error * tic_set_current_position(tic_handle * handle, int32_t position)
+{
+  if (handle == NULL)
+  {
+    return tic_error_create("Handle is null.");
+  }
+
+  tic_error * error = NULL;
+
+  uint16_t wValue = (uint32_t)position & 0xFFFF;
+  uint16_t wIndex = (uint32_t)position >> 16 & 0xFFFF;
+  error = tic_usb_error(libusbp_control_transfer(handle->usb_handle,
+    0x40, TIC_CMD_SET_CURRENT_POSITION, wValue, wIndex, NULL, 0, NULL));
+
+  if (error != NULL)
+  {
+    error = tic_error_add(error,
+      "There was an error setting the current position.");
+  }
+
+  return error;
+}
+
+tic_error * tic_stop(tic_handle * handle)
+{
+  if (handle == NULL)
+  {
+    return tic_error_create("Handle is null.");
+  }
+
+  tic_error * error = NULL;
+
+  error = tic_usb_error(libusbp_control_transfer(handle->usb_handle,
+    0x40, TIC_CMD_STOP, 0, 0, NULL, 0, NULL));
+
+  if (error != NULL)
+  {
+    error = tic_error_add(error,
+      "There was an error stopping the Tic.");
+  }
+
+  return error;
+}
+
+tic_error * tic_enable_driver(tic_handle * handle)
+{
+  if (handle == NULL)
+  {
+    return tic_error_create("Handle is null.");
+  }
+
+  tic_error * error = NULL;
+
+  error = tic_usb_error(libusbp_control_transfer(handle->usb_handle,
+    0x40, TIC_CMD_ENABLE_DRIVER, 0, 0, NULL, 0, NULL));
+
+  if (error != NULL)
+  {
+    error = tic_error_add(error,
+      "There was an error enabling the driver.");
+  }
+
+  return error;
+}
+
+tic_error * tic_disable_driver(tic_handle * handle)
+{
+  if (handle == NULL)
+  {
+    return tic_error_create("Handle is null.");
+  }
+
+  tic_error * error = NULL;
+
+  error = tic_usb_error(libusbp_control_transfer(handle->usb_handle,
+    0x40, TIC_CMD_DISABLE_DRIVER, 0, 0, NULL, 0, NULL));
+
+  if (error != NULL)
+  {
+    error = tic_error_add(error,
+      "There was an error disabling the driver.");
+  }
+
+  return error;
+}
+
+tic_error * tic_set_speed_max(tic_handle * handle, uint32_t speed_max)
+{
+  if (handle == NULL)
+  {
+    return tic_error_create("Handle is null.");
+  }
+
+  tic_error * error = NULL;
+
+  uint16_t wValue = (uint32_t)speed_max & 0xFFFF;
+  uint16_t wIndex = (uint32_t)speed_max >> 16 & 0xFFFF;
+  error = tic_usb_error(libusbp_control_transfer(handle->usb_handle,
+    0x40, TIC_CMD_SET_SPEED_MAX, wValue, wIndex, NULL, 0, NULL));
+
+  if (error != NULL)
+  {
+    error = tic_error_add(error,
+      "There was an error setting the speed max.");
+  }
+
+  return error;
+}
+
+tic_error * tic_set_speed_min(tic_handle * handle, uint32_t speed_min)
+{
+  if (handle == NULL)
+  {
+    return tic_error_create("Handle is null.");
+  }
+
+  tic_error * error = NULL;
+
+  uint16_t wValue = (uint32_t)speed_min & 0xFFFF;
+  uint16_t wIndex = (uint32_t)speed_min >> 16 & 0xFFFF;
+  error = tic_usb_error(libusbp_control_transfer(handle->usb_handle,
+    0x40, TIC_CMD_SET_SPEED_MIN, wValue, wIndex, NULL, 0, NULL));
+
+  if (error != NULL)
+  {
+    error = tic_error_add(error,
+      "There was an error setting the speed min.");
+  }
+
+  return error;
+}
+
+tic_error * tic_set_accel_max(tic_handle * handle, uint32_t accel_max)
+{
+  if (handle == NULL)
+  {
+    return tic_error_create("Handle is null.");
+  }
+
+  tic_error * error = NULL;
+
+  uint16_t wValue = (uint32_t)accel_max & 0xFFFF;
+  uint16_t wIndex = (uint32_t)accel_max >> 16 & 0xFFFF;
+  error = tic_usb_error(libusbp_control_transfer(handle->usb_handle,
+    0x40, TIC_CMD_SET_ACCEL_MAX, wValue, wIndex, NULL, 0, NULL));
+
+  if (error != NULL)
+  {
+    error = tic_error_add(error,
+      "There was an error setting the accel max.");
+  }
+
+  return error;
+}
+
+tic_error * tic_set_decel_max(tic_handle * handle, uint32_t decel_max)
+{
+  if (handle == NULL)
+  {
+    return tic_error_create("Handle is null.");
+  }
+
+  tic_error * error = NULL;
+
+  uint16_t wValue = (uint32_t)decel_max & 0xFFFF;
+  uint16_t wIndex = (uint32_t)decel_max >> 16 & 0xFFFF;
+  error = tic_usb_error(libusbp_control_transfer(handle->usb_handle,
+    0x40, TIC_CMD_SET_DECEL_MAX, wValue, wIndex, NULL, 0, NULL));
+
+  if (error != NULL)
+  {
+    error = tic_error_add(error,
+      "There was an error setting the decel max.");
+  }
+
+  return error;
+}
+
 tic_error * tic_set_step_mode(tic_handle * handle, uint8_t step_mode)
 {
   if (handle == NULL)

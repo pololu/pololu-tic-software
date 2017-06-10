@@ -109,8 +109,9 @@ void tic_sprintf(tic_string * str, const char * format, ...)
     str->capacity = new_capacity;
   }
 
-  // Add the new content anda  null terminator.
+  // Add the new content and a null terminator.
   int result = vsnprintf(str->data + str->length, length_increase + 1, format, ap);
+  (void)result;  // suppress unused variable warnings in release builds
   assert((size_t)result == length_increase);
   str->data[new_length] = 0;
   str->length = new_length;

@@ -17,7 +17,7 @@ describe 'commands for controlling the motor', usb: true do
 
       expect(tic_get_status['Target position']).to eq 230000
 
-      run_ticcmd('--position -44')
+      stdout, stderr, result = run_ticcmd('--position -44')
       expect(stderr).to eq ''
       expect(stdout).to eq ''
       expect(result).to eq 0
@@ -35,12 +35,124 @@ describe 'commands for controlling the motor', usb: true do
 
       expect(tic_get_status['Target velocity']).to eq 100000
 
-      run_ticcmd('--velocity -1')
+      stderr, stdout, result = run_ticcmd('--velocity -1')
       expect(stderr).to eq ''
       expect(stdout).to eq ''
       expect(result).to eq 0
 
       expect(tic_get_status['Target velocity']).to eq -1
+    end
+  end
+
+  describe 'Set Current Position command' do
+    it 'lets you set the current position' do
+      # Stop for a while to make sure we are not moving.
+      stdout, stderr, result = run_ticcmd('--stop')
+      expect(stderr).to eq ''
+      expect(stdout).to eq ''
+      expect(result).to eq 0
+      sleep 0.1
+
+      stdout, stderr, result = run_ticcmd('--set-current-position 2146054486')
+      expect(stderr).to eq ''
+      expect(stdout).to eq ''
+      expect(result).to eq 0
+
+      expect(tic_get_status['Current position']).to eq 2146054486
+
+      stderr, stdout, result = run_ticcmd('--set-current-position 10')
+      expect(stderr).to eq ''
+      expect(stdout).to eq ''
+      expect(result).to eq 0
+
+      expect(tic_get_status['Current position']).to eq 10
+    end
+  end
+
+  describe 'Stop command' do
+    it 'lets you clear a target position or velocity' do
+      stdout, stderr, result = run_ticcmd('-p 230000')
+      expect(stderr).to eq ''
+      expect(stdout).to eq ''
+      expect(result).to eq 0
+
+      expect(tic_get_status['Target position']).to eq 230000
+
+      stdout, stderr, result = run_ticcmd('--stop')
+      expect(stderr).to eq ''
+      expect(stdout).to eq ''
+      expect(result).to eq 0
+
+      # Ruby converts 'off' to false
+      expect(tic_get_status['Planning mode']).to eq false
+    end
+  end
+
+  describe 'Enable/Disable driver' do
+    it 'works' do
+      stdout, stderr, result = run_ticcmd('--disable-driver')
+      expect(stderr).to eq ''
+      expect(stdout).to eq ''
+      expect(result).to eq 0
+
+      errors = tic_get_status['Errors currently stopping the motor']
+      expect(errors).to be_include 'Intentionally disabled'
+
+      stdout, stderr, result = run_ticcmd('--enable-driver')
+      expect(stderr).to eq ''
+      expect(stdout).to eq ''
+      expect(result).to eq 0
+
+      errors = tic_get_status['Errors currently stopping the motor']
+      expect(errors).to_not be_include 'Intentionally disabled'
+    end
+  end
+end
+
+describe 'Set Speed Min' do
+  it 'works' do
+    ['512', '0']. each do |mode|
+      stdout, stderr, result = run_ticcmd("--speed-min #{mode}")
+      expect(stderr).to eq ''
+      expect(stdout).to eq ''
+      expect(result).to eq 0
+      expect(tic_get_status['Speed min'].to_s).to eq mode
+    end
+  end
+end
+
+describe 'Set Speed Max' do
+  it 'works' do
+    ['10000', '2000000']. each do |mode|
+      stdout, stderr, result = run_ticcmd("--speed-max #{mode}")
+      expect(stderr).to eq ''
+      expect(stdout).to eq ''
+      expect(result).to eq 0
+      expect(tic_get_status['Speed max'].to_s).to eq mode
+    end
+  end
+end
+
+describe 'Set Accel Max' do
+  it 'works' do
+    ['10000', '2000000']. each do |mode|
+      stdout, stderr, result = run_ticcmd("--accel-max #{mode}")
+      expect(stderr).to eq ''
+      expect(stdout).to eq ''
+      expect(result).to eq 0
+      expect(tic_get_status['Accel max'].to_s).to eq mode
+    end
+  end
+end
+
+describe 'Set Decel Max' do
+  it 'works' do
+    ['10000', '2000000']. each do |mode|
+      stdout, stderr, result = run_ticcmd("--decel-max #{mode}")
+      expect(stderr).to eq ''
+      expect(stdout).to eq ''
+      expect(result).to eq 0
+      expect(tic_get_status['Decel max'].to_s).to eq mode
     end
   end
 end
@@ -104,3 +216,5 @@ describe 'Set Decay Mode' do
     end
   end
 end
+
+
