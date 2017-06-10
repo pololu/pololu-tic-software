@@ -254,9 +254,15 @@ void main_window::set_u8_combo_box(QComboBox * combo, uint8_t value)
 
 void main_window::set_spin_box(QSpinBox * spin, int value)
 {
-  suppress_events = true;
-  spin->setValue(value);
-  suppress_events = false;
+  // Only set the QSpinBox's value if the new value is numerically different.
+  // This prevents, for example, a value of "0000" from being changed to "0"
+  // while you're trying to change "10000" to "20000".
+  if (spin->value() != value)
+  {
+    suppress_events = true;
+    spin->setValue(value);
+    suppress_events = false;
+  }
 }
 
 void main_window::showEvent(QShowEvent * event)
@@ -344,64 +350,64 @@ void main_window::on_control_mode_value_currentIndexChanged(int index)
   controller->handle_control_mode_input(control_mode);
 }
 
-void main_window::on_input_min_value_editingFinished()
+void main_window::on_input_min_value_valueChanged(int value)
 {
   if (suppress_events) { return; }
-  controller->handle_input_min_input(input_min_value->value());
+  controller->handle_input_min_input(value);
 }
 
-void main_window::on_input_neutral_min_value_editingFinished()
+void main_window::on_input_neutral_min_value_valueChanged(int value)
 {
   if (suppress_events) { return; }
-  controller->handle_input_neutral_min_input(input_neutral_min_value->value());
+  controller->handle_input_neutral_min_input(value);
 }
 
-void main_window::on_input_neutral_max_value_editingFinished()
+void main_window::on_input_neutral_max_value_valueChanged(int value)
 {
   if (suppress_events) { return; }
-  controller->handle_input_neutral_max_input(input_neutral_max_value->value());
+  controller->handle_input_neutral_max_input(value);
 }
 
-void main_window::on_input_max_value_editingFinished()
+void main_window::on_input_max_value_valueChanged(int value)
 {
   if (suppress_events) { return; }
-  controller->handle_input_max_input(input_max_value->value());
+  controller->handle_input_max_input(value);
 }
 
-void main_window::on_output_min_value_editingFinished()
+void main_window::on_output_min_value_valueChanged(int value)
 {
   if (suppress_events) { return; }
-  controller->handle_output_min_input(output_min_value->value());
+  controller->handle_output_min_input(value);
 }
 
-void main_window::on_output_max_value_editingFinished()
+void main_window::on_output_max_value_valueChanged(int value)
 {
   if (suppress_events) { return; }
-  controller->handle_output_max_input(output_max_value->value());
+  controller->handle_output_max_input(value);
 }
 
-void main_window::on_speed_max_value_editingFinished()
+void main_window::on_speed_max_value_valueChanged(int value)
 {
   if (suppress_events) { return; }
-  controller->handle_speed_max_input(speed_max_value->value());
+  controller->handle_speed_max_input(value);
 }
 
-void main_window::on_speed_min_value_editingFinished()
+void main_window::on_speed_min_value_valueChanged(int value)
 {
   if (suppress_events) { return; }
-  controller->handle_speed_min_input(speed_min_value->value());
+  controller->handle_speed_min_input(value);
 }
 
-void main_window::on_accel_max_value_editingFinished()
+void main_window::on_accel_max_value_valueChanged(int value)
 {
   if (suppress_events) { return; }
-  controller->handle_accel_max_input(accel_max_value->value());
+  controller->handle_accel_max_input(value);
 }
 
-void main_window::on_decel_max_value_editingFinished()
+void main_window::on_decel_max_value_valueChanged(int value)
 {
   if (suppress_events) { return; }
-  controller->handle_decel_max_input(decel_max_value->value());
+  controller->handle_decel_max_input(value);
 }
 
 void main_window::on_step_mode_value_currentIndexChanged(int index)
@@ -411,10 +417,10 @@ void main_window::on_step_mode_value_currentIndexChanged(int index)
   controller->handle_step_mode_input(step_mode);
 }
 
-void main_window::on_current_limit_value_editingFinished()
+void main_window::on_current_limit_value_valueChanged(int value)
 {
   if (suppress_events) { return; }
-  controller->handle_current_limit_input(current_limit_value->value());
+  controller->handle_current_limit_input(value);
 }
 
 void main_window::on_decay_mode_value_currentIndexChanged(int index)

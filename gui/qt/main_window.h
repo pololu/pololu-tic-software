@@ -118,18 +118,18 @@ private slots:
   void on_manual_target_position_mode_radio_toggled(bool checked);
   void on_set_target_button_clicked();
   void on_control_mode_value_currentIndexChanged(int index);
-  void on_input_min_value_editingFinished();
-  void on_input_neutral_min_value_editingFinished();
-  void on_input_neutral_max_value_editingFinished();
-  void on_input_max_value_editingFinished();
-  void on_output_min_value_editingFinished();
-  void on_output_max_value_editingFinished();
-  void on_speed_max_value_editingFinished();
-  void on_speed_min_value_editingFinished();
-  void on_accel_max_value_editingFinished();
-  void on_decel_max_value_editingFinished();
+  void on_input_min_value_valueChanged(int value);
+  void on_input_neutral_min_value_valueChanged(int value);
+  void on_input_neutral_max_value_valueChanged(int value);
+  void on_input_max_value_valueChanged(int value);
+  void on_output_min_value_valueChanged(int value);
+  void on_output_max_value_valueChanged(int value);
+  void on_speed_max_value_valueChanged(int value);
+  void on_speed_min_value_valueChanged(int value);
+  void on_accel_max_value_valueChanged(int value);
+  void on_decel_max_value_valueChanged(int value);
   void on_step_mode_value_currentIndexChanged(int index);
-  void on_current_limit_value_editingFinished();
+  void on_current_limit_value_valueChanged(int value);
   void on_decay_mode_value_currentIndexChanged(int index);
   
 private:
