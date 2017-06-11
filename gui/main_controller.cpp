@@ -83,6 +83,56 @@ void main_controller::set_connection_error(std::string error_message)
   connection_error_message = error_message;
 }
 
+void main_controller::reload_settings()
+{
+  if (!connected()) { return; }
+  try
+  {
+    settings = device_handle.get_settings();
+    settings_modified = false;
+  }
+  catch (const std::exception & e)
+  {
+    settings_modified = true;
+    show_exception(e, "There was an error loading the settings from the device.");
+  }
+  handle_settings_changed();
+}
+
+void main_controller::restore_default_settings()
+{
+  if (!connected()) { return; }
+
+  std::string question = "This will reset all of your device's settings "
+    "back to their default values.  "
+    "You will lose your custom settings.  "
+    "Are you sure you want to continue?";
+  if (!window->confirm(question))
+  {
+    return;
+  }
+
+  bool restore_success = false;
+  try
+  {
+      device_handle.restore_defaults();
+      restore_success = true;
+  }
+  catch (const std::exception & e)
+  {
+    show_exception(e, "There was an error resetting to the default settings.");
+  }
+
+  // This takes care of reloading the settings and telling the view to update.
+  reload_settings();
+
+  if (restore_success)
+  {
+    window->show_info_message(
+      "Your device's settings have been reset to their default values.");
+  }
+}
+
 /** Returns true if the device list includes the specified device. */
 static bool device_list_includes(
   const std::vector<tic::device> & device_list,
@@ -296,11 +346,28 @@ void main_controller::handle_device_changed()
       window->set_connection_status("Not connected yet...", false);
     }
   }
+  
+  window->set_connect_enabled(!connected());
+  window->set_disconnect_enabled(connected());
+  window->set_reload_settings_enabled(connected());
+  window->set_restore_defaults_enabled(connected());
+  window->set_main_boxes_enabled(connected());
 }
 
 void main_controller::handle_variables_changed()
 {
   //todo get_device_reset()
+  
+  window->set_vin_voltage(std::to_string(variables.get_vin_voltage()) + " mV");
+  
+  if (variables.get_planning_mode() == TIC_PLANNING_MODE_TARGET_POSITION)
+  {
+    window->set_target_position(std::to_string(variables.get_target_position()));
+  }
+  else if (variables.get_planning_mode() == TIC_PLANNING_MODE_TARGET_VELOCITY)
+  {
+    window->set_target_velocity(std::to_string(variables.get_target_velocity()));
+  }
   
   window->set_current_position(std::to_string(variables.get_current_position()));
   window->set_current_velocity(std::to_string(variables.get_current_velocity()));
@@ -323,6 +390,8 @@ void main_controller::handle_settings_changed()
   window->set_step_mode(tic_settings_step_mode_get(settings.pointer_get()));
   window->set_current_limit(tic_settings_current_limit_get(settings.pointer_get()));
   window->set_decay_mode(tic_settings_decay_mode_get(settings.pointer_get()));
+  
+  window->set_apply_settings_enabled(connected() && settings_modified);
 }
 
 void main_controller::handle_control_mode_input(uint8_t control_mode)
