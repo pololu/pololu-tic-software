@@ -26,9 +26,9 @@ input_error_max: 65535
 input_scaling_degree: linear
 input_invert: false
 input_min: 0
-input_neutral_min: 32768
-input_neutral_max: 32768
-input_max: 65535
+input_neutral_min: 2048
+input_neutral_max: 2048
+input_max: 4095
 output_min: -200
 output_neutral: 0
 output_max: 200

@@ -46,13 +46,6 @@ describe 'commands for controlling the motor', usb: true do
 
   describe 'Set Current Position command' do
     it 'lets you set the current position' do
-      # Stop for a while to make sure we are not moving.
-      stdout, stderr, result = run_ticcmd('--stop')
-      expect(stderr).to eq ''
-      expect(stdout).to eq ''
-      expect(result).to eq 0
-      sleep 0.1
-
       stdout, stderr, result = run_ticcmd('--set-current-position 2146054486')
       expect(stderr).to eq ''
       expect(stdout).to eq ''
@@ -109,18 +102,6 @@ describe 'commands for controlling the motor', usb: true do
   end
 end
 
-describe 'Set Speed Min' do
-  it 'works' do
-    ['512', '0']. each do |mode|
-      stdout, stderr, result = run_ticcmd("--speed-min #{mode}")
-      expect(stderr).to eq ''
-      expect(stdout).to eq ''
-      expect(result).to eq 0
-      expect(tic_get_status['Speed min'].to_s).to eq mode
-    end
-  end
-end
-
 describe 'Set Speed Max' do
   it 'works' do
     ['10000', '2000000']. each do |mode|
@@ -129,6 +110,18 @@ describe 'Set Speed Max' do
       expect(stdout).to eq ''
       expect(result).to eq 0
       expect(tic_get_status['Speed max'].to_s).to eq mode
+    end
+  end
+end
+
+describe 'Set Speed Min' do
+  it 'works' do
+    ['512', '0']. each do |mode|
+      stdout, stderr, result = run_ticcmd("--speed-min #{mode}")
+      expect(stderr).to eq ''
+      expect(stdout).to eq ''
+      expect(result).to eq 0
+      expect(tic_get_status['Speed min'].to_s).to eq mode
     end
   end
 end

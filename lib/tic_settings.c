@@ -79,9 +79,9 @@ void tic_settings_fill_with_defaults(tic_settings * settings)
   tic_settings_rc_bad_signal_timeout_set(settings, 500);
   tic_settings_rc_consecutive_good_pulses_set(settings, 2);
   tic_settings_input_error_max_set(settings, 0xFFFF);
-  tic_settings_input_neutral_min_set(settings, 0x8000);
-  tic_settings_input_neutral_max_set(settings, 0x8000);
-  tic_settings_input_max_set(settings, 0xFFFF);
+  tic_settings_input_neutral_min_set(settings, 0x0800);
+  tic_settings_input_neutral_max_set(settings, 0x0800);
+  tic_settings_input_max_set(settings, 0x0FFF);
   tic_settings_output_min_set(settings, -200);
   tic_settings_output_max_set(settings, 200);
   tic_settings_encoder_prescaler_set(settings, 2);
