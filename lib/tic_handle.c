@@ -416,11 +416,6 @@ tic_error * tic_set_current_limit(tic_handle * handle, uint32_t current_limit)
     return tic_error_create("Handle is null.");
   }
 
-  if (current_limit > TIC_MAX_ALLOWED_CURRENT)
-  {
-    current_limit = TIC_MAX_ALLOWED_CURRENT;
-  }
-
   tic_error * error = NULL;
 
   uint16_t wValue = current_limit / TIC_CURRENT_LIMIT_UNITS_MA;
