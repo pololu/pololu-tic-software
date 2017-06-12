@@ -84,7 +84,7 @@ void tic_settings_fill_with_defaults(tic_settings * settings)
   tic_settings_input_max_set(settings, 0x0FFF);
   tic_settings_output_min_set(settings, -200);
   tic_settings_output_max_set(settings, 200);
-  tic_settings_encoder_prescaler_set(settings, 2);
+  tic_settings_encoder_prescaler_set(settings, 0);
   tic_settings_encoder_postscaler_set(settings, 1);
   tic_settings_current_limit_set(settings, 192);
   tic_settings_speed_max_set(settings, 2000000);

@@ -32,7 +32,7 @@ input_max: 4095
 output_min: -200
 output_neutral: 0
 output_max: 200
-encoder_prescaler: 2
+encoder_prescaler: 0
 encoder_postscaler: 1
 scl_config: default
 sda_config: default
