@@ -678,6 +678,9 @@ QWidget * main_window::setup_control_mode_widget()
     control_mode_value->addItem("RC speed", TIC_CONTROL_MODE_RC_SPEED);
     control_mode_value->addItem("Analog position", TIC_CONTROL_MODE_ANALOG_POSITION);
     control_mode_value->addItem("Analog speed", TIC_CONTROL_MODE_ANALOG_SPEED);
+    control_mode_value->addItem("Encoder position", TIC_CONTROL_MODE_ENCODER_POSITION);
+    control_mode_value->addItem("Encoder speed", TIC_CONTROL_MODE_ENCODER_SPEED);
+    control_mode_value->addItem("STEP/DIR", TIC_CONTROL_MODE_STEP_DIR);
     control_mode_label = new QLabel();
     control_mode_label->setBuddy(control_mode_value);
     layout->addWidget(control_mode_label, row, 0, FIELD_LABEL_ALIGNMENT);
