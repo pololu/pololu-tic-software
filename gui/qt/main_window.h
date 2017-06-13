@@ -108,14 +108,14 @@ protected:
   void showEvent(QShowEvent *) override;
   
 private slots:
-  void on_connect_action_triggered();
-  void on_disconnect_action_triggered();
   void on_reload_settings_action_triggered();
   void on_restore_defaults_action_triggered();
   void on_update_timer_timeout();
   void on_device_name_value_linkActivated();
   void on_documentation_action_triggered();
   void on_about_action_triggered();
+  
+  void on_device_list_value_currentIndexChanged(int index);
 
   /** This is called by Qt when the user wants to apply settings. */
   void on_apply_settings_action_triggered();

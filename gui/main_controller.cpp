@@ -29,39 +29,34 @@ void main_controller::start()
     // Automatically connect if there is only one device.
     if (device_list.size() == 1)
     {
-      really_connect();
-      window->set_device_list_selected(device_list.at(0));
+      connect_device(device_list.at(0));
+      return;
     }
   }
-  
+
   handle_model_changed();
 }
 
-void main_controller::connect_device()
+/** Returns the device that matches the specified OS ID from the list, or a null
+ * device if none match. */
+static tic::device device_with_os_id(
+  std::vector<tic::device> const & device_list,
+  std::string const & id)
 {
-  if (connected())
+  for (tic::device const & candidate : device_list)
   {
-    // todo: figure out what to do with multiple devices
-    return;
+    if (candidate.get_os_id() == id)
+    {
+      return candidate;
+    }
   }
-  
-  bool successfully_updated_list = update_device_list();
-  if (!successfully_updated_list)
-  {
-    return;
-  }
+  return tic::device(); // null device
+}
 
-  if (device_list.size() > 0)
-  {
-    really_connect();
-  }
-  else
-  {
-    window->show_error_message(
-      "No Tic was found.  "
-      "Please verify that the Tic is connected to the computer via USB."
-      );
-  }
+void main_controller::connect_device_with_os_id(std::string const & id)
+{
+  // TODO: deal with id being invalid
+  connect_device(device_with_os_id(device_list, id));
 }
 
 void main_controller::disconnect_device()
@@ -74,7 +69,51 @@ void main_controller::disconnect_device()
   handle_model_changed();
 }
 
-void main_controller::disconnect_device_by_error(std::string error_message)
+void main_controller::connect_device(tic::device const & device)
+{
+  assert(device);
+
+  try
+  {
+    // Close the old handle in case one is already open.
+    device_handle.close();
+
+    connection_error = false;
+    disconnected_by_user = false;
+
+    // Open a handle to the specified device.
+    device_handle = tic::handle(device);
+  }
+  catch (std::exception const & e)
+  {
+    set_connection_error("Failed to connect to device.");
+    show_exception(e, "There was an error connecting to the device.");
+    handle_model_changed();
+    return;
+  }
+
+  try
+  {
+    settings = device_handle.get_settings();
+  }
+  catch (std::exception const & e)
+  {
+    show_exception(e, "There was an error loading settings from the device.");
+  }
+
+  try
+  {
+    reload_variables();
+  }
+  catch (std::exception const & e)
+  {
+    show_exception(e, "There was an error getting the status of the device.");
+  }
+
+  handle_model_changed();
+}
+
+void main_controller::disconnect_device_by_error(std::string const & error_message)
 {
   device_handle.close();
   settings_modified = false;
@@ -82,7 +121,7 @@ void main_controller::disconnect_device_by_error(std::string error_message)
   set_connection_error(error_message);
 }
 
-void main_controller::set_connection_error(std::string error_message)
+void main_controller::set_connection_error(std::string const & error_message)
 {
   connection_error = true;
   connection_error_message = error_message;
@@ -143,15 +182,7 @@ static bool device_list_includes(
   std::vector<tic::device> const & device_list,
   tic::device const & device)
 {
-  std::string id = device.get_os_id();
-  for (tic::device const & candidate : device_list)
-  {
-    if (candidate.get_os_id() == id)
-    {
-      return true;
-    }
-  }
-  return false;
+  return device_with_os_id(device_list, device.get_os_id());
 }
 
 void main_controller::update()
@@ -162,22 +193,19 @@ void main_controller::update()
   // here.  If the user tries to use the UI at all while this function is
   // running, the UI cannot respond until this function returns.
 
+  bool successfully_updated_list = update_device_list();
+  if (successfully_updated_list && device_list_changed)
+  {
+    window->set_device_list_contents(device_list);
+  }
+  
   if (connected())
   {
-    // First, see if the programmer we are connected to is still available.
+    // First, see if the device we are connected to is still available.
     // Note: It would be nice if the libusbp::generic_handle class had a
     // function that tests if the actual handle we are using is still valid.
     // This would be better for tricky cases like if someone unplugs and
-    // plugs the same programmer in very fast.
-
-    bool successfully_updated_list = update_device_list();
-    if (!successfully_updated_list)
-    {
-        // Ignore this unexpected error.  We are already successfully
-        // connected to the device, so it will still be on our list, and we
-        // will try to keep using it if we can.
-    }
-
+    // plugs the same device in very fast.
     bool device_still_present = device_list_includes(
       device_list, device_handle.get_device());
 
@@ -221,73 +249,49 @@ void main_controller::update()
       // The user explicitly disconnected the last connection, so don't
       // automatically reconnect.
     }
-    else
+    else if (successfully_updated_list && device_list.size() == 1)
     {
-      bool successfully_updated_list = update_device_list();
-      if (!successfully_updated_list)
-      {
-        // Since this is a background update, don't report
-        // this error to the user.
-      }
-
-      if (successfully_updated_list && device_list.size() > 0)
-      {
-        really_connect();
-      }
+      // Automatically connect if there is only one device and we were not
+      // recently disconnected from a device.
+      connect_device(device_list.at(0));
     }
   }
 }
 
-void main_controller::really_connect()
+static bool device_lists_different(std::vector<tic::device> const & list1,
+  std::vector<tic::device> const & list2)
 {
-  assert(device_list.size() > 0);
-
-  try
+  if (list1.size() != list2.size())
   {
-    // Close the old handle in case one is already open.
-    device_handle.close();
-
-    connection_error = false;
-    disconnected_by_user = false;
-
-    // Open a handle to the specified programmer.
-    device_handle = tic::handle(device_list.at(0));
-
+    return true;
   }
-  catch (std::exception const & e)
+  else
   {
-    set_connection_error("Failed to connect to device.");
-    show_exception(e, "There was an error connecting to the device.");
-    handle_model_changed();
-    return;
+    for (int i = 0; i < list1.size(); i++)
+    {
+      if (list1.at(i).get_os_id() != list2.at(i).get_os_id())
+      {
+        return true;
+      }
+    }
+    return false;
   }
-
-  try
-  {
-    settings = device_handle.get_settings();
-  }
-  catch (std::exception const & e)
-  {
-    show_exception(e, "There was an error loading settings from the device.");
-  }
-
-  try
-  {
-    reload_variables();
-  }
-  catch (std::exception const & e)
-  {
-    show_exception(e, "There was an error getting the status of the device.");
-  }
-
-  handle_model_changed();
 }
 
 bool main_controller::update_device_list()
 {
   try
   {
-    device_list = tic::list_connected_devices();
+    std::vector<tic::device> new_device_list = tic::list_connected_devices();
+    if (device_lists_different(device_list, new_device_list))
+    {
+      device_list_changed = true;
+    }
+    else
+    {
+      device_list_changed = false;
+    }
+    device_list = new_device_list;
     return true;
   }
   catch (std::exception const & e)
@@ -327,7 +331,8 @@ void main_controller::handle_device_changed()
     window->set_serial_number(device.get_serial_number());
     window->set_firmware_version(device_handle.get_firmware_version_string());
     
-    window->set_connection_status("Connected.", false);
+    window->set_device_list_selected(device);
+    window->set_connection_status("", false);
   }
   else 
   {
@@ -336,24 +341,18 @@ void main_controller::handle_device_changed()
     window->set_serial_number(value);
     window->set_firmware_version(value);
     
+    window->set_device_list_selected(tic::device()); // show "Not connected"
+    
     if (connection_error)
     {
       window->set_connection_status(connection_error_message, true);
     }
-    else if (disconnected_by_user)
-    {
-      window->set_connection_status("Not connected.", false);
-    }
     else
     {
-      // This is a subtle way of saying that we are not connected but we will
-      // auto-connect when we see a device available.
-      window->set_connection_status("Not connected yet...", false);
+      window->set_connection_status("", false);
     }
   }
   
-  window->set_connect_enabled(!connected());
-  window->set_disconnect_enabled(connected());
   window->set_reload_settings_enabled(connected());
   window->set_restore_defaults_enabled(connected());
   window->set_main_boxes_enabled(connected());

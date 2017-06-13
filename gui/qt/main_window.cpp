@@ -69,22 +69,30 @@ bool main_window::confirm(std::string const & question)
 
 void main_window::set_device_list_contents(std::vector<tic::device> const & device_list)
 {
+  suppress_events = true;
   device_list_value->clear();
-  device_list_value->addItem(tr("Not connected"), "");
+  device_list_value->addItem(tr("Not connected"), QString()); // null value
   for (tic::device const & device : device_list)
   {
     device_list_value->addItem(
       QString((device.get_short_name() + " #" +device.get_serial_number()).c_str()),
       QString(device.get_os_id().c_str()));
   }
+  suppress_events = false;
 }
 
 void main_window::set_device_list_selected(tic::device const & device)
 {
-  // todo check if we couldn't find the specified device (findData returned -1)?
-  // todo suppress events
-  device_list_value->setCurrentIndex(
-    device_list_value->findData(QString(device.get_os_id().c_str())));
+  // TODO: show an error if we couldn't find the specified device
+  // (findData returned -1)?
+  suppress_events = true;
+  int index = 0;
+  if (device)
+  {
+    index = device_list_value->findData(QString(device.get_os_id().c_str()));
+  }
+  device_list_value->setCurrentIndex(index);
+  suppress_events = false;
 }
 
 void main_window::set_connection_status(std::string const & status, bool error)
@@ -114,16 +122,6 @@ void main_window::set_apply_settings_enabled(bool enabled)
 {
   apply_settings_button->setEnabled(enabled);
   apply_settings_action->setEnabled(enabled);
-}
-
-void main_window::set_connect_enabled(bool enabled)
-{
-  connect_action->setEnabled(enabled);
-}
-
-void main_window::set_disconnect_enabled(bool enabled)
-{
-  disconnect_action->setEnabled(enabled);
 }
 
 void main_window::set_reload_settings_enabled(bool enabled)
@@ -256,18 +254,9 @@ void main_window::set_decay_mode(uint8_t decay_mode)
 
 void main_window::set_u8_combo_box(QComboBox * combo, uint8_t value)
 {
-    int index = 0;
-    for (int i = 0; i < combo->count(); i++)
-    {
-        if (value == combo->itemData(i).toUInt())
-        {
-            index = i;
-            break;
-        }
-    }
-    suppress_events = true;
-    combo->setCurrentIndex(index);
-    suppress_events = false;
+  suppress_events = true;
+  combo->setCurrentIndex(combo->findData(value));
+  suppress_events = false;
 }
 
 void main_window::set_spin_box(QSpinBox * spin, int value)
@@ -291,16 +280,6 @@ void main_window::showEvent(QShowEvent * event)
     start_event_reported = true;
     controller->start();
   }
-}
-
-void main_window::on_connect_action_triggered()
-{
-  controller->connect_device();
-}
-
-void main_window::on_disconnect_action_triggered()
-{
-   controller->disconnect_device();
 }
 
 void main_window::on_reload_settings_action_triggered()
@@ -337,6 +316,20 @@ void main_window::on_about_action_triggered()
       "<p>See LICENSE.html for copyright and license information.</p>"
       "<p><a href=\"%3\">Online documentation</a></p>")
     .arg(SOFTWARE_VERSION_STRING, SOFTWARE_YEAR, DOCUMENTATION_URL));
+}
+
+void main_window::on_device_list_value_currentIndexChanged(int index)
+{
+  if (suppress_events) { return; }
+  QString id = device_list_value->itemData(index).toString();
+  if (id.isNull())
+  {
+    controller->disconnect_device();
+  }
+  else
+  {
+    controller->connect_device_with_os_id(id.toStdString());
+  }
 }
 
 void main_window::on_apply_settings_action_triggered()
@@ -518,18 +511,6 @@ void main_window::setup_menu_bar()
 
   device_menu = menu_bar->addMenu("");
 
-  connect_action = new QAction(this);
-  connect_action->setObjectName("connect_action");
-  connect_action->setShortcut(Qt::CTRL + Qt::Key_N);
-  device_menu->addAction(connect_action);
-
-  disconnect_action = new QAction(this);
-  disconnect_action->setObjectName("disconnect_action");
-  disconnect_action->setShortcut(Qt::CTRL + Qt::Key_D);
-  device_menu->addAction(disconnect_action);
-
-  device_menu->addSeparator();
-
   reload_settings_action = new QAction(this);
   reload_settings_action->setObjectName("reload_settings_action");
   device_menu->addAction(reload_settings_action);
@@ -565,6 +546,8 @@ QLayout * main_window::setup_header()
 
   device_list_label = new QLabel();
   device_list_value = new QComboBox();
+  device_list_value->setObjectName("device_list_value");
+  device_list_value->addItem(tr("Not connected"), QString()); // null value
   connection_status_value = new QLabel();
   
   // Make the device list wide enough to display the short name and serial
@@ -929,8 +912,6 @@ void main_window::retranslate()
   file_menu->setTitle(tr("&File"));
   exit_action->setText(tr("E&xit"));
   device_menu->setTitle(tr("&Device"));
-  connect_action->setText(tr("&Connect"));
-  disconnect_action->setText(tr("&Disconnect"));
   reload_settings_action->setText(tr("Re&load settings from device"));
   restore_defaults_action->setText(tr("&Restore default settings"));
   apply_settings_action->setText(tr("&Apply settings"));

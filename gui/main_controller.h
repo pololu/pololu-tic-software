@@ -14,7 +14,7 @@ public:
   void start();
   
   /** This is called when the user issues a connect command. */
-  void connect_device();
+  void connect_device_with_os_id(std::string const & id);
 
   /** This is called when the user issues a disconnect command. */
   void disconnect_device();
@@ -40,14 +40,16 @@ public:
    * exactly changed. */
   void handle_model_changed();
 
-private:
-  void really_connect();
-  
-  void disconnect_device_by_error(std::string error_message);
-  void set_connection_error(std::string error_message);
+private:  
+  void connect_device(tic::device const & device);
+  void disconnect_device_by_error(std::string const & error_message);
+  void set_connection_error(std::string const & error_message);
 
   /** Returns true for success, false for failure. */
   bool update_device_list();
+  
+  /** True if device_list changed the last time update_device_list() was called. */
+  bool device_list_changed;
   
   void show_exception(std::exception const & e, std::string const & context = "");
 
