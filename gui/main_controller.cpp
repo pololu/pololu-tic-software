@@ -4,7 +4,7 @@
 #include <cassert>
 
 /** This is how often we fetch the variables from the device. */
-static const uint32_t UPDATE_INTERVAL_MS = 100;
+static uint32_t const UPDATE_INTERVAL_MS = 100;
 
 void main_controller::set_window(main_window * window)
 {
@@ -21,15 +21,20 @@ void main_controller::start()
 
   // The program has just started, so try to connect to a device.
 
-  bool successfully_updated_list = try_update_device_list();
-  if (successfully_updated_list && device_list.size() > 0)
+  bool successfully_updated_list = update_device_list();
+  if (successfully_updated_list)
   {
-    really_connect();
+    window->set_device_list_contents(device_list);
+    
+    // Automatically connect if there is only one device.
+    if (device_list.size() == 1)
+    {
+      really_connect();
+      window->set_device_list_selected(device_list.at(0));
+    }
   }
-  else
-  {
-    handle_model_changed();
-  }
+  
+  handle_model_changed();
 }
 
 void main_controller::connect_device()
@@ -40,7 +45,7 @@ void main_controller::connect_device()
     return;
   }
   
-  bool successfully_updated_list = try_update_device_list();
+  bool successfully_updated_list = update_device_list();
   if (!successfully_updated_list)
   {
     return;
@@ -91,7 +96,7 @@ void main_controller::reload_settings()
     settings = device_handle.get_settings();
     settings_modified = false;
   }
-  catch (const std::exception & e)
+  catch (std::exception const & e)
   {
     settings_modified = true;
     show_exception(e, "There was an error loading the settings from the device.");
@@ -118,7 +123,7 @@ void main_controller::restore_default_settings()
       device_handle.restore_defaults();
       restore_success = true;
   }
-  catch (const std::exception & e)
+  catch (std::exception const & e)
   {
     show_exception(e, "There was an error resetting to the default settings.");
   }
@@ -135,11 +140,11 @@ void main_controller::restore_default_settings()
 
 /** Returns true if the device list includes the specified device. */
 static bool device_list_includes(
-  const std::vector<tic::device> & device_list,
-  const tic::device & device)
+  std::vector<tic::device> const & device_list,
+  tic::device const & device)
 {
   std::string id = device.get_os_id();
-  for (const tic::device & candidate : device_list)
+  for (tic::device const & candidate : device_list)
   {
     if (candidate.get_os_id() == id)
     {
@@ -165,7 +170,7 @@ void main_controller::update()
     // This would be better for tricky cases like if someone unplugs and
     // plugs the same programmer in very fast.
 
-    bool successfully_updated_list = try_update_device_list();
+    bool successfully_updated_list = update_device_list();
     if (!successfully_updated_list)
     {
         // Ignore this unexpected error.  We are already successfully
@@ -183,7 +188,7 @@ void main_controller::update()
         {
           reload_variables();
         }
-        catch (const std::exception & e)
+        catch (std::exception const & e)
         {
           // Ignore the exception.  The model provides other ways to tell that
           // the variable update failed, and the exact message is probably
@@ -218,7 +223,7 @@ void main_controller::update()
     }
     else
     {
-      bool successfully_updated_list = try_update_device_list();
+      bool successfully_updated_list = update_device_list();
       if (!successfully_updated_list)
       {
         // Since this is a background update, don't report
@@ -249,7 +254,7 @@ void main_controller::really_connect()
     device_handle = tic::handle(device_list.at(0));
 
   }
-  catch (const std::exception & e)
+  catch (std::exception const & e)
   {
     set_connection_error("Failed to connect to device.");
     show_exception(e, "There was an error connecting to the device.");
@@ -261,7 +266,7 @@ void main_controller::really_connect()
   {
     settings = device_handle.get_settings();
   }
-  catch (const std::exception & e)
+  catch (std::exception const & e)
   {
     show_exception(e, "There was an error loading settings from the device.");
   }
@@ -270,7 +275,7 @@ void main_controller::really_connect()
   {
     reload_variables();
   }
-  catch (const std::exception & e)
+  catch (std::exception const & e)
   {
     show_exception(e, "There was an error getting the status of the device.");
   }
@@ -278,14 +283,14 @@ void main_controller::really_connect()
   handle_model_changed();
 }
 
-bool main_controller::try_update_device_list()
+bool main_controller::update_device_list()
 {
   try
   {
     device_list = tic::list_connected_devices();
     return true;
   }
-  catch (const std::exception & e)
+  catch (std::exception const & e)
   {
     set_connection_error("Failed to get the list of devices.");
     show_exception(e, "There was an error getting the list of devices.");
@@ -528,7 +533,7 @@ void main_controller::apply_settings()
       settings_modified = false;  // this must be last in case exceptions are thrown
     }
   }
-  catch (const std::exception & e)
+  catch (std::exception const & e)
   {
     show_exception(e, "There was an error applying settings.");
   }
@@ -562,7 +567,7 @@ void main_controller::set_target_position(int32_t position)
     
     device_handle.set_target_position(position);
   }
-  catch (const std::exception & e)
+  catch (std::exception const & e)
   {
     show_exception(e, "There was an error setting target position.");
   }
@@ -578,7 +583,7 @@ void main_controller::set_target_velocity(int32_t velocity)
     
     device_handle.set_target_velocity(velocity);
   }
-  catch (const std::exception & e)
+  catch (std::exception const & e)
   {
     show_exception(e, "There was an error setting target velocity.");
   }

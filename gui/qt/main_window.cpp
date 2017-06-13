@@ -2,8 +2,6 @@
 #include "main_controller.h"
 #include "config.h"
 
-#include "tic.hpp"
-
 #include <QCheckBox>
 #include <QComboBox>
 #include <QDesktopServices>
@@ -67,6 +65,26 @@ bool main_window::confirm(std::string const & question)
     QString(question.c_str()), QMessageBox::Ok | QMessageBox::Cancel);
   int button = mbox.exec();
   return button == QMessageBox::Ok;
+}
+
+void main_window::set_device_list_contents(std::vector<tic::device> const & device_list)
+{
+  device_list_value->clear();
+  device_list_value->addItem(tr("Not connected"), "");
+  for (tic::device const & device : device_list)
+  {
+    device_list_value->addItem(
+      QString((device.get_short_name() + " #" +device.get_serial_number()).c_str()),
+      QString(device.get_os_id().c_str()));
+  }
+}
+
+void main_window::set_device_list_selected(tic::device const & device)
+{
+  // todo check if we couldn't find the specified device (findData returned -1)?
+  // todo suppress events
+  device_list_value->setCurrentIndex(
+    device_list_value->findData(QString(device.get_os_id().c_str())));
 }
 
 void main_window::set_connection_status(std::string const & status, bool error)
@@ -455,13 +473,17 @@ static void setup_read_only_text_field(QGridLayout * layout, int row,
 
 void main_window::setup_window()
 {
+  // Make buttons a little bit bigger so they're easier to click.
+  // TODO: do we only want this on certain buttons?
+  setStyleSheet("QPushButton { padding: 0.3em 1em; }");
+
   setup_menu_bar();
   
   central_widget = new QWidget();
   QGridLayout * layout = central_widget_layout = new QGridLayout();
   
   int row = 0;
-  // todo: will require rework if we add more columns
+  layout->addLayout(setup_header(), row++, 0, 1, 2);
   layout->addLayout(setup_left_column(), row, 0);
   layout->addLayout(setup_right_column(), row++, 1);
   layout->addLayout(setup_footer(), row++, 0, 1, 2);
@@ -534,6 +556,30 @@ void main_window::setup_menu_bar()
   help_menu->addAction(about_action);
 
   setMenuBar(menu_bar);
+}
+
+QLayout * main_window::setup_header()
+{
+  QHBoxLayout * layout = header_layout = new QHBoxLayout();
+  //layout->setContentsMargins(0, 0, 0, 0);
+
+  device_list_label = new QLabel();
+  device_list_value = new QComboBox();
+  connection_status_value = new QLabel();
+  
+  // Make the device list wide enough to display the short name and serial
+  // number of the Tic.
+  {
+    QComboBox tmp_box;
+    tmp_box.addItem("TXXXXX: #1234567890123456");
+    device_list_value->setMinimumWidth(tmp_box.sizeHint().width() * 105 / 100);
+  }
+  
+  layout->addWidget(device_list_label);
+  layout->addWidget(device_list_value);
+  layout->addWidget(connection_status_value, 1, Qt::AlignLeft);
+
+  return header_layout;
 }
 
 QLayout * main_window::setup_left_column()
@@ -636,11 +682,9 @@ QLayout * main_window::setup_manual_target_mode_layout()
   manual_target_position_mode_radio->setChecked(true);
   manual_target_speed_mode_radio = new QRadioButton();
   manual_target_speed_mode_radio->setObjectName("manual_target_speed_mode_radio");
-  layout->addStretch(1);
-  layout->addWidget(manual_target_position_mode_radio);
+  layout->addWidget(manual_target_position_mode_radio, 1, Qt::AlignRight);
   layout->addSpacing(central_widget->fontMetrics().height());
-  layout->addWidget(manual_target_speed_mode_radio);
-  layout->addStretch(1);
+  layout->addWidget(manual_target_speed_mode_radio, 1, Qt::AlignLeft);
   
   return manual_target_mode_layout;
 }
@@ -855,29 +899,18 @@ QWidget * main_window::setup_motor_settings_box()
     row++;
   }
   
-  //layout->setRowStretch(row, 1);
-
   motor_settings_box->setLayout(layout);
   return motor_settings_box;
 }
 
 QLayout * main_window::setup_footer()
 {
-  //footer_widget = new QWidget();
-  QHBoxLayout * layout = footer_widget_layout = new QHBoxLayout();
-  layout->setContentsMargins(0, 0, 0, 0);
+  QHBoxLayout * layout = footer_layout = new QHBoxLayout();
+  //layout->setContentsMargins(0, 0, 0, 0);
 
-  layout->addWidget(setup_connection_status(), 0, Qt::AlignLeft);
   layout->addWidget(setup_apply_button(), 0, Qt::AlignRight);
     
-  //footer_widget->setLayout(layout);
-  return footer_widget_layout;
-}
-
-QWidget * main_window::setup_connection_status()
-{
-  connection_status_value = new QLabel();
-  return connection_status_value;
+  return footer_layout;
 }
 
 QWidget * main_window::setup_apply_button()
@@ -905,6 +938,8 @@ void main_window::retranslate()
   documentation_action->setText(tr("&Online documentation..."));
   about_action->setText(tr("&About..."));
 
+  device_list_label->setText(tr("Connected to:"));
+  
   device_info_box->setTitle(tr("Device info"));
   device_name_label->setText(tr("Name:"));
   serial_number_label->setText(tr("Serial number:"));

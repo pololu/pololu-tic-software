@@ -1,5 +1,7 @@
 #pragma once
 
+#include "tic.hpp"
+
 #include <QMainWindow>
 
 class QCheckBox;
@@ -39,6 +41,9 @@ public:
   
   /** Show an OK/Cancel dialog, return true if the user selects OK. */
   bool confirm(std::string const & question);
+  
+  void set_device_list_contents(std::vector<tic::device> const & device_list);
+  void set_device_list_selected(tic::device const & device);  
   
   /** Sets the label that shows the connection status/error. */
   void set_connection_status(std::string const & status, bool error);
@@ -146,6 +151,7 @@ private:
   // GUI elements.
   void setup_window();
   void setup_menu_bar();
+  QLayout * setup_header();
   QLayout * setup_left_column();
   QLayout * setup_right_column();
   QWidget * setup_device_info_box();
@@ -157,8 +163,6 @@ private:
   QWidget * setup_scaling_settings_box();
   QWidget * setup_motor_settings_box();
   QLayout * setup_footer();
-  QWidget * setup_connection_status();
-  QWidget * setup_defaults_button();
   QWidget * setup_apply_button();
   void retranslate();
   
@@ -182,6 +186,11 @@ private:
   
   QWidget * central_widget;
   QGridLayout * central_widget_layout;
+
+  QHBoxLayout * header_layout;
+  QLabel * device_list_label;
+  QComboBox * device_list_value;
+  QLabel * connection_status_value;
   
   QVBoxLayout * left_column_layout;
   QVBoxLayout * right_column_layout;
@@ -258,8 +267,7 @@ private:
   QLabel * decay_mode_label;
   QComboBox * decay_mode_value;
   
-  QHBoxLayout * footer_widget_layout;
-  QLabel * connection_status_value;
+  QHBoxLayout * footer_layout;
   QPushButton * apply_settings_button;
   
   main_controller * controller;

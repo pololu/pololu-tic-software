@@ -47,7 +47,7 @@ private:
   void set_connection_error(std::string error_message);
 
   /** Returns true for success, false for failure. */
-  bool try_update_device_list();
+  bool update_device_list();
   
   void show_exception(std::exception const & e, std::string const & context = "");
 
