@@ -1047,11 +1047,18 @@ tic_error * tic_device_copy(
 TIC_API
 void tic_device_free(tic_device *);
 
-/// Gets the name of the device as an ASCII-encoded string.
-/// The string will be valid at least as long as the device object.
+/// Gets the full name of the device (e.g. "Tic USB Stepper Motor Controller
+/// T825") as an ASCII-encoded string.  The string will be valid at least as
+/// long as the device object.
 /// If the device is NULL, returns an empty string.
 TIC_API TIC_WARN_UNUSED
 const char * tic_device_get_name(const tic_device *);
+
+/// Gets the short name of the device (e.g. "T825") as an ASCII-encoded string.
+/// The string will be valid at least as long as the device object.
+/// If the device is NULL, returns an empty string.
+TIC_API TIC_WARN_UNUSED
+const char * tic_device_get_short_name(const tic_device *);
 
 /// Gets the serial number of the device as an ASCII-encoded string.
 /// The string will be valid at least as long as the device object.

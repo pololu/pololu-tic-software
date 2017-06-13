@@ -479,11 +479,20 @@ namespace tic
     {
     }
 
-    /// Gets the name of the device as an ASCII-encoded string.
+    /// Gets the full name of the device (e.g. "Tic USB Stepper Motor Controller
+    /// T825") as an ASCII-encoded string.
     /// If the device is null, returns an empty string.
     std::string get_name() const noexcept
     {
       return tic_device_get_name(pointer);
+    }
+
+    /// Gets the short name of the device (e.g. "T825") as an ASCII-encoded
+    /// string.
+    /// If the device is null, returns an empty string.
+    std::string get_short_name() const noexcept
+    {
+      return tic_device_get_short_name(pointer);
     }
 
     /// Gets the serial number of the device as an ASCII-encoded string.
