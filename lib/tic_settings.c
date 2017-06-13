@@ -33,8 +33,9 @@ struct tic_settings
   int32_t output_min;
   int32_t output_neutral;
   int32_t output_max;
-  uint8_t encoder_prescaler;
+  uint32_t encoder_prescaler;
   uint32_t encoder_postscaler;
+  bool encoder_unlimited;
   uint8_t scl_config;
   uint8_t sda_config;
   uint8_t tx_config;
@@ -84,7 +85,7 @@ void tic_settings_fill_with_defaults(tic_settings * settings)
   tic_settings_input_max_set(settings, 0x0FFF);
   tic_settings_output_min_set(settings, -200);
   tic_settings_output_max_set(settings, 200);
-  tic_settings_encoder_prescaler_set(settings, 0);
+  tic_settings_encoder_prescaler_set(settings, 1);
   tic_settings_encoder_postscaler_set(settings, 1);
   tic_settings_current_limit_set(settings, 192);
   tic_settings_speed_max_set(settings, 2000000);
@@ -163,6 +164,8 @@ tic_error * tic_settings_copy(const tic_settings * source, tic_settings ** dest)
 
   return error;
 }
+
+// TODO: use present and future tense for these messages, not past tense
 
 static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings)
 {
@@ -319,7 +322,7 @@ static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings
   }
 
   {
-    uint8_t prescaler = tic_settings_encoder_prescaler_get(settings);
+    uint32_t prescaler = tic_settings_encoder_prescaler_get(settings);
 
     if (prescaler > TIC_MAX_ALLOWED_ENCODER_PRESCALER)
     {
@@ -327,6 +330,14 @@ static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings
       tic_sprintf(warnings,
         "Warning: The encoder prescaler was too high "
         "so it will be lowered to %u.\n", prescaler);
+    }
+
+    if (prescaler < 1)
+    {
+      prescaler = 1;
+      tic_sprintf(warnings,
+        "Warning: The encoder prescaler was zero "
+        "so it will be changed to 1.\n");
     }
 
     tic_settings_encoder_prescaler_set(settings, prescaler);
@@ -341,6 +352,14 @@ static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings
       tic_sprintf(warnings,
         "Warning: The encoder postscaler was too high "
         "so it will be lowered to %u.\n", postscaler);
+    }
+
+    if (postscaler < 1)
+    {
+      postscaler = 1;
+      tic_sprintf(warnings,
+        "Warning: The encoder postscaler was zero "
+        "so it will be changed to 1.\n");
     }
 
     tic_settings_encoder_postscaler_set(settings, postscaler);
@@ -1093,13 +1112,13 @@ int32_t tic_settings_output_max_get(const tic_settings * settings)
 }
 
 void tic_settings_encoder_prescaler_set(tic_settings * settings,
-  uint8_t encoder_prescaler)
+  uint32_t encoder_prescaler)
 {
   if (!settings) { return; }
   settings->encoder_prescaler = encoder_prescaler;
 }
 
-uint8_t tic_settings_encoder_prescaler_get(const tic_settings * settings)
+uint32_t tic_settings_encoder_prescaler_get(const tic_settings * settings)
 {
   if (!settings) { return 0; }
   return settings->encoder_prescaler;
@@ -1116,6 +1135,19 @@ uint32_t tic_settings_encoder_postscaler_get(const tic_settings * settings)
 {
   if (!settings) { return 0; }
   return settings->encoder_postscaler;
+}
+
+void tic_settings_encoder_unlimited_set(tic_settings * settings,
+  bool encoder_unlimited)
+{
+  if (!settings) { return; }
+  settings->encoder_unlimited = encoder_unlimited;
+}
+
+bool tic_settings_encoder_unlimited_get(const tic_settings * settings)
+{
+  if (!settings) { return 0; }
+  return settings->encoder_unlimited;
 }
 
 void tic_settings_scl_config_set(tic_settings * settings, uint8_t scl_config)

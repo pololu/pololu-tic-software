@@ -176,7 +176,7 @@ static void write_buffer_to_settings(const uint8_t * buf, tic_settings * setting
   }
 
   {
-    uint8_t encoder_prescaler = buf[TIC_SETTING_ENCODER_PRESCALER];
+    uint32_t encoder_prescaler = buf[TIC_SETTING_ENCODER_PRESCALER];
     tic_settings_encoder_prescaler_set(settings, encoder_prescaler);
   }
 
@@ -184,6 +184,11 @@ static void write_buffer_to_settings(const uint8_t * buf, tic_settings * setting
     const uint8_t * p = buf + TIC_SETTING_ENCODER_POSTSCALER;
     uint32_t encoder_postscaler = p[0] + (p[1] << 8) + (p[2] << 16) + (p[3] << 24);
     tic_settings_encoder_postscaler_set(settings, encoder_postscaler);
+  }
+
+  {
+    bool encoder_unlimited = buf[TIC_SETTING_ENCODER_UNLIMITED] & 1;
+    tic_settings_encoder_unlimited_set(settings, encoder_unlimited);
   }
 
   {

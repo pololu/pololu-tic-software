@@ -165,6 +165,8 @@ static void tic_write_settings_to_buffer(const tic_settings * settings, uint8_t 
     buf[TIC_SETTING_ENCODER_POSTSCALER + 3] = postscaler >> 24 & 0xFF;
   }
 
+  buf[TIC_SETTING_ENCODER_UNLIMITED] = tic_settings_encoder_unlimited_get(settings);
+
   buf[TIC_SETTING_SCL_CONFIG] = tic_settings_scl_config_get(settings);
 
   buf[TIC_SETTING_SDA_CONFIG] = tic_settings_sda_config_get(settings);

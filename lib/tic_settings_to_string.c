@@ -216,13 +216,18 @@ tic_error * tic_settings_to_string(const tic_settings * settings, char ** string
   }
 
   {
-    uint8_t encoder_prescaler = tic_settings_encoder_prescaler_get(settings);
+    uint32_t encoder_prescaler = tic_settings_encoder_prescaler_get(settings);
     tic_sprintf(&str, "encoder_prescaler: %u\n", encoder_prescaler);
   }
 
   {
     uint32_t encoder_postscaler = tic_settings_encoder_postscaler_get(settings);
     tic_sprintf(&str, "encoder_postscaler: %u\n", encoder_postscaler);
+  }
+
+  {
+    bool encoder_unlimited = tic_settings_encoder_unlimited_get(settings);
+    tic_sprintf(&str, "encoder_unlimited: %s\n", encoder_unlimited ? "true" : "false");
   }
 
   {

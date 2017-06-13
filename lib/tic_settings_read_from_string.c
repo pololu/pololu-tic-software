@@ -425,7 +425,7 @@ static tic_error * apply_string_pair(tic_settings * settings,
     {
       return tic_error_create("Invalid encoder_prescaler value.");
     }
-    if (encoder_prescaler < 0 || encoder_prescaler > 0xFF)
+    if (encoder_prescaler < 0 || encoder_prescaler > UINT32_MAX)
     {
       return tic_error_create("The encoder_prescaler value is out of range.");
     }
@@ -443,6 +443,15 @@ static tic_error * apply_string_pair(tic_settings * settings,
       return tic_error_create("The encoder_postscaler value is out of range.");
     }
     tic_settings_encoder_postscaler_set(settings, encoder_postscaler);
+  }
+  else if (!strcmp(key, "encoder_unlimited"))
+  {
+    uint32_t encoder_unlimited;
+    if (!tic_name_to_code(tic_bool_names, value, &encoder_unlimited))
+    {
+      return tic_error_create("Unrecognized encoder_unlimited value.");
+    }
+    tic_settings_encoder_unlimited_set(settings, encoder_unlimited);
   }
   else if (!strcmp(key, "scl_config"))
   {

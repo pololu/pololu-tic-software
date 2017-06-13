@@ -836,24 +836,37 @@ int32_t tic_settings_output_max_get(const tic_settings *);
 
 /// Sets the encoder prescaler.  For encoder control mode, this determines the
 /// number of counts from the encoder per unit change of the stepper motor
-/// position or speed.  The number of counts is 2 raised to encoder_prescaler
-/// value.  The allowed values are 0 through 8.
+/// position or speed.  The allowed values are 1 through
+/// TIC_MAX_ALLOWED_ENCODER_PRESCALER.
 TIC_API
-void tic_settings_encoder_prescaler_set(tic_settings *, uint8_t);
+void tic_settings_encoder_prescaler_set(tic_settings *, uint32_t);
 
 /// Gets the encoder prescaler described in tic_settings_encoder_prescaler_set().
 TIC_API
-uint8_t tic_settings_encoder_prescaler_get(const tic_settings *);
+uint32_t tic_settings_encoder_prescaler_get(const tic_settings *);
 
 /// Sets the encoder postscaler.  For encoder control mode, this determines the
-/// size of a unit change in the stepper motor position or speed.  This cannot
-/// be negative, but the input_invert setting can be used.
+/// size of a unit change in the stepper motor position or speed.  The allowed
+/// values are 1 through TIC_MAX_ALLOWED_ENCODER_POSTSCALER.
 TIC_API
 void tic_settings_encoder_postscaler_set(tic_settings *, uint32_t);
 
 /// Gets the encoder postscaler described in tic_settings_encoder_postscaler_set().
 TIC_API
 uint32_t tic_settings_encoder_postscaler_get(const tic_settings *);
+
+/// Sets the encoder unlimited option.  If the Control mode is set to Encoder
+/// position, normally the stepper motor position is limited by the output_min
+/// and output_max settings.  However, if this setting is set to true, the
+/// stepper motor's position will not be limited, and it should be able to turn
+/// very far in either direction, even past the point where the encoder position
+/// or the stepper motor position variables overflow.
+TIC_API
+void tic_settings_encoder_unlimited_set(tic_settings *, bool);
+
+/// Gets the encoder unlimited option described in tic_settings_encoder_unlimited_set().
+TIC_API
+bool tic_settings_encoder_unlimited_get(const tic_settings *);
 
 /// Sets the pin configuration for the SCL pin.  See
 /// tic_settings_rc_config_set().

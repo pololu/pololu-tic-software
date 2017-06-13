@@ -32,8 +32,9 @@ input_max: 4095
 output_min: -200
 output_neutral: 0
 output_max: 200
-encoder_prescaler: 0
+encoder_prescaler: 1
 encoder_postscaler: 1
+encoder_unlimited: false
 scl_config: default
 sda_config: default
 tx_config: default
@@ -84,6 +85,7 @@ output_neutral: 12
 output_max: 999
 encoder_prescaler: 5
 encoder_postscaler: 1000000000
+encoder_unlimited: true
 scl_config: limit_forward pullup active_high
 sda_config: limit_reverse analog
 tx_config: kill pullup analog
@@ -153,10 +155,18 @@ def test_cases_for_settings_fix(product)
       "Warning: The output neutral value must be 0 in analog speed control mode " \
       "so it will be changed to 0.\n"
     ],
-    [ { 'encoder_prescaler' => 9 },
-      { 'encoder_prescaler' => 8 },
+    [ { 'encoder_prescaler' => 0 },
+      { 'encoder_prescaler' => 1 },
+      "Warning: The encoder prescaler was zero so it will be changed to 1.\n"
+    ],
+    [ { 'encoder_prescaler' => 2147483648 },
+      { 'encoder_prescaler' => 2147483647 },
       "Warning: The encoder prescaler was too high " \
-      "so it will be lowered to 8.\n"
+      "so it will be lowered to 2147483647.\n"
+    ],
+    [ { 'encoder_postscaler' => 0 },
+      { 'encoder_postscaler' => 1 },
+      "Warning: The encoder postscaler was zero so it will be changed to 1.\n"
     ],
     [ { 'encoder_postscaler' => 2147483648 },
       { 'encoder_postscaler' => 2147483647 },
