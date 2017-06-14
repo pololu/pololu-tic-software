@@ -93,6 +93,8 @@ public:
   void set_step_mode(uint8_t step_mode);
   void set_current_limit(uint32_t current_limit);
   void set_decay_mode(uint8_t decay_mode);
+  
+  void update_cached_settings(tic::settings const & settings);
 
 private:
   /** Helper method for setting the index of a combo box, given the desired
@@ -101,6 +103,11 @@ private:
   void set_u8_combo_box(QComboBox * combo, uint8_t value);
 
   void set_spin_box(QSpinBox * box, int value);
+  
+  tic::settings cached_settings;
+  
+  bool manual_target_position_mode;
+  void reset_manual_target_box();
   
 protected:
   /** This is called by Qt just before the window is shown for the first time,
@@ -121,6 +128,8 @@ private slots:
   void on_apply_settings_action_triggered();
   
   void on_manual_target_position_mode_radio_toggled(bool checked);
+  void on_manual_target_scrollbar_valueChanged(int value);
+  void on_manual_target_entry_value_valueChanged(int value);
   void on_set_target_button_clicked();
   void on_control_mode_value_currentIndexChanged(int index);
   void on_input_min_value_valueChanged(int value);
@@ -165,10 +174,7 @@ private:
   QLayout * setup_footer();
   QWidget * setup_apply_button();
   void retranslate();
-  
-  bool manual_target_position_mode = true;
-  void update_manual_target_box(bool position_mode);
-  
+    
   QIcon program_icon;
     
   QMenuBar * menu_bar;
@@ -224,7 +230,7 @@ private:
   QScrollBar * manual_target_scrollbar;
   QLabel * manual_target_min_label;
   QLabel * manual_target_max_label;
-  QSpinBox * manual_target_numeric_value;
+  QSpinBox * manual_target_entry_value;
   QPushButton * set_target_button;
   QCheckBox * auto_set_target_checkbox;
   QCheckBox * auto_zero_target_checkbox;

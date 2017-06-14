@@ -95,6 +95,7 @@ void main_controller::connect_device(tic::device const & device)
   try
   {
     settings = device_handle.get_settings();
+    window->update_cached_settings(settings);
   }
   catch (std::exception const & e)
   {
@@ -529,6 +530,7 @@ void main_controller::apply_settings()
     
       device_handle.set_settings(settings);
       device_handle.reinitialize();
+      window->update_cached_settings(settings);
       settings_modified = false;  // this must be last in case exceptions are thrown
     }
   }
