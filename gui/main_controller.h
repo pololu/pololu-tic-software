@@ -16,8 +16,10 @@ public:
   /** This is called when the user issues a connect command. */
   void connect_device_with_os_id(std::string const & id);
 
-  /** This is called when the user issues a disconnect command. */
-  void disconnect_device();
+  /** This is called when the user issues a disconnect command. Returns true
+   * on completion or false if the user cancels when prompted about settings
+   * that have not been applied. */
+  bool disconnect_device();
 
   /** This is called when the user issues a command to reload settings from
    * the device. */
@@ -33,7 +35,7 @@ public:
 
   /** This is called when the user tries to exit the program.  Returns true if
    * the program is actually allowed to exit. */
-  //todo bool exit();
+  bool exit();
   
   /** This is called whenever something in the model has changed that might
    * require the window to be updated.  It includes no details about what
@@ -91,7 +93,7 @@ private:
 
   void handle_settings_changed();
   
-  void handle_settings_applied();
+  void handle_settings_applied(bool force_reset_manual_target = false);
   
   /** Holds a list of the relevant devices that are connected to the computer. */
   std::vector<tic::device> device_list;

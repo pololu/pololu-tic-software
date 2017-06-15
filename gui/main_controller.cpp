@@ -59,14 +59,28 @@ void main_controller::connect_device_with_os_id(std::string const & id)
   connect_device(device_with_os_id(device_list, id));
 }
 
-void main_controller::disconnect_device()
+bool main_controller::disconnect_device()
 {
-  if (!connected()) { return; }
+  if (!connected()) { return true; }
+  
+  if (settings_modified)
+  {
+    std::string question =
+      "The settings you changed have not been applied to the device.  "
+      "If you disconnect from the device now, those changes will be lost.  "
+      "Are you sure you want to disconnect?";
+    if (!window->confirm(question))
+    {
+      return false;
+    }
+  }
+  
   device_handle.close();
   settings_modified = false;
   disconnected_by_user = true;
   connection_error = false;
   handle_model_changed();
+  return true;
 }
 
 void main_controller::connect_device(tic::device const & device)
@@ -95,6 +109,7 @@ void main_controller::connect_device(tic::device const & device)
   try
   {
     settings = device_handle.get_settings();
+    handle_settings_applied(true);
   }
   catch (std::exception const & e)
   {
@@ -110,7 +125,6 @@ void main_controller::connect_device(tic::device const & device)
     show_exception(e, "There was an error getting the status of the device.");
   }
   
-  handle_settings_applied();
   handle_model_changed();
 }
 
@@ -134,6 +148,7 @@ void main_controller::reload_settings()
   try
   {
     settings = device_handle.get_settings();
+    handle_settings_applied();
     settings_modified = false;
   }
   catch (std::exception const & e)
@@ -256,6 +271,22 @@ void main_controller::update()
       // recently disconnected from a device.
       connect_device(device_list.at(0));
     }
+  }
+}
+
+bool main_controller::exit()
+{
+  if (connected() && settings_modified)
+  {
+    std::string question =
+      "The settings you changed have not been applied to the device.  "
+      "If you exit now, those changes will be lost.  "
+      "Are you sure you want to exit?";
+    return window->confirm(question);
+  }
+  else
+  {
+    return true;
   }
 }
 
@@ -404,7 +435,7 @@ void main_controller::handle_settings_changed()
   window->set_apply_settings_enabled(connected() && settings_modified);
 }
 
-void main_controller::handle_settings_applied()
+void main_controller::handle_settings_applied(bool force_reset_manual_target)
 {  
   window->set_manual_target_range(
     tic_settings_output_min_get(settings.pointer_get()),
@@ -412,7 +443,10 @@ void main_controller::handle_settings_applied()
     
   window->set_manual_target_box_enabled(control_mode_is_serial(settings));
     
-  if (!control_mode_is_serial(settings)) { window->set_manual_target(0); }
+  if (!control_mode_is_serial(settings) || force_reset_manual_target)
+  {
+    window->set_manual_target(0);
+  }
   
   // this must be last so the preceding code can compare old and new settings
   cached_settings = settings;

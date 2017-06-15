@@ -3,6 +3,7 @@
 #include "config.h"
 
 #include <QCheckBox>
+#include <QCloseEvent>
 #include <QComboBox>
 #include <QDesktopServices>
 #include <QGridLayout>
@@ -201,7 +202,9 @@ void main_window::set_manual_target_range(int32_t target_min, int32_t target_max
 
 void main_window::set_manual_target(int32_t target)
 {
+  suppress_events = true;
   manual_target_entry_value->setValue(target);
+  suppress_events = false;
 }
 
 void main_window::set_input_min(uint32_t input_min)
@@ -328,6 +331,15 @@ void main_window::showEvent(QShowEvent * event)
   }
 }
 
+void main_window::closeEvent(QCloseEvent * event)
+{
+  if (!controller->exit())
+  {
+    // User canceled exit when prompted about settings that have not been applied.
+    event->ignore();
+  }
+}
+
 void main_window::on_reload_settings_action_triggered()
 {
   controller->reload_settings();
@@ -367,14 +379,20 @@ void main_window::on_about_action_triggered()
 void main_window::on_device_list_value_currentIndexChanged(int index)
 {
   if (suppress_events) { return; }
-  QString id = device_list_value->itemData(index).toString();
-  if (id.isNull())
+  
+  if (controller->disconnect_device())
   {
-    controller->disconnect_device();
+    QString id = device_list_value->itemData(index).toString();
+    if (!id.isEmpty())
+    {
+      controller->connect_device_with_os_id(id.toStdString());
+    }
   }
   else
   {
-    controller->connect_device_with_os_id(id.toStdString());
+    // User canceled disconnect when prompted about settings that have not been
+    // applied. Reset the selected device.
+    controller->handle_model_changed();
   }
 }
 
@@ -457,6 +475,7 @@ void main_window::on_auto_set_target_checkbox_stateChanged(int state)
 {
   if (state == Qt::Checked)
   {
+    on_set_target_button_clicked();
     auto_zero_target_checkbox->setEnabled(true);
   }
   else
@@ -639,6 +658,7 @@ void main_window::setup_menu_bar()
 
   exit_action = new QAction(this);
   exit_action->setObjectName("exit_action");
+  exit_action->setShortcut(QKeySequence::Quit);
   connect(exit_action, SIGNAL(triggered()), this, SLOT(close()));
   file_menu->addAction(exit_action);
 

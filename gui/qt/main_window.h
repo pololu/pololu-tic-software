@@ -117,6 +117,10 @@ protected:
    * and is also called whenever the window becomes unminimized. */
   void showEvent(QShowEvent *) override;
   
+  /** This is called by Qt when the "close" slot is triggered, meaning that
+   * the user wants to close the window. */
+  void closeEvent(QCloseEvent *) override;
+    
 private slots:
   void on_reload_settings_action_triggered();
   void on_restore_defaults_action_triggered();
