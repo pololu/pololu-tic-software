@@ -348,6 +348,9 @@ TIC_API
 int32_t tic_variables_get_encoder_position(const tic_variables *);
 
 /// Gets the reading from the RC pulse input, in units of twelfth microseconds.
+///
+/// The value returned will be TIC_INPUT_NULL if the RC signal is bad or has not
+/// been measured.
 TIC_API
 uint16_t tic_variables_get_rc_pulse_width(const tic_variables *);
 
@@ -376,14 +379,36 @@ uint32_t tic_variables_get_current_limit(const tic_variables *);
 TIC_API
 uint8_t tic_variables_get_decay_mode(const tic_variables *);
 
+/// Gets a variable used in the process that converts raw RC and analog values
+/// into a motor position or speed.
+///
+/// A value of TIC_INPUT_NULL means the input value is not available.
+TIC_API
+uint16_t tic_variables_get_input_after_averaging(const tic_variables * variables);
+
+/// Gets a variable used in the process that converts raw RC and analog values
+/// into a motor position or speed.
+///
+/// A value of TIC_INPUT_NULL means the input value is not available.
+TIC_API
+uint16_t tic_variables_get_input_after_hysteresis(const tic_variables * variables);
+
+/// Gets a variable used in the process that converts raw RC and analog values
+/// into a motor position or speed.
+///
+/// A value of TIC_INPUT_NULL means the input value is not available.
+TIC_API
+uint16_t tic_variables_get_input_after_filtering(const tic_variables * variables);
+
 /// Gets the analog reading from the specified pin, if analog readings are
 /// enabled for that pin.
 ///
 /// The pin argument should be one of the TIC_PIN_NUM_* macros.
 ///
 /// The return value will be a left-justified analog reading; a value of 0
-/// represents 0 V and a value of 0xFFFF represents approximately the voltage on
-/// the controller's 5V pin.
+/// represents 0 V and a value near 0xFFFE represents the voltage on the
+/// controller's 5V pin.  A value of TIC_INPUT_NULL means the reading is not
+/// available.
 TIC_API
 uint16_t tic_variables_get_analog_reading(const tic_variables *, uint8_t pin);
 
@@ -704,19 +729,30 @@ void tic_settings_input_error_max_set(tic_settings *, uint16_t);
 TIC_API
 uint16_t tic_settings_input_error_max_get(const tic_settings *);
 
-/// Sets the input play.  The controller implements a filter on the raw
-/// input value (from RC pulses, encoders, or analog) that allows you to make
-/// noisy inputs have a constant value when they are not moving.  When the raw
-/// input value changes, the filtered input value will only change by the
-/// minimum amount necessary to ensure that the magnitude of the difference
-/// between the filtered input value and the raw input value is no more than the
-/// play value.
+/// Sets the input averaging enabled setting.
+///
+/// If this setting is true and the control mode is set to an RC or analog
+/// option, input averaging enabled, meaning that the controller will
+/// keep a running average of the last four analog or RC input values and use
+/// the average value to control the motor.
 TIC_API
-void tic_settings_input_play_set(tic_settings *, uint8_t);
+void tic_settings_input_averaging_enabled_set(tic_settings *, bool);
 
-/// Gets the input play setting described in tic_settings_input_play_set().
+/// Gets the input averaging enabled setting as described in
+/// tic_settings_input_averaging_enabled_set().
 TIC_API
-uint8_t tic_settings_input_play_get(const tic_settings *);
+bool tic_settings_input_averaging_enabled_get(const tic_settings *);
+
+/// Sets the input hysteresis setting.
+///
+/// TODO: document this setting
+TIC_API
+void tic_settings_input_hysteresis_set(tic_settings *, uint16_t);
+
+/// Gets the input hysteresis setting as described in
+/// tic_settings_input_hysteresis_set().
+TIC_API
+uint16_t tic_settings_input_hysteresis_get(const tic_settings *);
 
 /// Sets the input scaling degree.  0 is linear, 1 is quadratic, 2 is cubic.
 TIC_API
@@ -786,16 +822,6 @@ void tic_settings_output_min_set(tic_settings *, int32_t);
 TIC_API
 int32_t tic_settings_output_min_get(const tic_settings *);
 
-/// Sets the output neutral scaling parameter.  See
-/// tic_settings_output_max_set().
-TIC_API
-void tic_settings_output_neutral_set(tic_settings *, int32_t);
-
-/// Gets the output neutral scaling parameter.  See
-/// tic_settings_output_max_set().
-TIC_API
-int32_t tic_settings_output_neutral_get(const tic_settings *);
-
 /// Sets the output maximum scaling parameter.
 ///
 /// The following functions control the settings that define how an RC or analog
@@ -807,7 +833,6 @@ int32_t tic_settings_output_neutral_get(const tic_settings *);
 /// - tic_settings_input_neutral_max_set()
 /// - tic_settings_input_max_set()
 /// - tic_settings_output_min_set()
-/// - tic_settings_output_neutral_set()
 /// - tic_settings_output_max_set()
 ///
 /// Input values between less than or equal to the input minimum are mapped to
@@ -815,13 +840,13 @@ int32_t tic_settings_output_neutral_get(const tic_settings *);
 ///
 /// Input values between the input minimum and input neutral minimum map to an
 /// output value between the output minimum (or the output maximum if the input
-/// is inverted) and the output neutral.
+/// is inverted) and 0.
 ///
 /// Input values between the input neutral minimum and input netural maximum map
-/// to output_neutral.
+/// to 0.
 ///
 /// Input values between the input neutral maximum and input maximum map to an
-/// output value between the output neutral and output maximum (or output
+/// output value between 0 and output maximum (or output
 /// minimum if the input is inverted).
 ///
 /// Input values greater than or equal to the input maximum map to an output

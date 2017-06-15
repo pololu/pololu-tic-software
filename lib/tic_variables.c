@@ -32,6 +32,9 @@ struct tic_variables
   uint8_t step_mode;
   uint32_t current_limit;
   uint8_t decay_mode;
+  uint16_t input_after_averaging;
+  uint16_t input_after_hysteresis;
+  uint16_t input_after_filtering;
 };
 
 tic_error * tic_variables_create(tic_variables ** variables)
@@ -134,6 +137,9 @@ static void write_buffer_to_variables(const uint8_t * buf, tic_variables * vars)
   vars->step_mode = buf[TIC_VAR_STEP_MODE];
   vars->current_limit = TIC_CURRENT_LIMIT_UNITS_MA * buf[TIC_VAR_CURRENT_LIMIT];
   vars->decay_mode = buf[TIC_VAR_DECAY_MODE];
+  vars->input_after_averaging = read_u16(buf + TIC_VAR_INPUT_AFTER_AVERAGING);
+  vars->input_after_hysteresis = read_u16(buf + TIC_VAR_INPUT_AFTER_HYSTERESIS);
+  vars->input_after_filtering = read_u16(buf + TIC_VAR_INPUT_AFTER_FILTERING);
 
   {
     uint8_t s = buf[TIC_VAR_SWITCH_STATUS];
@@ -362,6 +368,24 @@ uint8_t tic_variables_get_decay_mode(const tic_variables * variables)
 {
   if (variables == NULL) { return 0; }
   return variables->decay_mode;
+}
+
+uint16_t tic_variables_get_input_after_averaging(const tic_variables * variables)
+{
+  if (variables == NULL) { return 0; }
+  return variables->input_after_averaging;
+}
+
+uint16_t tic_variables_get_input_after_hysteresis(const tic_variables * variables)
+{
+  if (variables == NULL) { return 0xFFFF; }
+  return variables->input_after_hysteresis;
+}
+
+uint16_t tic_variables_get_input_after_filtering(const tic_variables * variables)
+{
+  if (variables == NULL) { return 0xFFFF; }
+  return variables->input_after_filtering;
 }
 
 uint16_t tic_variables_get_analog_reading(const tic_variables * variables,

@@ -107,8 +107,15 @@ static void write_buffer_to_settings(const uint8_t * buf, tic_settings * setting
   }
 
   {
-    uint8_t input_play = buf[TIC_SETTING_INPUT_PLAY];
-    tic_settings_input_play_set(settings, input_play);
+    bool input_averaging_enabled =
+      buf[TIC_SETTING_INPUT_AVERAGING_ENABLED] & 1;
+    tic_settings_input_averaging_enabled_set(settings, input_averaging_enabled);
+  }
+
+  {
+    const uint8_t * p = buf + TIC_SETTING_INPUT_HYSTERESIS;
+    uint16_t input_hysteresis = p[0] + (p[1] << 8);
+    tic_settings_input_hysteresis_set(settings, input_hysteresis);
   }
 
   {
@@ -161,12 +168,6 @@ static void write_buffer_to_settings(const uint8_t * buf, tic_settings * setting
     const uint8_t * p = buf + TIC_SETTING_OUTPUT_MIN;
     int32_t output_min = p[0] + (p[1] << 8) + (p[2] << 16) + (p[3] << 24);
     tic_settings_output_min_set(settings, output_min);
-  }
-
-  {
-    const uint8_t * p = buf + TIC_SETTING_OUTPUT_NEUTRAL;
-    int32_t output_neutral = p[0] + (p[1] << 8) + (p[2] << 16) + (p[3] << 24);
-    tic_settings_output_neutral_set(settings, output_neutral);
   }
 
   {

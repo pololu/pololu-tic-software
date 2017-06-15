@@ -74,30 +74,33 @@ Time since last step:         4294967295
 VIN:                          65535 mV
 Up time:                      4294967295 ms
 Encoder position:             -1
-RC pulse width:               65535
+RC pulse width:               N/A
 Step mode:                    (unknown)
 Current limit:                4294967295 mA
 Decay mode:                   (unknown)
+Input after averaging:        N/A
+Input after hysteresis:       N/A
+Input after filtering:        N/A
 
 SCL pin:
   Digital reading:            255
   Switch status:              255
-  Analog reading:             65535
+  Analog reading:             N/A
   State:                      (unknown)
 SDA pin:
   Digital reading:            255
   Switch status:              255
-  Analog reading:             65535
+  Analog reading:             N/A
   State:                      (unknown)
 TX pin:
   Digital reading:            255
   Switch status:              255
-  Analog reading:             65535
+  Analog reading:             N/A
   State:                      (unknown)
 RX pin:
   Digital reading:            255
   Switch status:              255
-  Analog reading:             65535
+  Analog reading:             N/A
   State:                      (unknown)
 RC pin:
   Digital reading:            255

@@ -20,7 +20,8 @@ vin_multiplier_offset: 0
 rc_max_pulse_period: 100
 rc_bad_signal_timeout: 500
 rc_consecutive_good_pulses: 2
-input_play: 0
+input_averaging_enabled: true
+input_hysteresis: 0
 input_error_min: 0
 input_error_max: 65535
 input_scaling_degree: linear
@@ -30,7 +31,6 @@ input_neutral_min: 2048
 input_neutral_max: 2048
 input_max: 4095
 output_min: -200
-output_neutral: 0
 output_max: 200
 encoder_prescaler: 1
 encoder_postscaler: 1
@@ -71,7 +71,8 @@ vin_multiplier_offset: -345
 rc_max_pulse_period: 1234
 rc_bad_signal_timeout: 909
 rc_consecutive_good_pulses: 9
-input_play: 255
+input_averaging_enabled: false
+input_hysteresis: 4455
 input_error_min: 303
 input_error_max: 50050
 input_scaling_degree: quadratic
@@ -81,7 +82,6 @@ input_neutral_min: 12312
 input_neutral_max: 13412
 input_max: 50000
 output_min: -999
-output_neutral: 12
 output_max: 999
 encoder_prescaler: 5
 encoder_postscaler: 1000000000
@@ -139,21 +139,6 @@ def test_cases_for_settings_fix(product)
         'input_error_max' => 0xFFFF },
       "Warning: The input scaling values were out of order " \
       "so they will be reset to their default values.\n"
-    ],
-    [ { 'output_min' => -1, 'output_neutral' => -2, 'output_max' => -3 },
-      { 'output_min' => -200, 'output_neutral' => 0, 'output_max' => 200 },
-      "Warning: The output scaling values were out of order " \
-      "so they will be reset to their default values.\n"
-    ],
-    [ { 'control_mode' => 'rc_speed', 'output_neutral' => 100 },
-      { 'output_neutral' => 0 },
-      "Warning: The output neutral value must be 0 in RC speed control mode " \
-      "so it will be changed to 0.\n"
-    ],
-    [ { 'control_mode' => 'analog_speed', 'output_neutral' => 100 },
-      { 'output_neutral' => 0 },
-      "Warning: The output neutral value must be 0 in analog speed control mode " \
-      "so it will be changed to 0.\n"
     ],
     [ { 'encoder_prescaler' => 0 },
       { 'encoder_prescaler' => 1 },

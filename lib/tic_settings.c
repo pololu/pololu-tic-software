@@ -21,7 +21,8 @@ struct tic_settings
   uint16_t rc_max_pulse_period;
   uint16_t rc_bad_signal_timeout;
   uint8_t rc_consecutive_good_pulses;
-  uint8_t input_play;
+  uint8_t input_averaging_enabled;
+  uint16_t input_hysteresis;
   uint16_t input_error_min;
   uint16_t input_error_max;
   uint8_t input_scaling_degree;
@@ -31,7 +32,6 @@ struct tic_settings
   uint16_t input_neutral_max;
   uint16_t input_max;
   int32_t output_min;
-  int32_t output_neutral;
   int32_t output_max;
   uint32_t encoder_prescaler;
   uint32_t encoder_postscaler;
@@ -79,6 +79,7 @@ void tic_settings_fill_with_defaults(tic_settings * settings)
   tic_settings_rc_max_pulse_period_set(settings, 100);
   tic_settings_rc_bad_signal_timeout_set(settings, 500);
   tic_settings_rc_consecutive_good_pulses_set(settings, 2);
+  tic_settings_input_averaging_enabled_set(settings, true);
   tic_settings_input_error_max_set(settings, 0xFFFF);
   tic_settings_input_neutral_min_set(settings, 0x0800);
   tic_settings_input_neutral_max_set(settings, 0x0800);
@@ -283,42 +284,12 @@ static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings
 
   {
     int32_t output_min = tic_settings_output_min_get(settings);
-    int32_t output_neutral = tic_settings_output_neutral_get(settings);
     int32_t output_max = tic_settings_output_max_get(settings);
-
-    if (output_min > output_neutral || output_neutral > output_max)
-    {
-      output_min = -200;
-      output_neutral = 0;
-      output_max = 200;
-      tic_sprintf(warnings,
-        "Warning: The output scaling values were out of order "
-        "so they will be reset to their default values.\n");
-    }
 
     // TODO: enforce allowed range of output_min, output_max
 
     tic_settings_output_min_set(settings, output_min);
-    tic_settings_output_neutral_set(settings, output_neutral);
     tic_settings_output_max_set(settings, output_max);
-  }
-
-  if (tic_settings_output_neutral_get(settings) != 0)
-  {
-    if (control_mode == TIC_CONTROL_MODE_RC_SPEED)
-    {
-      tic_settings_output_neutral_set(settings, 0);
-      tic_sprintf(warnings,
-        "Warning: The output neutral value must be 0 in RC speed control mode "
-        "so it will be changed to 0.\n");
-    }
-    if (control_mode == TIC_CONTROL_MODE_ANALOG_SPEED)
-    {
-      tic_settings_output_neutral_set(settings, 0);
-      tic_sprintf(warnings,
-        "Warning: The output neutral value must be 0 in analog speed control mode "
-        "so it will be changed to 0.\n");
-    }
   }
 
   {
@@ -987,16 +958,29 @@ uint16_t tic_settings_input_error_max_get(const tic_settings * settings)
   return settings->input_error_max;
 }
 
-void tic_settings_input_play_set(tic_settings * settings, uint8_t input_play)
+void tic_settings_input_averaging_enabled_set(tic_settings * settings,
+  bool input_averaging_enabled)
 {
   if (!settings) { return; }
-  settings->input_play = input_play;
+  settings->input_averaging_enabled = input_averaging_enabled;
 }
 
-uint8_t tic_settings_input_play_get(const tic_settings * settings)
+bool tic_settings_input_averaging_enabled_get(const tic_settings * settings)
 {
   if (!settings) { return 0; }
-  return settings->input_play;
+  return settings->input_averaging_enabled;
+}
+
+void tic_settings_input_hysteresis_set(tic_settings * settings, uint16_t input_hysteresis)
+{
+  if (!settings) { return; }
+  settings->input_hysteresis = input_hysteresis;
+}
+
+uint16_t tic_settings_input_hysteresis_get(const tic_settings * settings)
+{
+  if (!settings) { return 0; }
+  return settings->input_hysteresis;
 }
 
 void tic_settings_input_scaling_degree_set(tic_settings * settings,
@@ -1084,19 +1068,6 @@ int32_t tic_settings_output_min_get(const tic_settings * settings)
 {
   if (!settings) { return 0; }
   return settings->output_min;
-}
-
-void tic_settings_output_neutral_set(tic_settings * settings,
-  int32_t output_neutral)
-{
-  if (!settings) { return; }
-  settings->output_neutral = output_neutral;
-}
-
-int32_t tic_settings_output_neutral_get(const tic_settings * settings)
-{
-  if (!settings) { return 0; }
-  return settings->output_neutral;
 }
 
 void tic_settings_output_max_set(tic_settings * settings, int32_t output_max)

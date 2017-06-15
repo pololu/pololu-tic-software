@@ -370,6 +370,42 @@ namespace tic
       return tic_variables_get_rc_pulse_width(pointer);
     }
 
+    /// Wrapper for tic_variables_get_step_mode().
+    uint8_t get_step_mode() const noexcept
+    {
+      return tic_variables_get_step_mode(pointer);
+    }
+
+    /// Wrapper for tic_variables_get_current_limit().
+    uint32_t get_current_limit() const noexcept
+    {
+      return tic_variables_get_current_limit(pointer);
+    }
+
+    /// Wrapper for tic_variables_get_decay_mode().
+    uint8_t get_decay_mode() const noexcept
+    {
+      return tic_variables_get_decay_mode(pointer);
+    }
+
+    /// Wrapper for tic_variables_get_input_after_averaging().
+    uint16_t get_input_after_averaging() const noexcept
+    {
+      return tic_variables_get_input_after_averaging(pointer);
+    }
+
+    /// Wrapper for tic_variables_get_input_after_hysteresis().
+    uint16_t get_input_after_hysteresis() const noexcept
+    {
+      return tic_variables_get_input_after_hysteresis(pointer);
+    }
+
+    /// Wrapper for tic_variables_get_input_after_filtering().
+    uint16_t get_input_after_filtering() const noexcept
+    {
+      return tic_variables_get_input_after_filtering(pointer);
+    }
+
     /// Wrapper for tic_variables_get_analog_reading().
     uint16_t get_analog_reading(uint8_t pin) const noexcept
     {
@@ -392,24 +428,6 @@ namespace tic
     uint16_t get_pin_state(uint8_t pin) const noexcept
     {
       return tic_variables_get_pin_state(pointer, pin);
-    }
-
-    /// Wrapper for tic_variables_get_step_mode().
-    uint8_t get_step_mode() const noexcept
-    {
-      return tic_variables_get_step_mode(pointer);
-    }
-
-    /// Wrapper for tic_variables_get_current_limit().
-    uint32_t get_current_limit() const noexcept
-    {
-      return tic_variables_get_current_limit(pointer);
-    }
-
-    /// Wrapper for tic_variables_get_decay_mode().
-    uint8_t get_decay_mode() const noexcept
-    {
-      return tic_variables_get_decay_mode(pointer);
     }
   };
 
