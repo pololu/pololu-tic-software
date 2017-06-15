@@ -56,6 +56,7 @@ private:
 public:
   void set_target_position(int32_t position);
   void set_target_velocity(int32_t velocity);
+  void set_current_position(int32_t position);
 
   /** This is called when the user wants to apply the settings. */
   void apply_settings();
@@ -83,7 +84,9 @@ private:
 
   void handle_variables_changed();
 
-  void handle_settings_changed();  
+  void handle_settings_changed();
+  
+  void handle_settings_applied();
   
   /** Holds a list of the relevant devices that are connected to the computer. */
   std::vector<tic::device> device_list;
@@ -102,11 +105,16 @@ private:
    * by the user. */
   bool disconnected_by_user = false;
 
-  /** Holds the settings from the device. */
+  /** Holds a working copy of the settings from the device, including any 
+   * unapplied changes. */
   tic::settings settings;
   
-  /** True if the settings have been modified by user and could be different
-   * from what is on the device. */
+  /** Holds a cached copy of the settings from the device, without any unapplied
+   *  changes. */
+  tic::settings cached_settings;
+  
+  /** True if the working settings have been modified by user and could be
+   * different from what is cached and on the device. */
   bool settings_modified = false;
   
   /** Holds the variables/status of the device. */
@@ -120,6 +128,8 @@ private:
 
   /** Returns true if we are currently connected to a device. */
   bool connected() const { return device_handle; }
+  
+  bool control_mode_is_serial(tic::settings const & s) const;
   
   main_window * window;
 };

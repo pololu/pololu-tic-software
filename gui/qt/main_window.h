@@ -13,6 +13,7 @@ class QLabel;
 class QPushButton;
 class QRadioButton;
 class QScrollBar;
+class QShortcut;
 class QSpinBox;
 class QVBoxLayout;
 
@@ -51,6 +52,8 @@ public:
   /** Controls whether the main controls of the application are enabled or
    * disabled. **/
   void set_main_boxes_enabled(bool enabled);
+  
+  void set_manual_target_box_enabled(bool enabled);
 
   /** Controls whether the apply settings action/button is enabled or
    * disabled. */
@@ -79,13 +82,15 @@ public:
   void set_current_velocity(std::string const & current_velocity);
   
   void set_control_mode(uint8_t control_mode);
+  void set_manual_target_range(int32_t target_min, int32_t target_max);
+  void set_manual_target(int32_t target);
   
   void set_input_min(uint32_t input_min);
   void set_input_neutral_min(uint32_t input_neutral_min);
   void set_input_neutral_max(uint32_t input_neutral_max);
   void set_input_max(uint32_t input_max);
-  void set_output_min(uint32_t output_min);
-  void set_output_max(uint32_t output_max);
+  void set_output_min(int32_t output_min);
+  void set_output_max(int32_t output_max);
   void set_speed_max(uint32_t speed_max);
   void set_speed_min(uint32_t speed_min);
   void set_accel_max(uint32_t accel_max);
@@ -93,8 +98,6 @@ public:
   void set_step_mode(uint8_t step_mode);
   void set_current_limit(uint32_t current_limit);
   void set_decay_mode(uint8_t decay_mode);
-  
-  void update_cached_settings(tic::settings const & settings);
 
 private:
   /** Helper method for setting the index of a combo box, given the desired
@@ -103,11 +106,6 @@ private:
   void set_u8_combo_box(QComboBox * combo, uint8_t value);
 
   void set_spin_box(QSpinBox * box, int value);
-  
-  tic::settings cached_settings;
-  
-  bool manual_target_position_mode;
-  void reset_manual_target_box();
   
 protected:
   /** This is called by Qt just before the window is shown for the first time,
@@ -124,13 +122,17 @@ private slots:
   
   void on_device_list_value_currentIndexChanged(int index);
 
+  void on_manual_target_position_mode_radio_toggled(bool checked);
+  void on_manual_target_scroll_bar_valueChanged(int value);
+  void on_manual_target_scroll_bar_sliderReleased();
+  void on_manual_target_entry_value_valueChanged(int value);
+  void on_manual_target_return_key_shortcut_activated();
+  void on_set_target_button_clicked();
+  void on_auto_set_target_checkbox_stateChanged(int state);
+  
   /** This is called by Qt when the user wants to apply settings. */
   void on_apply_settings_action_triggered();
   
-  void on_manual_target_position_mode_radio_toggled(bool checked);
-  void on_manual_target_scrollbar_valueChanged(int value);
-  void on_manual_target_entry_value_valueChanged(int value);
-  void on_set_target_button_clicked();
   void on_control_mode_value_currentIndexChanged(int index);
   void on_input_min_value_valueChanged(int value);
   void on_input_neutral_min_value_valueChanged(int value);
@@ -146,7 +148,7 @@ private slots:
   void on_current_limit_value_valueChanged(int value);
   void on_decay_mode_value_currentIndexChanged(int index);
   
-private:
+private:  
   bool start_event_reported = false;
   
   /* We set this to true temporarily when programmatically setting the value
@@ -168,7 +170,7 @@ private:
   QWidget * setup_control_mode_widget();
   QWidget * setup_manual_target_box();
   QLayout * setup_manual_target_mode_layout();
-  QLayout * setup_manual_target_range_layout();
+  QWidget * setup_manual_target_entry_widget();
   QWidget * setup_scaling_settings_box();
   QWidget * setup_motor_settings_box();
   QLayout * setup_footer();
@@ -224,13 +226,16 @@ private:
   QGroupBox * manual_target_box;
   QVBoxLayout * manual_target_box_layout;
   QHBoxLayout * manual_target_mode_layout;
-  QHBoxLayout * manual_target_range_layout;
+  QWidget * manual_target_entry_widget;
+  QGridLayout * manual_target_entry_widget_layout;
   QRadioButton * manual_target_position_mode_radio;
   QRadioButton * manual_target_speed_mode_radio;
-  QScrollBar * manual_target_scrollbar;
+  QScrollBar * manual_target_scroll_bar;
   QLabel * manual_target_min_label;
   QLabel * manual_target_max_label;
   QSpinBox * manual_target_entry_value;
+  QShortcut * manual_target_return_key_shortcut;
+  QShortcut * manual_target_enter_key_shortcut;
   QPushButton * set_target_button;
   QCheckBox * auto_set_target_checkbox;
   QCheckBox * auto_zero_target_checkbox;

@@ -95,7 +95,6 @@ void main_controller::connect_device(tic::device const & device)
   try
   {
     settings = device_handle.get_settings();
-    window->update_cached_settings(settings);
   }
   catch (std::exception const & e)
   {
@@ -110,7 +109,8 @@ void main_controller::connect_device(tic::device const & device)
   {
     show_exception(e, "There was an error getting the status of the device.");
   }
-
+  
+  handle_settings_applied();
   handle_model_changed();
 }
 
@@ -357,6 +357,8 @@ void main_controller::handle_device_changed()
   window->set_reload_settings_enabled(connected());
   window->set_restore_defaults_enabled(connected());
   window->set_main_boxes_enabled(connected());
+  window->set_manual_target_box_enabled(
+    connected() && control_mode_is_serial(cached_settings)); 
 }
 
 void main_controller::handle_variables_changed()
@@ -397,6 +399,21 @@ void main_controller::handle_settings_changed()
   window->set_decay_mode(tic_settings_decay_mode_get(settings.pointer_get()));
   
   window->set_apply_settings_enabled(connected() && settings_modified);
+}
+
+void main_controller::handle_settings_applied()
+{  
+  window->set_manual_target_range(
+    tic_settings_output_min_get(settings.pointer_get()),
+    tic_settings_output_max_get(settings.pointer_get()));
+    
+  window->set_manual_target_box_enabled(
+    connected() && control_mode_is_serial(settings));
+    
+  if (!control_mode_is_serial(settings)) { window->set_manual_target(0); }
+  
+  // this must be last so the preceding code can compare old and new settings
+  cached_settings = settings;
 }
 
 void main_controller::handle_control_mode_input(uint8_t control_mode)
@@ -511,53 +528,6 @@ void main_controller::handle_decay_mode_input(uint8_t decay_mode)
   handle_settings_changed();
 }
 
-void main_controller::apply_settings()
-{
-  if (!connected()) { return; }
-
-  try
-  {
-    assert(connected());
-    
-    tic::settings fixed_settings = settings;
-    std::string warnings;
-    fixed_settings.fix(&warnings); 
-    if (warnings.empty() ||
-      window->confirm(warnings.append("\nAccept these changes and apply settings?")))
-    {
-      settings = fixed_settings;
-      handle_model_changed();
-    
-      device_handle.set_settings(settings);
-      device_handle.reinitialize();
-      window->update_cached_settings(settings);
-      settings_modified = false;  // this must be last in case exceptions are thrown
-    }
-  }
-  catch (std::exception const & e)
-  {
-    show_exception(e, "There was an error applying settings.");
-  }
-
-  handle_settings_changed();
-}
-
-void main_controller::reload_variables()
-{
-  assert(connected());
-
-  try
-  {
-    variables = device_handle.get_variables();
-    variables_update_failed = false;
-  }
-  catch (...)
-  {
-    variables_update_failed = true;
-    throw;
-  }
-}
-
 void main_controller::set_target_position(int32_t position)
 {
   if (!connected()) { return; }
@@ -588,4 +558,71 @@ void main_controller::set_target_velocity(int32_t velocity)
   {
     show_exception(e, "There was an error setting target velocity.");
   }
+}
+
+void main_controller::set_current_position(int32_t position)
+{
+  if (!connected()) { return; }
+
+  try
+  {
+    assert(connected());
+    
+    device_handle.set_current_position(position);
+  }
+  catch (std::exception const & e)
+  {
+    show_exception(e, "There was an error setting current position.");
+  }
+}
+
+void main_controller::apply_settings()
+{
+  if (!connected()) { return; }
+
+  try
+  {
+    assert(connected());
+    
+    tic::settings fixed_settings = settings;
+    std::string warnings;
+    fixed_settings.fix(&warnings); 
+    if (warnings.empty() ||
+      window->confirm(warnings.append("\nAccept these changes and apply settings?")))
+    {
+      settings = fixed_settings;
+      device_handle.set_settings(settings);
+      device_handle.reinitialize();
+      handle_settings_applied();
+      settings_modified = false;  // this must be last in case exceptions are thrown
+    }
+  }
+  catch (std::exception const & e)
+  {
+    show_exception(e, "There was an error applying settings.");
+  }
+  
+  handle_settings_changed();
+}
+
+void main_controller::reload_variables()
+{
+  assert(connected());
+
+  try
+  {
+    variables = device_handle.get_variables();
+    variables_update_failed = false;
+  }
+  catch (...)
+  {
+    variables_update_failed = true;
+    throw;
+  }
+}
+
+bool main_controller::control_mode_is_serial(tic::settings const & s) const
+{
+  uint8_t control_mode = tic_settings_control_mode_get(s.pointer_get());
+  return (control_mode == TIC_CONTROL_MODE_SERIAL); 
 }

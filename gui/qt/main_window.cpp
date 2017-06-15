@@ -14,6 +14,7 @@
 #include <QPushButton>
 #include <QRadioButton>
 #include <QScrollBar>
+#include <QShortcut>
 #include <QSpinBox>
 #include <QTimer>
 #include <QUrl>
@@ -113,9 +114,13 @@ void main_window::set_main_boxes_enabled(bool enabled)
   device_info_box->setEnabled(enabled);
   status_box->setEnabled(enabled);
   control_mode_widget->setEnabled(enabled);
-  manual_target_box->setEnabled(enabled);
   scaling_settings_box->setEnabled(enabled);
   motor_settings_box->setEnabled(enabled);
+}
+
+void main_window::set_manual_target_box_enabled(bool enabled)
+{
+  manual_target_box->setEnabled(enabled);
 }
 
 void main_window::set_apply_settings_enabled(bool enabled)
@@ -139,9 +144,8 @@ void main_window::set_device_name(std::string const & name, bool link_enabled)
   QString text = QString(name.c_str());
   if (link_enabled)
   {
-      text = "<a href=\"#doc\">" + text + "</a>";
+    text = "<a href=\"#doc\">" + text + "</a>";
   }
-
   device_name_value->setText(text);
 }
 
@@ -187,30 +191,21 @@ void main_window::set_control_mode(uint8_t control_mode)
   set_u8_combo_box(control_mode_value, control_mode);
 }
 
-void main_window::reset_manual_target_box()
+void main_window::set_manual_target_range(int32_t target_min, int32_t target_max)
 {
   suppress_events = true;
-  
-  if (manual_target_position_mode)
-  {
-    set_target_button->setText(tr("Set target position"));
-  }
-  else
-  {
-    set_target_button->setText(tr("Set target speed"));
-  }
-  
-  int min = tic_settings_output_min_get(cached_settings.pointer_get());
-  int max = tic_settings_output_max_get(cached_settings.pointer_get());
-  manual_target_scrollbar->setMinimum(min);
-  manual_target_scrollbar->setMaximum(max);
-  manual_target_scrollbar->setPageStep((max - min) / 20);
-  manual_target_scrollbar->setValue(0);
-  manual_target_min_label->setText(QString::number(min));
-  manual_target_max_label->setText(QString::number(max));
-  manual_target_entry_value->setRange(min, max);
-
+  manual_target_scroll_bar->setMinimum(target_min);
+  manual_target_scroll_bar->setMaximum(target_max);
+  manual_target_scroll_bar->setPageStep((target_max - target_min) / 20);
+  manual_target_min_label->setText(QString::number(target_min));
+  manual_target_max_label->setText(QString::number(target_max));
+  manual_target_entry_value->setRange(target_min, target_max);
   suppress_events = false;
+}
+
+void main_window::set_manual_target(int32_t target)
+{
+  manual_target_entry_value->setValue(target);
 }
 
 void main_window::set_input_min(uint32_t input_min)
@@ -233,12 +228,12 @@ void main_window::set_input_max(uint32_t input_max)
   set_spin_box(input_max_value, input_max);
 }
 
-void main_window::set_output_min(uint32_t output_min)
+void main_window::set_output_min(int32_t output_min)
 {
   set_spin_box(output_min_value, output_min);
 }
 
-void main_window::set_output_max(uint32_t output_max)
+void main_window::set_output_max(int32_t output_max)
 {
   set_spin_box(output_max_value, output_max);
 }
@@ -276,12 +271,6 @@ void main_window::set_current_limit(uint32_t current_limit)
 void main_window::set_decay_mode(uint8_t decay_mode)
 {
   set_u8_combo_box(decay_mode_value, decay_mode);
-}
-
-void main_window::update_cached_settings(tic::settings const & settings)
-{
-  cached_settings = settings;
-  reset_manual_target_box();
 }
 
 void main_window::set_u8_combo_box(QComboBox * combo, uint8_t value)
@@ -369,29 +358,67 @@ void main_window::on_apply_settings_action_triggered()
   controller->apply_settings();
 }
 
-void main_window::on_manual_target_position_mode_radio_toggled(bool checked)
+void main_window::on_control_mode_value_currentIndexChanged(int index)
 {
-  manual_target_position_mode = checked;
-  reset_manual_target_box();
+  if (suppress_events) { return; }
+  uint8_t control_mode = control_mode_value->itemData(index).toUInt();
+  controller->handle_control_mode_input(control_mode);
 }
 
-void main_window::on_manual_target_scrollbar_valueChanged(int value)
+void main_window::on_manual_target_position_mode_radio_toggled(bool checked)
 {
-  // Don't suppress events; let the spin box handler set a target if appropriate
+  if (checked)
+  {
+    set_target_button->setText(tr("Set target position"));
+  }
+  else
+  {
+    set_target_button->setText(tr("Set target speed"));
+  }
+  set_manual_target(0);
+  controller->set_current_position(0);
+}
+
+void main_window::on_manual_target_scroll_bar_valueChanged(int value)
+{
+  // Don't suppress events; fall through to on_manual_target_entry_value_valueChanged
   manual_target_entry_value->setValue(value);
+}
+
+void main_window::on_manual_target_scroll_bar_sliderReleased()
+{
+  // Don't suppress events; fall through to on_manual_target_scroll_bar_valueChanged
+  if (auto_zero_target_checkbox->isChecked())
+  {
+    manual_target_scroll_bar->setValue(0);
+  }
 }
 
 void main_window::on_manual_target_entry_value_valueChanged(int value)
 {
-  // todo don't update if typing?
   suppress_events = true;
-  manual_target_scrollbar->setValue(value);
+  manual_target_scroll_bar->setValue(value);
   suppress_events = false;
+  
+  if (auto_set_target_checkbox->isChecked())
+  {
+    on_set_target_button_clicked();
+  }
+}
+
+void main_window::on_manual_target_return_key_shortcut_activated()
+{
+  if (manual_target_entry_value->hasFocus())
+  {
+    manual_target_entry_value->interpretText();
+    manual_target_entry_value->selectAll();
+  }
+  on_set_target_button_clicked();
 }
 
 void main_window::on_set_target_button_clicked()
 {
-  if (manual_target_position_mode)
+  if (manual_target_position_mode_radio->isChecked())
   {
     controller->set_target_position(manual_target_entry_value->value());
   }
@@ -401,11 +428,17 @@ void main_window::on_set_target_button_clicked()
   }
 }
 
-void main_window::on_control_mode_value_currentIndexChanged(int index)
+void main_window::on_auto_set_target_checkbox_stateChanged(int state)
 {
-  if (suppress_events) { return; }
-  uint8_t control_mode = control_mode_value->itemData(index).toUInt();
-  controller->handle_control_mode_input(control_mode);
+  if (state == Qt::Checked)
+  {
+    auto_zero_target_checkbox->setEnabled(true);
+  }
+  else if (state == Qt::Unchecked)
+  {
+    auto_zero_target_checkbox->setEnabled(false);
+    auto_zero_target_checkbox->setChecked(false);
+  }
 }
 
 void main_window::on_input_min_value_valueChanged(int value)
@@ -684,23 +717,33 @@ QWidget * main_window::setup_manual_target_box()
   manual_target_box = new QGroupBox();
   QVBoxLayout * layout = manual_target_box_layout = new QVBoxLayout();
   
-  manual_target_scrollbar = new QScrollBar(Qt::Horizontal);
-  manual_target_scrollbar->setObjectName("manual_target_scrollbar");
-  manual_target_scrollbar->setSingleStep(1);
-  manual_target_scrollbar->setFocusPolicy(Qt::ClickFocus);
-  set_target_button = new QPushButton();
-  set_target_button->setObjectName("set_target_button");
-  auto_set_target_checkbox = new QCheckBox();
-  auto_zero_target_checkbox = new QCheckBox();
   layout->addLayout(setup_manual_target_mode_layout());
-  layout->addSpacing(central_widget->fontMetrics().height());
-  layout->addWidget(manual_target_scrollbar);
-  layout->addLayout(setup_manual_target_range_layout());
-  layout->addWidget(set_target_button, 0, Qt::AlignCenter);
-  layout->addSpacing(central_widget->fontMetrics().height());
-  layout->addWidget(auto_set_target_checkbox, 0, Qt::AlignLeft);
-  layout->addWidget(auto_zero_target_checkbox, 0, Qt::AlignLeft);
   
+  layout->addSpacing(central_widget->fontMetrics().height());
+  
+  layout->addWidget(setup_manual_target_entry_widget());
+
+  {  
+    set_target_button = new QPushButton();
+    set_target_button->setObjectName("set_target_button");
+    layout->addWidget(set_target_button, 0, Qt::AlignCenter);
+  }
+  
+  layout->addSpacing(central_widget->fontMetrics().height());
+  
+  {
+    auto_set_target_checkbox = new QCheckBox();
+    auto_set_target_checkbox->setObjectName("auto_set_target_checkbox");
+    auto_set_target_checkbox->setChecked(true);
+    layout->addWidget(auto_set_target_checkbox, 0, Qt::AlignLeft);
+  }
+  
+  {
+    auto_zero_target_checkbox = new QCheckBox();
+    auto_zero_target_checkbox->setChecked(true);
+    layout->addWidget(auto_zero_target_checkbox, 0, Qt::AlignLeft);
+  }
+    
   manual_target_box->setLayout(layout);
   return manual_target_box;
 }
@@ -721,27 +764,67 @@ QLayout * main_window::setup_manual_target_mode_layout()
   return manual_target_mode_layout;
 }
 
-QLayout * main_window::setup_manual_target_range_layout()
+QWidget * main_window::setup_manual_target_entry_widget()
 {
-  QHBoxLayout * layout = manual_target_range_layout = new QHBoxLayout();
-
-  manual_target_min_label = new QLabel();
-  manual_target_max_label = new QLabel();
-  manual_target_entry_value = new QSpinBox();
-  manual_target_entry_value->setObjectName("manual_target_entry_value");
+  // This is a widget instead of a layout so that it can be a parent to the
+  // shortcuts, allowing the shortcuts to work on both the scroll bar and the
+  // spin box.
   
-  // Make the spin box wide enough to display the largest possible target value.
+  manual_target_entry_widget = new QWidget();
+  QGridLayout * layout = manual_target_entry_widget_layout = new QGridLayout();
+  layout->setColumnStretch(0, 1);
+  layout->setColumnStretch(2, 1);
+  layout->setContentsMargins(0, 0, 0, 0);
+  int row = 0;
+
   {
-    QSpinBox tmp_box;
-    tmp_box.setMinimum(-0x7FFFFFF);
-    manual_target_entry_value->setMinimumWidth(tmp_box.sizeHint().width());
+    manual_target_scroll_bar = new QScrollBar(Qt::Horizontal);
+    manual_target_scroll_bar->setObjectName("manual_target_scroll_bar");
+    manual_target_scroll_bar->setSingleStep(1);
+    manual_target_scroll_bar->setFocusPolicy(Qt::ClickFocus);
+    layout->addWidget(manual_target_scroll_bar, row, 0, 1, 3);
+    row++;
   }
   
-  layout->addWidget(manual_target_min_label, 1, Qt::AlignLeft);
-  layout->addWidget(manual_target_entry_value);
-  layout->addWidget(manual_target_max_label, 1, Qt::AlignRight);
+  {
+    manual_target_min_label = new QLabel();
+    manual_target_max_label = new QLabel();
+    manual_target_entry_value = new QSpinBox();
+    manual_target_entry_value->setObjectName("manual_target_entry_value");
+    // Don't emit valueChanged while user is typing (e.g. if the user enters 500,
+    // we don't want to set speeds of 5, 50, and 500).
+    manual_target_entry_value->setKeyboardTracking(false);
+    
+    
+    // Make the spin box wide enough to display the largest possible target value.
+    {
+      QSpinBox tmp_box;
+      tmp_box.setMinimum(-0x7FFFFFF);
+      manual_target_entry_value->setMinimumWidth(tmp_box.sizeHint().width());
+    }
+    
+    layout->addWidget(manual_target_min_label, row, 0, Qt::AlignLeft);
+    layout->addWidget(manual_target_entry_value, row, 1);
+    layout->addWidget(manual_target_max_label, row, 2, Qt::AlignRight);
+    row++;
+  }
   
-  return manual_target_range_layout;
+  {
+    manual_target_return_key_shortcut = new QShortcut(manual_target_entry_widget);
+    manual_target_return_key_shortcut->setObjectName("manual_target_return_key_shortcut");
+    manual_target_return_key_shortcut->setContext(Qt::WidgetWithChildrenShortcut);
+    manual_target_return_key_shortcut->setKey(Qt::Key_Return);
+    manual_target_enter_key_shortcut = new QShortcut(manual_target_entry_widget);
+    manual_target_enter_key_shortcut->setObjectName("manual_target_enter_key_shortcut");
+    manual_target_enter_key_shortcut->setContext(Qt::WidgetWithChildrenShortcut);
+    manual_target_enter_key_shortcut->setKey(Qt::Key_Enter);
+    
+    connect(manual_target_enter_key_shortcut, SIGNAL(activated()), this,
+      SLOT(on_manual_target_return_key_shortcut_activated()));
+  }
+  
+  manual_target_entry_widget->setLayout(layout);
+  return manual_target_entry_widget;
 }
 
 // [all-settings]
@@ -991,7 +1074,14 @@ void main_window::retranslate()
   manual_target_box->setTitle(tr("Set target (Serial\u2009/\u2009I\u00B2C\u2009/\u2009USB mode only)"));
   manual_target_position_mode_radio->setText(tr("Set position"));
   manual_target_speed_mode_radio->setText(tr("Set speed"));
-  reset_manual_target_box();
+  if (manual_target_position_mode_radio->isChecked())
+  {
+    set_target_button->setText(tr("Set target position"));
+  }
+  else
+  {
+    set_target_button->setText(tr("Set target speed"));
+  }
   auto_set_target_checkbox->setText(tr("Set target when slider or entry box are changed"));
   auto_zero_target_checkbox->setText(tr("Return slider to zero when it is released"));
   
@@ -1019,5 +1109,3 @@ void main_window::retranslate()
   // defaultsButton->setText("Defaults"); // TODO: use same name as menu item
   apply_settings_button->setText(apply_settings_action->text());
 }
-
-
