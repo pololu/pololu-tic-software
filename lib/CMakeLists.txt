@@ -9,12 +9,12 @@ set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra")
 pkg_check_modules(LIBUSBP REQUIRED libusbp-1)
 
 if (USE_SYSTEM_LIBYAML)
-  # TODO: make sure using the systme libyaml actually works
+  # TODO: make sure using the system libyaml actually works
   pkg_check_modules(YAML REQUIRED yaml)
   STRING(REPLACE ";" " " LIBYAML_LDFLAGS "${LIBYAML_LDFLAGS}")
 else ()
-  set (LIBYAML_LDFLAGS yaml)
-  include_directories ("${CMAKE_SOURCE_DIR}/libyaml")
+  set (LIBYAML_SRC libyaml/yaml.c)
+  include_directories ("${CMAKE_CURRENT_SOURCE_DIR}/libyaml")
   set (LIBYAML_CFLAGS "-DYAML_DECLARE_STATIC")
 endif ()
 
@@ -40,6 +40,7 @@ add_library (lib SHARED
   tic_settings_to_string.c
   tic_string.c
   tic_variables.c
+  ${LIBYAML_SRC}
 )
 
 #include_directories (
