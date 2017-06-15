@@ -57,7 +57,7 @@ const tic_name tic_device_reset_names[] =
 const tic_name tic_operation_state_names[] =
 {
   { "disabled", TIC_OPERATION_STATE_DISABLED },
-  { "holding", TIC_OPERATION_STATE_HOLDING },
+  { "error", TIC_OPERATION_STATE_ERROR },
   { "waiting_for_err_line", TIC_OPERATION_STATE_WAITING_FOR_ERR_LINE },
   { "active", TIC_OPERATION_STATE_ACTIVE },
   { NULL, 0 },

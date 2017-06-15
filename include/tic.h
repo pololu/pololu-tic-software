@@ -1278,8 +1278,12 @@ tic_error * tic_set_decay_mode(tic_handle *, uint8_t decay_mode);
 ///
 /// To read information from the variables object, see the tic_variables_get_*
 /// functions.
+///
+/// The clear_errors_occurred option should be true if you want to clear the
+/// bits in the device's Errors Occurred variable as a side effect.
 TIC_API TIC_WARN_UNUSED
-tic_error * tic_get_variables(tic_handle *, tic_variables ** variables);
+tic_error * tic_get_variables(tic_handle *, tic_variables ** variables,
+  bool clear_errors_occurred);
 
 /// Reads all of the Tic's non-volatile settings and returns them as an object.
 ///
