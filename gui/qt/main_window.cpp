@@ -991,7 +991,7 @@ QWidget * main_window::setup_scaling_settings_box()
   {
     input_averaging_enabled_checkbox = new QCheckBox();
     input_averaging_enabled_checkbox->setObjectName("input_averaging_enabled_checkbox");
-    layout->addWidget(input_averaging_enabled_checkbox, row, 0, 1, 2, Qt::AlignLeft);
+    layout->addWidget(input_averaging_enabled_checkbox, row, 0, 1, 3, Qt::AlignLeft);
     row++;
   }
   
@@ -1002,7 +1002,7 @@ QWidget * main_window::setup_scaling_settings_box()
     input_hysteresis_label = new QLabel();
     input_hysteresis_label->setBuddy(input_hysteresis_value);
     layout->addWidget(input_hysteresis_label, row, 0, FIELD_LABEL_ALIGNMENT);
-    layout->addWidget(input_hysteresis_value, row, 1, Qt::AlignLeft);
+    layout->addWidget(input_hysteresis_value, row, 1, 1, 2, Qt::AlignLeft);
     row++;
   }
   
@@ -1013,7 +1013,7 @@ QWidget * main_window::setup_scaling_settings_box()
     encoder_prescaler_label = new QLabel();
     encoder_prescaler_label->setBuddy(encoder_prescaler_value);
     layout->addWidget(encoder_prescaler_label, row, 0, FIELD_LABEL_ALIGNMENT);
-    layout->addWidget(encoder_prescaler_value, row, 1, Qt::AlignLeft);
+    layout->addWidget(encoder_prescaler_value, row, 1, 1, 2, Qt::AlignLeft);
     row++;
   }
   
@@ -1024,14 +1024,14 @@ QWidget * main_window::setup_scaling_settings_box()
     encoder_postscaler_label = new QLabel();
     encoder_postscaler_label->setBuddy(encoder_postscaler_value);
     layout->addWidget(encoder_postscaler_label, row, 0, FIELD_LABEL_ALIGNMENT);
-    layout->addWidget(encoder_postscaler_value, row, 1, Qt::AlignLeft);
+    layout->addWidget(encoder_postscaler_value, row, 1, 1, 2, Qt::AlignLeft);
     row++;
   }
 
   {
     encoder_unlimited_checkbox = new QCheckBox();
     encoder_unlimited_checkbox->setObjectName("encoder_unlimited_checkbox");
-    layout->addWidget(encoder_unlimited_checkbox, row, 0, 1, 2, Qt::AlignLeft);
+    layout->addWidget(encoder_unlimited_checkbox, row, 0, 1, 3, Qt::AlignLeft);
     row++;
   }
   
