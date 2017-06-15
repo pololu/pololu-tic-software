@@ -480,7 +480,7 @@ static void get_status(device_selector & selector)
 {
   tic::device device = selector.select_device();
   tic::handle handle(device);
-  tic::variables vars = handle.get_variables();
+  tic::variables vars = handle.get_variables(true);
   std::string name = device.get_name();
   std::string serial_number = device.get_serial_number();
   std::string firmware_version = handle.get_firmware_version_string();

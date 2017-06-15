@@ -1231,7 +1231,7 @@ void main_window::retranslate()
   input_hysteresis_label->setText(tr("Input hysteresis:"));
   encoder_prescaler_label->setText(tr("Encoder prescaler:"));
   encoder_postscaler_label->setText(tr("Encoder postscaler:"));
-  encoder_unlimited_checkbox->setText(tr("Don't limit encoder position"));
+  encoder_unlimited_checkbox->setText(tr("Unlimited encoder position control"));
   
   motor_settings_box->setTitle(tr("Motor settings"));
   speed_max_label->setText(tr("Speed max:"));

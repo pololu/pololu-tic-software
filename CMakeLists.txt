@@ -100,7 +100,3 @@ endif ()
 if (APPLE)
   # TODO: add_subdirectory (mac-installer)
 endif ()
-
-if (NOT USE_SYSTEM_LIBYAML)
-  add_subdirectory (libyaml)
-endif ()

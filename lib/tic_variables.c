@@ -182,7 +182,8 @@ static void write_buffer_to_variables(const uint8_t * buf, tic_variables * vars)
   vars->pin_info[TIC_PIN_NUM_RC].analog_reading = 0;
 }
 
-tic_error * tic_get_variables(tic_handle * handle, tic_variables ** variables)
+tic_error * tic_get_variables(tic_handle * handle, tic_variables ** variables,
+  bool clear_errors_occurred)
 {
   if (variables == NULL)
   {
@@ -210,7 +211,8 @@ tic_error * tic_get_variables(tic_handle * handle, tic_variables ** variables)
   if (error == NULL)
   {
     size_t index = 0;
-    error = tic_get_variable_segment(handle, index, sizeof(buf), buf);
+    error = tic_get_variable_segment(handle, index, sizeof(buf), buf,
+      clear_errors_occurred);
   }
 
   // Store the variables in the new variables object.

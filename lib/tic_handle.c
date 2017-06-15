@@ -489,13 +489,18 @@ tic_error * tic_get_setting_segment(tic_handle * handle,
 }
 
 tic_error * tic_get_variable_segment(tic_handle * handle,
-  size_t index, size_t length, uint8_t * output)
+  size_t index, size_t length, uint8_t * output,
+  bool clear_errors_occurred)
 {
   assert(handle != NULL);
   assert(output != NULL);
   assert(length && length <= TIC_MAX_USB_RESPONSE_SIZE);
 
   uint8_t cmd = TIC_CMD_GET_VARIABLE;
+  if (clear_errors_occurred)
+  {
+    cmd = TIC_CMD_GET_VARIABLE_AND_CLEAR_ERRORS_OCCURRED;
+  }
   size_t transferred;
   tic_error * error = tic_usb_error(libusbp_control_transfer(handle->usb_handle,
     0xC0, cmd, 0, index, output, length, &transferred));

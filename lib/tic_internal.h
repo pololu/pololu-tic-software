@@ -6,11 +6,12 @@
 #include <libusbp.h>
 #include <yaml.h>
 
-#include <stdlib.h>
+#include <assert.h>
+#include <errno.h>
 #include <stdarg.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
-#include <assert.h>
 
 #ifdef _MSC_VER
 #define TIC_PRINTF(f, a)
@@ -94,7 +95,8 @@ tic_error * tic_get_setting_segment(tic_handle * handle,
   uint8_t address, size_t length, uint8_t * output);
 
 tic_error * tic_get_variable_segment(tic_handle * handle,
-  size_t index, size_t length, uint8_t * buf);
+  size_t index, size_t length, uint8_t * buf,
+  bool clear_errors_occurred);
 
 
 // Error creation functions.
