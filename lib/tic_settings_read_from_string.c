@@ -805,8 +805,8 @@ tic_error * tic_settings_read_from_string(const char * string,
     }
     else
     {
-      error = tic_error_create("Failed to load document: %s at line %d.",
-        parser.problem, parser.problem_mark.line + 1);
+      error = tic_error_create("Failed to load document: %s at line %u.",
+        parser.problem, (unsigned int)parser.problem_mark.line + 1);
     }
   }
 
