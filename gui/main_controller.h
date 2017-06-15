@@ -68,7 +68,12 @@ public:
   void handle_input_neutral_max_input(uint16_t input_neutral_max);
   void handle_input_max_input(uint16_t input_max);
   void handle_output_min_input(int32_t output_min);
-  void handle_output_max_input(int32_t output_max);
+  void handle_output_max_input(int32_t output_max);  
+  void handle_input_averaging_enabled_input(bool input_averaging_enabled);
+  void handle_input_hysteresis_input(uint16_t input_hysteresis);
+  void handle_encoder_prescaler_input(uint32_t encoder_prescaler);
+  void handle_encoder_postscaler_input(uint32_t encoder_postscaler);
+  void handle_encoder_unlimited_input(bool encoder_unlimited);
   void handle_speed_max_input(uint32_t speed_max);
   void handle_speed_min_input(uint32_t speed_min);
   void handle_accel_max_input(uint32_t accel_max);

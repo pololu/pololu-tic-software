@@ -91,6 +91,11 @@ public:
   void set_input_max(uint32_t input_max);
   void set_output_min(int32_t output_min);
   void set_output_max(int32_t output_max);
+  void set_input_averaging_enabled(bool input_averaging_enabled);
+  void set_input_hysteresis(uint16_t input_hysteresis);
+  void set_encoder_prescaler(uint32_t encoder_prescaler);
+  void set_encoder_postscaler(uint32_t encoder_postscaler);
+  void set_encoder_unlimited(bool encoder_unlimited);
   void set_speed_max(uint32_t speed_max);
   void set_speed_min(uint32_t speed_min);
   void set_accel_max(uint32_t accel_max);
@@ -140,6 +145,11 @@ private slots:
   void on_input_max_value_valueChanged(int value);
   void on_output_min_value_valueChanged(int value);
   void on_output_max_value_valueChanged(int value);
+  void on_input_averaging_enabled_checkbox_stateChanged(int state);
+  void on_input_hysteresis_value_valueChanged(int value);
+  void on_encoder_prescaler_value_valueChanged(int value);
+  void on_encoder_postscaler_value_valueChanged(int value);
+  void on_encoder_unlimited_checkbox_stateChanged(int state);
   void on_speed_max_value_valueChanged(int value);
   void on_speed_min_value_valueChanged(int value);
   void on_accel_max_value_valueChanged(int value);
@@ -163,6 +173,7 @@ private:
   void setup_window();
   void setup_menu_bar();
   QLayout * setup_header();
+  QWidget * setup_main_boxes_widget();
   QLayout * setup_left_column();
   QLayout * setup_right_column();
   QWidget * setup_device_info_box();
@@ -193,13 +204,15 @@ private:
   QAction * about_action;
   
   QWidget * central_widget;
-  QGridLayout * central_widget_layout;
+  QVBoxLayout * central_widget_layout;
 
   QHBoxLayout * header_layout;
   QLabel * device_list_label;
   QComboBox * device_list_value;
   QLabel * connection_status_value;
   
+  QWidget * main_boxes_widget;
+  QHBoxLayout * main_boxes_widget_layout;
   QVBoxLayout * left_column_layout;
   QVBoxLayout * right_column_layout;
 
@@ -260,6 +273,14 @@ private:
   QSpinBox * input_max_value;
   QSpinBox * output_min_value;
   QSpinBox * output_max_value;
+  QCheckBox * input_averaging_enabled_checkbox;
+  QLabel * input_hysteresis_label;
+  QSpinBox * input_hysteresis_value;
+  QLabel * encoder_prescaler_label;
+  QSpinBox * encoder_prescaler_value;
+  QLabel * encoder_postscaler_label;
+  QSpinBox * encoder_postscaler_value;
+  QCheckBox * encoder_unlimited_checkbox;
   
   QGroupBox * motor_settings_box;
   QGridLayout * motor_settings_box_layout;

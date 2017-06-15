@@ -111,11 +111,7 @@ void main_window::set_connection_status(std::string const & status, bool error)
 
 void main_window::set_main_boxes_enabled(bool enabled)
 {
-  device_info_box->setEnabled(enabled);
-  status_box->setEnabled(enabled);
-  control_mode_widget->setEnabled(enabled);
-  scaling_settings_box->setEnabled(enabled);
-  motor_settings_box->setEnabled(enabled);
+  main_boxes_widget->setEnabled(enabled);
 }
 
 void main_window::set_manual_target_box_enabled(bool enabled)
@@ -236,6 +232,35 @@ void main_window::set_output_min(int32_t output_min)
 void main_window::set_output_max(int32_t output_max)
 {
   set_spin_box(output_max_value, output_max);
+}
+
+void main_window::set_input_averaging_enabled(bool input_averaging_enabled)
+{
+  suppress_events = true;
+  input_averaging_enabled_checkbox->setChecked(input_averaging_enabled);
+  suppress_events = false;
+}
+
+void main_window::set_input_hysteresis(uint16_t input_hysteresis)
+{
+  set_spin_box(input_hysteresis_value, input_hysteresis);
+}
+
+void main_window::set_encoder_prescaler(uint32_t encoder_prescaler)
+{
+  set_spin_box(encoder_prescaler_value, encoder_prescaler);
+}
+
+void main_window::set_encoder_postscaler(uint32_t encoder_postscaler)
+{
+  set_spin_box(encoder_postscaler_value, encoder_postscaler);
+}
+
+void main_window::set_encoder_unlimited(bool encoder_unlimited)
+{
+  suppress_events = true;
+  encoder_unlimited_checkbox->setChecked(encoder_unlimited);
+  suppress_events = false;
 }
 
 void main_window::set_speed_max(uint32_t speed_max)
@@ -434,7 +459,7 @@ void main_window::on_auto_set_target_checkbox_stateChanged(int state)
   {
     auto_zero_target_checkbox->setEnabled(true);
   }
-  else if (state == Qt::Unchecked)
+  else
   {
     auto_zero_target_checkbox->setEnabled(false);
     auto_zero_target_checkbox->setChecked(false);
@@ -475,6 +500,36 @@ void main_window::on_output_max_value_valueChanged(int value)
 {
   if (suppress_events) { return; }
   controller->handle_output_max_input(value);
+}
+
+void main_window::on_input_averaging_enabled_checkbox_stateChanged(int state)
+{
+  if (suppress_events) { return; }
+  controller->handle_input_averaging_enabled_input(state == Qt::Checked);
+}
+
+void main_window::on_input_hysteresis_value_valueChanged(int value)
+{
+  if (suppress_events) { return; }
+  controller->handle_input_hysteresis_input(value);
+}
+
+void main_window::on_encoder_prescaler_value_valueChanged(int value)
+{
+  if (suppress_events) { return; }
+  controller->handle_encoder_prescaler_input(value);
+}
+
+void main_window::on_encoder_postscaler_value_valueChanged(int value)
+{
+  if (suppress_events) { return; }
+  controller->handle_encoder_postscaler_input(value);
+}
+
+void main_window::on_encoder_unlimited_checkbox_stateChanged(int state)
+{
+  if (suppress_events) { return; }
+  controller->handle_encoder_unlimited_input(state == Qt::Checked);
 }
 
 void main_window::on_speed_max_value_valueChanged(int value)
@@ -553,13 +608,11 @@ void main_window::setup_window()
   setup_menu_bar();
   
   central_widget = new QWidget();
-  QGridLayout * layout = central_widget_layout = new QGridLayout();
+  QVBoxLayout * layout = central_widget_layout = new QVBoxLayout();
   
-  int row = 0;
-  layout->addLayout(setup_header(), row++, 0, 1, 2);
-  layout->addLayout(setup_left_column(), row, 0);
-  layout->addLayout(setup_right_column(), row++, 1);
-  layout->addLayout(setup_footer(), row++, 0, 1, 2);
+  layout->addLayout(setup_header());
+  layout->addWidget(setup_main_boxes_widget());
+  layout->addLayout(setup_footer());
   
   central_widget->setLayout(layout);
   setCentralWidget(central_widget);
@@ -622,7 +675,6 @@ void main_window::setup_menu_bar()
 QLayout * main_window::setup_header()
 {
   QHBoxLayout * layout = header_layout = new QHBoxLayout();
-  //layout->setContentsMargins(0, 0, 0, 0);
 
   device_list_label = new QLabel();
   device_list_value = new QComboBox();
@@ -643,6 +695,19 @@ QLayout * main_window::setup_header()
   layout->addWidget(connection_status_value, 1, Qt::AlignLeft);
 
   return header_layout;
+}
+
+QWidget * main_window::setup_main_boxes_widget()
+{
+  main_boxes_widget = new QWidget();
+  QHBoxLayout * layout = main_boxes_widget_layout = new QHBoxLayout();
+  layout->setContentsMargins(0, 0, 0, 0);
+  
+  layout->addLayout(setup_left_column());
+  layout->addLayout(setup_right_column());
+  
+  main_boxes_widget->setLayout(layout);
+  return main_boxes_widget;
 }
 
 QLayout * main_window::setup_left_column()
@@ -923,6 +988,53 @@ QWidget * main_window::setup_scaling_settings_box()
     row++;
   }
   
+  {
+    input_averaging_enabled_checkbox = new QCheckBox();
+    input_averaging_enabled_checkbox->setObjectName("input_averaging_enabled_checkbox");
+    layout->addWidget(input_averaging_enabled_checkbox, row, 0, 1, 2, Qt::AlignLeft);
+    row++;
+  }
+  
+  {    
+    input_hysteresis_value = new QSpinBox();
+    input_hysteresis_value->setObjectName("input_hysteresis_value");
+    input_hysteresis_value->setRange(0, 0xFFFF);
+    input_hysteresis_label = new QLabel();
+    input_hysteresis_label->setBuddy(input_hysteresis_value);
+    layout->addWidget(input_hysteresis_label, row, 0, FIELD_LABEL_ALIGNMENT);
+    layout->addWidget(input_hysteresis_value, row, 1, Qt::AlignLeft);
+    row++;
+  }
+  
+  {    
+    encoder_prescaler_value = new QSpinBox();
+    encoder_prescaler_value->setObjectName("encoder_prescaler_value");
+    encoder_prescaler_value->setRange(0, 0x7FFFFFFF);
+    encoder_prescaler_label = new QLabel();
+    encoder_prescaler_label->setBuddy(encoder_prescaler_value);
+    layout->addWidget(encoder_prescaler_label, row, 0, FIELD_LABEL_ALIGNMENT);
+    layout->addWidget(encoder_prescaler_value, row, 1, Qt::AlignLeft);
+    row++;
+  }
+  
+  {    
+    encoder_postscaler_value = new QSpinBox();
+    encoder_postscaler_value->setObjectName("encoder_postscaler_value");
+    encoder_postscaler_value->setRange(0, 0x7FFFFFFF);
+    encoder_postscaler_label = new QLabel();
+    encoder_postscaler_label->setBuddy(encoder_postscaler_value);
+    layout->addWidget(encoder_postscaler_label, row, 0, FIELD_LABEL_ALIGNMENT);
+    layout->addWidget(encoder_postscaler_value, row, 1, Qt::AlignLeft);
+    row++;
+  }
+
+  {
+    encoder_unlimited_checkbox = new QCheckBox();
+    encoder_unlimited_checkbox->setObjectName("encoder_unlimited_checkbox");
+    layout->addWidget(encoder_unlimited_checkbox, row, 0, 1, 2, Qt::AlignLeft);
+    row++;
+  }
+  
   //layout->setRowStretch(row, 1);
 
   scaling_settings_box->setLayout(layout);
@@ -1088,13 +1200,18 @@ void main_window::retranslate()
   // [all-settings]
   control_mode_label->setText(tr("Control mode:"));
   
-  scaling_settings_box->setTitle(tr("Scaling settings"));
+  scaling_settings_box->setTitle(tr("Input and scaling settings"));
   scaling_input_label->setText(tr("Input"));
   scaling_target_label->setText(tr("Target"));
   scaling_min_label->setText(tr("Minimum:"));
   scaling_neutral_min_label->setText(tr("Neutral min:"));
   scaling_neutral_max_label->setText(tr("Neutral max:"));
   scaling_max_label->setText(tr("Maximum:"));
+  input_averaging_enabled_checkbox->setText(tr("Enable input averaging"));
+  input_hysteresis_label->setText(tr("Input hysteresis:"));
+  encoder_prescaler_label->setText(tr("Encoder prescaler:"));
+  encoder_postscaler_label->setText(tr("Encoder postscaler:"));
+  encoder_unlimited_checkbox->setText(tr("Don't limit encoder position"));
   
   motor_settings_box->setTitle(tr("Motor settings"));
   speed_max_label->setText(tr("Speed max:"));

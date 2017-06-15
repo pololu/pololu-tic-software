@@ -357,8 +357,6 @@ void main_controller::handle_device_changed()
   window->set_reload_settings_enabled(connected());
   window->set_restore_defaults_enabled(connected());
   window->set_main_boxes_enabled(connected());
-  window->set_manual_target_box_enabled(
-    connected() && control_mode_is_serial(cached_settings)); 
 }
 
 void main_controller::handle_variables_changed()
@@ -390,6 +388,11 @@ void main_controller::handle_settings_changed()
   window->set_input_max(tic_settings_input_max_get(settings.pointer_get()));
   window->set_output_min(tic_settings_output_min_get(settings.pointer_get()));
   window->set_output_max(tic_settings_output_max_get(settings.pointer_get()));
+  window->set_input_averaging_enabled(tic_settings_input_averaging_enabled_get(settings.pointer_get()));
+  window->set_input_hysteresis(tic_settings_input_hysteresis_get(settings.pointer_get()));
+  window->set_encoder_prescaler(tic_settings_encoder_prescaler_get(settings.pointer_get()));
+  window->set_encoder_postscaler(tic_settings_encoder_postscaler_get(settings.pointer_get()));
+  window->set_encoder_unlimited(tic_settings_encoder_unlimited_get(settings.pointer_get()));
   window->set_speed_max(tic_settings_speed_max_get(settings.pointer_get()));
   window->set_speed_min(tic_settings_speed_min_get(settings.pointer_get()));
   window->set_accel_max(tic_settings_accel_max_get(settings.pointer_get()));
@@ -407,8 +410,7 @@ void main_controller::handle_settings_applied()
     tic_settings_output_min_get(settings.pointer_get()),
     tic_settings_output_max_get(settings.pointer_get()));
     
-  window->set_manual_target_box_enabled(
-    connected() && control_mode_is_serial(settings));
+  window->set_manual_target_box_enabled(control_mode_is_serial(settings));
     
   if (!control_mode_is_serial(settings)) { window->set_manual_target(0); }
   
@@ -468,6 +470,46 @@ void main_controller::handle_output_max_input(int32_t output_max)
 {
   if (!connected()) { return; }
   tic_settings_output_max_set(settings.pointer_get(), output_max);
+  settings_modified = true;
+  handle_settings_changed();
+}
+
+void main_controller::handle_input_averaging_enabled_input(bool input_averaging_enabled)
+{
+  if (!connected()) { return; }
+  tic_settings_input_averaging_enabled_set(settings.pointer_get(), input_averaging_enabled);
+  settings_modified = true;
+  handle_settings_changed();
+}
+
+void main_controller::handle_input_hysteresis_input(uint16_t input_hysteresis)
+{
+  if (!connected()) { return; }
+  tic_settings_input_hysteresis_set(settings.pointer_get(), input_hysteresis);
+  settings_modified = true;
+  handle_settings_changed();
+}
+
+void main_controller::handle_encoder_prescaler_input(uint32_t encoder_prescaler)
+{
+  if (!connected()) { return; }
+  tic_settings_encoder_prescaler_set(settings.pointer_get(), encoder_prescaler);
+  settings_modified = true;
+  handle_settings_changed();
+}
+
+void main_controller::handle_encoder_postscaler_input(uint32_t encoder_postscaler)
+{
+  if (!connected()) { return; }
+  tic_settings_encoder_postscaler_set(settings.pointer_get(), encoder_postscaler);
+  settings_modified = true;
+  handle_settings_changed();
+}
+
+void main_controller::handle_encoder_unlimited_input(bool encoder_unlimited)
+{
+  if (!connected()) { return; }
+  tic_settings_encoder_unlimited_set(settings.pointer_get(), encoder_unlimited);
   settings_modified = true;
   handle_settings_changed();
 }
