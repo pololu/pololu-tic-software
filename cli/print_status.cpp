@@ -36,6 +36,16 @@ static void print_errors(uint32_t errors, const char * error_set_name)
   }
 }
 
+static std::string input_format(uint16_t input)
+{
+  if (input == TIC_INPUT_NULL)
+  {
+    return std::string("N/A");
+  }
+
+  return std::to_string(input);
+}
+
 static void print_pin_info(const tic::variables & vars,
   uint8_t pin, const char * pin_name)
 {
@@ -47,7 +57,7 @@ static void print_pin_info(const tic::variables & vars,
   if (pin != TIC_PIN_NUM_RC)
   {
     std::cout << left_column << "  Analog reading: "
-      << vars.get_analog_reading(pin) << std::endl;
+      << input_format(vars.get_analog_reading(pin)) << std::endl;
   }
   std::cout << left_column << "  State: "
     << pretty_enum(tic_look_up_pin_state_string(vars.get_pin_state(pin)))
@@ -152,7 +162,7 @@ void print_status(const tic::variables & vars,
     << std::endl;
 
   std::cout << left_column << "RC pulse width: "
-    << vars.get_rc_pulse_width()
+    << input_format(vars.get_rc_pulse_width())
     << std::endl;
 
   std::cout << left_column << "Step mode: "
@@ -166,6 +176,19 @@ void print_status(const tic::variables & vars,
   std::cout << left_column << "Decay mode: "
     << pretty_enum(tic_look_up_decay_mode_string(vars.get_decay_mode()))
     << std::endl;
+
+  std::cout << left_column << "Input after averaging: "
+    << input_format(vars.get_input_after_averaging())
+    << std::endl;
+
+  std::cout << left_column << "Input after hysteresis: "
+    << input_format(vars.get_input_after_hysteresis())
+    << std::endl;
+
+  std::cout << left_column << "Input after filtering: "
+    << input_format(vars.get_input_after_filtering())
+    << std::endl;
+
   std::cout << std::endl;
 
   print_pin_info(vars, TIC_PIN_NUM_SCL, "SCL");

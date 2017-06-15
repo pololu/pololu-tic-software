@@ -348,6 +348,9 @@ TIC_API
 int32_t tic_variables_get_encoder_position(const tic_variables *);
 
 /// Gets the reading from the RC pulse input, in units of twelfth microseconds.
+///
+/// The value returned will be TIC_INPUT_NULL if the RC signal is bad or has not
+/// been measured.
 TIC_API
 uint16_t tic_variables_get_rc_pulse_width(const tic_variables *);
 
@@ -376,14 +379,36 @@ uint32_t tic_variables_get_current_limit(const tic_variables *);
 TIC_API
 uint8_t tic_variables_get_decay_mode(const tic_variables *);
 
+/// Gets a variable used in the process that converts raw RC and analog values
+/// into a motor position or speed.
+///
+/// A value of TIC_INPUT_NULL means the input value is not available.
+TIC_API
+uint16_t tic_variables_get_input_after_averaging(const tic_variables * variables);
+
+/// Gets a variable used in the process that converts raw RC and analog values
+/// into a motor position or speed.
+///
+/// A value of TIC_INPUT_NULL means the input value is not available.
+TIC_API
+uint16_t tic_variables_get_input_after_hysteresis(const tic_variables * variables);
+
+/// Gets a variable used in the process that converts raw RC and analog values
+/// into a motor position or speed.
+///
+/// A value of TIC_INPUT_NULL means the input value is not available.
+TIC_API
+uint16_t tic_variables_get_input_after_filtering(const tic_variables * variables);
+
 /// Gets the analog reading from the specified pin, if analog readings are
 /// enabled for that pin.
 ///
 /// The pin argument should be one of the TIC_PIN_NUM_* macros.
 ///
 /// The return value will be a left-justified analog reading; a value of 0
-/// represents 0 V and a value of 0xFFFF represents approximately the voltage on
-/// the controller's 5V pin.
+/// represents 0 V and a value near 0xFFFE represents the voltage on the
+/// controller's 5V pin.  A value of TIC_INPUT_NULL means the reading is not
+/// available.
 TIC_API
 uint16_t tic_variables_get_analog_reading(const tic_variables *, uint8_t pin);
 
