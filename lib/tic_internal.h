@@ -6,11 +6,12 @@
 #include <libusbp.h>
 #include <yaml.h>
 
-#include <stdlib.h>
+#include <assert.h>
+#include <errno.h>
 #include <stdarg.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
-#include <assert.h>
 
 #ifdef _MSC_VER
 #define TIC_PRINTF(f, a)
