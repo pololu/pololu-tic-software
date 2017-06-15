@@ -86,7 +86,14 @@ static void tic_write_settings_to_buffer(const tic_settings * settings, uint8_t 
     buf[TIC_SETTING_RC_CONSECUTIVE_GOOD_PULSES + 1] = pulses >> 8 & 0xFF;
   }
 
-  buf[TIC_SETTING_INPUT_PLAY] = tic_settings_input_play_get(settings);
+  buf[TIC_SETTING_INPUT_AVERAGING_ENABLED] =
+    tic_settings_input_averaging_enabled_get(settings);
+
+  {
+    uint16_t hysteresis = tic_settings_input_hysteresis_get(settings);
+    buf[TIC_SETTING_INPUT_HYSTERESIS + 0] = hysteresis >> 0 & 0xFF;
+    buf[TIC_SETTING_INPUT_HYSTERESIS + 1] = hysteresis >> 8 & 0xFF;
+  }
 
   {
     uint16_t input_error_min = tic_settings_input_error_min_get(settings);
@@ -136,14 +143,6 @@ static void tic_write_settings_to_buffer(const tic_settings * settings, uint8_t 
     buf[TIC_SETTING_OUTPUT_MIN + 1] = output >> 8 & 0xFF;
     buf[TIC_SETTING_OUTPUT_MIN + 2] = output >> 16 & 0xFF;
     buf[TIC_SETTING_OUTPUT_MIN + 3] = output >> 24 & 0xFF;
-  }
-
-  {
-    uint32_t output = (uint32_t)tic_settings_output_neutral_get(settings);
-    buf[TIC_SETTING_OUTPUT_NEUTRAL + 0] = output >> 0 & 0xFF;
-    buf[TIC_SETTING_OUTPUT_NEUTRAL + 1] = output >> 8 & 0xFF;
-    buf[TIC_SETTING_OUTPUT_NEUTRAL + 2] = output >> 16 & 0xFF;
-    buf[TIC_SETTING_OUTPUT_NEUTRAL + 3] = output >> 24 & 0xFF;
   }
 
   {

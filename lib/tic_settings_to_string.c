@@ -154,8 +154,14 @@ tic_error * tic_settings_to_string(const tic_settings * settings, char ** string
   }
 
   {
-    uint8_t input_play = tic_settings_input_play_get(settings);
-    tic_sprintf(&str, "input_play: %u\n", input_play);
+    bool enabled = tic_settings_input_averaging_enabled_get(settings);
+    tic_sprintf(&str, "input_averaging_enabled: %s\n",
+      enabled ? "true" : "false");
+  }
+
+  {
+    uint16_t input_hysteresis = tic_settings_input_hysteresis_get(settings);
+    tic_sprintf(&str, "input_hysteresis: %u\n", input_hysteresis);
   }
 
   {
@@ -203,11 +209,6 @@ tic_error * tic_settings_to_string(const tic_settings * settings, char ** string
   {
     int32_t output = tic_settings_output_min_get(settings);
     tic_sprintf(&str, "output_min: %d\n", output);
-  }
-
-  {
-    int32_t output = tic_settings_output_neutral_get(settings);
-    tic_sprintf(&str, "output_neutral: %d\n", output);
   }
 
   {

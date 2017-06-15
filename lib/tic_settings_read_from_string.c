@@ -270,18 +270,27 @@ static tic_error * apply_string_pair(tic_settings * settings,
     tic_settings_rc_consecutive_good_pulses_set(settings,
       rc_consecutive_good_pulses);
   }
-  else if (!strcmp(key, "input_play"))
+  else if (!strcmp(key, "input_averaging_enabled"))
   {
-    int64_t input_play;
-    if (!tic_string_to_i64(value, &input_play))
+    uint32_t input_averaging_enabled;
+    if (!tic_name_to_code(tic_bool_names, value, &input_averaging_enabled))
     {
-      return tic_error_create("Invalid input_play value.");
+      return tic_error_create("Unrecognized input_averaging_enabled value.");
     }
-    if (input_play < 0 || input_play > 0xFF)
+    tic_settings_input_averaging_enabled_set(settings, input_averaging_enabled);
+  }
+  else if (!strcmp(key, "input_hysteresis"))
+  {
+    int64_t hysteresis;
+    if (!tic_string_to_i64(value, &hysteresis))
     {
-      return tic_error_create("The input_play value is out of range.");
+      return tic_error_create("Invalid input_hysteresis value.");
     }
-    tic_settings_input_play_set(settings, input_play);
+    if (hysteresis < 0 || hysteresis > 0xFFFF)
+    {
+      return tic_error_create("The input_hysteresis value is out of range.");
+    }
+    tic_settings_input_hysteresis_set(settings, hysteresis);
   }
   else if (!strcmp(key, "input_error_min"))
   {
@@ -391,19 +400,6 @@ static tic_error * apply_string_pair(tic_settings * settings,
       return tic_error_create("The output_min value is out of range.");
     }
     tic_settings_output_min_set(settings, output_min);
-  }
-  else if (!strcmp(key, "output_neutral"))
-  {
-    int64_t output_neutral;
-    if (!tic_string_to_i64(value, &output_neutral))
-    {
-      return tic_error_create("Invalid output_neutral value.");
-    }
-    if (output_neutral < INT32_MIN || output_neutral > INT32_MAX)
-    {
-      return tic_error_create("The output_neutral value is out of range.");
-    }
-    tic_settings_output_neutral_set(settings, output_neutral);
   }
   else if (!strcmp(key, "output_max"))
   {
