@@ -128,8 +128,8 @@ def test_cases_for_settings_fix(product)
     ],
     [ { 'input_error_min' => 10, 'input_min' => 9, 'input_neutral_min' => 8,
         'input_neutral_max' => 7, 'input_max' => 6, 'input_error_max' => 5 },
-      { 'input_error_min' => 0, 'input_min' => 0, 'input_neutral_min' => 0x8000,
-        'input_neutral_max' => 0x8000, 'input_max' => 0xFFFF,
+      { 'input_error_min' => 0, 'input_min' => 0, 'input_neutral_min' => 2048,
+        'input_neutral_max' => 2048, 'input_max' => 4095,
         'input_error_max' => 0xFFFF },
       "Warning: The input scaling values were out of order " \
       "so they will be reset to their default values.\n"

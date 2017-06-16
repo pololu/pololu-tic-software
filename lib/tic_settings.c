@@ -264,9 +264,9 @@ static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings
     {
       error_min = 0;
       min = 0;
-      neutral_min = 0x8000;
-      neutral_max = 0x8000;
-      max = 0xFFFF;
+      neutral_min = 2048;
+      neutral_max = 2048;
+      max = 4095;
       error_max = 0xFFFF;
 
       tic_sprintf(warnings,
