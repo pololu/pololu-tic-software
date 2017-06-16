@@ -532,7 +532,7 @@ uint8_t tic_settings_product_get(const tic_settings *);
 
 /// Sets the control mode, which should be one of the TIC_CONTROL_MODE_* macros.
 /// Silently obeys if the input is invalid so that you can see a warning later
-/// when calling tic_settings_fix.
+/// when calling tic_settings_fix().
 TIC_API
 void tic_settings_control_mode_set(tic_settings *, uint8_t control_mode);
 
@@ -583,6 +583,11 @@ void tic_settings_serial_baud_rate_set(tic_settings *, uint32_t);
 /// asynchronous serial port, in bits per second.
 TIC_API
 uint32_t tic_settings_serial_baud_rate_get(const tic_settings *);
+
+/// Returns an acheivable baud rate corresponding to the specified baud rate.
+/// Does not modify the settings object.
+TIC_API
+uint32_t tic_settings_achievable_baud_rate(const tic_settings *, uint32_t);
 
 /// Sets the serial device number, a number between 0 and 0x7F that is used to
 /// identify the device when using the Pololu protocol.
@@ -961,12 +966,6 @@ TIC_API
 uint8_t tic_settings_rc_config_get(const tic_settings *);
 
 /// Sets the default stepper motor coil current limit in milliamps.
-///
-/// Like the baud rate setting, only certain current limit values are actually
-/// achievable.  This function will use the highest achievable current level
-/// that is below the given the argument.  You can call
-/// tic_settings_current_limit_get() after calling this function to see what
-/// current level was used.
 TIC_API
 void tic_settings_current_limit_set(tic_settings *, uint32_t);
 
@@ -974,6 +973,11 @@ void tic_settings_current_limit_set(tic_settings *, uint32_t);
 /// tic_settings_current_limit_set().
 TIC_API
 uint32_t tic_settings_current_limit_get(const tic_settings *);
+
+/// Returns the highest achievable current limit that is less than the given
+/// current limit.  Does not modify the settings object.
+TIC_API
+uint32_t tic_settings_achievable_current_limit(const tic_settings *, uint32_t);
 
 /// Sets the default step mode, also known as the microstepping mode.  This
 /// should be one of the TIC_STEP_MODE_* macros, but not all step modes are

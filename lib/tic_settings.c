@@ -166,6 +166,22 @@ tic_error * tic_settings_copy(const tic_settings * source, tic_settings ** dest)
   return error;
 }
 
+uint32_t tic_settings_achievable_baud_rate(const tic_settings * settings,
+  uint32_t baud)
+{
+  if (settings == NULL) { return 0; }
+  uint16_t brg = tic_baud_rate_to_brg(baud);
+  return tic_baud_rate_from_brg(brg);
+}
+
+uint32_t tic_settings_achievable_current_limit(const tic_settings * settings,
+  uint32_t current_limit)
+{
+  if (settings == NULL) { return 0; }
+  uint8_t code = tic_current_limit_to_code(current_limit);
+  return tic_current_limit_from_code(code);
+}
+
 // TODO: use present and future tense for these messages, not past tense
 
 static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings)
@@ -187,10 +203,7 @@ static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings
         "Warning: The serial baud rate was too high so it was changed to %u.\n", baud);
     }
 
-    // Fix the baud rate to be a close approximation of what it will actually be.
-    uint16_t brg = tic_baud_rate_to_brg(baud);
-    baud = tic_baud_rate_from_brg(brg);
-
+    baud = tic_settings_achievable_baud_rate(settings, baud);
     tic_settings_serial_baud_rate_set(settings, baud);
   }
 
@@ -337,20 +350,18 @@ static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings
   }
 
   {
-    uint32_t current_limit = tic_settings_current_limit_get(settings);
+    uint32_t current = tic_settings_current_limit_get(settings);
 
-    if (current_limit > TIC_MAX_ALLOWED_CURRENT)
+    if (current > TIC_MAX_ALLOWED_CURRENT)
     {
-      current_limit = TIC_MAX_ALLOWED_CURRENT;
+      current = TIC_MAX_ALLOWED_CURRENT;
       tic_sprintf(warnings,
         "Warning: The current limit was too high "
-        "so it will be lowered to %u mA.\n", current_limit);
+        "so it will be lowered to %u mA.\n", current);
     }
 
-    uint8_t code = tic_current_limit_to_code(current_limit);
-    current_limit = tic_current_limit_from_code(code);
-
-    tic_settings_current_limit_set(settings, current_limit);
+    current = tic_settings_achievable_current_limit(settings, current);
+    tic_settings_current_limit_set(settings, current);
   }
 
   {
