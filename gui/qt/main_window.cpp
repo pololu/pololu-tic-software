@@ -126,6 +126,11 @@ void main_window::set_apply_settings_enabled(bool enabled)
   apply_settings_action->setEnabled(enabled);
 }
 
+void main_window::set_disconnect_enabled(bool enabled)
+{
+  disconnect_action->setEnabled(enabled);
+}
+
 void main_window::set_reload_settings_enabled(bool enabled)
 {
   reload_settings_action->setEnabled(enabled);
@@ -355,6 +360,11 @@ void main_window::closeEvent(QCloseEvent * event)
     // User canceled exit when prompted about settings that have not been applied.
     event->ignore();
   }
+}
+
+void main_window::on_disconnect_action_triggered()
+{
+  controller->disconnect_device();
 }
 
 void main_window::on_reload_settings_action_triggered()
@@ -698,6 +708,13 @@ void main_window::setup_menu_bar()
   file_menu->addAction(exit_action);
 
   device_menu = menu_bar->addMenu("");
+
+  disconnect_action = new QAction(this);
+  disconnect_action->setObjectName("disconnect_action");
+  disconnect_action->setShortcut(Qt::CTRL + Qt::Key_D);
+  device_menu->addAction(disconnect_action);
+
+  device_menu->addSeparator();
 
   reload_settings_action = new QAction(this);
   reload_settings_action->setObjectName("reload_settings_action");
@@ -1255,6 +1272,7 @@ void main_window::retranslate()
   file_menu->setTitle(tr("&File"));
   exit_action->setText(tr("E&xit"));
   device_menu->setTitle(tr("&Device"));
+  disconnect_action->setText(tr("&Disconnect"));
   reload_settings_action->setText(tr("Re&load settings from device"));
   restore_defaults_action->setText(tr("&Restore default settings"));
   apply_settings_action->setText(tr("&Apply settings"));

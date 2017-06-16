@@ -385,6 +385,7 @@ void main_controller::handle_device_changed()
     }
   }
   
+  window->set_disconnect_enabled(connected());
   window->set_reload_settings_enabled(connected());
   window->set_restore_defaults_enabled(connected());
   window->set_main_boxes_enabled(connected());

@@ -59,9 +59,6 @@ public:
    * disabled. */
   void set_apply_settings_enabled(bool enabled);
 
-  /** Controls whether the connect action is enabled or disabled. */
-  void set_connect_enabled(bool enabled);
-
   /** Controls whether the disconnect action is enabled or disabled. */
   void set_disconnect_enabled(bool enabled);
 
@@ -125,6 +122,7 @@ protected:
   void closeEvent(QCloseEvent *) override;
     
 private slots:
+  void on_disconnect_action_triggered();
   void on_reload_settings_action_triggered();
   void on_restore_defaults_action_triggered();
   void on_update_timer_timeout();
@@ -205,7 +203,6 @@ private:
   QMenu * file_menu;
   QAction * exit_action;
   QMenu * device_menu;
-  QAction * connect_action;
   QAction * disconnect_action;
   QAction * reload_settings_action;
   QAction * restore_defaults_action;
