@@ -65,6 +65,9 @@ public:
 
   // These are called when the user changes a setting.
   void handle_control_mode_input(uint8_t control_mode);
+  void handle_serial_baud_rate_input(uint32_t serial_baud_rate);
+  void handle_serial_device_number_input(uint8_t serial_device_number);
+  void handle_serial_crc_enabled_input(bool serial_crc_enabled);
   void handle_input_min_input(uint16_t input_min);
   void handle_input_neutral_min_input(uint16_t input_neutral_min);
   void handle_input_neutral_max_input(uint16_t input_neutral_max);

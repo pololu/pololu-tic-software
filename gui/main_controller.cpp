@@ -413,6 +413,9 @@ void main_controller::handle_settings_changed()
 {
   // [all-settings]
   window->set_control_mode(tic_settings_control_mode_get(settings.pointer_get()));
+  window->set_serial_baud_rate(tic_settings_serial_baud_rate_get(settings.pointer_get()));
+  window->set_serial_device_number(tic_settings_serial_device_number_get(settings.pointer_get()));
+  window->set_serial_crc_enabled(tic_settings_serial_crc_enabled_get(settings.pointer_get()));
   window->set_input_min(tic_settings_input_min_get(settings.pointer_get()));
   window->set_input_neutral_min(tic_settings_input_neutral_min_get(settings.pointer_get()));
   window->set_input_neutral_max(tic_settings_input_neutral_max_get(settings.pointer_get()));
@@ -456,6 +459,30 @@ void main_controller::handle_control_mode_input(uint8_t control_mode)
 {
   if (!connected()) { return; }
   tic_settings_control_mode_set(settings.pointer_get(), control_mode);
+  settings_modified = true;
+  handle_settings_changed();
+}
+
+void main_controller::handle_serial_baud_rate_input(uint32_t serial_baud_rate)
+{
+  if (!connected()) { return; }
+  tic_settings_serial_baud_rate_set(settings.pointer_get(), serial_baud_rate);
+  settings_modified = true;
+  handle_settings_changed();
+}
+
+void main_controller::handle_serial_device_number_input(uint8_t serial_device_number)
+{
+  if (!connected()) { return; }
+  tic_settings_serial_device_number_set(settings.pointer_get(), serial_device_number);
+  settings_modified = true;
+  handle_settings_changed();
+}
+
+void main_controller::handle_serial_crc_enabled_input(bool serial_crc_enabled)
+{
+  if (!connected()) { return; }
+  tic_settings_serial_crc_enabled_set(settings.pointer_get(), serial_crc_enabled);
   settings_modified = true;
   handle_settings_changed();
 }

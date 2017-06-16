@@ -85,6 +85,9 @@ public:
   void set_manual_target_range(int32_t target_min, int32_t target_max);
   void set_manual_target(int32_t target);
   
+  void set_serial_baud_rate(uint32_t serial_baud_rate);
+  void set_serial_device_number(uint8_t serial_device_number);
+  void set_serial_crc_enabled(bool serial_crc_enabled);
   void set_input_min(uint32_t input_min);
   void set_input_neutral_min(uint32_t input_neutral_min);
   void set_input_neutral_max(uint32_t input_neutral_max);
@@ -143,6 +146,9 @@ private slots:
   void on_apply_settings_action_triggered();
   
   void on_control_mode_value_currentIndexChanged(int index);
+  void on_serial_baud_rate_value_valueChanged(int value);
+  void on_serial_device_number_value_valueChanged(int value);
+  void on_serial_crc_enabled_checkbox_stateChanged(int state);
   void on_input_min_value_valueChanged(int value);
   void on_input_neutral_min_value_valueChanged(int value);
   void on_input_neutral_max_value_valueChanged(int value);
@@ -186,6 +192,7 @@ private:
   QWidget * setup_manual_target_box();
   QLayout * setup_manual_target_mode_layout();
   QWidget * setup_manual_target_entry_widget();
+  QWidget * setup_serial_settings_box();
   QWidget * setup_scaling_settings_box();
   QWidget * setup_motor_settings_box();
   QLayout * setup_footer();
@@ -262,6 +269,14 @@ private:
   QGridLayout * control_mode_widget_layout;
   QLabel * control_mode_label;
   QComboBox * control_mode_value;
+  
+  QGroupBox * serial_settings_box;
+  QGridLayout * serial_settings_box_layout;
+  QLabel * serial_baud_rate_label;
+  QSpinBox * serial_baud_rate_value;
+  QLabel * serial_device_number_label;
+  QSpinBox * serial_device_number_value;
+  QCheckBox * serial_crc_enabled_checkbox;
   
   QGroupBox * scaling_settings_box;
   QGridLayout * scaling_settings_box_layout;

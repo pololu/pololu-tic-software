@@ -207,6 +207,23 @@ void main_window::set_manual_target(int32_t target)
   suppress_events = false;
 }
 
+void main_window::set_serial_baud_rate(uint32_t serial_baud_rate)
+{
+  set_spin_box(serial_baud_rate_value, serial_baud_rate);
+}
+
+void main_window::set_serial_device_number(uint8_t serial_device_number)
+{
+  set_spin_box(serial_device_number_value, serial_device_number);
+}
+
+void main_window::set_serial_crc_enabled(bool serial_crc_enabled)
+{
+  suppress_events = true;
+  serial_crc_enabled_checkbox->setChecked(serial_crc_enabled);
+  suppress_events = false;
+}
+
 void main_window::set_input_min(uint32_t input_min)
 {
   set_spin_box(input_min_value, input_min);
@@ -395,19 +412,7 @@ void main_window::on_device_list_value_currentIndexChanged(int index)
     controller->handle_model_changed();
   }
 }
-
-void main_window::on_apply_settings_action_triggered()
-{
-  controller->apply_settings();
-}
-
-void main_window::on_control_mode_value_currentIndexChanged(int index)
-{
-  if (suppress_events) { return; }
-  uint8_t control_mode = control_mode_value->itemData(index).toUInt();
-  controller->handle_control_mode_input(control_mode);
-}
-
+  
 void main_window::on_manual_target_position_mode_radio_toggled(bool checked)
 {
   if (checked)
@@ -485,6 +490,36 @@ void main_window::on_auto_set_target_checkbox_stateChanged(int state)
   }
 }
 
+void main_window::on_apply_settings_action_triggered()
+{
+  controller->apply_settings();
+}
+
+void main_window::on_control_mode_value_currentIndexChanged(int index)
+{
+  if (suppress_events) { return; }
+  uint8_t control_mode = control_mode_value->itemData(index).toUInt();
+  controller->handle_control_mode_input(control_mode);
+}
+
+void main_window::on_serial_baud_rate_value_valueChanged(int value)
+{
+  if (suppress_events) { return; }
+  controller->handle_serial_baud_rate_input(value);
+}
+
+void main_window::on_serial_device_number_value_valueChanged(int value)
+{
+  if (suppress_events) { return; }
+  controller->handle_serial_device_number_input(value);
+}
+
+void main_window::on_serial_crc_enabled_checkbox_stateChanged(int state)
+{
+  if (suppress_events) { return; }
+  controller->handle_serial_crc_enabled_input(state == Qt::Checked);
+}
+  
 void main_window::on_input_min_value_valueChanged(int value)
 {
   if (suppress_events) { return; }
@@ -738,6 +773,7 @@ QLayout * main_window::setup_left_column()
   layout->addWidget(setup_status_box());
   layout->addWidget(setup_control_mode_widget());
   layout->addWidget(setup_manual_target_box());
+  layout->addStretch(1);
   
   return left_column_layout;
 }
@@ -746,6 +782,7 @@ QLayout * main_window::setup_right_column()
 {
   QVBoxLayout * layout = right_column_layout = new QVBoxLayout();
   
+  layout->addWidget(setup_serial_settings_box());
   layout->addWidget(setup_scaling_settings_box());
   layout->addWidget(setup_motor_settings_box());
   layout->addStretch(1);
@@ -939,10 +976,48 @@ QWidget * main_window::setup_control_mode_widget()
     row++;
   }
   
-  //layout->setRowStretch(row, 1);
-
   control_mode_widget->setLayout(layout);
   return control_mode_widget;
+}
+
+QWidget * main_window::setup_serial_settings_box()
+{
+  serial_settings_box = new QGroupBox();
+  QGridLayout * layout = serial_settings_box_layout = new QGridLayout();
+  layout->setColumnStretch(1, 1);
+  int row = 0;
+    
+  {
+    serial_baud_rate_value = new QSpinBox();
+    serial_baud_rate_value->setObjectName("serial_baud_rate_value");
+    serial_baud_rate_value->setRange(TIC_MIN_ALLOWED_BAUD_RATE, TIC_MAX_ALLOWED_BAUD_RATE);
+    serial_baud_rate_label = new QLabel();
+    serial_baud_rate_label->setBuddy(serial_baud_rate_value);
+    layout->addWidget(serial_baud_rate_label, row, 0, FIELD_LABEL_ALIGNMENT);
+    layout->addWidget(serial_baud_rate_value, row, 1, Qt::AlignLeft);
+    row++;
+  }
+  
+  {
+    serial_device_number_value = new QSpinBox();
+    serial_device_number_value->setObjectName("serial_device_number_value");
+    serial_device_number_value->setRange(0, 0x7F);
+    serial_device_number_label = new QLabel();
+    serial_device_number_label->setBuddy(serial_device_number_value);
+    layout->addWidget(serial_device_number_label, row, 0, FIELD_LABEL_ALIGNMENT);
+    layout->addWidget(serial_device_number_value, row, 1, Qt::AlignLeft);
+    row++;
+  }
+  
+  {
+    serial_crc_enabled_checkbox = new QCheckBox();
+    serial_crc_enabled_checkbox->setObjectName("serial_crc_enabled_checkbox");
+    layout->addWidget(serial_crc_enabled_checkbox, row, 0, 1, 2, Qt::AlignLeft);
+    row++;
+  }
+  
+  serial_settings_box->setLayout(layout);
+  return serial_settings_box;
 }
 
 QWidget * main_window::setup_scaling_settings_box()
@@ -967,7 +1042,7 @@ QWidget * main_window::setup_scaling_settings_box()
     input_max_value->setRange(0, 0xFFFF);
     output_max_value = new QSpinBox();
     output_max_value->setObjectName("output_max_value");
-    output_max_value->setRange(0, 0x7FFFFFF);
+    output_max_value->setRange(0, 0x7FFFFFFF);
     layout->addWidget(scaling_max_label, row, 0, FIELD_LABEL_ALIGNMENT);
     layout->addWidget(input_max_value, row, 1, Qt::AlignLeft);
     layout->addWidget(output_max_value, row, 2, Qt::AlignLeft);
@@ -1001,7 +1076,7 @@ QWidget * main_window::setup_scaling_settings_box()
     input_min_value->setRange(0, 0xFFFF);
     output_min_value = new QSpinBox();
     output_min_value->setObjectName("output_min_value");
-    output_min_value->setRange(-0x7FFFFFF, 0);
+    output_min_value->setRange(-0x7FFFFFFF, 0);
     layout->addWidget(scaling_min_label, row, 0, FIELD_LABEL_ALIGNMENT);
     layout->addWidget(input_min_value, row, 1, Qt::AlignLeft);
     layout->addWidget(output_min_value, row, 2, Qt::AlignLeft);
@@ -1055,8 +1130,6 @@ QWidget * main_window::setup_scaling_settings_box()
     row++;
   }
   
-  //layout->setRowStretch(row, 1);
-
   scaling_settings_box->setLayout(layout);
   return scaling_settings_box;
 }
@@ -1160,7 +1233,6 @@ QWidget * main_window::setup_motor_settings_box()
 QLayout * main_window::setup_footer()
 {
   QHBoxLayout * layout = footer_layout = new QHBoxLayout();
-  //layout->setContentsMargins(0, 0, 0, 0);
 
   layout->addWidget(setup_apply_button(), 0, Qt::AlignRight);
     
@@ -1219,6 +1291,11 @@ void main_window::retranslate()
   
   // [all-settings]
   control_mode_label->setText(tr("Control mode:"));
+  
+  serial_settings_box->setTitle(tr("Serial settings"));
+  serial_baud_rate_label->setText(tr("Baud rate:"));
+  serial_device_number_label->setText(tr("Device number:"));
+  serial_crc_enabled_checkbox->setText(tr("Enable CRC"));
   
   scaling_settings_box->setTitle(tr("Input and scaling settings"));
   scaling_input_label->setText(tr("Input"));
