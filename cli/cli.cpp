@@ -14,6 +14,7 @@ static const char help[] =
   "  -p, --position NUM          Set target position in microsteps.\n"
   "  -y, --velocity NUM          Set target velocity in microsteps / 10000 s.\n"
   "  --set-current-position NUM  Set where the controller thinks it currently is.\n"
+  // TODO: --stop, --enable-driver, --disable-driver
   "  --speed-max NUM             Set the speed maximum.\n"
   "  --speed-min NUM             Set the speed minimum.\n"
   "  --accel-max NUM             Set the acceleration maximum.\n"

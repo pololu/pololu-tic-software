@@ -98,11 +98,6 @@ tic_error * tic_settings_to_string(const tic_settings * settings, char ** string
   }
 
   {
-    uint8_t address = tic_settings_i2c_address_get(settings);
-    tic_sprintf(&str, "i2c_address: %u\n", address);
-  }
-
-  {
     uint16_t command_timeout = tic_settings_command_timeout_get(settings);
     tic_sprintf(&str, "command_timeout: %u\n", command_timeout);
   }
