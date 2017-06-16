@@ -391,11 +391,17 @@ void main_controller::handle_device_changed()
   window->set_main_boxes_enabled(connected());
 }
 
+static std::string convert_mv_to_v_string(uint32_t mv)
+{
+  uint32_t dv = (mv + 50) / 100;
+  return std::to_string(dv / 10) + "." + std::to_string(dv % 10) + " V";
+}
+
 void main_controller::handle_variables_changed()
 {
   //todo get_device_reset()
   
-  window->set_vin_voltage(std::to_string(variables.get_vin_voltage()) + " mV");
+  window->set_vin_voltage(convert_mv_to_v_string(variables.get_vin_voltage()));
   
   if (variables.get_planning_mode() == TIC_PLANNING_MODE_TARGET_POSITION)
   {
