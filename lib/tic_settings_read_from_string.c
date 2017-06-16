@@ -122,19 +122,6 @@ static tic_error * apply_string_pair(tic_settings * settings,
     }
     tic_settings_serial_device_number_set(settings, num);
   }
-  else if (!strcmp(key, "i2c_address"))
-  {
-    int64_t address;
-    if (!tic_string_to_i64(value, &address))
-    {
-      return tic_error_create("Invalid i2c_address value.");
-    }
-    if (address < 0 || address > 0xFF)
-    {
-      return tic_error_create("The i2c_address value is out of range.");
-    }
-    tic_settings_i2c_address_set(settings, address);
-  }
   else if (!strcmp(key, "command_timeout"))
   {
     int64_t command_timeout;
