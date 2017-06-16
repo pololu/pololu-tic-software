@@ -291,21 +291,32 @@ void main_window::set_encoder_unlimited(bool encoder_unlimited)
 void main_window::set_speed_max(uint32_t speed_max)
 {
   set_spin_box(speed_max_value, speed_max);
+  speed_max_value_pretty->setText(QString(convert_speed_to_pps_string(speed_max).c_str()));
 }
 
 void main_window::set_speed_min(uint32_t speed_min)
 {
   set_spin_box(speed_min_value, speed_min);
+  speed_min_value_pretty->setText(QString(convert_speed_to_pps_string(speed_min).c_str()));
 }
 
 void main_window::set_accel_max(uint32_t accel_max)
 {
   set_spin_box(accel_max_value, accel_max);
+  accel_max_value_pretty->setText(QString(convert_accel_to_pps2_string(accel_max).c_str()));
 }
 
 void main_window::set_decel_max(uint32_t decel_max)
 {
   set_spin_box(decel_max_value, decel_max);
+  if (decel_max == 0)
+  {
+    decel_max_value_pretty->setText(tr("= acceleration max"));
+  }
+  else
+  {
+    decel_max_value_pretty->setText(QString(convert_accel_to_pps2_string(decel_max).c_str()));
+  }
 }
 
 void main_window::set_step_mode(uint8_t step_mode)
@@ -990,7 +1001,7 @@ QWidget * main_window::setup_control_mode_widget()
   {
     control_mode_value = new QComboBox();
     control_mode_value->setObjectName("control_mode_value");
-    control_mode_value->addItem("Serial\u2009/\u2009I\u00B2C\u2009/\u2009USB", TIC_CONTROL_MODE_SERIAL);
+    control_mode_value->addItem(u8"Serial\u2009/\u2009I\u00B2C\u2009/\u2009USB", TIC_CONTROL_MODE_SERIAL);
     control_mode_value->addItem("RC position", TIC_CONTROL_MODE_RC_POSITION);
     control_mode_value->addItem("RC speed", TIC_CONTROL_MODE_RC_SPEED);
     control_mode_value->addItem("Analog position", TIC_CONTROL_MODE_ANALOG_POSITION);
@@ -1167,7 +1178,7 @@ QWidget * main_window::setup_motor_settings_box()
 {
   motor_settings_box = new QGroupBox();
   QGridLayout * layout = motor_settings_box_layout = new QGridLayout();
-  layout->setColumnStretch(1, 1);
+  layout->setColumnStretch(1, 2);
   int row = 0;
 
   {
@@ -1176,8 +1187,10 @@ QWidget * main_window::setup_motor_settings_box()
     speed_max_value->setRange(0, TIC_MAX_ALLOWED_SPEED);
     speed_max_label = new QLabel();
     speed_max_label->setBuddy(speed_max_value);
+    speed_max_value_pretty = new QLabel();
     layout->addWidget(speed_max_label, row, 0, FIELD_LABEL_ALIGNMENT);
     layout->addWidget(speed_max_value, row, 1, Qt::AlignLeft);
+    layout->addWidget(speed_max_value_pretty, row, 2, Qt::AlignLeft);
     row++;
   }
   
@@ -1187,8 +1200,10 @@ QWidget * main_window::setup_motor_settings_box()
     speed_min_value->setRange(0, TIC_MAX_ALLOWED_SPEED);
     speed_min_label = new QLabel();
     speed_min_label->setBuddy(speed_min_value);
+    speed_min_value_pretty = new QLabel();
     layout->addWidget(speed_min_label, row, 0, FIELD_LABEL_ALIGNMENT);
     layout->addWidget(speed_min_value, row, 1, Qt::AlignLeft);
+    layout->addWidget(speed_min_value_pretty, row, 2, Qt::AlignLeft);
     row++;
   }
   
@@ -1198,8 +1213,18 @@ QWidget * main_window::setup_motor_settings_box()
     accel_max_value->setRange(TIC_MIN_ALLOWED_ACCEL, TIC_MAX_ALLOWED_ACCEL);
     accel_max_label = new QLabel();
     accel_max_label->setBuddy(accel_max_value);
+    accel_max_value_pretty = new QLabel();
     layout->addWidget(accel_max_label, row, 0, FIELD_LABEL_ALIGNMENT);
     layout->addWidget(accel_max_value, row, 1, Qt::AlignLeft);
+    layout->addWidget(accel_max_value_pretty, row, 2, Qt::AlignLeft);
+    
+   // Make enough room for the labels to display the largest possible pretty values.
+    {
+      QLabel tmp_label;
+      tmp_label.setText(QString(convert_accel_to_pps2_string(0x7FFFFFF).c_str()));
+      accel_max_value_pretty->setMinimumWidth(tmp_label.sizeHint().width());
+    }
+    
     row++;
   }
   
@@ -1209,8 +1234,10 @@ QWidget * main_window::setup_motor_settings_box()
     decel_max_value->setRange(0, TIC_MAX_ALLOWED_ACCEL);
     decel_max_label = new QLabel();
     decel_max_label->setBuddy(decel_max_value);
+    decel_max_value_pretty = new QLabel();
     layout->addWidget(decel_max_label, row, 0, FIELD_LABEL_ALIGNMENT);
     layout->addWidget(decel_max_value, row, 1, Qt::AlignLeft);
+    layout->addWidget(decel_max_value_pretty, row, 2, Qt::AlignLeft);
     row++;
   }
   
@@ -1305,7 +1332,7 @@ void main_window::retranslate()
   current_position_label->setText(tr("Current position:"));
   current_velocity_label->setText(tr("Current velocity:"));
   
-  manual_target_box->setTitle(tr("Set target (Serial\u2009/\u2009I\u00B2C\u2009/\u2009USB mode only)"));
+  manual_target_box->setTitle(tr(u8"Set target (Serial\u2009/\u2009I\u00B2C\u2009/\u2009USB mode only)"));
   manual_target_position_mode_radio->setText(tr("Set position"));
   manual_target_speed_mode_radio->setText(tr("Set speed"));
   if (manual_target_position_mode_radio->isChecked())

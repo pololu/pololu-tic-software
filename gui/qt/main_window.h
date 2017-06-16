@@ -304,12 +304,16 @@ private:
   QGridLayout * motor_settings_box_layout;
   QLabel * speed_max_label;
   QSpinBox * speed_max_value;
+  QLabel * speed_max_value_pretty;
   QLabel * speed_min_label;
   QSpinBox * speed_min_value;
+  QLabel * speed_min_value_pretty;
   QLabel * accel_max_label;
   QSpinBox * accel_max_value;
+  QLabel * accel_max_value_pretty;
   QLabel * decel_max_label;
   QSpinBox * decel_max_value;
+  QLabel * decel_max_value_pretty;
   QLabel * step_mode_label;
   QComboBox * step_mode_value;
   QLabel * current_limit_label;

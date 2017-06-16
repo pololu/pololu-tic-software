@@ -2,6 +2,9 @@
 #include "main_window.h"
 
 #include <cassert>
+#include <cmath>
+#include <iomanip>
+#include <sstream>
 
 /** This is how often we fetch the variables from the device. */
 static uint32_t const UPDATE_INTERVAL_MS = 100;
@@ -393,8 +396,37 @@ void main_controller::handle_device_changed()
 
 static std::string convert_mv_to_v_string(uint32_t mv)
 {
+  std::stringstream ss;
   uint32_t dv = (mv + 50) / 100;
-  return std::to_string(dv / 10) + "." + std::to_string(dv % 10) + " V";
+  
+  ss << (dv / 10) << "." << (dv % 10) << " V";
+  return ss.str();
+}
+
+std::string convert_speed_to_pps_string(int32_t speed)
+{
+  static uint8_t const decimal_digits = std::log10(TIC_SPEED_UNITS_PER_HZ);
+  
+  std::stringstream ss;
+  std::string sign = (speed < 0) ? "-" : "";
+  
+  ss << sign << std::abs(speed / TIC_SPEED_UNITS_PER_HZ) << "." <<
+    std::setfill('0') << std::setw(decimal_digits) <<
+    std::abs(speed % TIC_SPEED_UNITS_PER_HZ) << " pulses/s";
+  return ss.str();
+}
+
+std::string convert_accel_to_pps2_string(int32_t accel)
+{
+  static uint8_t const decimal_digits = std::log10(TIC_ACCEL_UNITS_PER_HZ2);
+  
+  std::stringstream ss;
+  std::string sign = (accel < 0) ? "-" : "";
+  
+  ss << sign << std::abs(accel / TIC_ACCEL_UNITS_PER_HZ2) << "." <<
+    std::setfill('0') << std::setw(decimal_digits) <<
+    std::abs(accel % TIC_ACCEL_UNITS_PER_HZ2) << u8" pulses/s\u00B2";
+  return ss.str();
 }
 
 void main_controller::handle_variables_changed()
@@ -409,11 +441,13 @@ void main_controller::handle_variables_changed()
   }
   else if (variables.get_planning_mode() == TIC_PLANNING_MODE_TARGET_VELOCITY)
   {
-    window->set_target_velocity(std::to_string(variables.get_target_velocity()));
+    window->set_target_velocity(std::to_string(variables.get_target_velocity()) +
+      " (" + convert_speed_to_pps_string(variables.get_target_velocity()) + ")");
   }
   
   window->set_current_position(std::to_string(variables.get_current_position()));
-  window->set_current_velocity(std::to_string(variables.get_current_velocity()));
+  window->set_current_velocity(std::to_string(variables.get_current_velocity()) +
+    " (" + convert_speed_to_pps_string(variables.get_current_velocity()) + ")");
 }
 
 void main_controller::handle_settings_changed()

@@ -145,3 +145,6 @@ private:
   
   main_window * window;
 };
+
+std::string convert_speed_to_pps_string(int32_t speed);
+std::string convert_accel_to_pps2_string(int32_t accel);
