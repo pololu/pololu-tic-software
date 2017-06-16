@@ -145,6 +145,7 @@ private slots:
   
   void on_control_mode_value_currentIndexChanged(int index);
   void on_serial_baud_rate_value_valueChanged(int value);
+  void on_serial_baud_rate_value_editingFinished();
   void on_serial_device_number_value_valueChanged(int value);
   void on_serial_crc_enabled_checkbox_stateChanged(int state);
   void on_input_min_value_valueChanged(int value);
@@ -164,6 +165,7 @@ private slots:
   void on_decel_max_value_valueChanged(int value);
   void on_step_mode_value_currentIndexChanged(int index);
   void on_current_limit_value_valueChanged(int value);
+  void on_current_limit_value_editingFinished();
   void on_decay_mode_value_currentIndexChanged(int index);
   
 private:  

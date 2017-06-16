@@ -518,6 +518,12 @@ void main_window::on_serial_baud_rate_value_valueChanged(int value)
   controller->handle_serial_baud_rate_input(value);
 }
 
+void main_window::on_serial_baud_rate_value_editingFinished()
+{
+  if (suppress_events) { return; }
+  controller->handle_serial_baud_rate_input_finished();
+}
+
 void main_window::on_serial_device_number_value_valueChanged(int value)
 {
   if (suppress_events) { return; }
@@ -631,6 +637,12 @@ void main_window::on_current_limit_value_valueChanged(int value)
 {
   if (suppress_events) { return; }
   controller->handle_current_limit_input(value);
+}
+
+void main_window::on_current_limit_value_editingFinished()
+{
+  if (suppress_events) { return; }
+  controller->handle_current_limit_input_finished();
 }
 
 void main_window::on_decay_mode_value_currentIndexChanged(int index)

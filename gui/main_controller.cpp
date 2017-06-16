@@ -472,6 +472,16 @@ void main_controller::handle_serial_baud_rate_input(uint32_t serial_baud_rate)
   handle_settings_changed();
 }
 
+void main_controller::handle_serial_baud_rate_input_finished()
+{
+  if (!connected()) { return; }
+  uint32_t serial_baud_rate = tic_settings_serial_baud_rate_get(settings.pointer_get());
+  serial_baud_rate = tic_settings_achievable_baud_rate(settings.pointer_get(), serial_baud_rate);
+  tic_settings_serial_baud_rate_set(settings.pointer_get(), serial_baud_rate);
+  settings_modified = true;
+  handle_settings_changed();
+}
+
 void main_controller::handle_serial_device_number_input(uint8_t serial_device_number)
 {
   if (!connected()) { return; }
@@ -619,6 +629,16 @@ void main_controller::handle_step_mode_input(uint8_t step_mode)
 void main_controller::handle_current_limit_input(uint32_t current_limit)
 {
   if (!connected()) { return; }
+  tic_settings_current_limit_set(settings.pointer_get(), current_limit);
+  settings_modified = true;
+  handle_settings_changed();
+}
+
+void main_controller::handle_current_limit_input_finished()
+{
+  if (!connected()) { return; }
+  uint32_t current_limit = tic_settings_current_limit_get(settings.pointer_get());
+  current_limit = tic_settings_achievable_current_limit(settings.pointer_get(), current_limit);
   tic_settings_current_limit_set(settings.pointer_get(), current_limit);
   settings_modified = true;
   handle_settings_changed();
