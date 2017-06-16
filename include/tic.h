@@ -587,7 +587,7 @@ uint32_t tic_settings_serial_baud_rate_get(const tic_settings *);
 /// Returns an acheivable baud rate corresponding to the specified baud rate.
 /// Does not modify the settings object.
 TIC_API
-uint32_t tic_settings_achievable_baud_rate(const tic_settings *, uint32_t);
+uint32_t tic_settings_achievable_serial_baud_rate(const tic_settings *, uint32_t);
 
 /// Sets the serial device number, a number between 0 and 0x7F that is used to
 /// identify the device when using the Pololu protocol.

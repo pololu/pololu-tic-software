@@ -516,7 +516,8 @@ void main_controller::handle_serial_baud_rate_input_finished()
 {
   if (!connected()) { return; }
   uint32_t serial_baud_rate = tic_settings_serial_baud_rate_get(settings.pointer_get());
-  serial_baud_rate = tic_settings_achievable_baud_rate(settings.pointer_get(), serial_baud_rate);
+  serial_baud_rate = tic_settings_achievable_serial_baud_rate(
+    settings.pointer_get(), serial_baud_rate);
   tic_settings_serial_baud_rate_set(settings.pointer_get(), serial_baud_rate);
   settings_modified = true;
   handle_settings_changed();
