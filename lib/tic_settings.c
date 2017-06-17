@@ -164,7 +164,7 @@ tic_error * tic_settings_copy(const tic_settings * source, tic_settings ** dest)
   return error;
 }
 
-uint32_t tic_settings_achievable_baud_rate(const tic_settings * settings,
+uint32_t tic_settings_achievable_serial_baud_rate(const tic_settings * settings,
   uint32_t baud)
 {
   if (settings == NULL) { return 0; }
@@ -201,7 +201,7 @@ static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings
         "Warning: The serial baud rate was too high so it was changed to %u.\n", baud);
     }
 
-    baud = tic_settings_achievable_baud_rate(settings, baud);
+    baud = tic_settings_achievable_serial_baud_rate(settings, baud);
     tic_settings_serial_baud_rate_set(settings, baud);
   }
 
@@ -264,9 +264,9 @@ static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings
     {
       error_min = 0;
       min = 0;
-      neutral_min = 0x8000;
-      neutral_max = 0x8000;
-      max = 0xFFFF;
+      neutral_min = 2048;
+      neutral_max = 2048;
+      max = 4095;
       error_max = 0xFFFF;
 
       tic_sprintf(warnings,
