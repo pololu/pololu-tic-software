@@ -75,6 +75,7 @@ public:
   void set_vin_voltage(std::string const & vin_voltage);
   void set_target_position(std::string const & target_position);
   void set_target_velocity(std::string const & target_velocity);
+  void set_target_none();
   void set_current_position(std::string const & current_position);
   void set_current_velocity(std::string const & current_velocity);
   

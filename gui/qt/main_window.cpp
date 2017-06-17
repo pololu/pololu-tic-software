@@ -178,6 +178,12 @@ void main_window::set_target_velocity(std::string const & target_velocity)
   target_value->setText(QString(target_velocity.c_str()));
 }
 
+void main_window::set_target_none()
+{
+  target_label->setText(tr("Target:"));
+  target_value->setText(tr("No target"));
+}
+
 void main_window::set_current_position(std::string const & current_position)
 {
   current_position_value->setText(QString(current_position.c_str()));
@@ -209,6 +215,7 @@ void main_window::set_manual_target(int32_t target)
 {
   suppress_events = true;
   manual_target_entry_value->setValue(target);
+  manual_target_scroll_bar->setValue(target);
   suppress_events = false;
 }
 
@@ -436,6 +443,7 @@ void main_window::on_device_list_value_currentIndexChanged(int index)
   
 void main_window::on_manual_target_position_mode_radio_toggled(bool checked)
 {
+  if (suppress_events) { return; }
   if (checked)
   {
     set_target_button->setText(tr("Set target position"));
@@ -450,13 +458,13 @@ void main_window::on_manual_target_position_mode_radio_toggled(bool checked)
 
 void main_window::on_manual_target_scroll_bar_valueChanged(int value)
 {
-  // Don't suppress events; fall through to on_manual_target_entry_value_valueChanged
+  if (suppress_events) { return; }
   manual_target_entry_value->setValue(value);
 }
 
 void main_window::on_manual_target_scroll_bar_sliderReleased()
 {
-  // Don't suppress events; fall through to on_manual_target_scroll_bar_valueChanged
+  if (suppress_events) { return; }
   if (auto_zero_target_checkbox->isChecked())
   {
     manual_target_scroll_bar->setValue(0);
@@ -465,9 +473,8 @@ void main_window::on_manual_target_scroll_bar_sliderReleased()
 
 void main_window::on_manual_target_entry_value_valueChanged(int value)
 {
-  suppress_events = true;
+  if (suppress_events) { return; }
   manual_target_scroll_bar->setValue(value);
-  suppress_events = false;
   
   if (auto_set_target_checkbox->isChecked())
   {
@@ -487,6 +494,7 @@ void main_window::on_manual_target_return_key_shortcut_activated()
 
 void main_window::on_set_target_button_clicked()
 {
+  if (suppress_events) { return; }
   if (manual_target_position_mode_radio->isChecked())
   {
     controller->set_target_position(manual_target_entry_value->value());
@@ -499,6 +507,7 @@ void main_window::on_set_target_button_clicked()
 
 void main_window::on_auto_set_target_checkbox_stateChanged(int state)
 {
+  if (suppress_events) { return; }
   if (state == Qt::Checked)
   {
     on_set_target_button_clicked();
@@ -881,7 +890,7 @@ QWidget * main_window::setup_manual_target_box()
   
   layout->addLayout(setup_manual_target_mode_layout());
   
-  layout->addSpacing(central_widget->fontMetrics().height());
+  layout->addSpacing(fontMetrics().height());
   
   layout->addWidget(setup_manual_target_entry_widget());
 
@@ -891,7 +900,7 @@ QWidget * main_window::setup_manual_target_box()
     layout->addWidget(set_target_button, 0, Qt::AlignCenter);
   }
   
-  layout->addSpacing(central_widget->fontMetrics().height());
+  layout->addSpacing(fontMetrics().height());
   
   {
     auto_set_target_checkbox = new QCheckBox();
@@ -902,7 +911,6 @@ QWidget * main_window::setup_manual_target_box()
   
   {
     auto_zero_target_checkbox = new QCheckBox();
-    auto_zero_target_checkbox->setChecked(true);
     layout->addWidget(auto_zero_target_checkbox, 0, Qt::AlignLeft);
   }
     
@@ -920,7 +928,7 @@ QLayout * main_window::setup_manual_target_mode_layout()
   manual_target_speed_mode_radio = new QRadioButton();
   manual_target_speed_mode_radio->setObjectName("manual_target_speed_mode_radio");
   layout->addWidget(manual_target_position_mode_radio, 1, Qt::AlignRight);
-  layout->addSpacing(central_widget->fontMetrics().height());
+  layout->addSpacing(fontMetrics().height());
   layout->addWidget(manual_target_speed_mode_radio, 1, Qt::AlignLeft);
   
   return manual_target_mode_layout;
@@ -1178,7 +1186,7 @@ QWidget * main_window::setup_motor_settings_box()
 {
   motor_settings_box = new QGroupBox();
   QGridLayout * layout = motor_settings_box_layout = new QGridLayout();
-  layout->setColumnStretch(1, 2);
+  layout->setColumnStretch(2, 2);
   int row = 0;
 
   {
@@ -1328,7 +1336,7 @@ void main_window::retranslate()
     
   status_box->setTitle(tr("Status"));
   vin_voltage_label->setText(tr("VIN voltage:"));
-  target_label->setText(tr("Target position:"));
+  set_target_none(); // TODO: display correct target mode if we retranslate on the fly
   current_position_label->setText(tr("Current position:"));
   current_velocity_label->setText(tr("Current velocity:"));
   

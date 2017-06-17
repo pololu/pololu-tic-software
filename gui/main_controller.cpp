@@ -444,6 +444,10 @@ void main_controller::handle_variables_changed()
     window->set_target_velocity(std::to_string(variables.get_target_velocity()) +
       " (" + convert_speed_to_pps_string(variables.get_target_velocity()) + ")");
   }
+  else
+  {
+    window->set_target_none();
+  }
   
   window->set_current_position(std::to_string(variables.get_current_position()));
   window->set_current_velocity(std::to_string(variables.get_current_velocity()) +
