@@ -379,6 +379,8 @@ uint32_t tic_variables_get_current_limit(const tic_variables *);
 TIC_API
 uint8_t tic_variables_get_decay_mode(const tic_variables *);
 
+// TODO: add tic_variables_get_input_state function
+
 /// Gets a variable used in the process that converts raw RC and analog values
 /// into a motor position or speed.
 ///
@@ -398,7 +400,7 @@ uint16_t tic_variables_get_input_after_hysteresis(const tic_variables * variable
 ///
 /// A value of TIC_INPUT_NULL means the input value is not available.
 TIC_API
-uint16_t tic_variables_get_input_after_filtering(const tic_variables * variables);
+int32_t tic_variables_get_input_after_scaling(const tic_variables * variables);
 
 /// Gets the analog reading from the specified pin, if analog readings are
 /// enabled for that pin.

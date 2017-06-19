@@ -177,6 +177,9 @@ void print_status(const tic::variables & vars,
     << pretty_enum(tic_look_up_decay_mode_string(vars.get_decay_mode()))
     << std::endl;
 
+  // TODO: show the input state here, and if it is not "valid",
+  // don't need to show the other variables
+
   std::cout << left_column << "Input after averaging: "
     << input_format(vars.get_input_after_averaging())
     << std::endl;
@@ -185,8 +188,8 @@ void print_status(const tic::variables & vars,
     << input_format(vars.get_input_after_hysteresis())
     << std::endl;
 
-  std::cout << left_column << "Input after filtering: "
-    << input_format(vars.get_input_after_filtering())
+  std::cout << left_column << "Input after scaling: "
+    << vars.get_input_after_scaling()
     << std::endl;
 
   std::cout << std::endl;

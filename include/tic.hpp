@@ -400,10 +400,10 @@ namespace tic
       return tic_variables_get_input_after_hysteresis(pointer);
     }
 
-    /// Wrapper for tic_variables_get_input_after_filtering().
-    uint16_t get_input_after_filtering() const noexcept
+    /// Wrapper for tic_variables_get_input_after_scaling().
+    int32_t get_input_after_scaling() const noexcept
     {
-      return tic_variables_get_input_after_filtering(pointer);
+      return tic_variables_get_input_after_scaling(pointer);
     }
 
     /// Wrapper for tic_variables_get_analog_reading().

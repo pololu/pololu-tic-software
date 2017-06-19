@@ -80,7 +80,7 @@ Current limit:                4294967295 mA
 Decay mode:                   (unknown)
 Input after averaging:        N/A
 Input after hysteresis:       N/A
-Input after filtering:        N/A
+Input after scaling:          -1
 
 SCL pin:
   Digital reading:            255
