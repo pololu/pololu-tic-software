@@ -14,7 +14,9 @@ static const char help[] =
   "  -p, --position NUM          Set target position in microsteps.\n"
   "  -y, --velocity NUM          Set target velocity in microsteps / 10000 s.\n"
   "  --set-current-position NUM  Set where the controller thinks it currently is.\n"
-  // TODO: --stop, --enable-driver, --disable-driver
+  "  --stop                      Abruptly stop the motor.\n"
+  "  --disable-driver            Disable the motor driver.\n"
+  "  --enable-driver             Stop disabling the driver and exit safe-start.\n"
   "  --speed-max NUM             Set the speed maximum.\n"
   "  --speed-min NUM             Set the speed minimum.\n"
   "  --accel-max NUM             Set the acceleration maximum.\n"
@@ -669,6 +671,13 @@ static void run(int argc, char ** argv)
     stop(selector);
   }
 
+  // Should be before set_target_position and set_target_velocity since it is
+  // useful to use this to get out of safe-start mode.
+  if (args.enable_driver)
+  {
+    enable_driver(selector);
+  }
+
   if (args.set_target_position)
   {
     set_target_position(selector, args.target_position);
@@ -697,11 +706,6 @@ static void run(int argc, char ** argv)
   if (args.set_decay_mode)
   {
     set_decay_mode(selector, args.decay_mode);
-  }
-
-  if (args.enable_driver)
-  {
-    enable_driver(selector);
   }
 
   if (args.disable_driver)
