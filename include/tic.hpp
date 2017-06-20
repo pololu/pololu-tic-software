@@ -614,16 +614,21 @@ namespace tic
       throw_if_needed(tic_stop(pointer));
     }
 
+    /// Wrapper for tic_disable_driver().
+    void disable_driver()
+    {
+      throw_if_needed(tic_disable_driver(pointer));
+    }
+
     /// Wrapper for tic_enable_driver().
     void enable_driver()
     {
       throw_if_needed(tic_enable_driver(pointer));
     }
 
-    /// Wrapper for tic_disable_driver().
-    void disable_driver()
+    void clear_driver_error()
     {
-      throw_if_needed(tic_disable_driver(pointer));
+      throw_if_needed(tic_clear_driver_error(pointer));
     }
 
     /// Wrapper for tic_set_speed_max().

@@ -17,6 +17,7 @@ static const char help[] =
   "  --stop                      Abruptly stop the motor.\n"
   "  --disable-driver            Disable the motor driver.\n"
   "  --enable-driver             Stop disabling the driver and exit safe-start.\n"
+  "  --clear-driver-error        Attempt to clear a motor driver error.\n"
   "  --speed-max NUM             Set the speed maximum.\n"
   "  --speed-min NUM             Set the speed minimum.\n"
   "  --accel-max NUM             Set the acceleration maximum.\n"
@@ -55,9 +56,11 @@ struct arguments
 
   bool stop = false;
 
+  bool disable_driver = false;
+
   bool enable_driver = false;
 
-  bool disable_driver = false;
+  bool clear_driver_error = false;
 
   bool set_speed_max = false;
   uint32_t speed_max;
@@ -106,8 +109,9 @@ struct arguments
       set_target_velocity ||
       set_current_position ||
       stop ||
-      enable_driver ||
       disable_driver ||
+      enable_driver ||
+      clear_driver_error ||
       set_speed_max ||
       set_speed_min ||
       set_accel_max ||
@@ -280,13 +284,17 @@ static arguments parse_args(int argc, char ** argv)
     {
       args.stop = true;
     }
+    else if (arg == "--disable-driver")
+    {
+      args.disable_driver = true;
+    }
     else if (arg == "--enable-driver")
     {
       args.enable_driver = true;
     }
-    else if (arg == "--disable-driver")
+    else if (arg == "--clear-driver-error")
     {
-      args.disable_driver = true;
+      args.clear_driver_error = true;
     }
     else if (arg == "--speed-max")
     {
@@ -408,6 +416,13 @@ static void stop(device_selector & selector)
   handle.stop();
 }
 
+static void disable_driver(device_selector & selector)
+{
+  tic::device device = selector.select_device();
+  tic::handle handle(device);
+  handle.disable_driver();
+}
+
 static void enable_driver(device_selector & selector)
 {
   tic::device device = selector.select_device();
@@ -415,11 +430,11 @@ static void enable_driver(device_selector & selector)
   handle.enable_driver();
 }
 
-static void disable_driver(device_selector & selector)
+static void clear_driver_error(device_selector & selector)
 {
   tic::device device = selector.select_device();
   tic::handle handle(device);
-  handle.disable_driver();
+  handle.clear_driver_error();
 }
 
 static void set_speed_max(device_selector & selector, uint32_t speed_max)
@@ -711,6 +726,11 @@ static void run(int argc, char ** argv)
   if (args.disable_driver)
   {
     disable_driver(selector);
+  }
+
+  if (args.clear_driver_error)
+  {
+    clear_driver_error(selector);
   }
 
   if (args.get_debug_data)

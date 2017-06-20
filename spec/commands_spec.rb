@@ -20,7 +20,7 @@ describe 'commands for controlling the motor', usb: true do
     expect(result).to eq 0
   end
 
-  describe 'Set Target Position command' do
+  describe 'Set Target Position' do
     it 'lets you set the position' do
       stdout, stderr, result = run_ticcmd('-p 230000')
       expect(stderr).to eq ''
@@ -38,7 +38,7 @@ describe 'commands for controlling the motor', usb: true do
     end
   end
 
-  describe 'Set Target Velocity command' do
+  describe 'Set Target Velocity' do
     it 'lets you set the velocity' do
       stdout, stderr, result = run_ticcmd('-y 100000')
       expect(stderr).to eq ''
@@ -56,7 +56,7 @@ describe 'commands for controlling the motor', usb: true do
     end
   end
 
-  describe 'Set Current Position command' do
+  describe 'Set Current Position' do
     it 'lets you set the current position' do
       stdout, stderr, result = run_ticcmd('--set-current-position 2146054486')
       expect(stderr).to eq ''
@@ -74,7 +74,7 @@ describe 'commands for controlling the motor', usb: true do
     end
   end
 
-  describe 'Stop command' do
+  describe 'Stop' do
     it 'lets you clear a target position or velocity' do
       stdout, stderr, result = run_ticcmd('-p 230000')
       expect(stderr).to eq ''
@@ -93,7 +93,7 @@ describe 'commands for controlling the motor', usb: true do
     end
   end
 
-  describe 'Enable/Disable driver' do
+  describe 'Enable/Disable Driver' do
     it 'works' do
       stdout, stderr, result = run_ticcmd('--disable-driver')
       expect(stderr).to eq ''
@@ -110,6 +110,15 @@ describe 'commands for controlling the motor', usb: true do
 
       errors = tic_get_status['Errors currently stopping the motor']
       expect(errors).to_not be_include 'Intentionally disabled'
+    end
+  end
+
+  describe 'Clear Driver Error' do
+    it 'runs' do
+      stdout, stderr, result = run_ticcmd('--clear-driver-error')
+      expect(stderr).to eq ''
+      expect(stdout).to eq ''
+      expect(result).to eq 0
     end
   end
 end

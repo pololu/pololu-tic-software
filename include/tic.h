@@ -1196,6 +1196,16 @@ tic_error * tic_set_current_position(tic_handle *, int32_t position);
 TIC_API TIC_WARN_UNUSED
 tic_error * tic_stop(tic_handle *);
 
+/// Disables the stepper motor driver.
+///
+/// This function sends a Disable Driver command to the Tic, causing it to
+/// disable its stepper driver.  This command only works if the control mode
+/// setting is set to Serial or STEP/DIR.  The effect only lasts until the Tic
+/// is powered off, reset, or reinitialized, or an Enable Driver command is
+/// issued.
+TIC_API TIC_WARN_UNUSED
+tic_error * tic_disable_driver(tic_handle *);
+
 /// Enables the stepper motor driver.
 ///
 /// This function sends an Enable Driver command to the Tic, causing it to
@@ -1206,15 +1216,11 @@ tic_error * tic_stop(tic_handle *);
 TIC_API TIC_WARN_UNUSED
 tic_error * tic_enable_driver(tic_handle *);
 
-/// Disables the stepper motor driver.
+/// Attempts to clear a motor driver errors.
 ///
-/// This function sends a Disable Driver command to the Tic, causing it to
-/// disable its stepper driver.  This command only works if the control mode
-/// setting is set to Serial or STEP/DIR.  The effect only lasts until the Tic
-/// is powered off, reset, or reinitialized, or an Enable Driver command is
-/// issued.
+/// This function sends a Clear Driver Error command to the Tic.
 TIC_API TIC_WARN_UNUSED
-tic_error * tic_disable_driver(tic_handle *);
+tic_error * tic_clear_driver_error(tic_handle *);
 
 /// Temporarily sets the speed maximum.
 ///
