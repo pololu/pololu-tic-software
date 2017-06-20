@@ -17,6 +17,7 @@
 #include <QScrollBar>
 #include <QShortcut>
 #include <QSpinBox>
+#include <QTabWidget>
 #include <QTimer>
 #include <QUrl>
 #include <QVBoxLayout>
@@ -110,14 +111,21 @@ void main_window::set_connection_status(std::string const & status, bool error)
   connection_status_value->setText(QString(status.c_str()));
 }
 
-void main_window::set_main_boxes_enabled(bool enabled)
+void main_window::set_tab_pages_enabled(bool enabled)
 {
-  main_boxes_widget->setEnabled(enabled);
+  status_page_widget->setEnabled(enabled);
+  settings_page_widget->setEnabled(enabled);
 }
 
 void main_window::set_manual_target_box_enabled(bool enabled)
 {
   manual_target_box->setEnabled(enabled);
+}
+
+void main_window::set_enable_disable_driver_buttons_enabled(bool enable_button_enabled)
+{
+  enable_driver_button->setEnabled(enable_button_enabled);
+  disable_driver_button->setEnabled(!enable_button_enabled);
 }
 
 void main_window::set_apply_settings_enabled(bool enabled)
@@ -231,9 +239,7 @@ void main_window::set_serial_device_number(uint8_t serial_device_number)
 
 void main_window::set_serial_crc_enabled(bool serial_crc_enabled)
 {
-  suppress_events = true;
-  serial_crc_enabled_checkbox->setChecked(serial_crc_enabled);
-  suppress_events = false;
+  set_check_box(serial_crc_enabled_check, serial_crc_enabled);
 }
 
 void main_window::set_input_min(uint32_t input_min)
@@ -268,9 +274,7 @@ void main_window::set_output_max(int32_t output_max)
 
 void main_window::set_input_averaging_enabled(bool input_averaging_enabled)
 {
-  suppress_events = true;
-  input_averaging_enabled_checkbox->setChecked(input_averaging_enabled);
-  suppress_events = false;
+  set_check_box(input_averaging_enabled_check, input_averaging_enabled);
 }
 
 void main_window::set_input_hysteresis(uint16_t input_hysteresis)
@@ -290,9 +294,7 @@ void main_window::set_encoder_postscaler(uint32_t encoder_postscaler)
 
 void main_window::set_encoder_unlimited(bool encoder_unlimited)
 {
-  suppress_events = true;
-  encoder_unlimited_checkbox->setChecked(encoder_unlimited);
-  suppress_events = false;
+  set_check_box(encoder_unlimited_check, encoder_unlimited);
 }
 
 void main_window::set_speed_max(uint32_t speed_max)
@@ -341,6 +343,16 @@ void main_window::set_decay_mode(uint8_t decay_mode)
   set_u8_combo_box(decay_mode_value, decay_mode);
 }
 
+void main_window::set_disable_safe_start(bool disable_safe_start)
+{
+  set_check_box(disable_safe_start_check, disable_safe_start);
+}
+
+void main_window::set_ignore_err_line_high(bool ignore_err_line_high)
+{
+  set_check_box(ignore_err_line_high_check, ignore_err_line_high);
+}
+
 void main_window::set_u8_combo_box(QComboBox * combo, uint8_t value)
 {
   suppress_events = true;
@@ -359,6 +371,13 @@ void main_window::set_spin_box(QSpinBox * spin, int value)
     spin->setValue(value);
     suppress_events = false;
   }
+}
+
+void main_window::set_check_box(QCheckBox * check, bool value)
+{
+  suppress_events = true;
+  check->setChecked(value);
+  suppress_events = false;
 }
 
 void main_window::showEvent(QShowEvent * event)
@@ -424,7 +443,7 @@ void main_window::on_about_action_triggered()
 void main_window::on_device_list_value_currentIndexChanged(int index)
 {
   if (suppress_events) { return; }
-  
+
   if (controller->disconnect_device())
   {
     QString id = device_list_value->itemData(index).toString();
@@ -440,7 +459,7 @@ void main_window::on_device_list_value_currentIndexChanged(int index)
     controller->handle_model_changed();
   }
 }
-  
+
 void main_window::on_manual_target_position_mode_radio_toggled(bool checked)
 {
   if (suppress_events) { return; }
@@ -465,7 +484,7 @@ void main_window::on_manual_target_scroll_bar_valueChanged(int value)
 void main_window::on_manual_target_scroll_bar_sliderReleased()
 {
   if (suppress_events) { return; }
-  if (auto_zero_target_checkbox->isChecked())
+  if (auto_zero_target_check->isChecked())
   {
     manual_target_scroll_bar->setValue(0);
   }
@@ -475,8 +494,8 @@ void main_window::on_manual_target_entry_value_valueChanged(int value)
 {
   if (suppress_events) { return; }
   manual_target_scroll_bar->setValue(value);
-  
-  if (auto_set_target_checkbox->isChecked())
+
+  if (auto_set_target_check->isChecked())
   {
     on_set_target_button_clicked();
   }
@@ -494,7 +513,6 @@ void main_window::on_manual_target_return_key_shortcut_activated()
 
 void main_window::on_set_target_button_clicked()
 {
-  if (suppress_events) { return; }
   if (manual_target_position_mode_radio->isChecked())
   {
     controller->set_target_position(manual_target_entry_value->value());
@@ -505,19 +523,34 @@ void main_window::on_set_target_button_clicked()
   }
 }
 
-void main_window::on_auto_set_target_checkbox_stateChanged(int state)
+void main_window::on_auto_set_target_check_stateChanged(int state)
 {
   if (suppress_events) { return; }
   if (state == Qt::Checked)
   {
     on_set_target_button_clicked();
-    auto_zero_target_checkbox->setEnabled(true);
+    auto_zero_target_check->setEnabled(true);
   }
   else
   {
-    auto_zero_target_checkbox->setEnabled(false);
-    auto_zero_target_checkbox->setChecked(false);
+    auto_zero_target_check->setEnabled(false);
+    auto_zero_target_check->setChecked(false);
   }
+}
+
+void main_window::on_stop_button_clicked()
+{
+  controller->stop_motor();
+}
+
+void main_window::on_disable_driver_button_clicked()
+{
+  controller->disable_driver();
+}
+
+void main_window::on_enable_driver_button_clicked()
+{
+  controller->enable_driver();
 }
 
 void main_window::on_apply_settings_action_triggered()
@@ -550,12 +583,12 @@ void main_window::on_serial_device_number_value_valueChanged(int value)
   controller->handle_serial_device_number_input(value);
 }
 
-void main_window::on_serial_crc_enabled_checkbox_stateChanged(int state)
+void main_window::on_serial_crc_enabled_check_stateChanged(int state)
 {
   if (suppress_events) { return; }
   controller->handle_serial_crc_enabled_input(state == Qt::Checked);
 }
-  
+
 void main_window::on_input_min_value_valueChanged(int value)
 {
   if (suppress_events) { return; }
@@ -592,7 +625,7 @@ void main_window::on_output_max_value_valueChanged(int value)
   controller->handle_output_max_input(value);
 }
 
-void main_window::on_input_averaging_enabled_checkbox_stateChanged(int state)
+void main_window::on_input_averaging_enabled_check_stateChanged(int state)
 {
   if (suppress_events) { return; }
   controller->handle_input_averaging_enabled_input(state == Qt::Checked);
@@ -616,7 +649,7 @@ void main_window::on_encoder_postscaler_value_valueChanged(int value)
   controller->handle_encoder_postscaler_input(value);
 }
 
-void main_window::on_encoder_unlimited_checkbox_stateChanged(int state)
+void main_window::on_encoder_unlimited_check_stateChanged(int state)
 {
   if (suppress_events) { return; }
   controller->handle_encoder_unlimited_input(state == Qt::Checked);
@@ -672,6 +705,18 @@ void main_window::on_decay_mode_value_currentIndexChanged(int index)
   controller->handle_decay_mode_input(decay_mode);
 }
 
+void main_window::on_disable_safe_start_check_stateChanged(int state)
+{
+  if (suppress_events) { return; }
+  controller->handle_disable_safe_start_input(state == Qt::Checked);
+}
+
+void main_window::on_ignore_err_line_high_check_stateChanged(int state)
+{
+  if (suppress_events) { return; }
+  controller->handle_ignore_err_line_high_input(state == Qt::Checked);
+}
+
 // On Mac OS X, field labels are usually right-aligned.
 #ifdef __APPLE__
 #define FIELD_LABEL_ALIGNMENT Qt::AlignRight
@@ -702,35 +747,35 @@ void main_window::setup_window()
   setStyleSheet("QPushButton { padding: 0.3em 1em; }");
 
   setup_menu_bar();
-  
+
   central_widget = new QWidget();
   QVBoxLayout * layout = central_widget_layout = new QVBoxLayout();
-  
+
   layout->addLayout(setup_header());
-  layout->addWidget(setup_main_boxes_widget());
+  layout->addWidget(setup_tab_widget());
   layout->addLayout(setup_footer());
-  
+
   central_widget->setLayout(layout);
   setCentralWidget(central_widget);
-  
+
   retranslate();
-  
+
   // Make the window non-resizable.
-  setFixedSize(sizeHint());
-  
+  //setFixedSize(sizeHint());
+
   program_icon = QIcon(":app_icon");
   setWindowIcon(program_icon);
-  
+
   update_timer = new QTimer(this);
   update_timer->setObjectName("update_timer");
-  
+
   QMetaObject::connectSlotsByName(this);
 }
 
 void main_window::setup_menu_bar()
 {
   menu_bar = new QMenuBar();
-      
+
   file_menu = menu_bar->addMenu("");
 
   exit_action = new QAction(this);
@@ -785,7 +830,7 @@ QLayout * main_window::setup_header()
   device_list_value->setObjectName("device_list_value");
   device_list_value->addItem(tr("Not connected"), QString()); // null value
   connection_status_value = new QLabel();
-  
+
   // Make the device list wide enough to display the short name and serial
   // number of the Tic.
   {
@@ -793,7 +838,7 @@ QLayout * main_window::setup_header()
     tmp_box.addItem("TXXXXX: #1234567890123456");
     device_list_value->setMinimumWidth(tmp_box.sizeHint().width() * 105 / 100);
   }
-  
+
   layout->addWidget(device_list_label);
   layout->addWidget(device_list_value);
   layout->addWidget(connection_status_value, 1, Qt::AlignLeft);
@@ -801,42 +846,49 @@ QLayout * main_window::setup_header()
   return header_layout;
 }
 
-QWidget * main_window::setup_main_boxes_widget()
+QWidget * main_window::setup_tab_widget()
 {
-  main_boxes_widget = new QWidget();
-  QHBoxLayout * layout = main_boxes_widget_layout = new QHBoxLayout();
-  layout->setContentsMargins(0, 0, 0, 0);
-  
-  layout->addLayout(setup_left_column());
-  layout->addLayout(setup_right_column());
-  
-  main_boxes_widget->setLayout(layout);
-  return main_boxes_widget;
+  tab_widget = new QTabWidget();
+
+  tab_widget->addTab(setup_status_page_widget(), tr("Status"));
+  tab_widget->addTab(setup_settings_page_widget(), tr("Settings"));
+
+  return tab_widget;
 }
 
-QLayout * main_window::setup_left_column()
+//// status page
+
+QWidget * main_window::setup_status_page_widget()
 {
-  QVBoxLayout * layout = left_column_layout = new QVBoxLayout();
+  status_page_widget = new QWidget();
+  QHBoxLayout * layout = status_page_layout = new QHBoxLayout();
+
+  layout->addLayout(setup_status_left_column());
+  layout->addLayout(setup_status_right_column());
+
+  status_page_widget->setLayout(layout);
+  return status_page_widget;
+}
+
+QLayout * main_window::setup_status_left_column()
+{
+  QVBoxLayout * layout = status_left_column_layout = new QVBoxLayout();
 
   layout->addWidget(setup_device_info_box());
-  layout->addWidget(setup_status_box());
-  layout->addWidget(setup_control_mode_widget());
   layout->addWidget(setup_manual_target_box());
   layout->addStretch(1);
-  
-  return left_column_layout;
+
+  return status_left_column_layout;
 }
 
-QLayout * main_window::setup_right_column()
+QLayout * main_window::setup_status_right_column()
 {
-  QVBoxLayout * layout = right_column_layout = new QVBoxLayout();
-  
-  layout->addWidget(setup_serial_settings_box());
-  layout->addWidget(setup_scaling_settings_box());
-  layout->addWidget(setup_motor_settings_box());
+  QVBoxLayout * layout = status_right_column_layout = new QVBoxLayout();
+
+  layout->addWidget(setup_status_box());
   layout->addStretch(1);
-  
-  return right_column_layout;
+
+  return status_right_column_layout;
 }
 
 QWidget * main_window::setup_device_info_box()
@@ -845,14 +897,14 @@ QWidget * main_window::setup_device_info_box()
   QGridLayout * layout = device_info_box_layout = new QGridLayout();
   layout->setColumnStretch(1, 1);
   int row = 0;
-  
+
   setup_read_only_text_field(layout, row++, &device_name_label, &device_name_value);
   device_name_value->setObjectName("device_name_value");
   device_name_value->setTextInteractionFlags(Qt::TextBrowserInteraction);
-  
+
   setup_read_only_text_field(layout, row++, &serial_number_label, &serial_number_value);
   setup_read_only_text_field(layout, row++, &firmware_version_label, &firmware_version_value);
-  
+
   // Make the right column wide enough to display the name of the Tic,
   // which should be the widest thing that needs to fit in that column.
   // This is important for making sure that the sizeHint of the overall main
@@ -862,7 +914,7 @@ QWidget * main_window::setup_device_info_box()
     tmpLabel.setText("Tic USB Stepper Motor Controller TXXXXX");
     layout->setColumnMinimumWidth(1, tmpLabel.sizeHint().width());
   }
-  
+
   device_info_box->setLayout(layout);
   return device_info_box;
 }
@@ -873,12 +925,12 @@ QWidget * main_window::setup_status_box()
   QGridLayout * layout = status_box_layout = new QGridLayout();
   layout->setColumnStretch(1, 1);
   int row = 0;
-  
+
   setup_read_only_text_field(layout, row++, &vin_voltage_label, &vin_voltage_value);
   setup_read_only_text_field(layout, row++, &target_label, &target_value);
   setup_read_only_text_field(layout, row++, &current_position_label, &current_position_value);
   setup_read_only_text_field(layout, row++, &current_velocity_label, &current_velocity_value);
-  
+
   status_box->setLayout(layout);
   return status_box;
 }
@@ -887,33 +939,35 @@ QWidget * main_window::setup_manual_target_box()
 {
   manual_target_box = new QGroupBox();
   QVBoxLayout * layout = manual_target_box_layout = new QVBoxLayout();
-  
+
   layout->addLayout(setup_manual_target_mode_layout());
-  
+
   layout->addSpacing(fontMetrics().height());
-  
+
   layout->addWidget(setup_manual_target_entry_widget());
 
-  {  
+  {
     set_target_button = new QPushButton();
     set_target_button->setObjectName("set_target_button");
     layout->addWidget(set_target_button, 0, Qt::AlignCenter);
   }
-  
+
   layout->addSpacing(fontMetrics().height());
-  
+
   {
-    auto_set_target_checkbox = new QCheckBox();
-    auto_set_target_checkbox->setObjectName("auto_set_target_checkbox");
-    auto_set_target_checkbox->setChecked(true);
-    layout->addWidget(auto_set_target_checkbox, 0, Qt::AlignLeft);
+    auto_set_target_check = new QCheckBox();
+    auto_set_target_check->setObjectName("auto_set_target_check");
+    auto_set_target_check->setChecked(true);
+    layout->addWidget(auto_set_target_check, 0, Qt::AlignLeft);
   }
-  
+
   {
-    auto_zero_target_checkbox = new QCheckBox();
-    layout->addWidget(auto_zero_target_checkbox, 0, Qt::AlignLeft);
+    auto_zero_target_check = new QCheckBox();
+    layout->addWidget(auto_zero_target_check, 0, Qt::AlignLeft);
   }
-    
+
+  layout->addLayout(setup_manual_target_buttons_layout());
+
   manual_target_box->setLayout(layout);
   return manual_target_box;
 }
@@ -921,7 +975,7 @@ QWidget * main_window::setup_manual_target_box()
 QLayout * main_window::setup_manual_target_mode_layout()
 {
   QHBoxLayout * layout = manual_target_mode_layout = new QHBoxLayout();
-  
+
   manual_target_position_mode_radio = new QRadioButton();
   manual_target_position_mode_radio->setObjectName("manual_target_position_mode_radio");
   manual_target_position_mode_radio->setChecked(true);
@@ -930,7 +984,7 @@ QLayout * main_window::setup_manual_target_mode_layout()
   layout->addWidget(manual_target_position_mode_radio, 1, Qt::AlignRight);
   layout->addSpacing(fontMetrics().height());
   layout->addWidget(manual_target_speed_mode_radio, 1, Qt::AlignLeft);
-  
+
   return manual_target_mode_layout;
 }
 
@@ -939,7 +993,7 @@ QWidget * main_window::setup_manual_target_entry_widget()
   // This is a widget instead of a layout so that it can be a parent to the
   // shortcuts, allowing the shortcuts to work on both the scroll bar and the
   // spin box.
-  
+
   manual_target_entry_widget = new QWidget();
   QGridLayout * layout = manual_target_entry_widget_layout = new QGridLayout();
   layout->setColumnStretch(0, 1);
@@ -955,7 +1009,7 @@ QWidget * main_window::setup_manual_target_entry_widget()
     layout->addWidget(manual_target_scroll_bar, row, 0, 1, 3);
     row++;
   }
-  
+
   {
     manual_target_min_label = new QLabel();
     manual_target_max_label = new QLabel();
@@ -964,21 +1018,21 @@ QWidget * main_window::setup_manual_target_entry_widget()
     // Don't emit valueChanged while user is typing (e.g. if the user enters 500,
     // we don't want to set speeds of 5, 50, and 500).
     manual_target_entry_value->setKeyboardTracking(false);
-    
-    
+
+
     // Make the spin box wide enough to display the largest possible target value.
     {
       QSpinBox tmp_box;
       tmp_box.setMinimum(-0x7FFFFFF);
       manual_target_entry_value->setMinimumWidth(tmp_box.sizeHint().width());
     }
-    
+
     layout->addWidget(manual_target_min_label, row, 0, Qt::AlignLeft);
     layout->addWidget(manual_target_entry_value, row, 1);
     layout->addWidget(manual_target_max_label, row, 2, Qt::AlignRight);
     row++;
   }
-  
+
   {
     manual_target_return_key_shortcut = new QShortcut(manual_target_entry_widget);
     manual_target_return_key_shortcut->setObjectName("manual_target_return_key_shortcut");
@@ -988,13 +1042,69 @@ QWidget * main_window::setup_manual_target_entry_widget()
     manual_target_enter_key_shortcut->setObjectName("manual_target_enter_key_shortcut");
     manual_target_enter_key_shortcut->setContext(Qt::WidgetWithChildrenShortcut);
     manual_target_enter_key_shortcut->setKey(Qt::Key_Enter);
-    
+
     connect(manual_target_enter_key_shortcut, SIGNAL(activated()), this,
       SLOT(on_manual_target_return_key_shortcut_activated()));
   }
-  
+
   manual_target_entry_widget->setLayout(layout);
   return manual_target_entry_widget;
+}
+
+QLayout * main_window::setup_manual_target_buttons_layout()
+{
+  QHBoxLayout * layout = manual_target_buttons_layout = new QHBoxLayout();
+
+  stop_button = new QPushButton();
+  stop_button->setObjectName("stop_button");
+  disable_driver_button = new QPushButton();
+  disable_driver_button->setObjectName("disable_driver_button");
+  enable_driver_button = new QPushButton();
+  enable_driver_button->setObjectName("enable_driver_button");
+  layout->addStretch(1);
+  layout->addWidget(stop_button);
+  layout->addWidget(disable_driver_button);
+  layout->addWidget(enable_driver_button);
+  layout->addStretch(1);
+
+  return manual_target_buttons_layout;
+}
+
+//// settings page
+
+QWidget * main_window::setup_settings_page_widget()
+{
+  settings_page_widget = new QWidget();
+  QHBoxLayout * layout = settings_page_layout = new QHBoxLayout();
+
+  layout->addLayout(setup_settings_left_column());
+  layout->addLayout(setup_settings_right_column());
+
+  settings_page_widget->setLayout(layout);
+  return settings_page_widget;
+}
+
+QLayout * main_window::setup_settings_left_column()
+{
+  QVBoxLayout * layout = settings_left_column_layout = new QVBoxLayout();
+
+  layout->addWidget(setup_control_mode_widget());
+  layout->addWidget(setup_serial_settings_box());
+  layout->addWidget(setup_scaling_settings_box());
+  layout->addStretch(1);
+
+  return settings_left_column_layout;
+}
+
+QLayout * main_window::setup_settings_right_column()
+{
+  QVBoxLayout * layout = settings_right_column_layout = new QVBoxLayout();
+
+  layout->addWidget(setup_motor_settings_box());
+  layout->addWidget(setup_misc_settings_box());
+  layout->addStretch(1);
+
+  return settings_right_column_layout;
 }
 
 // [all-settings]
@@ -1005,7 +1115,7 @@ QWidget * main_window::setup_control_mode_widget()
   QGridLayout * layout = control_mode_widget_layout = new QGridLayout();
   layout->setColumnStretch(1, 1);
   int row = 0;
-  
+
   {
     control_mode_value = new QComboBox();
     control_mode_value->setObjectName("control_mode_value");
@@ -1023,7 +1133,7 @@ QWidget * main_window::setup_control_mode_widget()
     layout->addWidget(control_mode_value, row, 1, Qt::AlignLeft);
     row++;
   }
-  
+
   control_mode_widget->setLayout(layout);
   return control_mode_widget;
 }
@@ -1034,7 +1144,7 @@ QWidget * main_window::setup_serial_settings_box()
   QGridLayout * layout = serial_settings_box_layout = new QGridLayout();
   layout->setColumnStretch(1, 1);
   int row = 0;
-    
+
   {
     serial_baud_rate_value = new QSpinBox();
     serial_baud_rate_value->setObjectName("serial_baud_rate_value");
@@ -1045,7 +1155,7 @@ QWidget * main_window::setup_serial_settings_box()
     layout->addWidget(serial_baud_rate_value, row, 1, Qt::AlignLeft);
     row++;
   }
-  
+
   {
     serial_device_number_value = new QSpinBox();
     serial_device_number_value->setObjectName("serial_device_number_value");
@@ -1056,14 +1166,14 @@ QWidget * main_window::setup_serial_settings_box()
     layout->addWidget(serial_device_number_value, row, 1, Qt::AlignLeft);
     row++;
   }
-  
+
   {
-    serial_crc_enabled_checkbox = new QCheckBox();
-    serial_crc_enabled_checkbox->setObjectName("serial_crc_enabled_checkbox");
-    layout->addWidget(serial_crc_enabled_checkbox, row, 0, 1, 2, Qt::AlignLeft);
+    serial_crc_enabled_check = new QCheckBox();
+    serial_crc_enabled_check->setObjectName("serial_crc_enabled_check");
+    layout->addWidget(serial_crc_enabled_check, row, 0, 1, 2, Qt::AlignLeft);
     row++;
   }
-  
+
   serial_settings_box->setLayout(layout);
   return serial_settings_box;
 }
@@ -1074,7 +1184,7 @@ QWidget * main_window::setup_scaling_settings_box()
   QGridLayout * layout = scaling_settings_box_layout = new QGridLayout();
   layout->setColumnStretch(2, 1);
   int row = 0;
-  
+
   {
     scaling_input_label = new QLabel();
     scaling_target_label = new QLabel();
@@ -1082,7 +1192,7 @@ QWidget * main_window::setup_scaling_settings_box()
     layout->addWidget(scaling_target_label, row, 2, Qt::AlignLeft);
     row++;
   }
-  
+
   {
     scaling_max_label = new QLabel();
     input_max_value = new QSpinBox();
@@ -1116,7 +1226,7 @@ QWidget * main_window::setup_scaling_settings_box()
     layout->addWidget(input_neutral_min_value, row, 1, Qt::AlignLeft);
     row++;
   }
-  
+
   {
     scaling_min_label = new QLabel();
     input_min_value = new QSpinBox();
@@ -1130,15 +1240,15 @@ QWidget * main_window::setup_scaling_settings_box()
     layout->addWidget(output_min_value, row, 2, Qt::AlignLeft);
     row++;
   }
-  
+
   {
-    input_averaging_enabled_checkbox = new QCheckBox();
-    input_averaging_enabled_checkbox->setObjectName("input_averaging_enabled_checkbox");
-    layout->addWidget(input_averaging_enabled_checkbox, row, 0, 1, 3, Qt::AlignLeft);
+    input_averaging_enabled_check = new QCheckBox();
+    input_averaging_enabled_check->setObjectName("input_averaging_enabled_check");
+    layout->addWidget(input_averaging_enabled_check, row, 0, 1, 3, Qt::AlignLeft);
     row++;
   }
-  
-  {    
+
+  {
     input_hysteresis_value = new QSpinBox();
     input_hysteresis_value->setObjectName("input_hysteresis_value");
     input_hysteresis_value->setRange(0, 0xFFFF);
@@ -1148,8 +1258,8 @@ QWidget * main_window::setup_scaling_settings_box()
     layout->addWidget(input_hysteresis_value, row, 1, 1, 2, Qt::AlignLeft);
     row++;
   }
-  
-  {    
+
+  {
     encoder_prescaler_value = new QSpinBox();
     encoder_prescaler_value->setObjectName("encoder_prescaler_value");
     encoder_prescaler_value->setRange(0, 0x7FFFFFFF);
@@ -1159,8 +1269,8 @@ QWidget * main_window::setup_scaling_settings_box()
     layout->addWidget(encoder_prescaler_value, row, 1, 1, 2, Qt::AlignLeft);
     row++;
   }
-  
-  {    
+
+  {
     encoder_postscaler_value = new QSpinBox();
     encoder_postscaler_value->setObjectName("encoder_postscaler_value");
     encoder_postscaler_value->setRange(0, 0x7FFFFFFF);
@@ -1172,12 +1282,12 @@ QWidget * main_window::setup_scaling_settings_box()
   }
 
   {
-    encoder_unlimited_checkbox = new QCheckBox();
-    encoder_unlimited_checkbox->setObjectName("encoder_unlimited_checkbox");
-    layout->addWidget(encoder_unlimited_checkbox, row, 0, 1, 3, Qt::AlignLeft);
+    encoder_unlimited_check = new QCheckBox();
+    encoder_unlimited_check->setObjectName("encoder_unlimited_check");
+    layout->addWidget(encoder_unlimited_check, row, 0, 1, 3, Qt::AlignLeft);
     row++;
   }
-  
+
   scaling_settings_box->setLayout(layout);
   return scaling_settings_box;
 }
@@ -1201,7 +1311,7 @@ QWidget * main_window::setup_motor_settings_box()
     layout->addWidget(speed_max_value_pretty, row, 2, Qt::AlignLeft);
     row++;
   }
-  
+
   {
     speed_min_value = new QSpinBox();
     speed_min_value->setObjectName("speed_min_value");
@@ -1214,7 +1324,7 @@ QWidget * main_window::setup_motor_settings_box()
     layout->addWidget(speed_min_value_pretty, row, 2, Qt::AlignLeft);
     row++;
   }
-  
+
   {
     accel_max_value = new QSpinBox();
     accel_max_value->setObjectName("accel_max_value");
@@ -1225,17 +1335,17 @@ QWidget * main_window::setup_motor_settings_box()
     layout->addWidget(accel_max_label, row, 0, FIELD_LABEL_ALIGNMENT);
     layout->addWidget(accel_max_value, row, 1, Qt::AlignLeft);
     layout->addWidget(accel_max_value_pretty, row, 2, Qt::AlignLeft);
-    
+
    // Make enough room for the labels to display the largest possible pretty values.
     {
       QLabel tmp_label;
       tmp_label.setText(QString(convert_accel_to_pps2_string(0x7FFFFFF).c_str()));
       accel_max_value_pretty->setMinimumWidth(tmp_label.sizeHint().width());
     }
-    
+
     row++;
   }
-  
+
   {
     decel_max_value = new QSpinBox();
     decel_max_value->setObjectName("decel_max_value");
@@ -1248,7 +1358,7 @@ QWidget * main_window::setup_motor_settings_box()
     layout->addWidget(decel_max_value_pretty, row, 2, Qt::AlignLeft);
     row++;
   }
-  
+
   {
     step_mode_value = new QComboBox();
     step_mode_value->setObjectName("step_mode_value");
@@ -1264,7 +1374,7 @@ QWidget * main_window::setup_motor_settings_box()
     layout->addWidget(step_mode_value, row, 1, Qt::AlignLeft);
     row++;
   }
-  
+
   {
     current_limit_value = new QSpinBox();
     current_limit_value->setObjectName("current_limit_value");
@@ -1276,7 +1386,7 @@ QWidget * main_window::setup_motor_settings_box()
     layout->addWidget(current_limit_value, row, 1, Qt::AlignLeft);
     row++;
   }
-  
+
   {
     decay_mode_value = new QComboBox();
     decay_mode_value->setObjectName("decay_mode_value");
@@ -1289,27 +1399,50 @@ QWidget * main_window::setup_motor_settings_box()
     layout->addWidget(decay_mode_value, row, 1, Qt::AlignLeft);
     row++;
   }
-  
+
   motor_settings_box->setLayout(layout);
   return motor_settings_box;
+}
+
+QWidget * main_window::setup_misc_settings_box()
+{
+  misc_settings_box = new QGroupBox();
+  QGridLayout * layout = misc_settings_box_layout = new QGridLayout();
+  layout->setColumnStretch(1, 1);
+  int row = 0;
+
+  {
+    disable_safe_start_check = new QCheckBox();
+    disable_safe_start_check->setObjectName("disable_safe_start_check");
+    layout->addWidget(disable_safe_start_check, row, 0, Qt::AlignLeft);
+    row++;
+  }
+
+  {
+    ignore_err_line_high_check = new QCheckBox();
+    ignore_err_line_high_check->setObjectName("ignore_err_line_high_check");
+    layout->addWidget(ignore_err_line_high_check, row, 0, Qt::AlignLeft);
+    row++;
+  }
+
+  misc_settings_box->setLayout(layout);
+  return misc_settings_box;
 }
 
 QLayout * main_window::setup_footer()
 {
   QHBoxLayout * layout = footer_layout = new QHBoxLayout();
 
-  layout->addWidget(setup_apply_button(), 0, Qt::AlignRight);
-    
+  {
+    apply_settings_button = new QPushButton();
+    connect(apply_settings_button, SIGNAL(clicked()),
+      this, SLOT(on_apply_settings_action_triggered()));
+  }
+
+  layout->addStretch(1);
+  layout->addWidget(apply_settings_button);
+
   return footer_layout;
-}
-
-QWidget * main_window::setup_apply_button()
-{
-  apply_settings_button = new QPushButton();
-
-  connect(apply_settings_button, SIGNAL(clicked()),
-    this, SLOT(on_apply_settings_action_triggered()));
-  return apply_settings_button;
 }
 
 void main_window::retranslate()
@@ -1328,18 +1461,18 @@ void main_window::retranslate()
   about_action->setText(tr("&About..."));
 
   device_list_label->setText(tr("Connected to:"));
-  
+
   device_info_box->setTitle(tr("Device info"));
   device_name_label->setText(tr("Name:"));
   serial_number_label->setText(tr("Serial number:"));
   firmware_version_label->setText(tr("Firmware version:"));
-    
+
   status_box->setTitle(tr("Status"));
   vin_voltage_label->setText(tr("VIN voltage:"));
   set_target_none(); // TODO: display correct target mode if we retranslate on the fly
   current_position_label->setText(tr("Current position:"));
   current_velocity_label->setText(tr("Current velocity:"));
-  
+
   manual_target_box->setTitle(tr(u8"Set target (Serial\u2009/\u2009I\u00B2C\u2009/\u2009USB mode only)"));
   manual_target_position_mode_radio->setText(tr("Set position"));
   manual_target_speed_mode_radio->setText(tr("Set speed"));
@@ -1351,17 +1484,17 @@ void main_window::retranslate()
   {
     set_target_button->setText(tr("Set target speed"));
   }
-  auto_set_target_checkbox->setText(tr("Set target when slider or entry box are changed"));
-  auto_zero_target_checkbox->setText(tr("Return slider to zero when it is released"));
-  
+  auto_set_target_check->setText(tr("Set target when slider or entry box are changed"));
+  auto_zero_target_check->setText(tr("Return slider to zero when it is released"));
+
   // [all-settings]
   control_mode_label->setText(tr("Control mode:"));
-  
+
   serial_settings_box->setTitle(tr("Serial settings"));
   serial_baud_rate_label->setText(tr("Baud rate:"));
   serial_device_number_label->setText(tr("Device number:"));
-  serial_crc_enabled_checkbox->setText(tr("Enable CRC"));
-  
+  serial_crc_enabled_check->setText(tr("Enable CRC"));
+
   scaling_settings_box->setTitle(tr("Input and scaling settings"));
   scaling_input_label->setText(tr("Input"));
   scaling_target_label->setText(tr("Target"));
@@ -1369,12 +1502,12 @@ void main_window::retranslate()
   scaling_neutral_min_label->setText(tr("Neutral min:"));
   scaling_neutral_max_label->setText(tr("Neutral max:"));
   scaling_max_label->setText(tr("Maximum:"));
-  input_averaging_enabled_checkbox->setText(tr("Enable input averaging"));
+  input_averaging_enabled_check->setText(tr("Enable input averaging"));
   input_hysteresis_label->setText(tr("Input hysteresis:"));
   encoder_prescaler_label->setText(tr("Encoder prescaler:"));
   encoder_postscaler_label->setText(tr("Encoder postscaler:"));
-  encoder_unlimited_checkbox->setText(tr("Unlimited encoder position control"));
-  
+  encoder_unlimited_check->setText(tr("Enable unlimited encoder position control"));
+
   motor_settings_box->setTitle(tr("Motor settings"));
   speed_max_label->setText(tr("Speed max:"));
   speed_min_label->setText(tr("Speed min:"));
@@ -1384,7 +1517,12 @@ void main_window::retranslate()
   current_limit_label->setText(tr("Current limit:"));
   decay_mode_label->setText(tr("Decay mode:"));
 
-  // cancelChangesButton->setText("Cancel Changes"); // TODO: use same name as menu item
-  // defaultsButton->setText("Defaults"); // TODO: use same name as menu item
+  misc_settings_box->setTitle(tr("Miscellaneous settings"));
+  disable_safe_start_check->setText(tr("Disable safe start"));
+  ignore_err_line_high_check->setText(tr("Ignore ERR line high"));
+
+  stop_button->setText(tr("Stop motor"));
+  disable_driver_button->setText(tr("Disable driver"));
+  enable_driver_button->setText(tr("Enable driver"));
   apply_settings_button->setText(apply_settings_action->text());
 }
