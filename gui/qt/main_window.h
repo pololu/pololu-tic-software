@@ -15,6 +15,7 @@ class QRadioButton;
 class QScrollBar;
 class QShortcut;
 class QSpinBox;
+class QTabWidget;
 class QVBoxLayout;
 
 class main_controller;
@@ -51,7 +52,7 @@ public:
 
   /** Controls whether the main controls of the application are enabled or
    * disabled. **/
-  void set_main_boxes_enabled(bool enabled);
+  void set_tab_pages_enabled(bool enabled);
 
   void set_manual_target_box_enabled(bool enabled);
   void set_enable_disable_driver_buttons_enabled(bool enable_button_enabled);
@@ -203,16 +204,22 @@ private:
   void setup_window();
   void setup_menu_bar();
   QLayout * setup_header();
-  QWidget * setup_main_boxes_widget();
-  QLayout * setup_left_column();
-  QLayout * setup_right_column();
+  QWidget * setup_tab_widget();
+
+  QWidget * setup_status_page_widget();
+  QLayout * setup_status_left_column();
+  QLayout * setup_status_right_column();
   QWidget * setup_device_info_box();
   QWidget * setup_status_box();
-  QWidget * setup_control_mode_widget();
   QWidget * setup_manual_target_box();
   QLayout * setup_manual_target_mode_layout();
   QWidget * setup_manual_target_entry_widget();
   QLayout * setup_manual_target_buttons_layout();
+
+  QWidget * setup_settings_page_widget();
+  QWidget * setup_control_mode_widget();
+  QLayout * setup_settings_left_column();
+  QLayout * setup_settings_right_column();
   QWidget * setup_serial_settings_box();
   QWidget * setup_scaling_settings_box();
   QWidget * setup_motor_settings_box();
@@ -242,10 +249,14 @@ private:
   QComboBox * device_list_value;
   QLabel * connection_status_value;
 
-  QWidget * main_boxes_widget;
-  QHBoxLayout * main_boxes_widget_layout;
-  QVBoxLayout * left_column_layout;
-  QVBoxLayout * right_column_layout;
+  QTabWidget * tab_widget;
+
+  //// status page
+
+  QWidget * status_page_widget;
+  QHBoxLayout * status_page_layout;
+  QVBoxLayout * status_left_column_layout;
+  QVBoxLayout * status_right_column_layout;
 
   QGroupBox * device_info_box;
   QGridLayout * device_info_box_layout;
@@ -287,7 +298,14 @@ private:
   QPushButton * stop_button;
   QPushButton * disable_driver_button;
   QPushButton * enable_driver_button;
-  
+
+  //// settings page
+
+  QWidget * settings_page_widget;
+  QHBoxLayout * settings_page_layout;
+  QVBoxLayout * settings_left_column_layout;
+  QVBoxLayout * settings_right_column_layout;
+
   // [all-settings]
   QWidget * control_mode_widget;
   QGridLayout * control_mode_widget_layout;

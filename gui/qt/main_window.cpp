@@ -17,6 +17,7 @@
 #include <QScrollBar>
 #include <QShortcut>
 #include <QSpinBox>
+#include <QTabWidget>
 #include <QTimer>
 #include <QUrl>
 #include <QVBoxLayout>
@@ -110,9 +111,10 @@ void main_window::set_connection_status(std::string const & status, bool error)
   connection_status_value->setText(QString(status.c_str()));
 }
 
-void main_window::set_main_boxes_enabled(bool enabled)
+void main_window::set_tab_pages_enabled(bool enabled)
 {
-  main_boxes_widget->setEnabled(enabled);
+  status_page_widget->setEnabled(enabled);
+  settings_page_widget->setEnabled(enabled);
 }
 
 void main_window::set_manual_target_box_enabled(bool enabled)
@@ -750,7 +752,7 @@ void main_window::setup_window()
   QVBoxLayout * layout = central_widget_layout = new QVBoxLayout();
 
   layout->addLayout(setup_header());
-  layout->addWidget(setup_main_boxes_widget());
+  layout->addWidget(setup_tab_widget());
   layout->addLayout(setup_footer());
 
   central_widget->setLayout(layout);
@@ -844,43 +846,49 @@ QLayout * main_window::setup_header()
   return header_layout;
 }
 
-QWidget * main_window::setup_main_boxes_widget()
+QWidget * main_window::setup_tab_widget()
 {
-  main_boxes_widget = new QWidget();
-  QHBoxLayout * layout = main_boxes_widget_layout = new QHBoxLayout();
-  layout->setContentsMargins(0, 0, 0, 0);
+  tab_widget = new QTabWidget();
 
-  layout->addLayout(setup_left_column());
-  layout->addLayout(setup_right_column());
+  tab_widget->addTab(setup_status_page_widget(), tr("Status"));
+  tab_widget->addTab(setup_settings_page_widget(), tr("Settings"));
 
-  main_boxes_widget->setLayout(layout);
-  return main_boxes_widget;
+  return tab_widget;
 }
 
-QLayout * main_window::setup_left_column()
+//// status page
+
+QWidget * main_window::setup_status_page_widget()
 {
-  QVBoxLayout * layout = left_column_layout = new QVBoxLayout();
+  status_page_widget = new QWidget();
+  QHBoxLayout * layout = status_page_layout = new QHBoxLayout();
+
+  layout->addLayout(setup_status_left_column());
+  layout->addLayout(setup_status_right_column());
+
+  status_page_widget->setLayout(layout);
+  return status_page_widget;
+}
+
+QLayout * main_window::setup_status_left_column()
+{
+  QVBoxLayout * layout = status_left_column_layout = new QVBoxLayout();
 
   layout->addWidget(setup_device_info_box());
-  layout->addWidget(setup_status_box());
-  layout->addWidget(setup_control_mode_widget());
   layout->addWidget(setup_manual_target_box());
   layout->addStretch(1);
 
-  return left_column_layout;
+  return status_left_column_layout;
 }
 
-QLayout * main_window::setup_right_column()
+QLayout * main_window::setup_status_right_column()
 {
-  QVBoxLayout * layout = right_column_layout = new QVBoxLayout();
+  QVBoxLayout * layout = status_right_column_layout = new QVBoxLayout();
 
-  layout->addWidget(setup_serial_settings_box());
-  layout->addWidget(setup_scaling_settings_box());
-  layout->addWidget(setup_motor_settings_box());
-  layout->addWidget(setup_misc_settings_box());
+  layout->addWidget(setup_status_box());
   layout->addStretch(1);
 
-  return right_column_layout;
+  return status_right_column_layout;
 }
 
 QWidget * main_window::setup_device_info_box()
@@ -959,7 +967,7 @@ QWidget * main_window::setup_manual_target_box()
   }
 
   layout->addLayout(setup_manual_target_buttons_layout());
-  
+
   manual_target_box->setLayout(layout);
   return manual_target_box;
 }
@@ -1060,6 +1068,43 @@ QLayout * main_window::setup_manual_target_buttons_layout()
   layout->addStretch(1);
 
   return manual_target_buttons_layout;
+}
+
+//// settings page
+
+QWidget * main_window::setup_settings_page_widget()
+{
+  settings_page_widget = new QWidget();
+  QHBoxLayout * layout = settings_page_layout = new QHBoxLayout();
+
+  layout->addLayout(setup_settings_left_column());
+  layout->addLayout(setup_settings_right_column());
+
+  settings_page_widget->setLayout(layout);
+  return settings_page_widget;
+}
+
+QLayout * main_window::setup_settings_left_column()
+{
+  QVBoxLayout * layout = settings_left_column_layout = new QVBoxLayout();
+
+  layout->addWidget(setup_control_mode_widget());
+  layout->addWidget(setup_serial_settings_box());
+  layout->addWidget(setup_scaling_settings_box());
+  layout->addStretch(1);
+
+  return settings_left_column_layout;
+}
+
+QLayout * main_window::setup_settings_right_column()
+{
+  QVBoxLayout * layout = settings_right_column_layout = new QVBoxLayout();
+
+  layout->addWidget(setup_motor_settings_box());
+  layout->addWidget(setup_misc_settings_box());
+  layout->addStretch(1);
+
+  return settings_right_column_layout;
 }
 
 // [all-settings]

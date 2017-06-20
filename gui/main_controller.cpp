@@ -391,7 +391,7 @@ void main_controller::handle_device_changed()
   window->set_disconnect_enabled(connected());
   window->set_reload_settings_enabled(connected());
   window->set_restore_defaults_enabled(connected());
-  window->set_main_boxes_enabled(connected());
+  window->set_tab_pages_enabled(connected());
 }
 
 static std::string convert_mv_to_v_string(uint32_t mv)
@@ -452,7 +452,7 @@ void main_controller::handle_variables_changed()
   window->set_current_position(std::to_string(variables.get_current_position()));
   window->set_current_velocity(std::to_string(variables.get_current_velocity()) +
     " (" + convert_speed_to_pps_string(variables.get_current_velocity()) + ")");
-    
+
   window->set_enable_disable_driver_buttons_enabled(variables.get_error_status() & (1 << TIC_ERROR_INTENTIONALLY_DISABLED));
 }
 
