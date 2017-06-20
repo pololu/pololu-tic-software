@@ -88,6 +88,12 @@ tic_error * tic_settings_to_string(const tic_settings * settings, char ** string
   }
 
   {
+    bool auto_clear = tic_settings_auto_clear_driver_error_get(settings);
+    tic_sprintf(&str, "auto_clear_driver_error: %s\n",
+      auto_clear ? "true" : "false");
+  }
+
+  {
     uint32_t baud = tic_settings_serial_baud_rate_get(settings);
     tic_sprintf(&str, "serial_baud_rate: %u\n", baud);
   }

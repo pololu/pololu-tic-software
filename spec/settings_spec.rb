@@ -7,6 +7,7 @@ control_mode: serial
 never_sleep: false
 disable_safe_start: false
 ignore_err_line_high: false
+auto_clear_driver_error: false
 serial_baud_rate: 9600
 serial_device_number: 14
 command_timeout: 0
@@ -57,6 +58,7 @@ control_mode: rc_position
 never_sleep: true
 disable_safe_start: true
 ignore_err_line_high: true
+auto_clear_driver_error: true
 serial_baud_rate: 115385
 serial_device_number: 40
 command_timeout: 2020

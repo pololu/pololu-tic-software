@@ -96,6 +96,15 @@ static tic_error * apply_string_pair(tic_settings * settings,
     }
     tic_settings_ignore_err_line_high_set(settings, ignore_err_line_high);
   }
+  else if (!strcmp(key, "auto_clear_driver_error"))
+  {
+    uint32_t auto_clear_driver_error;
+    if (!tic_name_to_code(tic_bool_names, value, &auto_clear_driver_error))
+    {
+      return tic_error_create("Unrecognized auto_clear_driver_error value.");
+    }
+    tic_settings_auto_clear_driver_error_set(settings, auto_clear_driver_error);
+  }
   else if (!strcmp(key, "serial_baud_rate"))
   {
     int64_t baud;

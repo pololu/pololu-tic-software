@@ -573,6 +573,16 @@ void tic_settings_ignore_err_line_high_set(tic_settings *, bool);
 TIC_API
 bool tic_settings_ignore_err_line_high_get(const tic_settings *);
 
+/// Sets the Auto clear driver error setting.  If true, the Tic will attempt to
+/// automatically clear motor driver error if they happen.
+TIC_API
+void tic_settings_auto_clear_driver_error_set(tic_settings *, bool);
+
+/// Gets the Auto clear driver error setting described in
+/// tic_settings_auto_clear_driver_error_set().
+TIC_API
+bool tic_settings_auto_clear_driver_error_get(const tic_settings *);
+
 /// Sets the baud rate n bits per second.
 ///
 /// Only certain baud rates are actually achievable.  This function will change
@@ -592,7 +602,8 @@ TIC_API
 uint32_t tic_settings_achievable_serial_baud_rate(const tic_settings *, uint32_t);
 
 /// Sets the serial device number, a number between 0 and 0x7F that is used to
-/// identify the device when using the Pololu protocol.
+/// identify the device when using the Pololu serial protocol and is also used
+/// as the 7-bit I2C address.
 TIC_API
 void tic_settings_serial_device_number_set(tic_settings *, uint8_t);
 

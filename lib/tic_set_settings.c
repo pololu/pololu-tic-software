@@ -17,6 +17,9 @@ static void tic_write_settings_to_buffer(const tic_settings * settings, uint8_t 
   buf[TIC_SETTING_IGNORE_ERR_LINE_HIGH] =
     tic_settings_ignore_err_line_high_get(settings);
 
+  buf[TIC_SETTING_AUTO_CLEAR_DRIVER_ERROR] =
+    tic_settings_auto_clear_driver_error_get(settings);
+
   {
     uint32_t baud_rate = tic_settings_serial_baud_rate_get(settings);
     uint16_t brg = tic_baud_rate_to_brg(baud_rate);

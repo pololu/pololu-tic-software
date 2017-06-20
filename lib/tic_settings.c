@@ -8,6 +8,7 @@ struct tic_settings
   bool never_sleep;
   bool disable_safe_start;
   bool ignore_err_line_high;
+  bool auto_clear_driver_error;
   uint32_t serial_baud_rate;
   uint8_t serial_device_number;
   uint16_t command_timeout;
@@ -759,6 +760,19 @@ bool tic_settings_ignore_err_line_high_get(const tic_settings * settings)
 {
   if (!settings) { return 0; }
   return settings->ignore_err_line_high;
+}
+
+void tic_settings_auto_clear_driver_error_set(tic_settings * settings,
+  bool auto_clear_driver_error)
+{
+  if (!settings) { return; }
+  settings->auto_clear_driver_error = auto_clear_driver_error;
+}
+
+bool tic_settings_auto_clear_driver_error_get(const tic_settings * settings)
+{
+  if (!settings) { return 0; }
+  return settings->auto_clear_driver_error;
 }
 
 void tic_settings_serial_baud_rate_set(tic_settings * settings, uint32_t serial_baud_rate)
