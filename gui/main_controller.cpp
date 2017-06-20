@@ -394,6 +394,7 @@ void main_controller::handle_device_changed()
   window->set_tab_pages_enabled(connected());
 }
 
+// TODO: move to separate file along with following 2 functions?
 static std::string convert_mv_to_v_string(uint32_t mv)
 {
   std::stringstream ss;
@@ -403,6 +404,7 @@ static std::string convert_mv_to_v_string(uint32_t mv)
   return ss.str();
 }
 
+// TODO: move to separate file (used in both window and controller)
 std::string convert_speed_to_pps_string(int32_t speed)
 {
   static uint8_t const decimal_digits = std::log10(TIC_SPEED_UNITS_PER_HZ);
@@ -416,6 +418,7 @@ std::string convert_speed_to_pps_string(int32_t speed)
   return ss.str();
 }
 
+// TODO: move to separate file (used in both window and controller)
 std::string convert_accel_to_pps2_string(int32_t accel)
 {
   static uint8_t const decimal_digits = std::log10(TIC_ACCEL_UNITS_PER_HZ2);
@@ -453,7 +456,8 @@ void main_controller::handle_variables_changed()
   window->set_current_velocity(std::to_string(variables.get_current_velocity()) +
     " (" + convert_speed_to_pps_string(variables.get_current_velocity()) + ")");
 
-  window->set_enable_disable_driver_buttons_enabled(variables.get_error_status() & (1 << TIC_ERROR_INTENTIONALLY_DISABLED));
+  window->set_disable_driver_button_enabled(!(variables.get_error_status() & (1 << TIC_ERROR_INTENTIONALLY_DISABLED)));
+  window->set_enable_driver_button_enabled(variables.get_error_status() & ((1 << TIC_ERROR_INTENTIONALLY_DISABLED) | (1 << TIC_ERROR_SAFE_START_VIOLATION)));
 }
 
 void main_controller::handle_settings_changed()

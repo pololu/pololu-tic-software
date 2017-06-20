@@ -122,10 +122,14 @@ void main_window::set_manual_target_box_enabled(bool enabled)
   manual_target_box->setEnabled(enabled);
 }
 
-void main_window::set_enable_disable_driver_buttons_enabled(bool enable_button_enabled)
+void main_window::set_disable_driver_button_enabled(bool enabled)
 {
-  enable_driver_button->setEnabled(enable_button_enabled);
-  disable_driver_button->setEnabled(!enable_button_enabled);
+  disable_driver_button->setEnabled(enabled);
+}
+
+void main_window::set_enable_driver_button_enabled(bool enabled)
+{
+  enable_driver_button->setEnabled(enabled);
 }
 
 void main_window::set_apply_settings_enabled(bool enabled)
@@ -865,6 +869,7 @@ QWidget * main_window::setup_status_page_widget()
 
   layout->addLayout(setup_status_left_column());
   layout->addLayout(setup_status_right_column());
+  layout->addStretch(1);
 
   status_page_widget->setLayout(layout);
   return status_page_widget;
@@ -930,6 +935,15 @@ QWidget * main_window::setup_status_box()
   setup_read_only_text_field(layout, row++, &target_label, &target_value);
   setup_read_only_text_field(layout, row++, &current_position_label, &current_position_value);
   setup_read_only_text_field(layout, row++, &current_velocity_label, &current_velocity_value);
+
+  // Make enough room for the labels to display the largest possible current velocity.
+  {
+    QLabel tmp_label;
+
+    tmp_label.setText(QString((std::to_string(TIC_MAX_ALLOWED_SPEED) +
+      " (" + convert_speed_to_pps_string(TIC_MAX_ALLOWED_SPEED) + ")").c_str()));
+    current_velocity_value->setMinimumWidth(tmp_label.sizeHint().width());
+  }
 
   status_box->setLayout(layout);
   return status_box;
@@ -1079,6 +1093,7 @@ QWidget * main_window::setup_settings_page_widget()
 
   layout->addLayout(setup_settings_left_column());
   layout->addLayout(setup_settings_right_column());
+  layout->addStretch(1);
 
   settings_page_widget->setLayout(layout);
   return settings_page_widget;
@@ -1336,7 +1351,7 @@ QWidget * main_window::setup_motor_settings_box()
     layout->addWidget(accel_max_value, row, 1, Qt::AlignLeft);
     layout->addWidget(accel_max_value_pretty, row, 2, Qt::AlignLeft);
 
-   // Make enough room for the labels to display the largest possible pretty values.
+    // Make enough room for the labels to display the largest possible pretty values.
     {
       QLabel tmp_label;
       tmp_label.setText(QString(convert_accel_to_pps2_string(0x7FFFFFF).c_str()));
