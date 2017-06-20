@@ -17,7 +17,7 @@ void main_controller::set_window(main_window * window)
 void main_controller::start()
 {
   assert(!connected());
-  
+
   // Start the update timer so that update() will be called regularly.
   // todo: use longer update period when disconnected
   window->start_update_timer(UPDATE_INTERVAL_MS);
@@ -28,7 +28,7 @@ void main_controller::start()
   if (successfully_updated_list)
   {
     window->set_device_list_contents(device_list);
-    
+
     // Automatically connect if there is only one device.
     if (device_list.size() == 1)
     {
@@ -65,7 +65,7 @@ void main_controller::connect_device_with_os_id(std::string const & id)
 bool main_controller::disconnect_device()
 {
   if (!connected()) { return true; }
-  
+
   if (settings_modified)
   {
     std::string question =
@@ -77,7 +77,7 @@ bool main_controller::disconnect_device()
       return false;
     }
   }
-  
+
   device_handle.close();
   settings_modified = false;
   disconnected_by_user = true;
@@ -127,7 +127,7 @@ void main_controller::connect_device(tic::device const & device)
   {
     show_exception(e, "There was an error getting the status of the device.");
   }
-  
+
   handle_model_changed();
 }
 
@@ -217,7 +217,7 @@ void main_controller::update()
   {
     window->set_device_list_contents(device_list);
   }
-  
+
   if (connected())
   {
     // First, see if the device we are connected to is still available.
@@ -365,19 +365,19 @@ void main_controller::handle_device_changed()
     window->set_device_name(device.get_name(), true);
     window->set_serial_number(device.get_serial_number());
     window->set_firmware_version(device_handle.get_firmware_version_string());
-    
+
     window->set_device_list_selected(device);
     window->set_connection_status("", false);
   }
-  else 
+  else
   {
     std::string value = "N/A";
     window->set_device_name(value, false);
     window->set_serial_number(value);
     window->set_firmware_version(value);
-    
+
     window->set_device_list_selected(tic::device()); // show "Not connected"
-    
+
     if (connection_error)
     {
       window->set_connection_status(connection_error_message, true);
@@ -387,7 +387,7 @@ void main_controller::handle_device_changed()
       window->set_connection_status("", false);
     }
   }
-  
+
   window->set_disconnect_enabled(connected());
   window->set_reload_settings_enabled(connected());
   window->set_restore_defaults_enabled(connected());
@@ -398,7 +398,7 @@ static std::string convert_mv_to_v_string(uint32_t mv)
 {
   std::stringstream ss;
   uint32_t dv = (mv + 50) / 100;
-  
+
   ss << (dv / 10) << "." << (dv % 10) << " V";
   return ss.str();
 }
@@ -406,10 +406,10 @@ static std::string convert_mv_to_v_string(uint32_t mv)
 std::string convert_speed_to_pps_string(int32_t speed)
 {
   static uint8_t const decimal_digits = std::log10(TIC_SPEED_UNITS_PER_HZ);
-  
+
   std::stringstream ss;
   std::string sign = (speed < 0) ? "-" : "";
-  
+
   ss << sign << std::abs(speed / TIC_SPEED_UNITS_PER_HZ) << "." <<
     std::setfill('0') << std::setw(decimal_digits) <<
     std::abs(speed % TIC_SPEED_UNITS_PER_HZ) << " pulses/s";
@@ -419,10 +419,10 @@ std::string convert_speed_to_pps_string(int32_t speed)
 std::string convert_accel_to_pps2_string(int32_t accel)
 {
   static uint8_t const decimal_digits = std::log10(TIC_ACCEL_UNITS_PER_HZ2);
-  
+
   std::stringstream ss;
   std::string sign = (accel < 0) ? "-" : "";
-  
+
   ss << sign << std::abs(accel / TIC_ACCEL_UNITS_PER_HZ2) << "." <<
     std::setfill('0') << std::setw(decimal_digits) <<
     std::abs(accel % TIC_ACCEL_UNITS_PER_HZ2) << u8" pulses/s\u00B2";
@@ -432,9 +432,9 @@ std::string convert_accel_to_pps2_string(int32_t accel)
 void main_controller::handle_variables_changed()
 {
   //todo get_device_reset()
-  
+
   window->set_vin_voltage(convert_mv_to_v_string(variables.get_vin_voltage()));
-  
+
   if (variables.get_planning_mode() == TIC_PLANNING_MODE_TARGET_POSITION)
   {
     window->set_target_position(std::to_string(variables.get_target_position()));
@@ -448,10 +448,12 @@ void main_controller::handle_variables_changed()
   {
     window->set_target_none();
   }
-  
+
   window->set_current_position(std::to_string(variables.get_current_position()));
   window->set_current_velocity(std::to_string(variables.get_current_velocity()) +
     " (" + convert_speed_to_pps_string(variables.get_current_velocity()) + ")");
+    
+  window->set_enable_disable_driver_buttons_enabled(variables.get_error_status() & (1 << TIC_ERROR_INTENTIONALLY_DISABLED));
 }
 
 void main_controller::handle_settings_changed()
@@ -461,17 +463,20 @@ void main_controller::handle_settings_changed()
   window->set_serial_baud_rate(tic_settings_serial_baud_rate_get(settings.pointer_get()));
   window->set_serial_device_number(tic_settings_serial_device_number_get(settings.pointer_get()));
   window->set_serial_crc_enabled(tic_settings_serial_crc_enabled_get(settings.pointer_get()));
+
   window->set_input_min(tic_settings_input_min_get(settings.pointer_get()));
   window->set_input_neutral_min(tic_settings_input_neutral_min_get(settings.pointer_get()));
   window->set_input_neutral_max(tic_settings_input_neutral_max_get(settings.pointer_get()));
   window->set_input_max(tic_settings_input_max_get(settings.pointer_get()));
   window->set_output_min(tic_settings_output_min_get(settings.pointer_get()));
   window->set_output_max(tic_settings_output_max_get(settings.pointer_get()));
+
   window->set_input_averaging_enabled(tic_settings_input_averaging_enabled_get(settings.pointer_get()));
   window->set_input_hysteresis(tic_settings_input_hysteresis_get(settings.pointer_get()));
   window->set_encoder_prescaler(tic_settings_encoder_prescaler_get(settings.pointer_get()));
   window->set_encoder_postscaler(tic_settings_encoder_postscaler_get(settings.pointer_get()));
   window->set_encoder_unlimited(tic_settings_encoder_unlimited_get(settings.pointer_get()));
+
   window->set_speed_max(tic_settings_speed_max_get(settings.pointer_get()));
   window->set_speed_min(tic_settings_speed_min_get(settings.pointer_get()));
   window->set_accel_max(tic_settings_accel_max_get(settings.pointer_get()));
@@ -479,23 +484,26 @@ void main_controller::handle_settings_changed()
   window->set_step_mode(tic_settings_step_mode_get(settings.pointer_get()));
   window->set_current_limit(tic_settings_current_limit_get(settings.pointer_get()));
   window->set_decay_mode(tic_settings_decay_mode_get(settings.pointer_get()));
-  
+
+  window->set_disable_safe_start(tic_settings_disable_safe_start_get(settings.pointer_get()));
+  window->set_ignore_err_line_high(tic_settings_ignore_err_line_high_get(settings.pointer_get()));
+
   window->set_apply_settings_enabled(connected() && settings_modified);
 }
 
 void main_controller::handle_settings_applied(bool force_reset_manual_target)
-{  
+{
   window->set_manual_target_range(
     tic_settings_output_min_get(settings.pointer_get()),
     tic_settings_output_max_get(settings.pointer_get()));
-    
+
   window->set_manual_target_box_enabled(control_mode_is_serial(settings));
-    
+
   if (!control_mode_is_serial(settings) || force_reset_manual_target)
   {
     window->set_manual_target(0);
   }
-  
+
   // this must be last so the preceding code can compare old and new settings
   cached_settings = settings;
 }
@@ -523,7 +531,6 @@ void main_controller::handle_serial_baud_rate_input_finished()
   serial_baud_rate = tic_settings_achievable_serial_baud_rate(
     settings.pointer_get(), serial_baud_rate);
   tic_settings_serial_baud_rate_set(settings.pointer_get(), serial_baud_rate);
-  settings_modified = true;
   handle_settings_changed();
 }
 
@@ -685,7 +692,6 @@ void main_controller::handle_current_limit_input_finished()
   uint32_t current_limit = tic_settings_current_limit_get(settings.pointer_get());
   current_limit = tic_settings_achievable_current_limit(settings.pointer_get(), current_limit);
   tic_settings_current_limit_set(settings.pointer_get(), current_limit);
-  settings_modified = true;
   handle_settings_changed();
 }
 
@@ -697,6 +703,22 @@ void main_controller::handle_decay_mode_input(uint8_t decay_mode)
   handle_settings_changed();
 }
 
+void main_controller::handle_disable_safe_start_input(bool disable_safe_start)
+{
+  if (!connected()) { return; }
+  tic_settings_disable_safe_start_set(settings.pointer_get(), disable_safe_start);
+  settings_modified = true;
+  handle_settings_changed();
+}
+
+void main_controller::handle_ignore_err_line_high_input(bool ignore_err_line_high)
+{
+  if (!connected()) { return; }
+  tic_settings_ignore_err_line_high_set(settings.pointer_get(), ignore_err_line_high);
+  settings_modified = true;
+  handle_settings_changed();
+}
+
 void main_controller::set_target_position(int32_t position)
 {
   if (!connected()) { return; }
@@ -704,12 +726,12 @@ void main_controller::set_target_position(int32_t position)
   try
   {
     assert(connected());
-    
+
     device_handle.set_target_position(position);
   }
   catch (std::exception const & e)
   {
-    show_exception(e, "There was an error setting target position.");
+    show_exception(e, "There was an error setting the target position.");
   }
 }
 
@@ -720,12 +742,12 @@ void main_controller::set_target_velocity(int32_t velocity)
   try
   {
     assert(connected());
-    
+
     device_handle.set_target_velocity(velocity);
   }
   catch (std::exception const & e)
   {
-    show_exception(e, "There was an error setting target velocity.");
+    show_exception(e, "There was an error setting the target velocity.");
   }
 }
 
@@ -736,12 +758,60 @@ void main_controller::set_current_position(int32_t position)
   try
   {
     assert(connected());
-    
+
     device_handle.set_current_position(position);
   }
   catch (std::exception const & e)
   {
-    show_exception(e, "There was an error setting current position.");
+    show_exception(e, "There was an error setting the current position.");
+  }
+}
+
+void main_controller::stop_motor()
+{
+  if (!connected()) { return; }
+
+  try
+  {
+    assert(connected());
+
+    device_handle.stop();
+  }
+  catch (std::exception const & e)
+  {
+    show_exception(e, "There was an error stopping.");
+  }
+}
+
+void main_controller::disable_driver()
+{
+  if (!connected()) { return; }
+
+  try
+  {
+    assert(connected());
+
+    device_handle.disable_driver();
+  }
+  catch (std::exception const & e)
+  {
+    show_exception(e, "There was an error disabling the driver.");
+  }
+}
+
+void main_controller::enable_driver()
+{
+  if (!connected()) { return; }
+
+  try
+  {
+    assert(connected());
+
+    device_handle.enable_driver();
+  }
+  catch (std::exception const & e)
+  {
+    show_exception(e, "There was an error enabling the driver.");
   }
 }
 
@@ -752,10 +822,10 @@ void main_controller::apply_settings()
   try
   {
     assert(connected());
-    
+
     tic::settings fixed_settings = settings;
     std::string warnings;
-    fixed_settings.fix(&warnings); 
+    fixed_settings.fix(&warnings);
     if (warnings.empty() ||
       window->confirm(warnings.append("\nAccept these changes and apply settings?")))
     {
@@ -770,7 +840,7 @@ void main_controller::apply_settings()
   {
     show_exception(e, "There was an error applying settings.");
   }
-  
+
   handle_settings_changed();
 }
 
@@ -793,5 +863,5 @@ void main_controller::reload_variables()
 bool main_controller::control_mode_is_serial(tic::settings const & s) const
 {
   uint8_t control_mode = tic_settings_control_mode_get(s.pointer_get());
-  return (control_mode == TIC_CONTROL_MODE_SERIAL); 
+  return (control_mode == TIC_CONTROL_MODE_SERIAL);
 }
