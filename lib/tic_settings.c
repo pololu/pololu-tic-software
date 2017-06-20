@@ -71,6 +71,7 @@ void tic_settings_fill_with_defaults(tic_settings * settings)
 
   tic_settings_serial_baud_rate_set(settings, 9600);
   tic_settings_serial_device_number_set(settings, 14);
+  tic_settings_command_timeout_set(settings, 4000);
   tic_settings_low_vin_timeout_set(settings, 250);
   tic_settings_low_vin_shutoff_voltage_set(settings, 6000);
   tic_settings_low_vin_startup_voltage_set(settings, 6500);
@@ -181,10 +182,11 @@ uint32_t tic_settings_achievable_current_limit(const tic_settings * settings,
   return tic_current_limit_from_code(code);
 }
 
-// TODO: use present and future tense for these messages, not past tense
-
 static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings)
 {
+  // TODO: use present and future tense for these messages, not past tense
+  // TODO: fix command_timeout; must be less than 60000
+
   uint8_t control_mode = tic_settings_control_mode_get(settings);
 
   {

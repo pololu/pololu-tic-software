@@ -247,7 +247,28 @@ tic_error * tic_stop(tic_handle * handle)
   if (error != NULL)
   {
     error = tic_error_add(error,
-      "There was an error stopping the Tic.");
+      "There was an error sending the stop command.");
+  }
+
+  return error;
+}
+
+tic_error * tic_reset_command_timeout(tic_handle * handle)
+{
+  if (handle == NULL)
+  {
+    return tic_error_create("Handle is null.");
+  }
+
+  tic_error * error = NULL;
+
+  error = tic_usb_error(libusbp_control_transfer(handle->usb_handle,
+    0x40, TIC_CMD_RESET_COMMAND_TIMEOUT, 0, 0, NULL, 0, NULL));
+
+  if (error != NULL)
+  {
+    error = tic_error_add(error,
+      "There was an error resetting the command timeout.");
   }
 
   return error;

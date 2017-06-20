@@ -15,6 +15,7 @@ static const char help[] =
   "  -y, --velocity NUM          Set target velocity in microsteps / 10000 s.\n"
   "  --set-current-position NUM  Set where the controller thinks it currently is.\n"
   "  --stop                      Abruptly stop the motor.\n"
+  "  --reset-command-timeout     Prevents the \"Command timeout\" error for a while.\n"
   "  --disable-driver            Disable the motor driver.\n"
   "  --enable-driver             Stop disabling the driver and exit safe-start.\n"
   "  --clear-driver-error        Attempt to clear a motor driver error.\n"
@@ -55,6 +56,8 @@ struct arguments
   int32_t current_position;
 
   bool stop = false;
+
+  bool reset_command_timeout = false;
 
   bool disable_driver = false;
 
@@ -109,6 +112,7 @@ struct arguments
       set_target_velocity ||
       set_current_position ||
       stop ||
+      reset_command_timeout ||
       disable_driver ||
       enable_driver ||
       clear_driver_error ||
@@ -284,6 +288,10 @@ static arguments parse_args(int argc, char ** argv)
     {
       args.stop = true;
     }
+    else if (arg == "--reset-command-timeout")
+    {
+      args.reset_command_timeout = true;
+    }
     else if (arg == "--disable-driver")
     {
       args.disable_driver = true;
@@ -414,6 +422,13 @@ static void stop(device_selector & selector)
   tic::device device = selector.select_device();
   tic::handle handle(device);
   handle.stop();
+}
+
+static void reset_command_timeout(device_selector & selector)
+{
+  tic::device device = selector.select_device();
+  tic::handle handle(device);
+  handle.reset_command_timeout();
 }
 
 static void disable_driver(device_selector & selector)
@@ -684,6 +699,11 @@ static void run(int argc, char ** argv)
   if (args.stop)
   {
     stop(selector);
+  }
+
+  if (args.reset_command_timeout)
+  {
+    reset_command_timeout(selector);
   }
 
   // Should be before set_target_position and set_target_velocity since it is

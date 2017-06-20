@@ -10,7 +10,7 @@ ignore_err_line_high: false
 auto_clear_driver_error: false
 serial_baud_rate: 9600
 serial_device_number: 14
-command_timeout: 0
+command_timeout: 4000
 serial_crc_enabled: false
 low_vin_timeout: 250
 low_vin_shutoff_voltage: 6000

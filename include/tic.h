@@ -1196,6 +1196,12 @@ tic_error * tic_set_current_position(tic_handle *, int32_t position);
 TIC_API TIC_WARN_UNUSED
 tic_error * tic_stop(tic_handle *);
 
+/// Prevents the "Command timeout" error from happening for some time.
+///
+/// This function sends a Reset Command Timeout command to the Tic.
+TIC_API TIC_WARN_UNUSED
+tic_error * tic_reset_command_timeout(tic_handle *);
+
 /// Disables the stepper motor driver.
 ///
 /// This function sends a Disable Driver command to the Tic, causing it to

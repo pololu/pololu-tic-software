@@ -88,6 +88,15 @@ describe 'commands for controlling the motor', usb: true do
     end
   end
 
+  describe 'Reset Command Timeout' do
+    it 'runs' do
+      stdout, stderr, result = run_ticcmd('--reset-command-timeout')
+      expect(stderr).to eq ''
+      expect(stdout).to eq ''
+      expect(result).to eq 0
+    end
+  end
+
   describe 'Enable/Disable Driver' do
     it 'works' do
       stdout, stderr, result = run_ticcmd('--disable-driver')

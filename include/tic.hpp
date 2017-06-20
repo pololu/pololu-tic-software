@@ -614,6 +614,12 @@ namespace tic
       throw_if_needed(tic_stop(pointer));
     }
 
+    /// Wrapper for tic_reset_command_timeout().
+    void reset_command_timeout()
+    {
+      throw_if_needed(tic_reset_command_timeout(pointer));
+    }
+
     /// Wrapper for tic_disable_driver().
     void disable_driver()
     {
