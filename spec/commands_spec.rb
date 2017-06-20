@@ -5,15 +5,10 @@ describe 'commands for controlling the motor', usb: true do
     tic_change_settings do |s|
       s['control_mode'] = 'serial'
       s['speed_max'] = '500000000'
-
-      # TODO: why does the Safe Start feature cause some of the specs in
-      # this group to fail specs to fail sometimes, even with the --enable-driver
-      # call here?  We'd like to set disable_safe_start to false here.
-
-      s['disable_safe_start'] = true
+      s['disable_safe_start'] = false
     end
 
-
+    # Get out of safe-start.
     stdout, stderr, result = run_ticcmd('--enable-driver')
     expect(stderr).to eq ''
     expect(stdout).to eq ''
