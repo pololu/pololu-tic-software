@@ -1199,20 +1199,18 @@ tic_error * tic_stop(tic_handle *);
 /// Disables the stepper motor driver.
 ///
 /// This function sends a Disable Driver command to the Tic, causing it to
-/// disable its stepper driver.  This command only works if the control mode
-/// setting is set to Serial or STEP/DIR.  The effect only lasts until the Tic
-/// is powered off, reset, or reinitialized, or an Enable Driver command is
-/// issued.
+/// disable its stepper motor driver and set the "Intentionally disabled" error
+/// bit.
 TIC_API TIC_WARN_UNUSED
 tic_error * tic_disable_driver(tic_handle *);
 
 /// Enables the stepper motor driver.
 ///
-/// This function sends an Enable Driver command to the Tic, causing it to
-/// enable its stepper driver if it was previously disabled.  This command only
-/// works if the control mode setting is set to Serial or STEP/DIR.  The effect
-/// only lasts until the Tic is powered off, reset, or reinitialized, or a
-/// Disable Driver command is issued.
+/// This function sends an Enable Driver command to the Tic, clearing the
+/// "Intentionally disabled" error bit.
+///
+/// In serial/I2C/USB control mode, this command also causes the Safe Start
+/// Violation error to be cleared for 200 ms.
 TIC_API TIC_WARN_UNUSED
 tic_error * tic_enable_driver(tic_handle *);
 
