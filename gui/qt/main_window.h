@@ -55,7 +55,8 @@ public:
   void set_tab_pages_enabled(bool enabled);
 
   void set_manual_target_box_enabled(bool enabled);
-  void set_enable_disable_driver_buttons_enabled(bool enable_button_enabled);
+  void set_disable_driver_button_enabled(bool enabled);
+  void set_enable_driver_button_enabled(bool enabled);
 
   /** Controls whether the apply settings action/button is enabled or
    * disabled. */
@@ -298,6 +299,9 @@ private:
   QPushButton * stop_button;
   QPushButton * disable_driver_button;
   QPushButton * enable_driver_button;
+
+  QGroupBox * errors_box;
+  QGridLayout * errors_box_layout;
 
   //// settings page
 
