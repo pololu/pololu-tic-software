@@ -15,16 +15,15 @@ const tic_name tic_product_names[] =
 
 const tic_name tic_nice_error_names[] =
 {
-  { "Safe start violation", 1 << TIC_ERROR_SAFE_START_VIOLATION },
+  { "Intentionally disabled", 1 << TIC_ERROR_INTENTIONALLY_DISABLED },
+  { "Motor driver error", 1 << TIC_ERROR_MOTOR_DRIVER_ERROR },
+  { "Low VIN", 1 << TIC_ERROR_LOW_VIN },
+  { "Kill switch", 1 << TIC_ERROR_KILL_SWITCH },
   { "Required input invalid", 1 << TIC_ERROR_REQUIRED_INPUT_INVALID },
   { "Serial error", 1 << TIC_ERROR_SERIAL_ERROR },
   { "Command timeout", 1 << TIC_ERROR_COMMAND_TIMEOUT },
-  { "Motor driver error", 1 << TIC_ERROR_MOTOR_DRIVER_ERROR },
-  { "Low VIN", 1 << TIC_ERROR_LOW_VIN },
-  { "High VIN", 1 << TIC_ERROR_HIGH_VIN },
+  { "Safe start violation", 1 << TIC_ERROR_SAFE_START_VIOLATION },
   { "ERR line high", 1 << TIC_ERROR_ERR_LINE_HIGH },
-  { "Kill switch", 1 << TIC_ERROR_KILL_SWITCH },
-  { "Intentionally disabled", 1 << TIC_ERROR_INTENTIONALLY_DISABLED },
   { "Serial framing", 1 << TIC_ERROR_SERIAL_FRAMING },
   { "Serial RX overrun", 1 << TIC_ERROR_SERIAL_RX_OVERRUN },
   { "Serial format", 1 << TIC_ERROR_SERIAL_FORMAT },

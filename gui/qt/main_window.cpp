@@ -1057,15 +1057,14 @@ QLayout * main_window::setup_error_table_layout()
      row++;
    }
 
-  setup_error_row(layout, row++, error_rows[TIC_ERROR_SAFE_START_VIOLATION]);
-  setup_error_row(layout, row++, error_rows[TIC_ERROR_REQUIRED_INPUT_INVALID]);
-  setup_error_row(layout, row++, error_rows[TIC_ERROR_COMMAND_TIMEOUT]);
+  setup_error_row(layout, row++, error_rows[TIC_ERROR_INTENTIONALLY_DISABLED]);
   setup_error_row(layout, row++, error_rows[TIC_ERROR_MOTOR_DRIVER_ERROR]);
   setup_error_row(layout, row++, error_rows[TIC_ERROR_LOW_VIN]);
-  setup_error_row(layout, row++, error_rows[TIC_ERROR_HIGH_VIN]);
-  setup_error_row(layout, row++, error_rows[TIC_ERROR_ERR_LINE_HIGH]);
   setup_error_row(layout, row++, error_rows[TIC_ERROR_KILL_SWITCH]);
-  setup_error_row(layout, row++, error_rows[TIC_ERROR_INTENTIONALLY_DISABLED]);
+  setup_error_row(layout, row++, error_rows[TIC_ERROR_REQUIRED_INPUT_INVALID]);
+  setup_error_row(layout, row++, error_rows[TIC_ERROR_COMMAND_TIMEOUT]);
+  setup_error_row(layout, row++, error_rows[TIC_ERROR_SAFE_START_VIOLATION]);
+  setup_error_row(layout, row++, error_rows[TIC_ERROR_ERR_LINE_HIGH]);
   setup_error_row(layout, row++, error_rows[TIC_ERROR_SERIAL_ERROR]);
   setup_error_row(layout, row++, error_rows[TIC_ERROR_SERIAL_FRAMING]);
   setup_error_row(layout, row++, error_rows[TIC_ERROR_SERIAL_RX_OVERRUN]);
@@ -1618,15 +1617,14 @@ void main_window::retranslate()
   errors_box->setTitle(tr("Errors"));
   errors_stopping_header_label->setText(tr("Stopping motor?"));
   errors_count_header_label->setText(tr("Count"));
-  error_rows[TIC_ERROR_SAFE_START_VIOLATION]  .name_label->setText(tr("Safe start violation"));
-  error_rows[TIC_ERROR_REQUIRED_INPUT_INVALID].name_label->setText(tr("Required input invalid"));
-  error_rows[TIC_ERROR_COMMAND_TIMEOUT]       .name_label->setText(tr("Command timeout"));
+  error_rows[TIC_ERROR_INTENTIONALLY_DISABLED].name_label->setText(tr("Intentionally disabled"));
   error_rows[TIC_ERROR_MOTOR_DRIVER_ERROR]    .name_label->setText(tr("Motor driver error"));
   error_rows[TIC_ERROR_LOW_VIN]               .name_label->setText(tr("Low VIN"));
-  error_rows[TIC_ERROR_HIGH_VIN]              .name_label->setText(tr("High VIN"));
-  error_rows[TIC_ERROR_ERR_LINE_HIGH]         .name_label->setText(tr("ERR line high"));
   error_rows[TIC_ERROR_KILL_SWITCH]           .name_label->setText(tr("Kill switch"));
-  error_rows[TIC_ERROR_INTENTIONALLY_DISABLED].name_label->setText(tr("Intentionally disabled"));
+  error_rows[TIC_ERROR_REQUIRED_INPUT_INVALID].name_label->setText(tr("Required input invalid"));
+  error_rows[TIC_ERROR_COMMAND_TIMEOUT]       .name_label->setText(tr("Command timeout"));
+  error_rows[TIC_ERROR_SAFE_START_VIOLATION]  .name_label->setText(tr("Safe start violation"));
+  error_rows[TIC_ERROR_ERR_LINE_HIGH]         .name_label->setText(tr("ERR line high"));
   error_rows[TIC_ERROR_SERIAL_ERROR]          .name_label->setText(tr("Serial errors:"));
   error_rows[TIC_ERROR_SERIAL_FRAMING]        .name_label->setText(tr(INDENT("Frame")));
   error_rows[TIC_ERROR_SERIAL_RX_OVERRUN]     .name_label->setText(tr(INDENT("RX overrun")));
