@@ -59,6 +59,8 @@ const tic_name tic_operation_state_names[] =
   { "disabled", TIC_OPERATION_STATE_DISABLED },
   { "error", TIC_OPERATION_STATE_ERROR },
   { "waiting_for_err_line", TIC_OPERATION_STATE_WAITING_FOR_ERR_LINE },
+  { "waiting_for_input", TIC_OPERATION_STATE_WAITING_FOR_INPUT },
+  { "input_invalid", TIC_OPERATION_STATE_INPUT_INVALID },
   { "active", TIC_OPERATION_STATE_ACTIVE },
   { NULL, 0 },
 };

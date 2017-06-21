@@ -188,6 +188,7 @@ static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings
   // TODO: use present and future tense for these messages, not past tense
   // TODO: fix command_timeout; must be less than 60000
   // TODO: fix enum values to be valid?
+  // TODO: don't allow tic_input_invalid_response to be position in a speed control mode
 
   uint8_t control_mode = tic_settings_control_mode_get(settings);
 
