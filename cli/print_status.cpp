@@ -50,18 +50,21 @@ static void print_pin_info(const tic::variables & vars,
   uint8_t pin, const char * pin_name)
 {
   std::cout<< pin_name << " pin:" << std::endl;
-  std::cout << left_column << "  Digital reading: "
-    << vars.get_digital_reading(pin) << std::endl;
-  std::cout << left_column << "  Switch status: "
-    << vars.get_switch_status(pin) << std::endl;
   if (pin != TIC_PIN_NUM_RC)
   {
-    std::cout << left_column << "  Analog reading: "
-      << input_format(vars.get_analog_reading(pin)) << std::endl;
+    std::cout << left_column << "  State: "
+      << pretty_enum(tic_look_up_pin_state_string(vars.get_pin_state(pin)))
+      << std::endl;
+    if (vars.get_analog_reading(pin) != TIC_INPUT_NULL)
+    {
+      std::cout << left_column << "  Analog reading: "
+        << vars.get_analog_reading(pin) << std::endl;
+    }
   }
-  std::cout << left_column << "  State: "
-    << pretty_enum(tic_look_up_pin_state_string(vars.get_pin_state(pin)))
-    << std::endl;
+  std::cout << left_column << "  Digital reading: "
+    << vars.get_digital_reading(pin) << std::endl;
+  //std::cout << left_column << "  Switch status: "
+  //  << vars.get_switch_status(pin) << std::endl;
 }
 
 void print_status(const tic::variables & vars,

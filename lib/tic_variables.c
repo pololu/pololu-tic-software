@@ -161,10 +161,10 @@ static void write_buffer_to_variables(const uint8_t * buf, tic_variables * vars)
 
   {
     uint8_t s = buf[TIC_VAR_PIN_STATES];
-    vars->pin_info[TIC_PIN_NUM_SCL].pin_state = s >> TIC_PIN_NUM_SCL * 2 & 1;
-    vars->pin_info[TIC_PIN_NUM_SDA].pin_state = s >> TIC_PIN_NUM_SDA * 2 & 1;
-    vars->pin_info[TIC_PIN_NUM_TX].pin_state = s >> TIC_PIN_NUM_TX * 2 & 1;
-    vars->pin_info[TIC_PIN_NUM_RX].pin_state = s >> TIC_PIN_NUM_RX * 2 & 1;
+    vars->pin_info[TIC_PIN_NUM_SCL].pin_state = s >> (TIC_PIN_NUM_SCL * 2) & 3;
+    vars->pin_info[TIC_PIN_NUM_SDA].pin_state = s >> (TIC_PIN_NUM_SDA * 2) & 3;
+    vars->pin_info[TIC_PIN_NUM_TX].pin_state = s >> (TIC_PIN_NUM_TX * 2) & 3;
+    vars->pin_info[TIC_PIN_NUM_RX].pin_state = s >> (TIC_PIN_NUM_RX * 2) & 3;
   }
 
   vars->pin_info[TIC_PIN_NUM_SCL].analog_reading =

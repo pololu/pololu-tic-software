@@ -10,7 +10,6 @@ static const char help[] =
   "  -s, --status                Show device settings and info.\n"
   "  -d SERIALNUMBER             Specifies the serial number of the device.\n"
   "  --list                      List devices connected to computer.\n"
-  "  --stop                      Stop the motor.\n"
   "  -p, --position NUM          Set target position in microsteps.\n"
   "  -y, --velocity NUM          Set target velocity in microsteps / 10000 s.\n"
   "  --set-current-position NUM  Set where the controller thinks it currently is.\n"
