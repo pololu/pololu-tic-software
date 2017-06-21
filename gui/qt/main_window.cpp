@@ -206,6 +206,36 @@ void main_window::set_current_velocity(std::string const & current_velocity)
   current_velocity_value->setText(QString(current_velocity.c_str()));
 }
 
+void main_window::set_error_status_stopping(uint8_t error, bool stopping)
+{
+  if (stopping)
+  {
+    error_rows[error].stopping_value->setText(tr("Yes"));
+    error_rows[error].stopping_value->setStyleSheet(
+      "QLabel { background-color: red; color: white; }");
+  }
+  else
+  {
+    error_rows[error].stopping_value->setText(tr("No"));
+    error_rows[error].stopping_value->setStyleSheet(styleSheet());
+  }
+}
+
+void main_window::increment_error_status_count(uint8_t error)
+{
+  error_rows[error].count++;
+  error_rows[error].count_value->setText(QString::number(error_rows[error].count));
+}
+
+void main_window::reset_error_status_counts()
+{
+  for (uint8_t e : errors_occurred_bits)
+  {
+    error_rows[e].count = 0;
+    error_rows[e].count_value->setText(tr("-"));
+  }
+}
+
 void main_window::set_control_mode(uint8_t control_mode)
 {
   set_u8_combo_box(control_mode_value, control_mode);
@@ -464,6 +494,21 @@ void main_window::on_device_list_value_currentIndexChanged(int index)
   }
 }
 
+void main_window::on_disable_driver_button_clicked()
+{
+  controller->disable_driver();
+}
+
+void main_window::on_enable_driver_button_clicked()
+{
+  controller->enable_driver();
+}
+
+void main_window::on_errors_reset_counts_button_clicked()
+{
+  reset_error_status_counts();
+}
+
 void main_window::on_manual_target_position_mode_radio_toggled(bool checked)
 {
   if (suppress_events) { return; }
@@ -545,16 +590,6 @@ void main_window::on_auto_set_target_check_stateChanged(int state)
 void main_window::on_stop_button_clicked()
 {
   controller->stop_motor();
-}
-
-void main_window::on_disable_driver_button_clicked()
-{
-  controller->disable_driver();
-}
-
-void main_window::on_enable_driver_button_clicked()
-{
-  controller->enable_driver();
 }
 
 void main_window::on_apply_settings_action_triggered()
@@ -724,8 +759,10 @@ void main_window::on_ignore_err_line_high_check_stateChanged(int state)
 // On Mac OS X, field labels are usually right-aligned.
 #ifdef __APPLE__
 #define FIELD_LABEL_ALIGNMENT Qt::AlignRight
+#define INDENT(s) (((s) + std::string("    ")).c_str())
 #else
 #define FIELD_LABEL_ALIGNMENT Qt::AlignLeft
+#define INDENT(s) ((std::string("    ") + (s)).c_str())
 #endif
 
 static void setup_read_only_text_field(QGridLayout * layout, int row,
@@ -742,6 +779,41 @@ static void setup_read_only_text_field(QGridLayout * layout, int row,
 
   if (label) { *label = new_label; }
   if (value) { *value = new_value; }
+}
+
+static void setup_error_row(QGridLayout * layout, int row, error_row & line)
+{
+  // TODO make sure this all looks good on mac/linux/high dpi
+  line.count = 0;
+  line.name_label = new QLabel();
+  line.name_label->setContentsMargins(
+    line.name_label->style()->pixelMetric(QStyle::PM_LayoutLeftMargin), 0, 0, 0);
+  line.stopping_value = new QLabel();
+  line.stopping_value->setAlignment(Qt::AlignCenter);
+  line.count_value = new QLabel();
+  line.count_value->setContentsMargins(
+    0, 0, line.count_value->style()->pixelMetric(QStyle::PM_LayoutRightMargin), 0);
+  line.background = new QFrame();
+  if (row & 1)
+  {
+    line.background->setStyleSheet("QFrame { background-color: palette(alternate-base); }");
+  }
+
+  {
+    QLabel tmp_label;
+
+    tmp_label.setText("Yes");
+
+    line.stopping_value->setMinimumWidth(tmp_label.sizeHint().width() +
+      3 * line.stopping_value->fontMetrics().height());
+    layout->setRowMinimumHeight(row, tmp_label.sizeHint().height() +
+      line.background->style()->pixelMetric(QStyle::PM_LayoutVerticalSpacing));
+  }
+
+  layout->addWidget(line.background, row, 0, 1, 3);
+  layout->addWidget(line.name_label, row, 0, FIELD_LABEL_ALIGNMENT);
+  layout->addWidget(line.stopping_value, row, 1, Qt::AlignCenter);
+  layout->addWidget(line.count_value, row, 2, Qt::AlignLeft);
 }
 
 void main_window::setup_window()
@@ -891,6 +963,7 @@ QLayout * main_window::setup_status_right_column()
   QVBoxLayout * layout = status_right_column_layout = new QVBoxLayout();
 
   layout->addWidget(setup_status_box());
+  layout->addWidget(setup_errors_box());
   layout->addStretch(1);
 
   return status_right_column_layout;
@@ -936,17 +1009,81 @@ QWidget * main_window::setup_status_box()
   setup_read_only_text_field(layout, row++, &current_position_label, &current_position_value);
   setup_read_only_text_field(layout, row++, &current_velocity_label, &current_velocity_value);
 
-  // Make enough room for the labels to display the largest possible current velocity.
+  // Make the right column wide enough to display the largest possible current
+  // velocity.
   {
     QLabel tmp_label;
 
     tmp_label.setText(QString((std::to_string(TIC_MAX_ALLOWED_SPEED) +
       " (" + convert_speed_to_pps_string(TIC_MAX_ALLOWED_SPEED) + ")").c_str()));
-    current_velocity_value->setMinimumWidth(tmp_label.sizeHint().width());
+    layout->setColumnMinimumWidth(1, tmp_label.sizeHint().width());
   }
 
   status_box->setLayout(layout);
   return status_box;
+}
+
+QWidget * main_window::setup_errors_box()
+{
+  errors_box = new QGroupBox();
+  QVBoxLayout * layout = errors_box_layout = new QVBoxLayout();
+
+  layout->addLayout(setup_error_table_layout());
+
+  {
+    errors_reset_counts_button = new QPushButton;
+    errors_reset_counts_button->setObjectName("errors_reset_counts_button");
+    layout->addWidget(errors_reset_counts_button, 0, Qt::AlignRight);
+  }
+
+  reset_error_status_counts();
+
+  errors_box->setLayout(layout);
+  return errors_box;
+}
+
+QLayout * main_window::setup_error_table_layout()
+{
+  QGridLayout * layout = error_table_layout = new QGridLayout();
+  layout->setHorizontalSpacing(fontMetrics().height());
+  layout->setVerticalSpacing(0);
+  int row = 0;
+
+   {
+     errors_stopping_header_label = new QLabel;
+     errors_count_header_label = new QLabel;
+     layout->addWidget(errors_stopping_header_label, row, 1, Qt::AlignCenter);
+     layout->addWidget(errors_count_header_label, row, 2, Qt::AlignLeft);
+     row++;
+   }
+
+  setup_error_row(layout, row++, error_rows[TIC_ERROR_SAFE_START_VIOLATION]);
+  setup_error_row(layout, row++, error_rows[TIC_ERROR_REQUIRED_INPUT_INVALID]);
+  setup_error_row(layout, row++, error_rows[TIC_ERROR_COMMAND_TIMEOUT]);
+  setup_error_row(layout, row++, error_rows[TIC_ERROR_MOTOR_DRIVER_ERROR]);
+  setup_error_row(layout, row++, error_rows[TIC_ERROR_LOW_VIN]);
+  setup_error_row(layout, row++, error_rows[TIC_ERROR_HIGH_VIN]);
+  setup_error_row(layout, row++, error_rows[TIC_ERROR_ERR_LINE_HIGH]);
+  setup_error_row(layout, row++, error_rows[TIC_ERROR_KILL_SWITCH]);
+  setup_error_row(layout, row++, error_rows[TIC_ERROR_INTENTIONALLY_DISABLED]);
+  setup_error_row(layout, row++, error_rows[TIC_ERROR_SERIAL_ERROR]);
+  setup_error_row(layout, row++, error_rows[TIC_ERROR_SERIAL_FRAMING]);
+  setup_error_row(layout, row++, error_rows[TIC_ERROR_SERIAL_RX_OVERRUN]);
+  setup_error_row(layout, row++, error_rows[TIC_ERROR_SERIAL_FORMAT]);
+  setup_error_row(layout, row++, error_rows[TIC_ERROR_SERIAL_CRC]);
+  setup_error_row(layout, row++, error_rows[TIC_ERROR_ENCODER_SKIP]);
+
+  layout->setRowMinimumHeight(0, layout->rowMinimumHeight(1));
+
+  // Make the right column wide enough to display the largest possible count.
+  {
+    QLabel tmp_label;
+
+    tmp_label.setText(QString::number(UINT_MAX));
+    layout->setColumnMinimumWidth(2, tmp_label.sizeHint().width());
+  }
+
+  return layout;
 }
 
 QWidget * main_window::setup_manual_target_box()
@@ -980,7 +1117,11 @@ QWidget * main_window::setup_manual_target_box()
     layout->addWidget(auto_zero_target_check, 0, Qt::AlignLeft);
   }
 
-  layout->addLayout(setup_manual_target_buttons_layout());
+  {
+    stop_button = new QPushButton();
+    stop_button->setObjectName("stop_button");
+    layout->addWidget(stop_button, 0, Qt::AlignCenter);
+  }
 
   manual_target_box->setLayout(layout);
   return manual_target_box;
@@ -1065,25 +1206,6 @@ QWidget * main_window::setup_manual_target_entry_widget()
   return manual_target_entry_widget;
 }
 
-QLayout * main_window::setup_manual_target_buttons_layout()
-{
-  QHBoxLayout * layout = manual_target_buttons_layout = new QHBoxLayout();
-
-  stop_button = new QPushButton();
-  stop_button->setObjectName("stop_button");
-  disable_driver_button = new QPushButton();
-  disable_driver_button->setObjectName("disable_driver_button");
-  enable_driver_button = new QPushButton();
-  enable_driver_button->setObjectName("enable_driver_button");
-  layout->addStretch(1);
-  layout->addWidget(stop_button);
-  layout->addWidget(disable_driver_button);
-  layout->addWidget(enable_driver_button);
-  layout->addStretch(1);
-
-  return manual_target_buttons_layout;
-}
-
 //// settings page
 
 QWidget * main_window::setup_settings_page_widget()
@@ -1129,6 +1251,7 @@ QWidget * main_window::setup_control_mode_widget()
   control_mode_widget = new QWidget();
   QGridLayout * layout = control_mode_widget_layout = new QGridLayout();
   layout->setColumnStretch(1, 1);
+  layout->setContentsMargins(0, 0, 0, 0);
   int row = 0;
 
   {
@@ -1351,11 +1474,12 @@ QWidget * main_window::setup_motor_settings_box()
     layout->addWidget(accel_max_value, row, 1, Qt::AlignLeft);
     layout->addWidget(accel_max_value_pretty, row, 2, Qt::AlignLeft);
 
-    // Make enough room for the labels to display the largest possible pretty values.
+    // Make the right column wide enough to display the largest possible pretty
+    // values.
     {
       QLabel tmp_label;
       tmp_label.setText(QString(convert_accel_to_pps2_string(0x7FFFFFF).c_str()));
-      accel_max_value_pretty->setMinimumWidth(tmp_label.sizeHint().width());
+      layout->setColumnMinimumWidth(2, tmp_label.sizeHint().width());
     }
 
     row++;
@@ -1448,12 +1572,15 @@ QLayout * main_window::setup_footer()
 {
   QHBoxLayout * layout = footer_layout = new QHBoxLayout();
 
-  {
-    apply_settings_button = new QPushButton();
-    connect(apply_settings_button, SIGNAL(clicked()),
-      this, SLOT(on_apply_settings_action_triggered()));
-  }
-
+  disable_driver_button = new QPushButton();
+  disable_driver_button->setObjectName("disable_driver_button");
+  enable_driver_button = new QPushButton();
+  enable_driver_button->setObjectName("enable_driver_button");
+  apply_settings_button = new QPushButton();
+  connect(apply_settings_button, SIGNAL(clicked()),
+    this, SLOT(on_apply_settings_action_triggered()));
+  layout->addWidget(disable_driver_button);
+  layout->addWidget(enable_driver_button);
   layout->addStretch(1);
   layout->addWidget(apply_settings_button);
 
@@ -1488,6 +1615,26 @@ void main_window::retranslate()
   current_position_label->setText(tr("Current position:"));
   current_velocity_label->setText(tr("Current velocity:"));
 
+  errors_box->setTitle(tr("Errors"));
+  errors_stopping_header_label->setText(tr("Stopping motor?"));
+  errors_count_header_label->setText(tr("Count"));
+  error_rows[TIC_ERROR_SAFE_START_VIOLATION]  .name_label->setText(tr("Safe start violation"));
+  error_rows[TIC_ERROR_REQUIRED_INPUT_INVALID].name_label->setText(tr("Required input invalid"));
+  error_rows[TIC_ERROR_COMMAND_TIMEOUT]       .name_label->setText(tr("Command timeout"));
+  error_rows[TIC_ERROR_MOTOR_DRIVER_ERROR]    .name_label->setText(tr("Motor driver error"));
+  error_rows[TIC_ERROR_LOW_VIN]               .name_label->setText(tr("Low VIN"));
+  error_rows[TIC_ERROR_HIGH_VIN]              .name_label->setText(tr("High VIN"));
+  error_rows[TIC_ERROR_ERR_LINE_HIGH]         .name_label->setText(tr("ERR line high"));
+  error_rows[TIC_ERROR_KILL_SWITCH]           .name_label->setText(tr("Kill switch"));
+  error_rows[TIC_ERROR_INTENTIONALLY_DISABLED].name_label->setText(tr("Intentionally disabled"));
+  error_rows[TIC_ERROR_SERIAL_ERROR]          .name_label->setText(tr("Serial errors:"));
+  error_rows[TIC_ERROR_SERIAL_FRAMING]        .name_label->setText(tr(INDENT("Frame")));
+  error_rows[TIC_ERROR_SERIAL_RX_OVERRUN]     .name_label->setText(tr(INDENT("RX overrun")));
+  error_rows[TIC_ERROR_SERIAL_FORMAT]         .name_label->setText(tr(INDENT("Format")));
+  error_rows[TIC_ERROR_SERIAL_CRC]            .name_label->setText(tr(INDENT("CRC")));
+  error_rows[TIC_ERROR_ENCODER_SKIP]          .name_label->setText(tr("Encoder skip"));
+  errors_reset_counts_button->setText(tr("Reset counts"));
+
   manual_target_box->setTitle(tr(u8"Set target (Serial\u2009/\u2009I\u00B2C\u2009/\u2009USB mode only)"));
   manual_target_position_mode_radio->setText(tr("Set position"));
   manual_target_speed_mode_radio->setText(tr("Set speed"));
@@ -1517,6 +1664,7 @@ void main_window::retranslate()
   scaling_neutral_min_label->setText(tr("Neutral min:"));
   scaling_neutral_max_label->setText(tr("Neutral max:"));
   scaling_max_label->setText(tr("Maximum:"));
+
   input_averaging_enabled_check->setText(tr("Enable input averaging"));
   input_hysteresis_label->setText(tr("Input hysteresis:"));
   encoder_prescaler_label->setText(tr("Encoder prescaler:"));

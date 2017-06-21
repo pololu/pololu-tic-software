@@ -121,6 +121,7 @@ void main_controller::connect_device(tic::device const & device)
 
   try
   {
+    device_handle.reset_command_timeout();
     reload_variables();
   }
   catch (std::exception const & e)
@@ -230,25 +231,26 @@ void main_controller::update()
 
     if (device_still_present)
     {
-        // Reload the variables from the device.
-        try
-        {
-          reload_variables();
-        }
-        catch (std::exception const & e)
-        {
-          // Ignore the exception.  The model provides other ways to tell that
-          // the variable update failed, and the exact message is probably
-          // not that useful since it is probably just a generic problem with
-          // the USB connection.
-        }
-        handle_variables_changed();
+      // Reload the variables from the device.
+      try
+      {
+        device_handle.reset_command_timeout();
+        reload_variables();
+      }
+      catch (std::exception const & e)
+      {
+        // Ignore the exception.  The model provides other ways to tell that
+        // the variable update failed, and the exact message is probably
+        // not that useful since it is probably just a generic problem with
+        // the USB connection.
+      }
+      handle_variables_changed();
     }
     else
     {
-        // The device is gone.
-        disconnect_device_by_error("The connection to the device was lost.");
-        handle_model_changed();
+      // The device is gone.
+      disconnect_device_by_error("The connection to the device was lost.");
+      handle_model_changed();
     }
   }
   else
@@ -368,6 +370,8 @@ void main_controller::handle_device_changed()
 
     window->set_device_list_selected(device);
     window->set_connection_status("", false);
+
+    window->reset_error_status_counts();
   }
   else
   {
@@ -456,8 +460,25 @@ void main_controller::handle_variables_changed()
   window->set_current_velocity(std::to_string(variables.get_current_velocity()) +
     " (" + convert_speed_to_pps_string(variables.get_current_velocity()) + ")");
 
-  window->set_disable_driver_button_enabled(!(variables.get_error_status() & (1 << TIC_ERROR_INTENTIONALLY_DISABLED)));
-  window->set_enable_driver_button_enabled(variables.get_error_status() & ((1 << TIC_ERROR_INTENTIONALLY_DISABLED) | (1 << TIC_ERROR_SAFE_START_VIOLATION)));
+  uint16_t error_status = variables.get_error_status();
+  uint16_t errors_occurred = variables.get_errors_occurred();
+
+  for (uint8_t e : error_status_bits)
+  {
+    window->set_error_status_stopping(e, error_status & (1 << e));
+  }
+  for (uint8_t e : errors_occurred_bits)
+  {
+    if (errors_occurred & (1 << e)) { window->increment_error_status_count(e); }
+  }
+
+  window->set_disable_driver_button_enabled(
+    !(error_status & (1 << TIC_ERROR_INTENTIONALLY_DISABLED)));
+  window->set_enable_driver_button_enabled(
+    (error_status & (1 << TIC_ERROR_INTENTIONALLY_DISABLED)) ||
+    ((error_status & (1 << TIC_ERROR_SAFE_START_VIOLATION)) &&
+    control_mode_is_serial(cached_settings)));
+
 }
 
 void main_controller::handle_settings_changed()
@@ -854,7 +875,7 @@ void main_controller::reload_variables()
 
   try
   {
-    variables = device_handle.get_variables();
+    variables = device_handle.get_variables(true);
     variables_update_failed = false;
   }
   catch (...)

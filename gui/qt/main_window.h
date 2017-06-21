@@ -6,6 +6,7 @@
 
 class QCheckBox;
 class QComboBox;
+class QFrame;
 class QGridLayout;
 class QGroupBox;
 class QHBoxLayout;
@@ -19,6 +20,15 @@ class QTabWidget;
 class QVBoxLayout;
 
 class main_controller;
+
+struct error_row
+{
+  unsigned int count;
+  QLabel * name_label;
+  QLabel * stopping_value;
+  QLabel * count_value;
+  QFrame * background;
+};
 
 class main_window : public QMainWindow
 {
@@ -82,6 +92,10 @@ public:
   void set_current_position(std::string const & current_position);
   void set_current_velocity(std::string const & current_velocity);
 
+  void set_error_status_stopping(uint8_t error, bool stopping);
+  void increment_error_status_count(uint8_t error);
+  void reset_error_status_counts();
+
   void set_control_mode(uint8_t control_mode);
 
   void set_manual_target_range(int32_t target_min, int32_t target_max);
@@ -123,7 +137,6 @@ private:
   void set_spin_box(QSpinBox * box, int value);
   void set_check_box(QCheckBox * check, bool value);
 
-
 protected:
   /** This is called by Qt just before the window is shown for the first time,
    * and is also called whenever the window becomes unminimized. */
@@ -143,7 +156,10 @@ private slots:
   void on_about_action_triggered();
 
   void on_device_list_value_currentIndexChanged(int index);
+  void on_disable_driver_button_clicked();
+  void on_enable_driver_button_clicked();
 
+  void on_errors_reset_counts_button_clicked();
   void on_manual_target_position_mode_radio_toggled(bool checked);
   void on_manual_target_scroll_bar_valueChanged(int value);
   void on_manual_target_scroll_bar_sliderReleased();
@@ -152,8 +168,6 @@ private slots:
   void on_set_target_button_clicked();
   void on_auto_set_target_check_stateChanged(int state);
   void on_stop_button_clicked();
-  void on_disable_driver_button_clicked();
-  void on_enable_driver_button_clicked();
 
   /** This is called by Qt when the user wants to apply settings. */
   void on_apply_settings_action_triggered();
@@ -212,10 +226,11 @@ private:
   QLayout * setup_status_right_column();
   QWidget * setup_device_info_box();
   QWidget * setup_status_box();
+  QWidget * setup_errors_box();
+  QLayout * setup_error_table_layout();
   QWidget * setup_manual_target_box();
   QLayout * setup_manual_target_mode_layout();
   QWidget * setup_manual_target_entry_widget();
-  QLayout * setup_manual_target_buttons_layout();
 
   QWidget * setup_settings_page_widget();
   QWidget * setup_control_mode_widget();
@@ -301,7 +316,12 @@ private:
   QPushButton * enable_driver_button;
 
   QGroupBox * errors_box;
-  QGridLayout * errors_box_layout;
+  QVBoxLayout * errors_box_layout;
+  QGridLayout * error_table_layout;
+  QLabel * errors_stopping_header_label;
+  QLabel * errors_count_header_label;
+  std::map<uint8_t, error_row> error_rows;
+  QPushButton * errors_reset_counts_button;
 
   //// settings page
 
