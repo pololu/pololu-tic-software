@@ -212,7 +212,7 @@ void main_window::set_error_status_stopping(uint8_t error, bool stopping)
   {
     error_rows[error].stopping_value->setText(tr("Yes"));
     error_rows[error].stopping_value->setStyleSheet(
-      "QLabel { background-color: red; color: white; }");
+      "QLabel:enabled { background-color: red; color: white; }");
   }
   else
   {
@@ -786,11 +786,13 @@ static void setup_error_row(QGridLayout * layout, int row, error_row & line)
   // TODO make sure this all looks good on mac/linux/high dpi
   line.count = 0;
   line.name_label = new QLabel();
+  // Add left margin to offset from edge of row background fill.
   line.name_label->setContentsMargins(
     line.name_label->style()->pixelMetric(QStyle::PM_LayoutLeftMargin), 0, 0, 0);
   line.stopping_value = new QLabel();
   line.stopping_value->setAlignment(Qt::AlignCenter);
   line.count_value = new QLabel();
+  // Add right margin to offset from edge of row background fill.
   line.count_value->setContentsMargins(
     0, 0, line.count_value->style()->pixelMetric(QStyle::PM_LayoutRightMargin), 0);
   line.background = new QFrame();
@@ -799,13 +801,14 @@ static void setup_error_row(QGridLayout * layout, int row, error_row & line)
     line.background->setStyleSheet("QFrame { background-color: palette(alternate-base); }");
   }
 
+  // Increase the width of the Yes/No label to make it have a good width when
+  // highlighted red. Increase the minimum height of the row in the layout to
+  // make up for the vertical spacing being removed.
   {
     QLabel tmp_label;
-
     tmp_label.setText("Yes");
-
     line.stopping_value->setMinimumWidth(tmp_label.sizeHint().width() +
-      3 * line.stopping_value->fontMetrics().height());
+      2 * line.stopping_value->fontMetrics().height());
     layout->setRowMinimumHeight(row, tmp_label.sizeHint().height() +
       line.background->style()->pixelMetric(QStyle::PM_LayoutVerticalSpacing));
   }
@@ -1013,7 +1016,6 @@ QWidget * main_window::setup_status_box()
   // velocity.
   {
     QLabel tmp_label;
-
     tmp_label.setText(QString((std::to_string(TIC_MAX_ALLOWED_SPEED) +
       " (" + convert_speed_to_pps_string(TIC_MAX_ALLOWED_SPEED) + ")").c_str()));
     layout->setColumnMinimumWidth(1, tmp_label.sizeHint().width());
@@ -1046,7 +1048,8 @@ QLayout * main_window::setup_error_table_layout()
 {
   QGridLayout * layout = error_table_layout = new QGridLayout();
   layout->setHorizontalSpacing(fontMetrics().height());
-  layout->setVerticalSpacing(0);
+  // Remove spaces between rows so row background fill looks good.
+  layout->setVerticalSpacing(0); 
   int row = 0;
 
    {
@@ -1073,12 +1076,12 @@ QLayout * main_window::setup_error_table_layout()
   setup_error_row(layout, row++, error_rows[TIC_ERROR_SERIAL_CRC]);
   setup_error_row(layout, row++, error_rows[TIC_ERROR_ENCODER_SKIP]);
 
+  // Adjust height of header row to match error rows.
   layout->setRowMinimumHeight(0, layout->rowMinimumHeight(1));
 
   // Make the right column wide enough to display the largest possible count.
   {
     QLabel tmp_label;
-
     tmp_label.setText(QString::number(UINT_MAX));
     layout->setColumnMinimumWidth(2, tmp_label.sizeHint().width());
   }
