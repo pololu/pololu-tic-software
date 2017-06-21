@@ -105,6 +105,29 @@ static tic_error * apply_string_pair(tic_settings * settings,
     }
     tic_settings_auto_clear_driver_error_set(settings, auto_clear_driver_error);
   }
+  else if (!strcmp(key, "input_invalid_response"))
+  {
+    uint32_t response;
+    if (!tic_name_to_code(tic_response_names, value, &response))
+    {
+      return tic_error_create("Unrecognized input_invalid_response value.");
+    }
+    tic_settings_input_invalid_response_set(settings, response);
+  }
+  else if (!strcmp(key, "input_invalid_position"))
+  {
+    int64_t position;
+    if (!tic_string_to_i64(value, &position))
+    {
+      return tic_error_create("Invalid position value.");
+    }
+    if (position < INT32_MIN || position > INT32_MAX)
+    {
+      return tic_error_create(
+        "The input_invalid_position value is out of range.");
+    }
+    tic_settings_input_invalid_position_set(settings, position);
+  }
   else if (!strcmp(key, "serial_baud_rate"))
   {
     int64_t baud;
@@ -572,20 +595,6 @@ static tic_error * apply_string_pair(tic_settings * settings,
       return tic_error_create("The accel_max value is out of range.");
     }
     tic_settings_accel_max_set(settings, accel_max);
-  }
-  else if (!strcmp(key, "decel_max_during_error"))
-  {
-    int64_t decel_max_during_error;
-    if (!tic_string_to_i64(value, &decel_max_during_error))
-    {
-      return tic_error_create("Invalid decel_max_during_error value.");
-    }
-    if (decel_max_during_error < 0 || decel_max_during_error > UINT32_MAX)
-    {
-      return tic_error_create(
-        "The decel_max_during_error value is out of range.");
-    }
-    tic_settings_decel_max_during_error_set(settings, decel_max_during_error);
   }
   else
   {

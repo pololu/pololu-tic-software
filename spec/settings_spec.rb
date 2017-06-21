@@ -8,6 +8,8 @@ never_sleep: false
 disable_safe_start: false
 ignore_err_line_high: false
 auto_clear_driver_error: false
+input_invalid_response: disable_driver
+input_invalid_position: 0
 serial_baud_rate: 9600
 serial_device_number: 14
 command_timeout: 4000
@@ -47,7 +49,6 @@ speed_min: 0
 speed_max: 2000000
 accel_max: 40000
 decel_max: 0
-decel_max_during_error: 0
 END
 }
 
@@ -59,6 +60,8 @@ never_sleep: true
 disable_safe_start: true
 ignore_err_line_high: true
 auto_clear_driver_error: true
+input_invalid_response: go_to_position
+input_invalid_position: -234333890
 serial_baud_rate: 115385
 serial_device_number: 40
 command_timeout: 2020
@@ -98,7 +101,6 @@ speed_min: 10000
 speed_max: 234567890
 accel_max: 934567820
 decel_max: 734567890
-decel_max_during_error: 234333890
 END
 }
 
@@ -202,19 +204,6 @@ def test_cases_for_settings_fix(product)
       { 'accel_max' => 100 },
       "Warning: The maximum acceleration was too low " \
       "so it will be raised to 100.\n"
-    ],
-    [ { 'decel_max_during_error' => 0x80000000 },
-      { 'decel_max_during_error' => 0x7FFFFFFF },
-      "Warning: The maximum deceleration during error was too high " \
-      "so it will be lowered to 2147483647.\n"
-    ],
-    [ { 'decel_max_during_error' => 99 },
-      { 'decel_max_during_error' => 100 },
-      "Warning: The maximum deceleration during error was too low " \
-      "so it will be raised to 100.\n"
-    ],
-    [ { 'decel_max_during_error' => 0 },  # 0 means same as accel_max
-      { }
     ],
     [ { 'control_mode' => 'analog_position', 'sda_config' => 'home active_high' },
       { 'sda_config' => 'default active_high' },

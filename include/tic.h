@@ -583,7 +583,32 @@ void tic_settings_auto_clear_driver_error_set(tic_settings *, bool);
 TIC_API
 bool tic_settings_auto_clear_driver_error_get(const tic_settings *);
 
-/// Sets the baud rate n bits per second.
+/// Sets the Input invalid response setting, which determines what the Tic will
+/// do when its input is considered to be invalid.  Should be one of:
+/// - TIC_RESPONSE_DISABLE_DRIVER
+/// - TIC_RESPONSE_STOP
+/// - TIC_RESPONSE_COAST_TO_STOP
+/// - TIC_RESPONSE_GO_TO_POSITION
+TIC_API
+void tic_settings_input_invalid_response_set(tic_settings *, uint8_t);
+
+/// Gets the Input invalid response setting described in
+/// tic_settings_input_invalid_response_set().
+TIC_API
+uint8_t tic_settings_input_invalid_response_get(const tic_settings *);
+
+/// Sets the Input invalid position setting, which is the position the Tic will
+/// go to if its Input invalid response parameter is set to
+/// TIC_RESPONSE_GO_TO_POSITION.
+TIC_API
+void tic_settings_input_invalid_position_set(tic_settings *, int32_t);
+
+/// Gets the Input invalid position setting described in
+/// tic_settings_input_invalid_response_set().
+TIC_API
+int32_t tic_settings_input_invalid_position_get(const tic_settings *);
+
+/// Sets the baud rate in bits per second.
 ///
 /// Only certain baud rates are actually achievable.  This function will change
 /// the supplied baud rate to the nearest achievable baud rate.  You can call
@@ -1043,17 +1068,6 @@ void tic_settings_accel_max_set(tic_settings *, uint32_t);
 /// Gets the acceleration maximum described in tic_settings_accel_max_set().
 TIC_API
 uint32_t tic_settings_accel_max_get(const tic_settings *);
-
-/// Sets the deceleration maximum, or deceleration limit, that is used when the
-/// controller is stopping the motor due to an error, in steps per 100 square
-/// seconds.  Valid values are 0 and 59 to 2147483647.  A value of 0 causes the
-/// controller's deceleration limit to be equal to the acceleration limit.
-TIC_API
-void tic_settings_decel_max_during_error_set(tic_settings *, uint32_t);
-
-/// Gets the deceleration maximum described in tic_settings_decel_max_set().
-TIC_API
-uint32_t tic_settings_decel_max_during_error_get(const tic_settings *);
 
 
 // tic_device ///////////////////////////////////////////////////////////////////

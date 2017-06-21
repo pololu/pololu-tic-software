@@ -94,6 +94,18 @@ tic_error * tic_settings_to_string(const tic_settings * settings, char ** string
   }
 
   {
+    uint8_t response = tic_settings_input_invalid_response_get(settings);
+    const char * response_str;
+    tic_code_to_name(tic_response_names, response, &response_str);
+    tic_sprintf(&str, "input_invalid_response: %s\n", response_str);
+  }
+
+  {
+    int32_t position = tic_settings_input_invalid_position_get(settings);
+    tic_sprintf(&str, "input_invalid_position: %d\n", position);
+  }
+
+  {
     uint32_t baud = tic_settings_serial_baud_rate_get(settings);
     tic_sprintf(&str, "serial_baud_rate: %u\n", baud);
   }
@@ -292,11 +304,6 @@ tic_error * tic_settings_to_string(const tic_settings * settings, char ** string
   {
     uint32_t decel = tic_settings_decel_max_get(settings);
     tic_sprintf(&str, "decel_max: %u\n", decel);
-  }
-
-  {
-    uint32_t decel = tic_settings_decel_max_during_error_get(settings);
-    tic_sprintf(&str, "decel_max_during_error: %u\n", decel);
   }
 
   if (error == NULL && str.data == NULL)

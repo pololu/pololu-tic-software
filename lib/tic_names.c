@@ -106,6 +106,15 @@ const tic_name tic_control_mode_names[] =
   { NULL, 0 },
 };
 
+const tic_name tic_response_names[] =
+{
+  { "disable_driver", TIC_RESPONSE_DISABLE_DRIVER },
+  { "stop", TIC_RESPONSE_STOP },
+  { "coast_to_stop", TIC_RESPONSE_COAST_TO_STOP },
+  { "go_to_position", TIC_RESPONSE_GO_TO_POSITION },
+  { NULL, 0},
+};
+
 const tic_name tic_scaling_degree_names[] =
 {
   { "linear", TIC_SCALING_DEGREE_LINEAR },

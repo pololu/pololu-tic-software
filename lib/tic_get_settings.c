@@ -30,6 +30,16 @@ static void write_buffer_to_settings(const uint8_t * buf, tic_settings * setting
   }
 
   {
+    uint8_t response = buf[TIC_SETTING_INPUT_INVALID_RESPONSE];
+    tic_settings_input_invalid_response_set(settings, response);
+  }
+
+  {
+    int32_t position = read_i32(buf + TIC_SETTING_INPUT_INVALID_POSITION);
+    tic_settings_input_invalid_position_set(settings, position);
+  }
+
+  {
     uint16_t brg = read_u16(buf + TIC_SETTING_SERIAL_BAUD_RATE_GENERATOR);
     uint32_t baud_rate = tic_baud_rate_from_brg(brg);
     tic_settings_serial_baud_rate_set(settings, baud_rate);
@@ -254,13 +264,6 @@ static void write_buffer_to_settings(const uint8_t * buf, tic_settings * setting
     const uint8_t * p = buf + TIC_SETTING_ACCEL_MAX;
     uint32_t accel_max = p[0] + (p[1] << 8) + (p[2] << 16) + (p[3] << 24);
     tic_settings_accel_max_set(settings, accel_max);
-  }
-
-  {
-    const uint8_t * p = buf + TIC_SETTING_DECEL_MAX_DURING_ERROR;
-    uint32_t decel_max_during_error = p[0] + (p[1] << 8) +
-      (p[2] << 16) + (p[3] << 24);
-    tic_settings_decel_max_during_error_set(settings, decel_max_during_error);
   }
 }
 

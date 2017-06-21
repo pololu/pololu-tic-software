@@ -20,6 +20,17 @@ static void tic_write_settings_to_buffer(const tic_settings * settings, uint8_t 
   buf[TIC_SETTING_AUTO_CLEAR_DRIVER_ERROR] =
     tic_settings_auto_clear_driver_error_get(settings);
 
+  buf[TIC_SETTING_INPUT_INVALID_RESPONSE] =
+    tic_settings_input_invalid_response_get(settings);
+
+  {
+    uint32_t position = (uint32_t)tic_settings_input_invalid_position_get(settings);
+    buf[TIC_SETTING_INPUT_INVALID_POSITION + 0] = position >> 0 & 0xFF;
+    buf[TIC_SETTING_INPUT_INVALID_POSITION + 1] = position >> 8 & 0xFF;
+    buf[TIC_SETTING_INPUT_INVALID_POSITION + 2] = position >> 16 & 0xFF;
+    buf[TIC_SETTING_INPUT_INVALID_POSITION + 3] = position >> 24 & 0xFF;
+  }
+
   {
     uint32_t baud_rate = tic_settings_serial_baud_rate_get(settings);
     uint16_t brg = tic_baud_rate_to_brg(baud_rate);
@@ -214,14 +225,6 @@ static void tic_write_settings_to_buffer(const tic_settings * settings, uint8_t 
     buf[TIC_SETTING_ACCEL_MAX + 1] = accel >> 8 & 0xFF;
     buf[TIC_SETTING_ACCEL_MAX + 2] = accel >> 16 & 0xFF;
     buf[TIC_SETTING_ACCEL_MAX + 3] = accel >> 24 & 0xFF;
-  }
-
-  {
-    uint32_t decel = tic_settings_decel_max_during_error_get(settings);
-    buf[TIC_SETTING_DECEL_MAX_DURING_ERROR + 0] = decel >> 0 & 0xFF;
-    buf[TIC_SETTING_DECEL_MAX_DURING_ERROR + 1] = decel >> 8 & 0xFF;
-    buf[TIC_SETTING_DECEL_MAX_DURING_ERROR + 2] = decel >> 16 & 0xFF;
-    buf[TIC_SETTING_DECEL_MAX_DURING_ERROR + 3] = decel >> 24 & 0xFF;
   }
 }
 

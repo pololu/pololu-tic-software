@@ -9,6 +9,8 @@ struct tic_settings
   bool disable_safe_start;
   bool ignore_err_line_high;
   bool auto_clear_driver_error;
+  uint8_t input_invalid_response;
+  int32_t input_invalid_position;
   uint32_t serial_baud_rate;
   uint8_t serial_device_number;
   uint16_t command_timeout;
@@ -48,7 +50,6 @@ struct tic_settings
   uint32_t speed_max;
   uint32_t decel_max;
   uint32_t accel_max;
-  uint32_t decel_max_during_error;
 };
 
 void tic_settings_fill_with_defaults(tic_settings * settings)
@@ -186,6 +187,7 @@ static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings
 {
   // TODO: use present and future tense for these messages, not past tense
   // TODO: fix command_timeout; must be less than 60000
+  // TODO: fix enum values to be valid?
 
   uint8_t control_mode = tic_settings_control_mode_get(settings);
 
@@ -452,29 +454,6 @@ static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings
     }
 
     tic_settings_accel_max_set(settings, accel_max);
-  }
-
-  {
-    uint32_t decel_max_during_error = tic_settings_decel_max_during_error_get(settings);
-
-    if (decel_max_during_error > TIC_MAX_ALLOWED_ACCEL)
-    {
-      decel_max_during_error = TIC_MAX_ALLOWED_ACCEL;
-      tic_sprintf(warnings,
-        "Warning: The maximum deceleration during error was too high "
-        "so it will be lowered to %u.\n", decel_max_during_error);
-    }
-
-    if (decel_max_during_error != 0 &&
-      decel_max_during_error < TIC_MIN_ALLOWED_ACCEL)
-    {
-      decel_max_during_error = TIC_MIN_ALLOWED_ACCEL;
-      tic_sprintf(warnings,
-        "Warning: The maximum deceleration during error was too low "
-        "so it will be raised to %u.\n", decel_max_during_error);
-    }
-
-    tic_settings_decel_max_during_error_set(settings, decel_max_during_error);
   }
 
   {
@@ -775,6 +754,32 @@ bool tic_settings_auto_clear_driver_error_get(const tic_settings * settings)
 {
   if (!settings) { return 0; }
   return settings->auto_clear_driver_error;
+}
+
+void tic_settings_input_invalid_response_set(tic_settings * settings,
+  uint8_t input_invalid_response)
+{
+  if (!settings) { return; }
+  settings->input_invalid_response = input_invalid_response;
+}
+
+uint8_t tic_settings_input_invalid_response_get(const tic_settings * settings)
+{
+  if (!settings) { return 0; }
+  return settings->input_invalid_response;
+}
+
+void tic_settings_input_invalid_position_set(tic_settings * settings,
+  int32_t input_invalid_position)
+{
+  if (!settings) { return; }
+  settings->input_invalid_position = input_invalid_position;
+}
+
+int32_t tic_settings_input_invalid_position_get(const tic_settings * settings)
+{
+  if (!settings) { return 0; }
+  return settings->input_invalid_position;
 }
 
 void tic_settings_serial_baud_rate_set(tic_settings * settings, uint32_t serial_baud_rate)
@@ -1266,17 +1271,4 @@ uint32_t tic_settings_accel_max_get(const tic_settings * settings)
 {
   if (!settings) { return 0; }
   return settings->accel_max;
-}
-
-void tic_settings_decel_max_during_error_set(tic_settings * settings,
-  uint32_t decel_max_during_error)
-{
-  if (!settings) { return; }
-  settings->decel_max_during_error = decel_max_during_error;
-}
-
-uint32_t tic_settings_decel_max_during_error_get(const tic_settings * settings)
-{
-  if (!settings) { return 0; }
-  return settings->decel_max_during_error;
 }
