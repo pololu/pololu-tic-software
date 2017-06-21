@@ -206,33 +206,48 @@ void main_window::set_current_velocity(std::string const & current_velocity)
   current_velocity_value->setText(QString(current_velocity.c_str()));
 }
 
-void main_window::set_error_status_stopping(uint8_t error, bool stopping)
+void main_window::set_error_status(uint16_t error_status)
 {
-  if (stopping)
+  for (int i = 0; i < 16; i++)
   {
-    error_rows[error].stopping_value->setText(tr("Yes"));
-    error_rows[error].stopping_value->setStyleSheet(
-      "QLabel:enabled { background-color: red; color: white; }");
-  }
-  else
-  {
-    error_rows[error].stopping_value->setText(tr("No"));
-    error_rows[error].stopping_value->setStyleSheet(styleSheet());
+    if (error_rows[i].stopping_value == NULL) { continue; }
+
+    if (error_status & (1 << i))
+    {
+      error_rows[i].stopping_value->setText(tr("Yes"));
+      error_rows[i].stopping_value->setStyleSheet(
+        "QLabel:enabled { background-color: red; color: white; }");
+    }
+    else
+    {
+      error_rows[i].stopping_value->setText(tr("No"));
+      error_rows[i].stopping_value->setStyleSheet(styleSheet());
+    }
   }
 }
 
-void main_window::increment_error_status_count(uint8_t error)
+void main_window::increment_errors_occurred(uint32_t errors_occurred)
 {
-  error_rows[error].count++;
-  error_rows[error].count_value->setText(QString::number(error_rows[error].count));
+  for (int i = 0; i < 32; i++)
+  {
+    if (error_rows[i].count_value == NULL) { continue; }
+
+    if (errors_occurred & (1 << i))
+    {
+      error_rows[i].count++;
+      error_rows[i].count_value->setText(QString::number(error_rows[i].count));
+    }
+  }
 }
 
-void main_window::reset_error_status_counts()
+void main_window::reset_error_counts()
 {
-  for (uint8_t e : errors_occurred_bits)
+  for (int i = 0; i < 32; i++)
   {
-    error_rows[e].count = 0;
-    error_rows[e].count_value->setText(tr("-"));
+    if (error_rows[i].count_value == NULL) { continue; }
+
+    error_rows[i].count = 0;
+    error_rows[i].count_value->setText(tr("-"));
   }
 }
 
@@ -506,7 +521,7 @@ void main_window::on_enable_driver_button_clicked()
 
 void main_window::on_errors_reset_counts_button_clicked()
 {
-  reset_error_status_counts();
+  reset_error_counts();
 }
 
 void main_window::on_manual_target_position_mode_radio_toggled(bool checked)
@@ -1038,7 +1053,7 @@ QWidget * main_window::setup_errors_box()
     layout->addWidget(errors_reset_counts_button, 0, Qt::AlignRight);
   }
 
-  reset_error_status_counts();
+  reset_error_counts();
 
   errors_box->setLayout(layout);
   return errors_box;
@@ -1049,7 +1064,7 @@ QLayout * main_window::setup_error_table_layout()
   QGridLayout * layout = error_table_layout = new QGridLayout();
   layout->setHorizontalSpacing(fontMetrics().height());
   // Remove spaces between rows so row background fill looks good.
-  layout->setVerticalSpacing(0); 
+  layout->setVerticalSpacing(0);
   int row = 0;
 
    {

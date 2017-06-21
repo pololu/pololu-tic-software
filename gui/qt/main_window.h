@@ -24,10 +24,10 @@ class main_controller;
 struct error_row
 {
   unsigned int count;
-  QLabel * name_label;
-  QLabel * stopping_value;
-  QLabel * count_value;
-  QFrame * background;
+  QLabel * name_label = NULL;
+  QLabel * stopping_value = NULL;
+  QLabel * count_value = NULL;
+  QFrame * background = NULL;
 };
 
 class main_window : public QMainWindow
@@ -92,9 +92,9 @@ public:
   void set_current_position(std::string const & current_position);
   void set_current_velocity(std::string const & current_velocity);
 
-  void set_error_status_stopping(uint8_t error, bool stopping);
-  void increment_error_status_count(uint8_t error);
-  void reset_error_status_counts();
+  void set_error_status(uint16_t error_status);
+  void increment_errors_occurred(uint32_t errors_occurred);
+  void reset_error_counts();
 
   void set_control_mode(uint8_t control_mode);
 
@@ -320,7 +320,7 @@ private:
   QGridLayout * error_table_layout;
   QLabel * errors_stopping_header_label;
   QLabel * errors_count_header_label;
-  std::map<uint8_t, error_row> error_rows;
+  std::array<error_row, 32> error_rows;
   QPushButton * errors_reset_counts_button;
 
   //// settings page

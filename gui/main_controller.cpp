@@ -371,7 +371,7 @@ void main_controller::handle_device_changed()
     window->set_device_list_selected(device);
     window->set_connection_status("", false);
 
-    window->reset_error_status_counts();
+    window->reset_error_counts();
   }
   else
   {
@@ -461,16 +461,9 @@ void main_controller::handle_variables_changed()
     " (" + convert_speed_to_pps_string(variables.get_current_velocity()) + ")");
 
   uint16_t error_status = variables.get_error_status();
-  uint16_t errors_occurred = variables.get_errors_occurred();
 
-  for (uint8_t e : error_status_bits)
-  {
-    window->set_error_status_stopping(e, error_status & (1 << e));
-  }
-  for (uint8_t e : errors_occurred_bits)
-  {
-    if (errors_occurred & (1 << e)) { window->increment_error_status_count(e); }
-  }
+  window->set_error_status(error_status);
+  window->increment_errors_occurred(variables.get_errors_occurred());
 
   window->set_disable_driver_button_enabled(
     !(error_status & (1 << TIC_ERROR_INTENTIONALLY_DISABLED)));
@@ -478,7 +471,6 @@ void main_controller::handle_variables_changed()
     (error_status & (1 << TIC_ERROR_INTENTIONALLY_DISABLED)) ||
     ((error_status & (1 << TIC_ERROR_SAFE_START_VIOLATION)) &&
     control_mode_is_serial(cached_settings)));
-
 }
 
 void main_controller::handle_settings_changed()
