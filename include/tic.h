@@ -1206,7 +1206,8 @@ tic_error * tic_reset_command_timeout(tic_handle *);
 ///
 /// This function sends a Disable Driver command to the Tic, causing it to
 /// disable its stepper motor driver and set the "Intentionally disabled" error
-/// bit.
+/// bit.  This command is mostly equivalent to turning off the Tic's motor power
+/// input.
 TIC_API TIC_WARN_UNUSED
 tic_error * tic_disable_driver(tic_handle *);
 
