@@ -475,7 +475,7 @@ static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings
     case TIC_CONTROL_MODE_ANALOG_POSITION:
     case TIC_CONTROL_MODE_ANALOG_SPEED:
       if ((sda_config & TIC_PIN_FUNC_MASK) != TIC_PIN_FUNC_DEFAULT &&
-        (sda_config & TIC_PIN_FUNC_MASK) != TIC_PIN_FUNC_GENERAL)
+        (sda_config & TIC_PIN_FUNC_MASK) != TIC_PIN_FUNC_USER_INPUT)
       {
         sda_config = (sda_config & ~TIC_PIN_FUNC_MASK) | TIC_PIN_FUNC_DEFAULT;
         tic_sprintf(warnings,

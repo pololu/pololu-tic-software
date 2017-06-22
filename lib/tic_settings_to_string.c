@@ -15,19 +15,8 @@ static void print_pin_config_to_yaml(tic_string * str,
   const char * polarity_str = "";
   if (value >> TIC_PIN_ACTIVE_HIGH & 1) { polarity_str = " active_high"; }
 
-  const char * func_str = "";
-  switch((value & TIC_PIN_FUNC_MASK) >> TIC_PIN_FUNC_POSN)
-  {
-  case TIC_PIN_FUNC_DEFAULT: func_str = "default"; break;
-  case TIC_PIN_FUNC_GENERAL: func_str = "general"; break;
-  case TIC_PIN_FUNC_SERIAL: func_str = "serial"; break;
-  case TIC_PIN_FUNC_RC: func_str = "rc"; break;
-  case TIC_PIN_FUNC_ENCODER: func_str = "encoder"; break;
-  case TIC_PIN_FUNC_LIMIT_FORWARD: func_str = "limit_forward"; break;
-  case TIC_PIN_FUNC_LIMIT_REVERSE: func_str = "limit_reverse"; break;
-  case TIC_PIN_FUNC_HOME: func_str = "home"; break;
-  case TIC_PIN_FUNC_KILL: func_str = "kill"; break;
-  }
+  const char * func_str;
+  tic_code_to_name(tic_pin_config_names, (value & TIC_PIN_FUNC_MASK), &func_str);
 
   tic_sprintf(str, "%s: %s%s%s%s\n", config_name, func_str,
     pullup_str, analog_str, polarity_str);
