@@ -4,6 +4,7 @@
 
 #include <QMainWindow>
 
+class BallScrollBar;
 class QCheckBox;
 class QComboBox;
 class QFrame;
@@ -100,6 +101,8 @@ public:
 
   void set_manual_target_range(int32_t target_min, int32_t target_max);
   void set_manual_target(int32_t target);
+  void set_manual_target_ball_position(int32_t current_position, bool on_target);
+  void set_manual_target_ball_velocity(int32_t current_velocity, bool on_target);
 
   void set_serial_baud_rate(uint32_t serial_baud_rate);
   void set_serial_device_number(uint8_t serial_device_number);
@@ -302,7 +305,7 @@ private:
   QGridLayout * manual_target_entry_widget_layout;
   QRadioButton * manual_target_position_mode_radio;
   QRadioButton * manual_target_speed_mode_radio;
-  QScrollBar * manual_target_scroll_bar;
+  BallScrollBar * manual_target_scroll_bar;
   QLabel * manual_target_min_label;
   QLabel * manual_target_max_label;
   QSpinBox * manual_target_entry_value;

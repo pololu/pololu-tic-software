@@ -28,6 +28,7 @@ add_executable (gui
   main.cpp
   main_controller.cpp
   qt/main_window.cpp
+  qt/BallScrollBar.cpp
   ${CMAKE_CURRENT_BINARY_DIR}/gui_info.rc
   ${ICON_QRC}
   ${ICON_FILE}

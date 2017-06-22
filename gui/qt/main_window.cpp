@@ -2,6 +2,8 @@
 #include "main_controller.h"
 #include "config.h"
 
+#include "BallScrollBar.h"
+
 #include <QCheckBox>
 #include <QCloseEvent>
 #include <QComboBox>
@@ -261,7 +263,7 @@ void main_window::set_manual_target_range(int32_t target_min, int32_t target_max
   suppress_events = true;
   manual_target_scroll_bar->setMinimum(target_min);
   manual_target_scroll_bar->setMaximum(target_max);
-  manual_target_scroll_bar->setPageStep((target_max - target_min) / 20);
+  manual_target_scroll_bar->setPageStep(std::max((target_max - target_min) / 20, 1));
   manual_target_min_label->setText(QString::number(target_min));
   manual_target_max_label->setText(QString::number(target_max));
   manual_target_entry_value->setRange(target_min, target_max);
@@ -274,6 +276,24 @@ void main_window::set_manual_target(int32_t target)
   manual_target_entry_value->setValue(target);
   manual_target_scroll_bar->setValue(target);
   suppress_events = false;
+}
+
+void main_window::set_manual_target_ball_position(int32_t current_position, bool on_target)
+{
+  if (manual_target_position_mode_radio->isChecked())
+  {
+    manual_target_scroll_bar->setBallValue(current_position);
+    manual_target_scroll_bar->setBallColor(on_target ? Qt::darkGreen : Qt::blue);
+  }
+}
+
+void main_window::set_manual_target_ball_velocity(int32_t current_velocity, bool on_target)
+{
+  if (manual_target_speed_mode_radio->isChecked())
+  {
+    manual_target_scroll_bar->setBallValue(current_velocity);
+    manual_target_scroll_bar->setBallColor(on_target ? Qt::darkGreen : Qt::blue);
+  }
 }
 
 void main_window::set_serial_baud_rate(uint32_t serial_baud_rate)
@@ -1174,10 +1194,11 @@ QWidget * main_window::setup_manual_target_entry_widget()
   int row = 0;
 
   {
-    manual_target_scroll_bar = new QScrollBar(Qt::Horizontal);
+    manual_target_scroll_bar = new BallScrollBar(Qt::Horizontal);
     manual_target_scroll_bar->setObjectName("manual_target_scroll_bar");
     manual_target_scroll_bar->setSingleStep(1);
     manual_target_scroll_bar->setFocusPolicy(Qt::ClickFocus);
+    manual_target_scroll_bar->setBallVisible(true);
     layout->addWidget(manual_target_scroll_bar, row, 0, 1, 3);
     row++;
   }
