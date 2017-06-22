@@ -328,7 +328,7 @@ static arguments parse_args(int argc, char ** argv)
       args.set_step_mode = true;
       args.step_mode = parse_arg_step_mode(arg_reader);
     }
-    else if (arg == "--current")
+    else if (arg == "--current" || arg == "--current-limit")
     {
       args.set_current_limit = true;
       args.current_limit = parse_arg_int<uint32_t>(arg_reader);
