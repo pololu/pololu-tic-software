@@ -10,17 +10,17 @@ Last reset:                   (unknown)
 Operation state:              (unknown)
 
 Errors currently stopping the motor:
-  - Safe start violation
+  - Intentionally disabled
+  - Motor driver error
+  - Low VIN
+  - Kill switch
   - Required input invalid
   - Serial error
   - Command timeout
-  - Motor driver error
-  - Low VIN
-  - High VIN
+  - Safe start violation
   - ERR line high
-  - Kill switch
-  - Intentionally disabled
-  - Intentionally disabled from USB
+  - (unknown)
+  - (unknown)
   - (unknown)
   - (unknown)
   - (unknown)
@@ -28,17 +28,17 @@ Errors currently stopping the motor:
   - (unknown)
 
 Errors that occurred since last check:
-  - Safe start violation
+  - Intentionally disabled
+  - Motor driver error
+  - Low VIN
+  - Kill switch
   - Required input invalid
   - Serial error
   - Command timeout
-  - Motor driver error
-  - Low VIN
-  - High VIN
+  - Safe start violation
   - ERR line high
-  - Kill switch
-  - Intentionally disabled
-  - Intentionally disabled from USB
+  - (unknown)
+  - (unknown)
   - (unknown)
   - (unknown)
   - (unknown)
@@ -83,29 +83,19 @@ Input after hysteresis:       N/A
 Input after scaling:          -1
 
 SCL pin:
-  Digital reading:            255
-  Switch status:              255
-  Analog reading:             N/A
   State:                      (unknown)
+  Digital reading:            255
 SDA pin:
-  Digital reading:            255
-  Switch status:              255
-  Analog reading:             N/A
   State:                      (unknown)
+  Digital reading:            255
 TX pin:
-  Digital reading:            255
-  Switch status:              255
-  Analog reading:             N/A
   State:                      (unknown)
+  Digital reading:            255
 RX pin:
-  Digital reading:            255
-  Switch status:              255
-  Analog reading:             N/A
   State:                      (unknown)
+  Digital reading:            255
 RC pin:
   Digital reading:            255
-  Switch status:              255
-  State:                      (unknown)
 END
 
 describe '--status' do
@@ -129,7 +119,7 @@ end
 
 describe 'print_status' do
   it 'can print a fake status for testing' do
-    stdout, stderr, result = run_ticcmd('--test 1')
+    stdout, stderr, result = run_ticcmd('-d x --test 1')
     expect(stderr).to eq ''
     expect(result).to eq 0
     YAML.load(stdout)

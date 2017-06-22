@@ -129,15 +129,13 @@ const tic_name tic_pin_config_names[] =
   { "analog", 1 << TIC_PIN_ANALOG },
   { "active_high", 1 << TIC_PIN_ACTIVE_HIGH },
   { "default", TIC_PIN_FUNC_DEFAULT << TIC_PIN_FUNC_POSN },
-  { "general", TIC_PIN_FUNC_GENERAL << TIC_PIN_FUNC_POSN },
+  { "user_io", TIC_PIN_FUNC_USER_IO << TIC_PIN_FUNC_POSN },
+  { "user_input", TIC_PIN_FUNC_USER_INPUT << TIC_PIN_FUNC_POSN },
   { "pot_power", TIC_PIN_FUNC_POT_POWER << TIC_PIN_FUNC_POSN },
   { "serial", TIC_PIN_FUNC_SERIAL << TIC_PIN_FUNC_POSN },
   { "rc", TIC_PIN_FUNC_RC << TIC_PIN_FUNC_POSN },
   { "encoder", TIC_PIN_FUNC_ENCODER << TIC_PIN_FUNC_POSN },
-  { "limit_forward", TIC_PIN_FUNC_LIMIT_FORWARD << TIC_PIN_FUNC_POSN },
-  { "limit_reverse", TIC_PIN_FUNC_LIMIT_REVERSE << TIC_PIN_FUNC_POSN },
-  { "home", TIC_PIN_FUNC_HOME << TIC_PIN_FUNC_POSN },
-  { "kill", TIC_PIN_FUNC_KILL << TIC_PIN_FUNC_POSN },
+  { "kill_switch", TIC_PIN_FUNC_KILL_SWITCH << TIC_PIN_FUNC_POSN },
   { NULL, 0 },
 };
 
