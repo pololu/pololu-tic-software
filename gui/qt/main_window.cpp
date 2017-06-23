@@ -627,6 +627,11 @@ void main_window::on_stop_button_clicked()
   controller->stop_motor();
 }
 
+void main_window::on_decel_stop_button_clicked()
+{
+  controller->set_target_velocity(0);
+}
+
 void main_window::on_apply_settings_action_triggered()
 {
   controller->apply_settings();
@@ -977,9 +982,9 @@ QWidget * main_window::setup_status_page_widget()
   status_page_widget = new QWidget();
   QHBoxLayout * layout = status_page_layout = new QHBoxLayout();
 
-  layout->addLayout(setup_status_left_column());
+  layout->addLayout(setup_status_left_column(), 1);
   layout->addLayout(setup_status_right_column());
-  layout->addStretch(1);
+  //layout->addStretch(1);
 
   status_page_widget->setLayout(layout);
   return status_page_widget;
@@ -1154,11 +1159,7 @@ QWidget * main_window::setup_manual_target_box()
     layout->addWidget(auto_zero_target_check, 0, Qt::AlignLeft);
   }
 
-  {
-    stop_button = new QPushButton();
-    stop_button->setObjectName("stop_button");
-    layout->addWidget(stop_button, 0, Qt::AlignCenter);
-  }
+  layout->addLayout(setup_manual_target_buttons_layout());
 
   manual_target_box->setLayout(layout);
   return manual_target_box;
@@ -1242,6 +1243,22 @@ QWidget * main_window::setup_manual_target_entry_widget()
 
   manual_target_entry_widget->setLayout(layout);
   return manual_target_entry_widget;
+}
+
+QLayout * main_window::setup_manual_target_buttons_layout()
+{
+  QHBoxLayout * layout = manual_target_buttons_layout = new QHBoxLayout();
+
+  stop_button = new QPushButton();
+  stop_button->setObjectName("stop_button");
+  decel_stop_button = new QPushButton();
+  decel_stop_button->setObjectName("decel_stop_button");
+  layout->addStretch(1);
+  layout->addWidget(stop_button);
+  layout->addWidget(decel_stop_button);
+  layout->addStretch(1);
+
+  return manual_target_buttons_layout;
 }
 
 //// settings page
@@ -1685,6 +1702,8 @@ void main_window::retranslate()
   }
   auto_set_target_check->setText(tr("Set target when slider or entry box are changed"));
   auto_zero_target_check->setText(tr("Return slider to zero when it is released"));
+  stop_button->setText(tr("Stop motor"));
+  decel_stop_button->setText(tr("Decelerate motor"));
 
   // [all-settings]
   control_mode_label->setText(tr("Control mode:"));
@@ -1721,7 +1740,6 @@ void main_window::retranslate()
   disable_safe_start_check->setText(tr("Disable safe start"));
   ignore_err_line_high_check->setText(tr("Ignore ERR line high"));
 
-  stop_button->setText(tr("Stop motor"));
   disable_driver_button->setText(tr("Disable driver"));
   enable_driver_button->setText(tr("Enable driver"));
   apply_settings_button->setText(apply_settings_action->text());

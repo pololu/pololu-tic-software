@@ -171,6 +171,7 @@ private slots:
   void on_set_target_button_clicked();
   void on_auto_set_target_check_stateChanged(int state);
   void on_stop_button_clicked();
+  void on_decel_stop_button_clicked();
 
   /** This is called by Qt when the user wants to apply settings. */
   void on_apply_settings_action_triggered();
@@ -234,6 +235,7 @@ private:
   QWidget * setup_manual_target_box();
   QLayout * setup_manual_target_mode_layout();
   QWidget * setup_manual_target_entry_widget();
+  QLayout * setup_manual_target_buttons_layout();
 
   QWidget * setup_settings_page_widget();
   QWidget * setup_control_mode_widget();
@@ -315,8 +317,7 @@ private:
   QCheckBox * auto_set_target_check;
   QCheckBox * auto_zero_target_check;
   QPushButton * stop_button;
-  QPushButton * disable_driver_button;
-  QPushButton * enable_driver_button;
+  QPushButton * decel_stop_button;
 
   QGroupBox * errors_box;
   QVBoxLayout * errors_box_layout;
@@ -397,6 +398,8 @@ private:
   QCheckBox * ignore_err_line_high_check;
 
   QHBoxLayout * footer_layout;
+  QPushButton * disable_driver_button;
+  QPushButton * enable_driver_button;
   QPushButton * apply_settings_button;
 
   main_controller * controller;
