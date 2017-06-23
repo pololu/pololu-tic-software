@@ -117,6 +117,8 @@ describe 'commands for controlling the motor', usb: true do
     end
   end
 
+  # TODO: test exit safe start
+
   describe 'Clear Driver Error' do
     it 'runs' do
       stdout, stderr, result = run_ticcmd('--clear-driver-error')

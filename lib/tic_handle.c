@@ -305,7 +305,7 @@ tic_error * tic_energize(tic_handle * handle)
   tic_error * error = NULL;
 
   error = tic_usb_error(libusbp_control_transfer(handle->usb_handle,
-    0x40, TIC_CMD_EXIT_SAFE_START, 0, 0, NULL, 0, NULL));
+    0x40, TIC_CMD_ENERGIZE, 0, 0, NULL, 0, NULL));
 
   if (error != NULL)
   {

@@ -819,11 +819,6 @@ void main_controller::deenergize()
     assert(connected());
 
     device_handle.deenergize();
-
-    // This is here for backwards compatibility with the old GUI behavior for
-    // now.  TODO: do we really want to do this?  Shouldn't the button be named
-    // something else like Resume if we are calling two commands?
-    device_handle.exit_safe_start();
   }
   catch (std::exception const & e)
   {
@@ -840,6 +835,11 @@ void main_controller::energize()
     assert(connected());
 
     device_handle.energize();
+
+    // This is here for backwards compatibility with the old GUI behavior for
+    // now.  TODO: do we really want to do this?  Shouldn't the button be named
+    // something else like Resume if we are calling two commands?
+    device_handle.exit_safe_start();
   }
   catch (std::exception const & e)
   {
