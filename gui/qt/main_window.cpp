@@ -2,6 +2,8 @@
 #include "main_controller.h"
 #include "config.h"
 
+#include "BallScrollBar.h"
+
 #include <QCheckBox>
 #include <QCloseEvent>
 #include <QComboBox>
@@ -261,7 +263,7 @@ void main_window::set_manual_target_range(int32_t target_min, int32_t target_max
   suppress_events = true;
   manual_target_scroll_bar->setMinimum(target_min);
   manual_target_scroll_bar->setMaximum(target_max);
-  manual_target_scroll_bar->setPageStep((target_max - target_min) / 20);
+  manual_target_scroll_bar->setPageStep(std::max((target_max - target_min) / 20, 1));
   manual_target_min_label->setText(QString::number(target_min));
   manual_target_max_label->setText(QString::number(target_max));
   manual_target_entry_value->setRange(target_min, target_max);
@@ -274,6 +276,24 @@ void main_window::set_manual_target(int32_t target)
   manual_target_entry_value->setValue(target);
   manual_target_scroll_bar->setValue(target);
   suppress_events = false;
+}
+
+void main_window::set_manual_target_ball_position(int32_t current_position, bool on_target)
+{
+  if (manual_target_position_mode_radio->isChecked())
+  {
+    manual_target_scroll_bar->setBallValue(current_position);
+    manual_target_scroll_bar->setBallColor(on_target ? Qt::darkGreen : Qt::blue);
+  }
+}
+
+void main_window::set_manual_target_ball_velocity(int32_t current_velocity, bool on_target)
+{
+  if (manual_target_speed_mode_radio->isChecked())
+  {
+    manual_target_scroll_bar->setBallValue(current_velocity);
+    manual_target_scroll_bar->setBallColor(on_target ? Qt::darkGreen : Qt::blue);
+  }
 }
 
 void main_window::set_serial_baud_rate(uint32_t serial_baud_rate)
@@ -605,6 +625,11 @@ void main_window::on_auto_set_target_check_stateChanged(int state)
 void main_window::on_stop_button_clicked()
 {
   controller->stop_motor();
+}
+
+void main_window::on_decel_stop_button_clicked()
+{
+  controller->set_target_velocity(0);
 }
 
 void main_window::on_apply_settings_action_triggered()
@@ -957,9 +982,9 @@ QWidget * main_window::setup_status_page_widget()
   status_page_widget = new QWidget();
   QHBoxLayout * layout = status_page_layout = new QHBoxLayout();
 
-  layout->addLayout(setup_status_left_column());
+  layout->addLayout(setup_status_left_column(), 1);
   layout->addLayout(setup_status_right_column());
-  layout->addStretch(1);
+  //layout->addStretch(1);
 
   status_page_widget->setLayout(layout);
   return status_page_widget;
@@ -1134,11 +1159,7 @@ QWidget * main_window::setup_manual_target_box()
     layout->addWidget(auto_zero_target_check, 0, Qt::AlignLeft);
   }
 
-  {
-    stop_button = new QPushButton();
-    stop_button->setObjectName("stop_button");
-    layout->addWidget(stop_button, 0, Qt::AlignCenter);
-  }
+  layout->addLayout(setup_manual_target_buttons_layout());
 
   manual_target_box->setLayout(layout);
   return manual_target_box;
@@ -1174,10 +1195,11 @@ QWidget * main_window::setup_manual_target_entry_widget()
   int row = 0;
 
   {
-    manual_target_scroll_bar = new QScrollBar(Qt::Horizontal);
+    manual_target_scroll_bar = new BallScrollBar(Qt::Horizontal);
     manual_target_scroll_bar->setObjectName("manual_target_scroll_bar");
     manual_target_scroll_bar->setSingleStep(1);
     manual_target_scroll_bar->setFocusPolicy(Qt::ClickFocus);
+    manual_target_scroll_bar->setBallVisible(true);
     layout->addWidget(manual_target_scroll_bar, row, 0, 1, 3);
     row++;
   }
@@ -1221,6 +1243,22 @@ QWidget * main_window::setup_manual_target_entry_widget()
 
   manual_target_entry_widget->setLayout(layout);
   return manual_target_entry_widget;
+}
+
+QLayout * main_window::setup_manual_target_buttons_layout()
+{
+  QHBoxLayout * layout = manual_target_buttons_layout = new QHBoxLayout();
+
+  stop_button = new QPushButton();
+  stop_button->setObjectName("stop_button");
+  decel_stop_button = new QPushButton();
+  decel_stop_button->setObjectName("decel_stop_button");
+  layout->addStretch(1);
+  layout->addWidget(stop_button);
+  layout->addWidget(decel_stop_button);
+  layout->addStretch(1);
+
+  return manual_target_buttons_layout;
 }
 
 //// settings page
@@ -1664,6 +1702,8 @@ void main_window::retranslate()
   }
   auto_set_target_check->setText(tr("Set target when slider or entry box are changed"));
   auto_zero_target_check->setText(tr("Return slider to zero when it is released"));
+  stop_button->setText(tr("Stop motor"));
+  decel_stop_button->setText(tr("Decelerate motor"));
 
   // [all-settings]
   control_mode_label->setText(tr("Control mode:"));
@@ -1700,7 +1740,6 @@ void main_window::retranslate()
   disable_safe_start_check->setText(tr("Disable safe start"));
   ignore_err_line_high_check->setText(tr("Ignore ERR line high"));
 
-  stop_button->setText(tr("Stop motor"));
   disable_driver_button->setText(tr("Disable driver"));
   enable_driver_button->setText(tr("Enable driver"));
   apply_settings_button->setText(apply_settings_action->text());

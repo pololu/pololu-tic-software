@@ -7,7 +7,7 @@
 #include <sstream>
 
 /** This is how often we fetch the variables from the device. */
-static uint32_t const UPDATE_INTERVAL_MS = 100;
+static uint32_t const UPDATE_INTERVAL_MS = 50;
 
 void main_controller::set_window(main_window * window)
 {
@@ -442,23 +442,33 @@ void main_controller::handle_variables_changed()
 
   window->set_vin_voltage(convert_mv_to_v_string(variables.get_vin_voltage()));
 
+  int32_t target_position = variables.get_target_position();
+  int32_t target_velocity = variables.get_target_velocity();
+  int32_t current_position = variables.get_current_position();
+  int32_t current_velocity = variables.get_current_velocity();
+
   if (variables.get_planning_mode() == TIC_PLANNING_MODE_TARGET_POSITION)
   {
-    window->set_target_position(std::to_string(variables.get_target_position()));
+    window->set_target_position(std::to_string(target_position));
   }
   else if (variables.get_planning_mode() == TIC_PLANNING_MODE_TARGET_VELOCITY)
   {
-    window->set_target_velocity(std::to_string(variables.get_target_velocity()) +
-      " (" + convert_speed_to_pps_string(variables.get_target_velocity()) + ")");
+    window->set_target_velocity(std::to_string(target_velocity) +
+      " (" + convert_speed_to_pps_string(target_velocity) + ")");
   }
   else
   {
     window->set_target_none();
   }
 
-  window->set_current_position(std::to_string(variables.get_current_position()));
-  window->set_current_velocity(std::to_string(variables.get_current_velocity()) +
-    " (" + convert_speed_to_pps_string(variables.get_current_velocity()) + ")");
+  window->set_manual_target_ball_position(current_position,
+    current_position == target_position);
+  window->set_manual_target_ball_velocity(current_velocity,
+    current_velocity == target_velocity);
+
+  window->set_current_position(std::to_string(current_position));
+  window->set_current_velocity(std::to_string(current_velocity) +
+    " (" + convert_speed_to_pps_string(current_velocity) + ")");
 
   uint16_t error_status = variables.get_error_status();
 
