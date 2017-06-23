@@ -1192,23 +1192,23 @@ tic_error * tic_set_target_position(tic_handle *, int32_t position);
 TIC_API TIC_WARN_UNUSED
 tic_error * tic_set_target_velocity(tic_handle *, int32_t velocity);
 
-/// Sets the current position, e.g. the position where the Tic currently thinks
-/// it is.
+/// Stops the motor abruptly without respecting the deceleration limit ands sets
+/// the "Current position" variable, which represents where the Tic currently
+/// thinks the motor's output is.
 ///
-/// This functions sends a Set Current Position command to the Tic.
-///
-/// Do not call this if the stepper motor is moving, or else you could get
-/// unexpected behavior from the controller.
+/// This functions sends a Halt and Set Position command to the Tic.
 TIC_API TIC_WARN_UNUSED
-tic_error * tic_set_current_position(tic_handle *, int32_t position);
+tic_error * tic_halt_and_set_position(tic_handle *, int32_t position);
 
-/// Stops the Tic abruptly without respecting the deceleration limits.
+/// Stops the motor abruptly without respecting the deceleration limit.
 ///
 /// This function sends a Stop command to the Tic.  If the Control mode is set
 /// to Serial, the Tic will stop abruptly.  If the control mode is something
 /// other than Serial, ths command will be silently ignored.
+///
+/// See also tic_deenergize().
 TIC_API TIC_WARN_UNUSED
-tic_error * tic_stop(tic_handle *);
+tic_error * tic_halt_and_hold(tic_handle *);
 
 /// Prevents the "Command timeout" error from happening for some time.
 ///
@@ -1216,24 +1216,36 @@ tic_error * tic_stop(tic_handle *);
 TIC_API TIC_WARN_UNUSED
 tic_error * tic_reset_command_timeout(tic_handle *);
 
-/// Disables the stepper motor driver.
+/// Deenergizes the stepper motor coils.
 ///
-/// This function sends a Disable Driver command to the Tic, causing it to
-/// disable its stepper motor driver and set the "Intentionally disabled" error
-/// bit.  This command is mostly equivalent to turning off the Tic's motor power
-/// input.
+/// This function sends a Deenergize command to the Tic, causing it to disable
+/// its stepper motor driver.  The motor will stop moving and consuming power.
+/// The Tic will also set the "Intentionally deenergized" error bit, turn on its
+/// red LED, and drive its ERR line high.
+///
+/// Note that the Energize command, which can be sent over USB with
+/// tic_energize() or sent over serial or I2C, will undo the effect of this
+/// command and could make the system start up again.
+///
+/// See also tic_halt_and_hold().
 TIC_API TIC_WARN_UNUSED
-tic_error * tic_disable_driver(tic_handle *);
+tic_error * tic_deenergize(tic_handle *);
 
-/// Enables the stepper motor driver.
+/// Sends the Energize command.
 ///
 /// This function sends an Enable Driver command to the Tic, clearing the
-/// "Intentionally disabled" error bit.
-///
-/// In serial/I2C/USB control mode, this command also causes the Safe Start
-/// Violation error to be cleared for 200 ms.
+/// "Intentionally deenergized" error bit.  If there are no other errors, this
+/// allows the system to start up.
 TIC_API TIC_WARN_UNUSED
-tic_error * tic_enable_driver(tic_handle *);
+tic_error * tic_energize(tic_handle *);
+
+/// Sends the Exit Safe Start command.
+///
+/// In Serial/I2C/USB control mode, this command causes the Safe Start Violation
+/// error to be cleared for 200 ms.  If there are no other errors, this
+/// allows the system to start up.
+TIC_API TIC_WARN_UNUSED
+tic_error * tic_exit_safe_start(tic_handle *);
 
 /// Attempts to clear a motor driver errors.
 ///

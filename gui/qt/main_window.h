@@ -66,8 +66,8 @@ public:
   void set_tab_pages_enabled(bool enabled);
 
   void set_manual_target_box_enabled(bool enabled);
-  void set_disable_driver_button_enabled(bool enabled);
-  void set_enable_driver_button_enabled(bool enabled);
+  void set_deenergize_button_enabled(bool enabled);
+  void set_energize_button_enabled(bool enabled);
 
   /** Controls whether the apply settings action/button is enabled or
    * disabled. */
@@ -159,8 +159,8 @@ private slots:
   void on_about_action_triggered();
 
   void on_device_list_value_currentIndexChanged(int index);
-  void on_disable_driver_button_clicked();
-  void on_enable_driver_button_clicked();
+  void on_deenergize_button_clicked();
+  void on_energize_button_clicked();
 
   void on_errors_reset_counts_button_clicked();
   void on_manual_target_position_mode_radio_toggled(bool checked);
@@ -398,8 +398,8 @@ private:
   QCheckBox * ignore_err_line_high_check;
 
   QHBoxLayout * footer_layout;
-  QPushButton * disable_driver_button;
-  QPushButton * enable_driver_button;
+  QPushButton * deenergize_button;
+  QPushButton * energize_button;
   QPushButton * apply_settings_button;
 
   main_controller * controller;

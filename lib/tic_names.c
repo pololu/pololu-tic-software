@@ -15,7 +15,7 @@ const tic_name tic_product_names[] =
 
 const tic_name tic_nice_error_names[] =
 {
-  { "Intentionally disabled", 1 << TIC_ERROR_INTENTIONALLY_DISABLED },
+  { "Intentionally de-energized", 1 << TIC_ERROR_INTENTIONALLY_DEENERGIZED },
   { "Motor driver error", 1 << TIC_ERROR_MOTOR_DRIVER_ERROR },
   { "Low VIN", 1 << TIC_ERROR_LOW_VIN },
   { "Kill switch", 1 << TIC_ERROR_KILL_SWITCH },
@@ -54,12 +54,11 @@ const tic_name tic_device_reset_names[] =
 
 const tic_name tic_operation_state_names[] =
 {
-  { "disabled", TIC_OPERATION_STATE_DISABLED },
-  { "error", TIC_OPERATION_STATE_ERROR },
+  { "reset", TIC_OPERATION_STATE_RESET },
+  { "soft_error", TIC_OPERATION_STATE_SOFT_ERROR },
   { "waiting_for_err_line", TIC_OPERATION_STATE_WAITING_FOR_ERR_LINE },
-  { "waiting_for_input", TIC_OPERATION_STATE_WAITING_FOR_INPUT },
-  { "input_invalid", TIC_OPERATION_STATE_INPUT_INVALID },
-  { "active", TIC_OPERATION_STATE_ACTIVE },
+  { "starting_up", TIC_OPERATION_STATE_STARTING_UP },
+  { "normal", TIC_OPERATION_STATE_NORMAL },
   { NULL, 0 },
 };
 

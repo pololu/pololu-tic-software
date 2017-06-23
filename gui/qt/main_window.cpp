@@ -124,14 +124,14 @@ void main_window::set_manual_target_box_enabled(bool enabled)
   manual_target_box->setEnabled(enabled);
 }
 
-void main_window::set_disable_driver_button_enabled(bool enabled)
+void main_window::set_deenergize_button_enabled(bool enabled)
 {
-  disable_driver_button->setEnabled(enabled);
+  deenergize_button->setEnabled(enabled);
 }
 
-void main_window::set_enable_driver_button_enabled(bool enabled)
+void main_window::set_energize_button_enabled(bool enabled)
 {
-  enable_driver_button->setEnabled(enabled);
+  energize_button->setEnabled(enabled);
 }
 
 void main_window::set_apply_settings_enabled(bool enabled)
@@ -529,14 +529,14 @@ void main_window::on_device_list_value_currentIndexChanged(int index)
   }
 }
 
-void main_window::on_disable_driver_button_clicked()
+void main_window::on_deenergize_button_clicked()
 {
-  controller->disable_driver();
+  controller->deenergize();
 }
 
-void main_window::on_enable_driver_button_clicked()
+void main_window::on_energize_button_clicked()
 {
-  controller->enable_driver();
+  controller->energize();
 }
 
 void main_window::on_errors_reset_counts_button_clicked()
@@ -556,7 +556,7 @@ void main_window::on_manual_target_position_mode_radio_toggled(bool checked)
     set_target_button->setText(tr("Set target speed"));
   }
   set_manual_target(0);
-  controller->set_current_position(0);
+  controller->halt_and_set_position(0);
 }
 
 void main_window::on_manual_target_scroll_bar_valueChanged(int value)
@@ -624,7 +624,7 @@ void main_window::on_auto_set_target_check_stateChanged(int state)
 
 void main_window::on_stop_button_clicked()
 {
-  controller->stop_motor();
+  controller->halt_and_hold();
 }
 
 void main_window::on_decel_stop_button_clicked()
@@ -1100,7 +1100,7 @@ QLayout * main_window::setup_error_table_layout()
      row++;
    }
 
-  setup_error_row(layout, row++, error_rows[TIC_ERROR_INTENTIONALLY_DISABLED]);
+  setup_error_row(layout, row++, error_rows[TIC_ERROR_INTENTIONALLY_DEENERGIZED]);
   setup_error_row(layout, row++, error_rows[TIC_ERROR_MOTOR_DRIVER_ERROR]);
   setup_error_row(layout, row++, error_rows[TIC_ERROR_LOW_VIN]);
   setup_error_row(layout, row++, error_rows[TIC_ERROR_KILL_SWITCH]);
@@ -1627,15 +1627,15 @@ QLayout * main_window::setup_footer()
 {
   QHBoxLayout * layout = footer_layout = new QHBoxLayout();
 
-  disable_driver_button = new QPushButton();
-  disable_driver_button->setObjectName("disable_driver_button");
-  enable_driver_button = new QPushButton();
-  enable_driver_button->setObjectName("enable_driver_button");
+  deenergize_button = new QPushButton();
+  deenergize_button->setObjectName("deenergize_button");
+  energize_button = new QPushButton();
+  energize_button->setObjectName("energize_button");
   apply_settings_button = new QPushButton();
   connect(apply_settings_button, SIGNAL(clicked()),
     this, SLOT(on_apply_settings_action_triggered()));
-  layout->addWidget(disable_driver_button);
-  layout->addWidget(enable_driver_button);
+  layout->addWidget(deenergize_button);
+  layout->addWidget(energize_button);
   layout->addStretch(1);
   layout->addWidget(apply_settings_button);
 
@@ -1673,20 +1673,20 @@ void main_window::retranslate()
   errors_box->setTitle(tr("Errors"));
   errors_stopping_header_label->setText(tr("Stopping motor?"));
   errors_count_header_label->setText(tr("Count"));
-  error_rows[TIC_ERROR_INTENTIONALLY_DISABLED].name_label->setText(tr("Intentionally disabled"));
-  error_rows[TIC_ERROR_MOTOR_DRIVER_ERROR]    .name_label->setText(tr("Motor driver error"));
-  error_rows[TIC_ERROR_LOW_VIN]               .name_label->setText(tr("Low VIN"));
-  error_rows[TIC_ERROR_KILL_SWITCH]           .name_label->setText(tr("Kill switch"));
-  error_rows[TIC_ERROR_REQUIRED_INPUT_INVALID].name_label->setText(tr("Required input invalid"));
-  error_rows[TIC_ERROR_COMMAND_TIMEOUT]       .name_label->setText(tr("Command timeout"));
-  error_rows[TIC_ERROR_SAFE_START_VIOLATION]  .name_label->setText(tr("Safe start violation"));
-  error_rows[TIC_ERROR_ERR_LINE_HIGH]         .name_label->setText(tr("ERR line high"));
-  error_rows[TIC_ERROR_SERIAL_ERROR]          .name_label->setText(tr("Serial errors:"));
-  error_rows[TIC_ERROR_SERIAL_FRAMING]        .name_label->setText(tr(INDENT("Frame")));
-  error_rows[TIC_ERROR_SERIAL_RX_OVERRUN]     .name_label->setText(tr(INDENT("RX overrun")));
-  error_rows[TIC_ERROR_SERIAL_FORMAT]         .name_label->setText(tr(INDENT("Format")));
-  error_rows[TIC_ERROR_SERIAL_CRC]            .name_label->setText(tr(INDENT("CRC")));
-  error_rows[TIC_ERROR_ENCODER_SKIP]          .name_label->setText(tr("Encoder skip"));
+  error_rows[TIC_ERROR_INTENTIONALLY_DEENERGIZED].name_label->setText(tr("Intentionally de-energized"));
+  error_rows[TIC_ERROR_MOTOR_DRIVER_ERROR]      .name_label->setText(tr("Motor driver error"));
+  error_rows[TIC_ERROR_LOW_VIN]                 .name_label->setText(tr("Low VIN"));
+  error_rows[TIC_ERROR_KILL_SWITCH]             .name_label->setText(tr("Kill switch"));
+  error_rows[TIC_ERROR_REQUIRED_INPUT_INVALID]  .name_label->setText(tr("Required input invalid"));
+  error_rows[TIC_ERROR_COMMAND_TIMEOUT]         .name_label->setText(tr("Command timeout"));
+  error_rows[TIC_ERROR_SAFE_START_VIOLATION]    .name_label->setText(tr("Safe start violation"));
+  error_rows[TIC_ERROR_ERR_LINE_HIGH]           .name_label->setText(tr("ERR line high"));
+  error_rows[TIC_ERROR_SERIAL_ERROR]            .name_label->setText(tr("Serial errors:"));
+  error_rows[TIC_ERROR_SERIAL_FRAMING]          .name_label->setText(tr(INDENT("Frame")));
+  error_rows[TIC_ERROR_SERIAL_RX_OVERRUN]       .name_label->setText(tr(INDENT("RX overrun")));
+  error_rows[TIC_ERROR_SERIAL_FORMAT]           .name_label->setText(tr(INDENT("Format")));
+  error_rows[TIC_ERROR_SERIAL_CRC]              .name_label->setText(tr(INDENT("CRC")));
+  error_rows[TIC_ERROR_ENCODER_SKIP]            .name_label->setText(tr("Encoder skip"));
   errors_reset_counts_button->setText(tr("Reset counts"));
 
   manual_target_box->setTitle(tr(u8"Set target (Serial\u2009/\u2009I\u00B2C\u2009/\u2009USB mode only)"));
@@ -1740,7 +1740,7 @@ void main_window::retranslate()
   disable_safe_start_check->setText(tr("Disable safe start"));
   ignore_err_line_high_check->setText(tr("Ignore ERR line high"));
 
-  disable_driver_button->setText(tr("Disable driver"));
-  enable_driver_button->setText(tr("Enable driver"));
+  deenergize_button->setText(tr("De-energize"));
+  energize_button->setText(tr("Energize"));
   apply_settings_button->setText(apply_settings_action->text());
 }

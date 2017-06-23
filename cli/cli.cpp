@@ -7,29 +7,30 @@ static const char help[] =
   "Usage: " CLI_NAME " OPTIONS\n"
   "\n"
   "General options:\n"
-  "  -s, --status                Show device settings and info.\n"
-  "  -d SERIALNUMBER             Specifies the serial number of the device.\n"
-  "  --list                      List devices connected to computer.\n"
-  "  -p, --position NUM          Set target position in microsteps.\n"
-  "  -y, --velocity NUM          Set target velocity in microsteps / 10000 s.\n"
-  "  --set-current-position NUM  Set where the controller thinks it currently is.\n"
-  "  --stop                      Abruptly stop the motor.\n"
-  "  --reset-command-timeout     Prevents the \"Command timeout\" error for a while.\n"
-  "  --disable-driver            Disable the motor driver.\n"
-  "  --enable-driver             Stop disabling the driver and exit safe-start.\n"
-  "  --clear-driver-error        Attempt to clear a motor driver error.\n"
-  "  --speed-max NUM             Set the speed maximum.\n"
-  "  --speed-min NUM             Set the speed minimum.\n"
-  "  --accel-max NUM             Set the acceleration maximum.\n"
-  "  --decel-max NUM             Set the deceleration maximum.\n"
-  "  --step-mode NUM             Set step mode: full, half, 1, 2, 4, 8, 16, 32.\n"
-  "  --current NUM               Set the current limit in mA.\n"
-  "  --decay MODE                Set decay mode: mixed, slow, or fast.\n"
-  "  --restore-defaults          Restore device's factory settings\n"
-  "  --settings FILE             Load settings file into device.\n"
-  "  --get-settings FILE         Read device settings and write to file.\n"
-  "  --fix-settings IN OUT       Read settings from a file and fix them.\n"
-  "  -h, --help                  Show this help screen.\n"
+  "  -s, --status                 Show device settings and info.\n"
+  "  -d SERIALNUMBER              Specifies the serial number of the device.\n"
+  "  --list                       List devices connected to computer.\n"
+  "  -p, --position NUM           Set target position in microsteps.\n"
+  "  -y, --velocity NUM           Set target velocity in microsteps / 10000 s.\n"
+  "  --halt-and-set-position NUM  Set where the controller thinks it currently is.\n"
+  "  --halt-and-hold              Abruptly stop the motor.\n"
+  "  --reset-command-timeout      Prevents the \"Command timeout\" error for a while.\n"
+  "  --deenergize                 Disable the motor driver.\n"
+  "  --energize                   Stop disabling the driver.\n"
+  "  --exit-safe-start            Send the Exit Safe Start command.\n"
+  "  --clear-driver-error         Attempt to clear a motor driver error.\n"
+  "  --speed-max NUM              Set the speed maximum.\n"
+  "  --speed-min NUM              Set the speed minimum.\n"
+  "  --accel-max NUM              Set the acceleration maximum.\n"
+  "  --decel-max NUM              Set the deceleration maximum.\n"
+  "  --step-mode NUM              Set step mode: full, half, 1, 2, 4, 8, 16, 32.\n"
+  "  --current NUM                Set the current limit in mA.\n"
+  "  --decay MODE                 Set decay mode: mixed, slow, or fast.\n"
+  "  --restore-defaults           Restore device's factory settings\n"
+  "  --settings FILE              Load settings file into device.\n"
+  "  --get-settings FILE          Read device settings and write to file.\n"
+  "  --fix-settings IN OUT        Read settings from a file and fix them.\n"
+  "  -h, --help                   Show this help screen.\n"
   "\n"
   "The only option that makes permanent changes to the device is --settings.\n"
   "\n"
@@ -51,16 +52,18 @@ struct arguments
   bool set_target_velocity = false;
   int32_t target_velocity;
 
-  bool set_current_position = false;
-  int32_t current_position;
+  bool halt_and_set_position = false;
+  int32_t position;
 
-  bool stop = false;
+  bool halt_and_hold = false;
 
   bool reset_command_timeout = false;
 
-  bool disable_driver = false;
+  bool deenergize = false;
 
-  bool enable_driver = false;
+  bool energize = false;
+
+  bool exit_safe_start = false;
 
   bool clear_driver_error = false;
 
@@ -109,11 +112,12 @@ struct arguments
       show_list ||
       set_target_position ||
       set_target_velocity ||
-      set_current_position ||
-      stop ||
+      halt_and_set_position ||
+      halt_and_hold ||
       reset_command_timeout ||
-      disable_driver ||
-      enable_driver ||
+      deenergize ||
+      energize ||
+      exit_safe_start ||
       clear_driver_error ||
       set_speed_max ||
       set_speed_min ||
@@ -278,26 +282,26 @@ static arguments parse_args(int argc, char ** argv)
       args.set_target_velocity = true;
       args.target_velocity = parse_arg_int<int32_t>(arg_reader);
     }
-    else if (arg == "--set-current-position")
+    else if (arg == "--halt-and-set-position")
     {
-      args.set_current_position = true;
-      args.current_position = parse_arg_int<int32_t>(arg_reader);
+      args.halt_and_set_position = true;
+      args.position = parse_arg_int<int32_t>(arg_reader);
     }
-    else if (arg == "--stop")
+    else if (arg == "--halt-and-hold")
     {
-      args.stop = true;
+      args.halt_and_hold = true;
     }
     else if (arg == "--reset-command-timeout")
     {
       args.reset_command_timeout = true;
     }
-    else if (arg == "--disable-driver")
+    else if (arg == "--deenergize")
     {
-      args.disable_driver = true;
+      args.deenergize = true;
     }
-    else if (arg == "--enable-driver")
+    else if (arg == "--energize")
     {
-      args.enable_driver = true;
+      args.energize = true;
     }
     else if (arg == "--clear-driver-error")
     {
@@ -395,98 +399,7 @@ static void print_list(device_selector & selector)
   }
 }
 
-static void set_target_position(device_selector & selector, int32_t position)
-{
-  tic::device device = selector.select_device();
-  tic::handle handle(device);
-  handle.set_target_position(position);
-}
-
-static void set_target_velocity(device_selector & selector, int32_t velocity)
-{
-  tic::device device = selector.select_device();
-  tic::handle handle(device);
-  handle.set_target_velocity(velocity);
-}
-
-static void set_current_position(device_selector & selector, int32_t current_position)
-{
-  tic::device device = selector.select_device();
-  tic::handle handle(device);
-  handle.set_current_position(current_position);
-}
-
-static void stop(device_selector & selector)
-{
-  tic::device device = selector.select_device();
-  tic::handle handle(device);
-  handle.stop();
-}
-
-static void reset_command_timeout(device_selector & selector)
-{
-  tic::device device = selector.select_device();
-  tic::handle handle(device);
-  handle.reset_command_timeout();
-}
-
-static void disable_driver(device_selector & selector)
-{
-  tic::device device = selector.select_device();
-  tic::handle handle(device);
-  handle.disable_driver();
-}
-
-static void enable_driver(device_selector & selector)
-{
-  tic::device device = selector.select_device();
-  tic::handle handle(device);
-  handle.enable_driver();
-}
-
-static void clear_driver_error(device_selector & selector)
-{
-  tic::device device = selector.select_device();
-  tic::handle handle(device);
-  handle.clear_driver_error();
-}
-
-static void set_speed_max(device_selector & selector, uint32_t speed_max)
-{
-  tic::device device = selector.select_device();
-  tic::handle handle(device);
-  handle.set_speed_max(speed_max);
-}
-
-static void set_speed_min(device_selector & selector, uint32_t speed_min)
-{
-  tic::device device = selector.select_device();
-  tic::handle handle(device);
-  handle.set_speed_min(speed_min);
-}
-
-static void set_accel_max(device_selector & selector, uint32_t accel_max)
-{
-  tic::device device = selector.select_device();
-  tic::handle handle(device);
-  handle.set_accel_max(accel_max);
-}
-
-static void set_decel_max(device_selector & selector, uint32_t decel_max)
-{
-  tic::device device = selector.select_device();
-  tic::handle handle(device);
-  handle.set_decel_max(decel_max);
-}
-
-static void set_step_mode(device_selector & selector, uint8_t step_mode)
-{
-  tic::device device = selector.select_device();
-  tic::handle handle(device);
-  handle.set_step_mode(step_mode);
-}
-
-static void set_current_limit(device_selector & selector, uint32_t current_limit)
+static void set_current_limit_after_warning(tic::handle handle, uint32_t current_limit)
 {
   if (current_limit > TIC_MAX_ALLOWED_CURRENT)
   {
@@ -495,17 +408,7 @@ static void set_current_limit(device_selector & selector, uint32_t current_limit
       << "Warning: The current limit was too high "
       << "so it will be lowered to " << current_limit << " mA." << std::endl;
   }
-
-  tic::device device = selector.select_device();
-  tic::handle handle(device);
   handle.set_current_limit(current_limit);
-}
-
-static void set_decay_mode(device_selector & selector, uint8_t decay_mode)
-{
-  tic::device device = selector.select_device();
-  tic::handle handle(device);
-  handle.set_decay_mode(decay_mode);
 }
 
 static void get_status(device_selector & selector)
@@ -627,6 +530,12 @@ static void test_procedure(device_selector & selector, uint32_t procedure)
   }
 }
 
+static tic::handle handle(device_selector & selector)
+{
+  tic::device device = selector.select_device();
+  return tic::handle(device);
+}
+
 // A note about ordering: We want to do all the setting stuff first because it
 // could affect subsequent options.  We want to shoe the status last, because it
 // could be affected by options before it.
@@ -677,79 +586,82 @@ static void run(int argc, char ** argv)
 
   if (args.set_speed_max)
   {
-    set_speed_max(selector, args.speed_max);
+    handle(selector).set_speed_max(args.speed_max);
   }
 
   if (args.set_speed_min)
   {
-    set_speed_min(selector, args.speed_min);
+    handle(selector).set_speed_min(args.speed_min);
   }
 
   if (args.set_accel_max)
   {
-    set_accel_max(selector, args.accel_max);
+    handle(selector).set_accel_max(args.accel_max);
   }
 
   if (args.set_decel_max)
   {
-    set_decel_max(selector, args.decel_max);
+    handle(selector).set_decel_max(args.decel_max);
   }
 
-  if (args.stop)
+  if (args.halt_and_hold)
   {
-    stop(selector);
+    handle(selector).halt_and_hold();
   }
 
   if (args.reset_command_timeout)
   {
-    reset_command_timeout(selector);
+    handle(selector).reset_command_timeout();
   }
 
-  // Should be before set_target_position and set_target_velocity since it is
-  // useful to use this to get out of safe-start mode.
-  if (args.enable_driver)
+  if (args.energize)
   {
-    enable_driver(selector);
+    handle(selector).energize();
+  }
+
+  if (args.exit_safe_start)
+  {
+    handle(selector).exit_safe_start();
   }
 
   if (args.set_target_position)
   {
-    set_target_position(selector, args.target_position);
+    handle(selector).set_target_position(args.target_position);
   }
 
   if (args.set_target_velocity)
   {
-    set_target_velocity(selector, args.target_velocity);
+    handle(selector).set_target_velocity(args.target_velocity);
   }
 
-  if (args.set_current_position)
+  if (args.halt_and_set_position)
   {
-    set_current_position(selector, args.current_position);
+    handle(selector).halt_and_set_position(args.position);
   }
 
   if (args.set_step_mode)
   {
-    set_step_mode(selector, args.step_mode);
+    handle(selector).set_step_mode(args.step_mode);
   }
 
   if (args.set_current_limit)
   {
-    set_current_limit(selector, args.current_limit);
+    set_current_limit_after_warning(handle(selector), args.current_limit);
   }
 
   if (args.set_decay_mode)
   {
-    set_decay_mode(selector, args.decay_mode);
-  }
-
-  if (args.disable_driver)
-  {
-    disable_driver(selector);
+    handle(selector).set_decay_mode(args.decay_mode);
   }
 
   if (args.clear_driver_error)
   {
-    clear_driver_error(selector);
+    handle(selector).clear_driver_error();
+  }
+
+  if (args.deenergize)
+  {
+    handle(selector).deenergize();
   }
 
   if (args.get_debug_data)

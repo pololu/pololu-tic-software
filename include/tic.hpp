@@ -602,16 +602,16 @@ namespace tic
       throw_if_needed(tic_set_target_velocity(pointer, velocity));
     }
 
-    /// Wrapper for tic_set_current_position().
-    void set_current_position(int32_t position)
+    /// Wrapper for tic_halt_and_set_position().
+    void halt_and_set_position(int32_t position)
     {
-      throw_if_needed(tic_set_current_position(pointer, position));
+      throw_if_needed(tic_halt_and_set_position(pointer, position));
     }
 
-    /// Wrapper for tic_stop().
-    void stop()
+    /// Wrapper for tic_halt_and_hold().
+    void halt_and_hold()
     {
-      throw_if_needed(tic_stop(pointer));
+      throw_if_needed(tic_halt_and_hold(pointer));
     }
 
     /// Wrapper for tic_reset_command_timeout().
@@ -620,18 +620,25 @@ namespace tic
       throw_if_needed(tic_reset_command_timeout(pointer));
     }
 
-    /// Wrapper for tic_disable_driver().
-    void disable_driver()
+    /// Wrapper for tic_deenergize().
+    void deenergize()
     {
-      throw_if_needed(tic_disable_driver(pointer));
+      throw_if_needed(tic_deenergize(pointer));
     }
 
-    /// Wrapper for tic_enable_driver().
-    void enable_driver()
+    /// Wrapper for tic_energize().
+    void energize()
     {
-      throw_if_needed(tic_enable_driver(pointer));
+      throw_if_needed(tic_energize(pointer));
     }
 
+    /// Wrapper for tic_exit_safe_start().
+    void exit_safe_start()
+    {
+      throw_if_needed(tic_exit_safe_start(pointer));
+    }
+
+    /// Wrapper for tic_clear_driver_error().
     void clear_driver_error()
     {
       throw_if_needed(tic_clear_driver_error(pointer));

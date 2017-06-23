@@ -58,10 +58,10 @@ private:
 public:
   void set_target_position(int32_t position);
   void set_target_velocity(int32_t velocity);
-  void set_current_position(int32_t position);
-  void stop_motor();
-  void disable_driver();
-  void enable_driver();
+  void halt_and_set_position(int32_t position);
+  void halt_and_hold();
+  void deenergize();
+  void energize();
 
   /** This is called when the user wants to apply the settings. */
   void apply_settings();

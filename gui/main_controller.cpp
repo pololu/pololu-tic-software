@@ -475,10 +475,10 @@ void main_controller::handle_variables_changed()
   window->set_error_status(error_status);
   window->increment_errors_occurred(variables.get_errors_occurred());
 
-  window->set_disable_driver_button_enabled(
-    !(error_status & (1 << TIC_ERROR_INTENTIONALLY_DISABLED)));
-  window->set_enable_driver_button_enabled(
-    (error_status & (1 << TIC_ERROR_INTENTIONALLY_DISABLED)) ||
+  window->set_deenergize_button_enabled(
+    !(error_status & (1 << TIC_ERROR_INTENTIONALLY_DEENERGIZED)));
+  window->set_energize_button_enabled(
+    (error_status & (1 << TIC_ERROR_INTENTIONALLY_DEENERGIZED)) ||
     ((error_status & (1 << TIC_ERROR_SAFE_START_VIOLATION)) &&
     control_mode_is_serial(cached_settings)));
 }
@@ -758,7 +758,7 @@ void main_controller::set_target_position(int32_t position)
   }
   catch (std::exception const & e)
   {
-    show_exception(e, "There was an error setting the target position.");
+    show_exception(e);
   }
 }
 
@@ -774,11 +774,11 @@ void main_controller::set_target_velocity(int32_t velocity)
   }
   catch (std::exception const & e)
   {
-    show_exception(e, "There was an error setting the target velocity.");
+    show_exception(e);
   }
 }
 
-void main_controller::set_current_position(int32_t position)
+void main_controller::halt_and_set_position(int32_t position)
 {
   if (!connected()) { return; }
 
@@ -786,15 +786,15 @@ void main_controller::set_current_position(int32_t position)
   {
     assert(connected());
 
-    device_handle.set_current_position(position);
+    device_handle.halt_and_set_position(position);
   }
   catch (std::exception const & e)
   {
-    show_exception(e, "There was an error setting the current position.");
+    show_exception(e);
   }
 }
 
-void main_controller::stop_motor()
+void main_controller::halt_and_hold()
 {
   if (!connected()) { return; }
 
@@ -802,15 +802,15 @@ void main_controller::stop_motor()
   {
     assert(connected());
 
-    device_handle.stop();
+    device_handle.halt_and_hold();
   }
   catch (std::exception const & e)
   {
-    show_exception(e, "There was an error stopping.");
+    show_exception(e);
   }
 }
 
-void main_controller::disable_driver()
+void main_controller::deenergize()
 {
   if (!connected()) { return; }
 
@@ -818,15 +818,20 @@ void main_controller::disable_driver()
   {
     assert(connected());
 
-    device_handle.disable_driver();
+    device_handle.deenergize();
+
+    // This is here for backwards compatibility with the old GUI behavior for
+    // now.  TODO: do we really want to do this?  Shouldn't the button be named
+    // something else like Resume if we are calling two commands?
+    device_handle.exit_safe_start();
   }
   catch (std::exception const & e)
   {
-    show_exception(e, "There was an error disabling the driver.");
+    show_exception(e);
   }
 }
 
-void main_controller::enable_driver()
+void main_controller::energize()
 {
   if (!connected()) { return; }
 
@@ -834,11 +839,11 @@ void main_controller::enable_driver()
   {
     assert(connected());
 
-    device_handle.enable_driver();
+    device_handle.energize();
   }
   catch (std::exception const & e)
   {
-    show_exception(e, "There was an error enabling the driver.");
+    show_exception(e);
   }
 }
 
@@ -865,7 +870,7 @@ void main_controller::apply_settings()
   }
   catch (std::exception const & e)
   {
-    show_exception(e, "There was an error applying settings.");
+    show_exception(e);
   }
 
   handle_settings_changed();

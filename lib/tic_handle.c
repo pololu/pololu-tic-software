@@ -209,7 +209,7 @@ tic_error * tic_set_target_velocity(tic_handle * handle, int32_t velocity)
   return error;
 }
 
-tic_error * tic_set_current_position(tic_handle * handle, int32_t position)
+tic_error * tic_halt_and_set_position(tic_handle * handle, int32_t position)
 {
   if (handle == NULL)
   {
@@ -221,18 +221,18 @@ tic_error * tic_set_current_position(tic_handle * handle, int32_t position)
   uint16_t wValue = (uint32_t)position & 0xFFFF;
   uint16_t wIndex = (uint32_t)position >> 16 & 0xFFFF;
   error = tic_usb_error(libusbp_control_transfer(handle->usb_handle,
-    0x40, TIC_CMD_SET_CURRENT_POSITION, wValue, wIndex, NULL, 0, NULL));
+    0x40, TIC_CMD_HALT_AND_SET_POSITION, wValue, wIndex, NULL, 0, NULL));
 
   if (error != NULL)
   {
     error = tic_error_add(error,
-      "There was an error setting the current position.");
+      "There was an error halting and setting the position.");
   }
 
   return error;
 }
 
-tic_error * tic_stop(tic_handle * handle)
+tic_error * tic_halt_and_hold(tic_handle * handle)
 {
   if (handle == NULL)
   {
@@ -242,12 +242,12 @@ tic_error * tic_stop(tic_handle * handle)
   tic_error * error = NULL;
 
   error = tic_usb_error(libusbp_control_transfer(handle->usb_handle,
-    0x40, TIC_CMD_STOP, 0, 0, NULL, 0, NULL));
+    0x40, TIC_CMD_HALT_AND_HOLD, 0, 0, NULL, 0, NULL));
 
   if (error != NULL)
   {
     error = tic_error_add(error,
-      "There was an error sending the stop command.");
+      "There was an error halting.");
   }
 
   return error;
@@ -274,7 +274,7 @@ tic_error * tic_reset_command_timeout(tic_handle * handle)
   return error;
 }
 
-tic_error * tic_disable_driver(tic_handle * handle)
+tic_error * tic_deenergize(tic_handle * handle)
 {
   if (handle == NULL)
   {
@@ -284,18 +284,18 @@ tic_error * tic_disable_driver(tic_handle * handle)
   tic_error * error = NULL;
 
   error = tic_usb_error(libusbp_control_transfer(handle->usb_handle,
-    0x40, TIC_CMD_DISABLE_DRIVER, 0, 0, NULL, 0, NULL));
+    0x40, TIC_CMD_DEENERGIZE, 0, 0, NULL, 0, NULL));
 
   if (error != NULL)
   {
     error = tic_error_add(error,
-      "There was an error disabling the driver.");
+      "There was an error deenergizing.");
   }
 
   return error;
 }
 
-tic_error * tic_enable_driver(tic_handle * handle)
+tic_error * tic_energize(tic_handle * handle)
 {
   if (handle == NULL)
   {
@@ -305,12 +305,33 @@ tic_error * tic_enable_driver(tic_handle * handle)
   tic_error * error = NULL;
 
   error = tic_usb_error(libusbp_control_transfer(handle->usb_handle,
-    0x40, TIC_CMD_ENABLE_DRIVER, 0, 0, NULL, 0, NULL));
+    0x40, TIC_CMD_EXIT_SAFE_START, 0, 0, NULL, 0, NULL));
 
   if (error != NULL)
   {
     error = tic_error_add(error,
-      "There was an error enabling the driver.");
+      "There was an error energizing.");
+  }
+
+  return error;
+}
+
+tic_error * tic_exit_safe_start(tic_handle * handle)
+{
+  if (handle == NULL)
+  {
+    return tic_error_create("Handle is null.");
+  }
+
+  tic_error * error = NULL;
+
+  error = tic_usb_error(libusbp_control_transfer(handle->usb_handle,
+    0x40, TIC_CMD_EXIT_SAFE_START, 0, 0, NULL, 0, NULL));
+
+  if (error != NULL)
+  {
+    error = tic_error_add(error,
+      "There was an error exiting safe start.");
   }
 
   return error;
@@ -502,6 +523,12 @@ tic_error * tic_set_setting_byte(tic_handle * handle,
 
   tic_error * error = tic_usb_error(libusbp_control_transfer(handle->usb_handle,
     0x40, TIC_CMD_SET_SETTING, byte, address, NULL, 0, NULL));
+
+  if (error != NULL)
+  {
+    error = tic_error_add(error,
+      "There was an error applying settings.");
+  }
   return error;
 }
 
@@ -571,12 +598,6 @@ tic_error * tic_restore_defaults(tic_handle * handle)
 
   tic_error * error = NULL;
   error = tic_set_setting_byte(handle, TIC_SETTING_NOT_INITIALIZED, 1);
-
-  if (error != NULL)
-  {
-    error = tic_error_add(error,
-      "There was an error restoring default settings.");
-  }
 
   if (error == NULL)
   {
