@@ -1004,6 +1004,18 @@ void tic_settings_current_limit_set(tic_settings *, uint32_t);
 TIC_API
 uint32_t tic_settings_current_limit_get(const tic_settings *);
 
+/// Sets the stepper motor coil current limit in milliamps when there is an
+/// error.
+///
+/// A value of 0 means to use the default current limit.
+TIC_API
+void tic_settings_current_limit_during_error_set(tic_settings *, uint32_t);
+
+/// Gets the current limit settings as described in
+/// tic_settings_current_limit_during_error_set().
+TIC_API
+uint32_t tic_settings_current_limit_during_error_get(const tic_settings *);
+
 /// Returns the highest achievable current limit that is less than the given
 /// current limit.  Does not modify the settings object.
 TIC_API

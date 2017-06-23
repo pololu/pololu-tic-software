@@ -233,6 +233,12 @@ static void write_buffer_to_settings(const uint8_t * buf, tic_settings * setting
   }
 
   {
+    uint32_t current_limit =
+      tic_current_limit_from_code(buf[TIC_SETTING_CURRENT_LIMIT_DURING_ERROR]);
+    tic_settings_current_limit_during_error_set(settings, current_limit);
+  }
+
+  {
     uint8_t step_mode = buf[TIC_SETTING_STEP_MODE];
     tic_settings_step_mode_set(settings, step_mode);
   }

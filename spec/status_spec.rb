@@ -10,7 +10,7 @@ Last reset:                   (unknown)
 Operation state:              (unknown)
 
 Errors currently stopping the motor:
-  - Intentionally disabled
+  - Intentionally de-energized
   - Motor driver error
   - Low VIN
   - Kill switch
@@ -28,7 +28,7 @@ Errors currently stopping the motor:
   - (unknown)
 
 Errors that occurred since last check:
-  - Intentionally disabled
+  - Intentionally de-energized
   - Motor driver error
   - Low VIN
   - Kill switch

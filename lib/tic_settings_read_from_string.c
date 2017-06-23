@@ -526,6 +526,19 @@ static tic_error * apply_string_pair(tic_settings * settings,
     }
     tic_settings_current_limit_set(settings, current_limit);
   }
+  else if (!strcmp(key, "current_limit_during_error"))
+  {
+    int64_t current_limit;
+    if (!tic_string_to_i64(value, &current_limit))
+    {
+      return tic_error_create("Invalid current_limit_during_error value.");
+    }
+    if (current_limit < 0 || current_limit > UINT32_MAX)
+    {
+      return tic_error_create("The current_limit_during_error value is out of range.");
+    }
+    tic_settings_current_limit_during_error_set(settings, current_limit);
+  }
   else if (!strcmp(key, "step_mode"))
   {
     uint32_t step_mode;

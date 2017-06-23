@@ -190,6 +190,9 @@ static void tic_write_settings_to_buffer(const tic_settings * settings, uint8_t 
   buf[TIC_SETTING_CURRENT_LIMIT] =
     tic_current_limit_to_code(tic_settings_current_limit_get(settings));
 
+  buf[TIC_SETTING_CURRENT_LIMIT_DURING_ERROR] =
+    tic_current_limit_to_code(tic_settings_current_limit_during_error_get(settings));
+
   buf[TIC_SETTING_STEP_MODE] =
     tic_settings_step_mode_get(settings);
 

@@ -295,13 +295,17 @@ static arguments parse_args(int argc, char ** argv)
     {
       args.reset_command_timeout = true;
     }
-    else if (arg == "--deenergize")
+    else if (arg == "--deenergize" || arg == "--de-energize")
     {
       args.deenergize = true;
     }
     else if (arg == "--energize")
     {
       args.energize = true;
+    }
+    else if (arg == "--exit-safe-start")
+    {
+      args.exit_safe_start = true;
     }
     else if (arg == "--clear-driver-error")
     {
@@ -388,6 +392,12 @@ static arguments parse_args(int argc, char ** argv)
   return args;
 }
 
+static tic::handle handle(device_selector & selector)
+{
+  tic::device device = selector.select_device();
+  return tic::handle(device);
+}
+
 static void print_list(device_selector & selector)
 {
   for (const tic::device & instance : selector.list_devices())
@@ -399,7 +409,7 @@ static void print_list(device_selector & selector)
   }
 }
 
-static void set_current_limit_after_warning(tic::handle handle, uint32_t current_limit)
+static void set_current_limit_after_warning(device_selector & selector, uint32_t current_limit)
 {
   if (current_limit > TIC_MAX_ALLOWED_CURRENT)
   {
@@ -408,7 +418,7 @@ static void set_current_limit_after_warning(tic::handle handle, uint32_t current
       << "Warning: The current limit was too high "
       << "so it will be lowered to " << current_limit << " mA." << std::endl;
   }
-  handle.set_current_limit(current_limit);
+  handle(selector).set_current_limit(current_limit);
 }
 
 static void get_status(device_selector & selector)
@@ -424,8 +434,7 @@ static void get_status(device_selector & selector)
 
 static void restore_defaults(device_selector & selector)
 {
-  tic::device device = selector.select_device();
-  tic::handle(device).restore_defaults();
+  handle(selector).restore_defaults();
 
   // Give the Tic time to modify its settings.
   std::this_thread::sleep_for(std::chrono::milliseconds(1500));
@@ -434,8 +443,7 @@ static void restore_defaults(device_selector & selector)
 static void get_settings(device_selector & selector,
   const std::string & filename)
 {
-  tic::device device = selector.select_device();
-  tic::settings settings = tic::handle(device).get_settings();
+  tic::settings settings = handle(selector).get_settings();
   std::string settings_string = settings.to_string();
 
   std::string warnings;
@@ -528,12 +536,6 @@ static void test_procedure(device_selector & selector, uint32_t procedure)
   {
     throw std::runtime_error("Unknown test procedure.");
   }
-}
-
-static tic::handle handle(device_selector & selector)
-{
-  tic::device device = selector.select_device();
-  return tic::handle(device);
 }
 
 // A note about ordering: We want to do all the setting stuff first because it
@@ -646,7 +648,7 @@ static void run(int argc, char ** argv)
 
   if (args.set_current_limit)
   {
-    set_current_limit_after_warning(handle(selector), args.current_limit);
+    set_current_limit_after_warning(selector, args.current_limit);
   }
 
   if (args.set_decay_mode)

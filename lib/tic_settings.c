@@ -44,6 +44,7 @@ struct tic_settings
   uint8_t rx_config;
   uint8_t rc_config;
   uint32_t current_limit;
+  uint32_t current_limit_during_error;
   uint8_t step_mode;
   uint8_t decay_mode;
   uint32_t speed_min;
@@ -70,9 +71,10 @@ void tic_settings_fill_with_defaults(tic_settings * settings)
 
   tic_settings_product_set(settings, product);
 
+  tic_settings_auto_clear_driver_error_set(settings, true);
   tic_settings_serial_baud_rate_set(settings, 9600);
   tic_settings_serial_device_number_set(settings, 14);
-  tic_settings_command_timeout_set(settings, 4000);
+  tic_settings_command_timeout_set(settings, 1000);
   tic_settings_low_vin_timeout_set(settings, 250);
   tic_settings_low_vin_shutoff_voltage_set(settings, 6000);
   tic_settings_low_vin_startup_voltage_set(settings, 6500);
@@ -355,6 +357,21 @@ static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings
 
     current = tic_settings_achievable_current_limit(settings, current);
     tic_settings_current_limit_set(settings, current);
+
+    uint32_t current_during_error =
+      tic_settings_current_limit_during_error_get(settings);
+
+    if (current_during_error > current)
+    {
+      current_during_error = 0;
+      tic_sprintf(warnings,
+        "Warning: The current limit during error was higher than "
+        "the default current limit so it will be changed to be the same.\n");
+    }
+
+    current_during_error = tic_settings_achievable_current_limit(
+      settings, current_during_error);
+    tic_settings_current_limit_during_error_set(settings, current_during_error);
   }
 
   {
@@ -1200,6 +1217,19 @@ uint32_t tic_settings_current_limit_get(const tic_settings * settings)
 {
   if (!settings) { return 0; }
   return settings->current_limit;
+}
+
+void tic_settings_current_limit_during_error_set(tic_settings * settings,
+  uint32_t current_limit)
+{
+  if (!settings) { return; }
+  settings->current_limit_during_error = current_limit;
+}
+
+uint32_t tic_settings_current_limit_during_error_get(const tic_settings * settings)
+{
+  if (!settings) { return 0; }
+  return settings->current_limit_during_error;
 }
 
 void tic_settings_step_mode_set(tic_settings * settings, uint8_t step_mode)

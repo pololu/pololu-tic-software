@@ -7,12 +7,12 @@ control_mode: serial
 never_sleep: false
 disable_safe_start: false
 ignore_err_line_high: false
-auto_clear_driver_error: false
+auto_clear_driver_error: true
 input_invalid_response: disable_driver
 input_invalid_position: 0
 serial_baud_rate: 9600
 serial_device_number: 14
-command_timeout: 4000
+command_timeout: 1000
 serial_crc_enabled: false
 low_vin_timeout: 250
 low_vin_shutoff_voltage: 6000
@@ -43,6 +43,7 @@ tx_config: default
 rx_config: default
 rc_config: default
 current_limit: 192
+current_limit_during_error: 0
 step_mode: 1
 decay_mode: mixed
 speed_min: 0
@@ -95,6 +96,7 @@ tx_config: kill_switch pullup analog
 rx_config: serial
 rc_config: rc pullup
 current_limit: 384
+current_limit_during_error: 96
 step_mode: 32
 decay_mode: fast
 speed_min: 10000
@@ -166,6 +168,14 @@ def test_cases_for_settings_fix(product)
       { 'current_limit' => 3968 },
       "Warning: The current limit was too high " \
       "so it will be lowered to 3968 mA.\n"
+    ],
+    [ { 'current_limit' => 320, 'current_limit_during_error' => 64 },
+      { }
+    ],
+    [ { 'current_limit' => 320, 'current_limit_during_error' => 640 },
+      { 'current_limit_during_error' => 0 },
+      "Warning: The current limit during error was higher than the default " \
+      "current limit so it will be changed to be the same.\n"
     ],
     [ { 'speed_max' => 70000_0000 },
       { 'speed_max' => 50000_0000 },

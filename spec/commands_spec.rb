@@ -9,7 +9,7 @@ describe 'commands for controlling the motor', usb: true do
     end
 
     # Get out of safe-start.
-    stdout, stderr, result = run_ticcmd('--enable-driver')
+    stdout, stderr, result = run_ticcmd('--energize --exit-safe-start')
     expect(stderr).to eq ''
     expect(stdout).to eq ''
     expect(result).to eq 0
@@ -51,16 +51,16 @@ describe 'commands for controlling the motor', usb: true do
     end
   end
 
-  describe 'Set Current Position' do
+  describe 'Halt and Set Position' do
     it 'lets you set the current position' do
-      stdout, stderr, result = run_ticcmd('--set-current-position 2146054486')
+      stdout, stderr, result = run_ticcmd('--halt-and-set-position 2146054486')
       expect(stderr).to eq ''
       expect(stdout).to eq ''
       expect(result).to eq 0
 
       expect(tic_get_status['Current position']).to eq 2146054486
 
-      stderr, stdout, result = run_ticcmd('--set-current-position 10')
+      stderr, stdout, result = run_ticcmd('--halt-and-set-position 10')
       expect(stderr).to eq ''
       expect(stdout).to eq ''
       expect(result).to eq 0
@@ -69,7 +69,7 @@ describe 'commands for controlling the motor', usb: true do
     end
   end
 
-  describe 'Stop' do
+  describe 'Halt and Hold' do
     it 'lets you clear a target position or velocity' do
       stdout, stderr, result = run_ticcmd('-p 230000')
       expect(stderr).to eq ''
@@ -78,7 +78,7 @@ describe 'commands for controlling the motor', usb: true do
 
       expect(tic_get_status['Target position']).to eq 230000
 
-      stdout, stderr, result = run_ticcmd('--stop')
+      stdout, stderr, result = run_ticcmd('--halt-and-hold')
       expect(stderr).to eq ''
       expect(stdout).to eq ''
       expect(result).to eq 0
@@ -97,27 +97,34 @@ describe 'commands for controlling the motor', usb: true do
     end
   end
 
-  describe 'Enable/Disable Driver' do
+  describe 'Deenergize/energize' do
     it 'works' do
-      stdout, stderr, result = run_ticcmd('--disable-driver')
+      stdout, stderr, result = run_ticcmd('--deenergize')
       expect(stderr).to eq ''
       expect(stdout).to eq ''
       expect(result).to eq 0
 
       errors = tic_get_status['Errors currently stopping the motor']
-      expect(errors).to be_include 'Intentionally disabled'
+      expect(errors).to be_include 'Intentionally de-energized'
 
-      stdout, stderr, result = run_ticcmd('--enable-driver')
+      stdout, stderr, result = run_ticcmd('--energize')
       expect(stderr).to eq ''
       expect(stdout).to eq ''
       expect(result).to eq 0
 
       errors = tic_get_status['Errors currently stopping the motor']
-      expect(errors).to_not be_include 'Intentionally disabled'
+      expect(errors).to_not be_include 'Intentionally de-energized'
     end
   end
 
-  # TODO: test exit safe start
+  describe 'Clear Driver Error' do
+    it 'runs' do
+      stdout, stderr, result = run_ticcmd('--exit-safe-start')
+      expect(stderr).to eq ''
+      expect(stdout).to eq ''
+      expect(result).to eq 0
+    end
+  end
 
   describe 'Clear Driver Error' do
     it 'runs' do
