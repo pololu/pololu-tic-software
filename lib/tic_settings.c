@@ -69,31 +69,31 @@ void tic_settings_fill_with_defaults(tic_settings * settings)
   // Reset all fields to zero.
   memset(settings, 0, sizeof(tic_settings));
 
-  tic_settings_product_set(settings, product);
+  tic_settings_set_product(settings, product);
 
-  tic_settings_auto_clear_driver_error_set(settings, true);
-  tic_settings_serial_baud_rate_set(settings, 9600);
-  tic_settings_serial_device_number_set(settings, 14);
-  tic_settings_command_timeout_set(settings, 1000);
-  tic_settings_low_vin_timeout_set(settings, 250);
-  tic_settings_low_vin_shutoff_voltage_set(settings, 6000);
-  tic_settings_low_vin_startup_voltage_set(settings, 6500);
-  tic_settings_high_vin_shutoff_voltage_set(settings, 35000);
-  tic_settings_rc_max_pulse_period_set(settings, 100);
-  tic_settings_rc_bad_signal_timeout_set(settings, 500);
-  tic_settings_rc_consecutive_good_pulses_set(settings, 2);
-  tic_settings_input_averaging_enabled_set(settings, true);
-  tic_settings_input_error_max_set(settings, 0xFFFF);
-  tic_settings_input_neutral_min_set(settings, 0x0800);
-  tic_settings_input_neutral_max_set(settings, 0x0800);
-  tic_settings_input_max_set(settings, 0x0FFF);
-  tic_settings_output_min_set(settings, -200);
-  tic_settings_output_max_set(settings, 200);
-  tic_settings_encoder_prescaler_set(settings, 1);
-  tic_settings_encoder_postscaler_set(settings, 1);
-  tic_settings_current_limit_set(settings, 192);
-  tic_settings_speed_max_set(settings, 2000000);
-  tic_settings_accel_max_set(settings, 40000);
+  tic_settings_set_auto_clear_driver_error(settings, true);
+  tic_settings_set_serial_baud_rate(settings, 9600);
+  tic_settings_set_serial_device_number(settings, 14);
+  tic_settings_set_command_timeout(settings, 1000);
+  tic_settings_set_low_vin_timeout(settings, 250);
+  tic_settings_set_low_vin_shutoff_voltage(settings, 6000);
+  tic_settings_set_low_vin_startup_voltage(settings, 6500);
+  tic_settings_set_high_vin_shutoff_voltage(settings, 35000);
+  tic_settings_set_rc_max_pulse_period(settings, 100);
+  tic_settings_set_rc_bad_signal_timeout(settings, 500);
+  tic_settings_set_rc_consecutive_good_pulses(settings, 2);
+  tic_settings_set_input_averaging_enabled(settings, true);
+  tic_settings_set_input_error_max(settings, 0xFFFF);
+  tic_settings_set_input_neutral_min(settings, 0x0800);
+  tic_settings_set_input_neutral_max(settings, 0x0800);
+  tic_settings_set_input_max(settings, 0x0FFF);
+  tic_settings_set_output_min(settings, -200);
+  tic_settings_set_output_max(settings, 200);
+  tic_settings_set_encoder_prescaler(settings, 1);
+  tic_settings_set_encoder_postscaler(settings, 1);
+  tic_settings_set_current_limit(settings, 192);
+  tic_settings_set_speed_max(settings, 2000000);
+  tic_settings_set_accel_max(settings, 40000);
 }
 
 tic_error * tic_settings_create(tic_settings ** settings)
@@ -192,10 +192,10 @@ static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings
   // TODO: fix enum values to be valid?
   // TODO: don't allow tic_input_invalid_response to be position in a speed control mode
 
-  uint8_t control_mode = tic_settings_control_mode_get(settings);
+  uint8_t control_mode = tic_settings_get_control_mode(settings);
 
   {
-    uint32_t baud = tic_settings_serial_baud_rate_get(settings);
+    uint32_t baud = tic_settings_get_serial_baud_rate(settings);
     if (baud < TIC_MIN_ALLOWED_BAUD_RATE)
     {
       baud = TIC_MIN_ALLOWED_BAUD_RATE;
@@ -210,24 +210,24 @@ static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings
     }
 
     baud = tic_settings_achievable_serial_baud_rate(settings, baud);
-    tic_settings_serial_baud_rate_set(settings, baud);
+    tic_settings_set_serial_baud_rate(settings, baud);
   }
 
   {
-    uint8_t serial_device_number = tic_settings_serial_device_number_get(settings);
+    uint8_t serial_device_number = tic_settings_get_serial_device_number(settings);
     if (serial_device_number > 127)
     {
       serial_device_number = 127;
       tic_sprintf(warnings,
         "Warning: The serial device number was too high so it was changed to 127.\n");
     }
-    tic_settings_serial_device_number_set(settings, serial_device_number);
+    tic_settings_set_serial_device_number(settings, serial_device_number);
   }
 
   {
-    uint16_t low_shutoff = tic_settings_low_vin_shutoff_voltage_get(settings);
-    uint16_t low_startup = tic_settings_low_vin_startup_voltage_get(settings);
-    uint16_t high_shutoff = tic_settings_high_vin_shutoff_voltage_get(settings);
+    uint16_t low_shutoff = tic_settings_get_low_vin_shutoff_voltage(settings);
+    uint16_t low_startup = tic_settings_get_low_vin_startup_voltage(settings);
+    uint16_t high_shutoff = tic_settings_get_high_vin_shutoff_voltage(settings);
 
     // Move low_shutoff down a little bit to prevent overflows below.
     if (low_shutoff > 64000)
@@ -254,18 +254,18 @@ static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings
         high_shutoff);
     }
 
-    tic_settings_low_vin_shutoff_voltage_set(settings, low_shutoff);
-    tic_settings_low_vin_startup_voltage_set(settings, low_startup);
-    tic_settings_high_vin_shutoff_voltage_set(settings, high_shutoff);
+    tic_settings_set_low_vin_shutoff_voltage(settings, low_shutoff);
+    tic_settings_set_low_vin_startup_voltage(settings, low_startup);
+    tic_settings_set_high_vin_shutoff_voltage(settings, high_shutoff);
   }
 
   {
-    uint16_t error_min = tic_settings_input_error_min_get(settings);
-    uint16_t min = tic_settings_input_min_get(settings);
-    uint16_t neutral_min = tic_settings_input_neutral_min_get(settings);
-    uint16_t neutral_max = tic_settings_input_neutral_max_get(settings);
-    uint16_t max = tic_settings_input_max_get(settings);
-    uint16_t error_max = tic_settings_input_error_max_get(settings);
+    uint16_t error_min = tic_settings_get_input_error_min(settings);
+    uint16_t min = tic_settings_get_input_min(settings);
+    uint16_t neutral_min = tic_settings_get_input_neutral_min(settings);
+    uint16_t neutral_max = tic_settings_get_input_neutral_max(settings);
+    uint16_t max = tic_settings_get_input_max(settings);
+    uint16_t error_max = tic_settings_get_input_error_max(settings);
 
     if (error_min > min || min > neutral_min || neutral_min > neutral_max ||
       neutral_max > max || max > error_max)
@@ -282,26 +282,26 @@ static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings
         "so they will be reset to their default values.\n");
     }
 
-    tic_settings_input_error_min_set(settings, error_min);
-    tic_settings_input_min_set(settings, min);
-    tic_settings_input_neutral_min_set(settings, neutral_min);
-    tic_settings_input_neutral_max_set(settings, neutral_max);
-    tic_settings_input_max_set(settings, max);
-    tic_settings_input_error_max_set(settings, error_max);
+    tic_settings_set_input_error_min(settings, error_min);
+    tic_settings_set_input_min(settings, min);
+    tic_settings_set_input_neutral_min(settings, neutral_min);
+    tic_settings_set_input_neutral_max(settings, neutral_max);
+    tic_settings_set_input_max(settings, max);
+    tic_settings_set_input_error_max(settings, error_max);
   }
 
   {
-    int32_t output_min = tic_settings_output_min_get(settings);
-    int32_t output_max = tic_settings_output_max_get(settings);
+    int32_t output_min = tic_settings_get_output_min(settings);
+    int32_t output_max = tic_settings_get_output_max(settings);
 
     // TODO: enforce allowed range of output_min, output_max
 
-    tic_settings_output_min_set(settings, output_min);
-    tic_settings_output_max_set(settings, output_max);
+    tic_settings_set_output_min(settings, output_min);
+    tic_settings_set_output_max(settings, output_max);
   }
 
   {
-    uint32_t prescaler = tic_settings_encoder_prescaler_get(settings);
+    uint32_t prescaler = tic_settings_get_encoder_prescaler(settings);
 
     if (prescaler > TIC_MAX_ALLOWED_ENCODER_PRESCALER)
     {
@@ -319,11 +319,11 @@ static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings
         "so it will be changed to 1.\n");
     }
 
-    tic_settings_encoder_prescaler_set(settings, prescaler);
+    tic_settings_set_encoder_prescaler(settings, prescaler);
   }
 
   {
-    uint32_t postscaler = tic_settings_encoder_postscaler_get(settings);
+    uint32_t postscaler = tic_settings_get_encoder_postscaler(settings);
 
     if (postscaler > TIC_MAX_ALLOWED_ENCODER_POSTSCALER)
     {
@@ -341,11 +341,11 @@ static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings
         "so it will be changed to 1.\n");
     }
 
-    tic_settings_encoder_postscaler_set(settings, postscaler);
+    tic_settings_set_encoder_postscaler(settings, postscaler);
   }
 
   {
-    uint32_t current = tic_settings_current_limit_get(settings);
+    uint32_t current = tic_settings_get_current_limit(settings);
 
     if (current > TIC_MAX_ALLOWED_CURRENT)
     {
@@ -356,10 +356,10 @@ static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings
     }
 
     current = tic_settings_achievable_current_limit(settings, current);
-    tic_settings_current_limit_set(settings, current);
+    tic_settings_set_current_limit(settings, current);
 
     uint32_t current_during_error =
-      tic_settings_current_limit_during_error_get(settings);
+      tic_settings_get_current_limit_during_error(settings);
 
     if (current_during_error > current)
     {
@@ -371,11 +371,11 @@ static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings
 
     current_during_error = tic_settings_achievable_current_limit(
       settings, current_during_error);
-    tic_settings_current_limit_during_error_set(settings, current_during_error);
+    tic_settings_set_current_limit_during_error(settings, current_during_error);
   }
 
   {
-    uint8_t decay_mode = tic_settings_decay_mode_get(settings);
+    uint8_t decay_mode = tic_settings_get_decay_mode(settings);
     if (decay_mode != TIC_DECAY_MODE_MIXED &&
       decay_mode != TIC_DECAY_MODE_SLOW &&
       decay_mode != TIC_DECAY_MODE_FAST)
@@ -388,7 +388,7 @@ static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings
   }
 
   {
-    uint8_t mode = tic_settings_step_mode_get(settings);
+    uint8_t mode = tic_settings_get_step_mode(settings);
     if (mode != TIC_STEP_MODE_MICROSTEP1 &&
       mode != TIC_STEP_MODE_MICROSTEP2 &&
       mode != TIC_STEP_MODE_MICROSTEP4 &&
@@ -402,12 +402,12 @@ static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings
         "so it will be changed to 1 (full step).\n");
     }
 
-    tic_settings_step_mode_set(settings, mode);
+    tic_settings_set_step_mode(settings, mode);
   }
 
   {
-    uint32_t speed_max = tic_settings_speed_max_get(settings);
-    uint32_t speed_min = tic_settings_speed_min_get(settings);
+    uint32_t speed_max = tic_settings_get_speed_max(settings);
+    uint32_t speed_min = tic_settings_get_speed_min(settings);
 
     if (speed_max > TIC_MAX_ALLOWED_SPEED)
     {
@@ -426,12 +426,12 @@ static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings
         "so it will be lowered to %u.\n", speed_min);
     }
 
-    tic_settings_speed_max_set(settings, speed_max);
-    tic_settings_speed_min_set(settings, speed_min);
+    tic_settings_set_speed_max(settings, speed_max);
+    tic_settings_set_speed_min(settings, speed_min);
   }
 
   {
-    uint32_t decel_max = tic_settings_decel_max_get(settings);
+    uint32_t decel_max = tic_settings_get_decel_max(settings);
 
     if (decel_max > TIC_MAX_ALLOWED_ACCEL)
     {
@@ -449,11 +449,11 @@ static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings
         "so it will be raised to %u.\n", decel_max);
     }
 
-    tic_settings_decel_max_set(settings, decel_max);
+    tic_settings_set_decel_max(settings, decel_max);
   }
 
   {
-    uint32_t accel_max = tic_settings_accel_max_get(settings);
+    uint32_t accel_max = tic_settings_get_accel_max(settings);
 
     if (accel_max > TIC_MAX_ALLOWED_ACCEL)
     {
@@ -471,18 +471,18 @@ static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings
         "so it will be raised to %u.\n", accel_max);
     }
 
-    tic_settings_accel_max_set(settings, accel_max);
+    tic_settings_set_accel_max(settings, accel_max);
   }
 
   {
     #if TIC_PIN_FUNC_POSN != 0
     #error This code needs to be fixed.
     #endif
-    uint8_t scl_config = tic_settings_scl_config_get(settings);
-    uint8_t sda_config = tic_settings_sda_config_get(settings);
-    uint8_t tx_config = tic_settings_tx_config_get(settings);
-    uint8_t rx_config = tic_settings_rx_config_get(settings);
-    uint8_t rc_config = tic_settings_rc_config_get(settings);
+    uint8_t scl_config = tic_settings_get_scl_config(settings);
+    uint8_t sda_config = tic_settings_get_sda_config(settings);
+    uint8_t tx_config = tic_settings_get_tx_config(settings);
+    uint8_t rx_config = tic_settings_get_rx_config(settings);
+    uint8_t rc_config = tic_settings_get_rc_config(settings);
 
     // First, we make sure the pins are configured to provide the primary
     // input that will be used to control the motor.
@@ -642,11 +642,11 @@ static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings
 
     // TODO: if the control mode is analog, SDA must be *input* (general is not allowed)
 
-    tic_settings_scl_config_set(settings, scl_config);
-    tic_settings_sda_config_set(settings, sda_config);
-    tic_settings_tx_config_set(settings, tx_config);
-    tic_settings_rx_config_set(settings, rx_config);
-    tic_settings_rc_config_set(settings, rc_config);
+    tic_settings_set_scl_config(settings, scl_config);
+    tic_settings_set_sda_config(settings, sda_config);
+    tic_settings_set_tx_config(settings, tx_config);
+    tic_settings_set_rx_config(settings, rx_config);
+    tic_settings_set_rc_config(settings, rc_config);
   }
 }
 
@@ -698,607 +698,607 @@ tic_error * tic_settings_fix(tic_settings * settings, char ** warnings)
   return NULL;
 }
 
-void tic_settings_product_set(tic_settings * settings, uint8_t product)
+void tic_settings_set_product(tic_settings * settings, uint8_t product)
 {
   if (!settings) { return; }
   settings->product = product;
 }
 
-uint8_t tic_settings_product_get(const tic_settings * settings)
+uint8_t tic_settings_get_product(const tic_settings * settings)
 {
   if (!settings) { return 0; }
   return settings->product;
 }
 
-void tic_settings_control_mode_set(tic_settings * settings,
+void tic_settings_set_control_mode(tic_settings * settings,
   uint8_t control_mode)
 {
   if (!settings) { return; }
   settings->control_mode = control_mode;
 }
 
-uint8_t tic_settings_control_mode_get(const tic_settings * settings)
+uint8_t tic_settings_get_control_mode(const tic_settings * settings)
 {
   if (!settings) { return 0; }
   return settings->control_mode;
 }
 
-void tic_settings_never_sleep_set(tic_settings * settings, bool never_sleep)
+void tic_settings_set_never_sleep(tic_settings * settings, bool never_sleep)
 {
   if (!settings) { return; }
   settings->never_sleep = never_sleep;
 }
 
-bool tic_settings_never_sleep_get(const tic_settings * settings)
+bool tic_settings_get_never_sleep(const tic_settings * settings)
 {
   if (!settings) { return 0; }
   return settings->never_sleep;
 }
 
-void tic_settings_disable_safe_start_set(tic_settings * settings,
+void tic_settings_set_disable_safe_start(tic_settings * settings,
   bool disable_safe_start)
 {
   if (!settings) { return; }
   settings->disable_safe_start = disable_safe_start;
 }
 
-bool tic_settings_disable_safe_start_get(const tic_settings * settings)
+bool tic_settings_get_disable_safe_start(const tic_settings * settings)
 {
   if (!settings) { return 0; }
   return settings->disable_safe_start;
 }
 
-void tic_settings_ignore_err_line_high_set(tic_settings * settings,
+void tic_settings_set_ignore_err_line_high(tic_settings * settings,
   bool ignore_err_line_high)
 {
   if (!settings) { return; }
   settings->ignore_err_line_high = ignore_err_line_high;
 }
 
-bool tic_settings_ignore_err_line_high_get(const tic_settings * settings)
+bool tic_settings_get_ignore_err_line_high(const tic_settings * settings)
 {
   if (!settings) { return 0; }
   return settings->ignore_err_line_high;
 }
 
-void tic_settings_auto_clear_driver_error_set(tic_settings * settings,
+void tic_settings_set_auto_clear_driver_error(tic_settings * settings,
   bool auto_clear_driver_error)
 {
   if (!settings) { return; }
   settings->auto_clear_driver_error = auto_clear_driver_error;
 }
 
-bool tic_settings_auto_clear_driver_error_get(const tic_settings * settings)
+bool tic_settings_get_auto_clear_driver_error(const tic_settings * settings)
 {
   if (!settings) { return 0; }
   return settings->auto_clear_driver_error;
 }
 
-void tic_settings_input_invalid_response_set(tic_settings * settings,
+void tic_settings_set_input_invalid_response(tic_settings * settings,
   uint8_t input_invalid_response)
 {
   if (!settings) { return; }
   settings->input_invalid_response = input_invalid_response;
 }
 
-uint8_t tic_settings_input_invalid_response_get(const tic_settings * settings)
+uint8_t tic_settings_get_input_invalid_response(const tic_settings * settings)
 {
   if (!settings) { return 0; }
   return settings->input_invalid_response;
 }
 
-void tic_settings_input_invalid_position_set(tic_settings * settings,
+void tic_settings_set_input_invalid_position(tic_settings * settings,
   int32_t input_invalid_position)
 {
   if (!settings) { return; }
   settings->input_invalid_position = input_invalid_position;
 }
 
-int32_t tic_settings_input_invalid_position_get(const tic_settings * settings)
+int32_t tic_settings_get_input_invalid_position(const tic_settings * settings)
 {
   if (!settings) { return 0; }
   return settings->input_invalid_position;
 }
 
-void tic_settings_serial_baud_rate_set(tic_settings * settings, uint32_t serial_baud_rate)
+void tic_settings_set_serial_baud_rate(tic_settings * settings, uint32_t serial_baud_rate)
 {
   if (!settings) { return; }
   settings->serial_baud_rate = serial_baud_rate;
 }
 
-uint32_t tic_settings_serial_baud_rate_get(const tic_settings * settings)
+uint32_t tic_settings_get_serial_baud_rate(const tic_settings * settings)
 {
   if (!settings) { return 0; }
   return settings->serial_baud_rate;
 }
 
-void tic_settings_serial_device_number_set(tic_settings * settings,
+void tic_settings_set_serial_device_number(tic_settings * settings,
   uint8_t serial_device_number)
 {
   if (!settings) { return; }
   settings->serial_device_number = serial_device_number;
 }
 
-uint8_t tic_settings_serial_device_number_get(const tic_settings * settings)
+uint8_t tic_settings_get_serial_device_number(const tic_settings * settings)
 {
   if (!settings) { return 0; }
   return settings->serial_device_number;
 }
 
-void tic_settings_command_timeout_set(tic_settings * settings,
+void tic_settings_set_command_timeout(tic_settings * settings,
   uint16_t command_timeout)
 {
   if (!settings) { return; }
   settings->command_timeout = command_timeout;
 }
 
-uint16_t tic_settings_command_timeout_get(const tic_settings * settings)
+uint16_t tic_settings_get_command_timeout(const tic_settings * settings)
 {
   if (!settings) { return 0; }
   return settings->command_timeout;
 }
 
-void tic_settings_serial_crc_enabled_set(tic_settings * settings,
+void tic_settings_set_serial_crc_enabled(tic_settings * settings,
   bool serial_crc_enabled)
 {
   if (!settings) { return; }
   settings->serial_crc_enabled = serial_crc_enabled;
 }
 
-bool tic_settings_serial_crc_enabled_get(const tic_settings * settings)
+bool tic_settings_get_serial_crc_enabled(const tic_settings * settings)
 {
   if (!settings) { return 0; }
   return settings->serial_crc_enabled;
 }
 
-void tic_settings_low_vin_timeout_set(tic_settings * settings,
+void tic_settings_set_low_vin_timeout(tic_settings * settings,
   uint16_t low_vin_timeout)
 {
   if (!settings) { return; }
   settings->low_vin_timeout = low_vin_timeout;
 }
 
-uint16_t tic_settings_low_vin_timeout_get(const tic_settings * settings)
+uint16_t tic_settings_get_low_vin_timeout(const tic_settings * settings)
 {
   if (!settings) { return 0; }
   return settings->low_vin_timeout;
 }
 
-void tic_settings_low_vin_shutoff_voltage_set(tic_settings * settings,
+void tic_settings_set_low_vin_shutoff_voltage(tic_settings * settings,
   uint16_t low_vin_shutoff_voltage)
 {
   if (!settings) { return; }
   settings->low_vin_shutoff_voltage = low_vin_shutoff_voltage;
 }
 
-uint16_t tic_settings_low_vin_shutoff_voltage_get(const tic_settings * settings)
+uint16_t tic_settings_get_low_vin_shutoff_voltage(const tic_settings * settings)
 {
   if (!settings) { return 0; }
   return settings->low_vin_shutoff_voltage;
 }
 
-void tic_settings_low_vin_startup_voltage_set(tic_settings * settings,
+void tic_settings_set_low_vin_startup_voltage(tic_settings * settings,
   uint16_t low_vin_startup_voltage)
 {
   if (!settings) { return; }
   settings->low_vin_startup_voltage = low_vin_startup_voltage;
 }
 
-uint16_t tic_settings_low_vin_startup_voltage_get(const tic_settings * settings)
+uint16_t tic_settings_get_low_vin_startup_voltage(const tic_settings * settings)
 {
   if (!settings) { return 0; }
   return settings->low_vin_startup_voltage;
 }
 
-void tic_settings_high_vin_shutoff_voltage_set(tic_settings * settings,
+void tic_settings_set_high_vin_shutoff_voltage(tic_settings * settings,
   uint16_t high_vin_shutoff_voltage)
 {
   if (!settings) { return; }
   settings->high_vin_shutoff_voltage = high_vin_shutoff_voltage;
 }
 
-uint16_t tic_settings_high_vin_shutoff_voltage_get(const tic_settings * settings)
+uint16_t tic_settings_get_high_vin_shutoff_voltage(const tic_settings * settings)
 {
   if (!settings) { return 0; }
   return settings->high_vin_shutoff_voltage;
 }
 
-void tic_settings_vin_multiplier_offset_set(tic_settings * settings,
+void tic_settings_set_vin_multiplier_offset(tic_settings * settings,
   uint16_t vin_multiplier_offset)
 {
   if (!settings) { return; }
   settings->vin_multiplier_offset = vin_multiplier_offset;
 }
 
-uint16_t tic_settings_vin_multiplier_offset_get(const tic_settings * settings)
+uint16_t tic_settings_get_vin_multiplier_offset(const tic_settings * settings)
 {
   if (!settings) { return 0; }
   return settings->vin_multiplier_offset;
 }
 
-void tic_settings_rc_max_pulse_period_set(tic_settings * settings,
+void tic_settings_set_rc_max_pulse_period(tic_settings * settings,
   uint16_t rc_max_pulse_period)
 {
   if (!settings) { return; }
   settings->rc_max_pulse_period = rc_max_pulse_period;
 }
 
-uint16_t tic_settings_rc_max_pulse_period_get(const tic_settings * settings)
+uint16_t tic_settings_get_rc_max_pulse_period(const tic_settings * settings)
 {
   if (!settings) { return 0; }
   return settings->rc_max_pulse_period;
 }
 
-void tic_settings_rc_bad_signal_timeout_set(tic_settings * settings,
+void tic_settings_set_rc_bad_signal_timeout(tic_settings * settings,
   uint16_t rc_bad_signal_timeout)
 {
   if (!settings) { return; }
   settings->rc_bad_signal_timeout = rc_bad_signal_timeout;
 }
 
-uint16_t tic_settings_rc_bad_signal_timeout_get(const tic_settings * settings)
+uint16_t tic_settings_get_rc_bad_signal_timeout(const tic_settings * settings)
 {
   if (!settings) { return 0; }
   return settings->rc_bad_signal_timeout;
 }
 
-void tic_settings_rc_consecutive_good_pulses_set(tic_settings * settings,
+void tic_settings_set_rc_consecutive_good_pulses(tic_settings * settings,
   uint8_t rc_consecutive_good_pulses)
 {
   if (!settings) { return; }
   settings->rc_consecutive_good_pulses = rc_consecutive_good_pulses;
 }
 
-uint8_t tic_settings_rc_consecutive_good_pulses_get(
+uint8_t tic_settings_get_rc_consecutive_good_pulses(
   const tic_settings * settings)
 {
   if (!settings) { return 0; }
   return settings->rc_consecutive_good_pulses;
 }
 
-void tic_settings_input_error_min_set(tic_settings * settings,
+void tic_settings_set_input_error_min(tic_settings * settings,
   uint16_t input_error_min)
 {
   if (!settings) { return; }
   settings->input_error_min = input_error_min;
 }
 
-uint16_t tic_settings_input_error_min_get(const tic_settings * settings)
+uint16_t tic_settings_get_input_error_min(const tic_settings * settings)
 {
   if (!settings) { return 0; }
   return settings->input_error_min;
 }
 
-void tic_settings_input_error_max_set(tic_settings * settings,
+void tic_settings_set_input_error_max(tic_settings * settings,
   uint16_t input_error_max)
 {
   if (!settings) { return; }
   settings->input_error_max = input_error_max;
 }
 
-uint16_t tic_settings_input_error_max_get(const tic_settings * settings)
+uint16_t tic_settings_get_input_error_max(const tic_settings * settings)
 {
   if (!settings) { return 0; }
   return settings->input_error_max;
 }
 
-void tic_settings_input_averaging_enabled_set(tic_settings * settings,
+void tic_settings_set_input_averaging_enabled(tic_settings * settings,
   bool input_averaging_enabled)
 {
   if (!settings) { return; }
   settings->input_averaging_enabled = input_averaging_enabled;
 }
 
-bool tic_settings_input_averaging_enabled_get(const tic_settings * settings)
+bool tic_settings_get_input_averaging_enabled(const tic_settings * settings)
 {
   if (!settings) { return 0; }
   return settings->input_averaging_enabled;
 }
 
-void tic_settings_input_hysteresis_set(tic_settings * settings, uint16_t input_hysteresis)
+void tic_settings_set_input_hysteresis(tic_settings * settings, uint16_t input_hysteresis)
 {
   if (!settings) { return; }
   settings->input_hysteresis = input_hysteresis;
 }
 
-uint16_t tic_settings_input_hysteresis_get(const tic_settings * settings)
+uint16_t tic_settings_get_input_hysteresis(const tic_settings * settings)
 {
   if (!settings) { return 0; }
   return settings->input_hysteresis;
 }
 
-void tic_settings_input_scaling_degree_set(tic_settings * settings,
+void tic_settings_set_input_scaling_degree(tic_settings * settings,
   uint8_t input_scaling_degree)
 {
   if (!settings) { return; }
   settings->input_scaling_degree = input_scaling_degree;
 }
 
-uint8_t tic_settings_input_scaling_degree_get(const tic_settings * settings)
+uint8_t tic_settings_get_input_scaling_degree(const tic_settings * settings)
 {
   if (!settings) { return 0; }
   return settings->input_scaling_degree;
 }
 
-void tic_settings_input_invert_set(tic_settings * settings, bool invert)
+void tic_settings_set_input_invert(tic_settings * settings, bool invert)
 {
   if (!settings) { return; }
   settings->input_invert = invert;
 }
 
-bool tic_settings_input_invert_get(const tic_settings * settings)
+bool tic_settings_get_input_invert(const tic_settings * settings)
 {
   if (!settings) { return 0; }
   return settings->input_invert;
 }
 
-void tic_settings_input_min_set(tic_settings * settings, uint16_t input_min)
+void tic_settings_set_input_min(tic_settings * settings, uint16_t input_min)
 {
   if (!settings) { return; }
   settings->input_min = input_min;
 }
 
-uint16_t tic_settings_input_min_get(const tic_settings * settings)
+uint16_t tic_settings_get_input_min(const tic_settings * settings)
 {
   if (!settings) { return 0; }
   return settings->input_min;
 }
 
-void tic_settings_input_neutral_min_set(tic_settings * settings,
+void tic_settings_set_input_neutral_min(tic_settings * settings,
   uint16_t input_neutral_min)
 {
   if (!settings) { return; }
   settings->input_neutral_min = input_neutral_min;
 }
 
-uint16_t tic_settings_input_neutral_min_get(const tic_settings * settings)
+uint16_t tic_settings_get_input_neutral_min(const tic_settings * settings)
 {
   if (!settings){ return 0; }
   return settings->input_neutral_min;
 }
 
-void tic_settings_input_neutral_max_set(tic_settings * settings,
+void tic_settings_set_input_neutral_max(tic_settings * settings,
   uint16_t input_neutral_max)
 {
   if (!settings) { return; }
   settings->input_neutral_max = input_neutral_max;
 }
 
-uint16_t tic_settings_input_neutral_max_get(const tic_settings * settings)
+uint16_t tic_settings_get_input_neutral_max(const tic_settings * settings)
 {
   if (!settings) { return 0; }
   return settings->input_neutral_max;
 }
 
-void tic_settings_input_max_set(tic_settings * settings, uint16_t input_max)
+void tic_settings_set_input_max(tic_settings * settings, uint16_t input_max)
 {
   if (!settings) { return; }
   settings->input_max = input_max;
 }
 
-uint16_t tic_settings_input_max_get(const tic_settings * settings)
+uint16_t tic_settings_get_input_max(const tic_settings * settings)
 {
   if (!settings) { return 0; }
   return settings->input_max;
 }
 
-void tic_settings_output_min_set(tic_settings * settings, int32_t output_min)
+void tic_settings_set_output_min(tic_settings * settings, int32_t output_min)
 {
   if (!settings) { return; }
   settings->output_min = output_min;
 }
 
-int32_t tic_settings_output_min_get(const tic_settings * settings)
+int32_t tic_settings_get_output_min(const tic_settings * settings)
 {
   if (!settings) { return 0; }
   return settings->output_min;
 }
 
-void tic_settings_output_max_set(tic_settings * settings, int32_t output_max)
+void tic_settings_set_output_max(tic_settings * settings, int32_t output_max)
 {
   if (!settings) { return; }
   settings->output_max = output_max;
 }
 
-int32_t tic_settings_output_max_get(const tic_settings * settings)
+int32_t tic_settings_get_output_max(const tic_settings * settings)
 {
   if (!settings) { return 0; }
   return settings->output_max;
 }
 
-void tic_settings_encoder_prescaler_set(tic_settings * settings,
+void tic_settings_set_encoder_prescaler(tic_settings * settings,
   uint32_t encoder_prescaler)
 {
   if (!settings) { return; }
   settings->encoder_prescaler = encoder_prescaler;
 }
 
-uint32_t tic_settings_encoder_prescaler_get(const tic_settings * settings)
+uint32_t tic_settings_get_encoder_prescaler(const tic_settings * settings)
 {
   if (!settings) { return 0; }
   return settings->encoder_prescaler;
 }
 
-void tic_settings_encoder_postscaler_set(tic_settings * settings,
+void tic_settings_set_encoder_postscaler(tic_settings * settings,
   uint32_t encoder_postscaler)
 {
   if (!settings) { return; }
   settings->encoder_postscaler = encoder_postscaler;
 }
 
-uint32_t tic_settings_encoder_postscaler_get(const tic_settings * settings)
+uint32_t tic_settings_get_encoder_postscaler(const tic_settings * settings)
 {
   if (!settings) { return 0; }
   return settings->encoder_postscaler;
 }
 
-void tic_settings_encoder_unlimited_set(tic_settings * settings,
+void tic_settings_set_encoder_unlimited(tic_settings * settings,
   bool encoder_unlimited)
 {
   if (!settings) { return; }
   settings->encoder_unlimited = encoder_unlimited;
 }
 
-bool tic_settings_encoder_unlimited_get(const tic_settings * settings)
+bool tic_settings_get_encoder_unlimited(const tic_settings * settings)
 {
   if (!settings) { return 0; }
   return settings->encoder_unlimited;
 }
 
-void tic_settings_scl_config_set(tic_settings * settings, uint8_t scl_config)
+void tic_settings_set_scl_config(tic_settings * settings, uint8_t scl_config)
 {
   if (!settings) { return; }
   settings->scl_config = scl_config;
 }
 
-uint8_t tic_settings_scl_config_get(const tic_settings * settings)
+uint8_t tic_settings_get_scl_config(const tic_settings * settings)
 {
   if (!settings) { return 0; }
   return settings->scl_config;
 }
 
 
-void tic_settings_sda_config_set(tic_settings * settings, uint8_t sda_config)
+void tic_settings_set_sda_config(tic_settings * settings, uint8_t sda_config)
 {
   if (!settings) { return; }
   settings->sda_config = sda_config;
 }
 
-uint8_t tic_settings_sda_config_get(const tic_settings * settings)
+uint8_t tic_settings_get_sda_config(const tic_settings * settings)
 {
   if (!settings) { return 0; }
   return settings->sda_config;
 }
 
-void tic_settings_tx_config_set(tic_settings * settings, uint8_t tx_config)
+void tic_settings_set_tx_config(tic_settings * settings, uint8_t tx_config)
 {
   if (!settings) { return; }
   settings->tx_config = tx_config;
 }
 
-uint8_t tic_settings_tx_config_get(const tic_settings * settings)
+uint8_t tic_settings_get_tx_config(const tic_settings * settings)
 {
   if (!settings) { return 0; }
   return settings->tx_config;
 }
 
-void tic_settings_rx_config_set(tic_settings * settings, uint8_t rx_config)
+void tic_settings_set_rx_config(tic_settings * settings, uint8_t rx_config)
 {
   if (!settings) { return; }
   settings->rx_config = rx_config;
 }
 
-uint8_t tic_settings_rx_config_get(const tic_settings * settings)
+uint8_t tic_settings_get_rx_config(const tic_settings * settings)
 {
   if (!settings) { return 0; }
   return settings->rx_config;
 }
 
-void tic_settings_rc_config_set(tic_settings * settings, uint8_t rc_config)
+void tic_settings_set_rc_config(tic_settings * settings, uint8_t rc_config)
 {
   if (!settings) { return; }
   settings->rc_config = rc_config;
 }
 
-uint8_t tic_settings_rc_config_get(const tic_settings * settings)
+uint8_t tic_settings_get_rc_config(const tic_settings * settings)
 {
   if (!settings) { return 0; }
   return settings->rc_config;
 }
 
-void tic_settings_current_limit_set(tic_settings * settings,
+void tic_settings_set_current_limit(tic_settings * settings,
   uint32_t current_limit)
 {
   if (!settings) { return; }
   settings->current_limit = current_limit;
 }
 
-uint32_t tic_settings_current_limit_get(const tic_settings * settings)
+uint32_t tic_settings_get_current_limit(const tic_settings * settings)
 {
   if (!settings) { return 0; }
   return settings->current_limit;
 }
 
-void tic_settings_current_limit_during_error_set(tic_settings * settings,
+void tic_settings_set_current_limit_during_error(tic_settings * settings,
   uint32_t current_limit)
 {
   if (!settings) { return; }
   settings->current_limit_during_error = current_limit;
 }
 
-uint32_t tic_settings_current_limit_during_error_get(const tic_settings * settings)
+uint32_t tic_settings_get_current_limit_during_error(const tic_settings * settings)
 {
   if (!settings) { return 0; }
   return settings->current_limit_during_error;
 }
 
-void tic_settings_step_mode_set(tic_settings * settings, uint8_t step_mode)
+void tic_settings_set_step_mode(tic_settings * settings, uint8_t step_mode)
 {
   if (!settings) { return; }
   settings->step_mode = step_mode;
 }
 
-uint8_t tic_settings_step_mode_get(const tic_settings * settings)
+uint8_t tic_settings_get_step_mode(const tic_settings * settings)
 {
   if (!settings) { return 1; }
   return settings->step_mode;
 }
 
-void tic_settings_decay_mode_set(tic_settings * settings, uint8_t decay_mode)
+void tic_settings_set_decay_mode(tic_settings * settings, uint8_t decay_mode)
 {
   if (!settings) { return; }
   settings->decay_mode = decay_mode;
 }
 
-uint8_t tic_settings_decay_mode_get(const tic_settings * settings)
+uint8_t tic_settings_get_decay_mode(const tic_settings * settings)
 {
   if (!settings) { return 0; }
   return settings->decay_mode;
 }
 
-void tic_settings_speed_min_set(tic_settings * settings, uint32_t speed_min)
+void tic_settings_set_speed_min(tic_settings * settings, uint32_t speed_min)
 {
   if (!settings) { return; }
   settings->speed_min = speed_min;
 }
 
-uint32_t tic_settings_speed_min_get(const tic_settings * settings)
+uint32_t tic_settings_get_speed_min(const tic_settings * settings)
 {
   if (!settings) { return 0; }
   return settings->speed_min;
 }
 
-void tic_settings_speed_max_set(tic_settings * settings, uint32_t speed_max)
+void tic_settings_set_speed_max(tic_settings * settings, uint32_t speed_max)
 {
   if (!settings) { return; }
   settings->speed_max = speed_max;
 }
 
-uint32_t tic_settings_speed_max_get(const tic_settings * settings)
+uint32_t tic_settings_get_speed_max(const tic_settings * settings)
 {
   if (!settings) { return 0; }
   return settings->speed_max;
 }
 
-void tic_settings_decel_max_set(tic_settings * settings, uint32_t decel_max)
+void tic_settings_set_decel_max(tic_settings * settings, uint32_t decel_max)
 {
   if (!settings) { return; }
   settings->decel_max = decel_max;
 }
 
-uint32_t tic_settings_decel_max_get(const tic_settings * settings)
+uint32_t tic_settings_get_decel_max(const tic_settings * settings)
 {
   if (!settings) { return 0; }
   return settings->decel_max;
 }
 
-void tic_settings_accel_max_set(tic_settings * settings, uint32_t accel_max)
+void tic_settings_set_accel_max(tic_settings * settings, uint32_t accel_max)
 {
   if (!settings) { return; }
   settings->accel_max = accel_max;
 }
 
-uint32_t tic_settings_accel_max_get(const tic_settings * settings)
+uint32_t tic_settings_get_accel_max(const tic_settings * settings)
 {
   if (!settings) { return 0; }
   return settings->accel_max;

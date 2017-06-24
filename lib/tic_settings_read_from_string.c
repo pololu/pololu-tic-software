@@ -44,7 +44,7 @@ static tic_error * apply_product_name(tic_settings * settings, const char * prod
   {
     return tic_error_create("Unrecognized product name.");
   }
-  tic_settings_product_set(settings, product);
+  tic_settings_set_product(settings, product);
   tic_settings_fill_with_defaults(settings);
   return NULL;
 }
@@ -67,7 +67,7 @@ static tic_error * apply_string_pair(tic_settings * settings,
     {
       return tic_error_create("Unrecognized control_mode value.");
     }
-    tic_settings_control_mode_set(settings, control_mode);
+    tic_settings_set_control_mode(settings, control_mode);
   }
   else if (!strcmp(key, "never_sleep"))
   {
@@ -76,7 +76,7 @@ static tic_error * apply_string_pair(tic_settings * settings,
     {
       return tic_error_create("Unrecognized never_sleep value.");
     }
-    tic_settings_never_sleep_set(settings, never_sleep);
+    tic_settings_set_never_sleep(settings, never_sleep);
   }
   else if (!strcmp(key, "disable_safe_start"))
   {
@@ -85,7 +85,7 @@ static tic_error * apply_string_pair(tic_settings * settings,
     {
       return tic_error_create("Unrecognized disable_safe_start value.");
     }
-    tic_settings_disable_safe_start_set(settings, disable_safe_start);
+    tic_settings_set_disable_safe_start(settings, disable_safe_start);
   }
   else if (!strcmp(key, "ignore_err_line_high"))
   {
@@ -94,7 +94,7 @@ static tic_error * apply_string_pair(tic_settings * settings,
     {
       return tic_error_create("Unrecognized ignore_err_line_high value.");
     }
-    tic_settings_ignore_err_line_high_set(settings, ignore_err_line_high);
+    tic_settings_set_ignore_err_line_high(settings, ignore_err_line_high);
   }
   else if (!strcmp(key, "auto_clear_driver_error"))
   {
@@ -103,7 +103,7 @@ static tic_error * apply_string_pair(tic_settings * settings,
     {
       return tic_error_create("Unrecognized auto_clear_driver_error value.");
     }
-    tic_settings_auto_clear_driver_error_set(settings, auto_clear_driver_error);
+    tic_settings_set_auto_clear_driver_error(settings, auto_clear_driver_error);
   }
   else if (!strcmp(key, "input_invalid_response"))
   {
@@ -112,7 +112,7 @@ static tic_error * apply_string_pair(tic_settings * settings,
     {
       return tic_error_create("Unrecognized input_invalid_response value.");
     }
-    tic_settings_input_invalid_response_set(settings, response);
+    tic_settings_set_input_invalid_response(settings, response);
   }
   else if (!strcmp(key, "input_invalid_position"))
   {
@@ -126,7 +126,7 @@ static tic_error * apply_string_pair(tic_settings * settings,
       return tic_error_create(
         "The input_invalid_position value is out of range.");
     }
-    tic_settings_input_invalid_position_set(settings, position);
+    tic_settings_set_input_invalid_position(settings, position);
   }
   else if (!strcmp(key, "serial_baud_rate"))
   {
@@ -139,7 +139,7 @@ static tic_error * apply_string_pair(tic_settings * settings,
     {
       return tic_error_create("The serial_baud_rate value is out of range.");
     }
-    tic_settings_serial_baud_rate_set(settings, baud);
+    tic_settings_set_serial_baud_rate(settings, baud);
   }
   else if (!strcmp(key, "serial_device_number"))
   {
@@ -152,7 +152,7 @@ static tic_error * apply_string_pair(tic_settings * settings,
     {
       return tic_error_create("The serial_device_number value is out of range.");
     }
-    tic_settings_serial_device_number_set(settings, num);
+    tic_settings_set_serial_device_number(settings, num);
   }
   else if (!strcmp(key, "command_timeout"))
   {
@@ -165,7 +165,7 @@ static tic_error * apply_string_pair(tic_settings * settings,
     {
       return tic_error_create("The command_timeout value is out of range.");
     }
-    tic_settings_command_timeout_set(settings, command_timeout);
+    tic_settings_set_command_timeout(settings, command_timeout);
   }
   else if (!strcmp(key, "serial_crc_enabled"))
   {
@@ -174,7 +174,7 @@ static tic_error * apply_string_pair(tic_settings * settings,
     {
       return tic_error_create("Unrecognized serial_crc_enabled value.");
     }
-    tic_settings_serial_crc_enabled_set(settings, serial_crc_enabled);
+    tic_settings_set_serial_crc_enabled(settings, serial_crc_enabled);
   }
   else if (!strcmp(key, "low_vin_timeout"))
   {
@@ -187,7 +187,7 @@ static tic_error * apply_string_pair(tic_settings * settings,
     {
       return tic_error_create("The low_vin_timeout value is out of range.");
     }
-    tic_settings_low_vin_timeout_set(settings, low_vin_timeout);
+    tic_settings_set_low_vin_timeout(settings, low_vin_timeout);
   }
   else if (!strcmp(key, "low_vin_shutoff_voltage"))
   {
@@ -201,7 +201,7 @@ static tic_error * apply_string_pair(tic_settings * settings,
       return tic_error_create(
         "The low_vin_shutoff_voltage value is out of range.");
     }
-    tic_settings_low_vin_shutoff_voltage_set(settings, low_vin_shutoff_voltage);
+    tic_settings_set_low_vin_shutoff_voltage(settings, low_vin_shutoff_voltage);
   }
   else if (!strcmp(key, "low_vin_startup_voltage"))
   {
@@ -215,7 +215,7 @@ static tic_error * apply_string_pair(tic_settings * settings,
       return tic_error_create(
         "The low_vin_startup_voltage value is out of range.");
     }
-    tic_settings_low_vin_startup_voltage_set(settings, low_vin_startup_voltage);
+    tic_settings_set_low_vin_startup_voltage(settings, low_vin_startup_voltage);
   }
   else if (!strcmp(key, "high_vin_shutoff_voltage"))
   {
@@ -229,7 +229,7 @@ static tic_error * apply_string_pair(tic_settings * settings,
       return tic_error_create(
         "The high_vin_shutoff_voltage value is out of range.");
     }
-    tic_settings_high_vin_shutoff_voltage_set(settings,
+    tic_settings_set_high_vin_shutoff_voltage(settings,
       high_vin_shutoff_voltage);
   }
   else if (!strcmp(key, "vin_multiplier_offset"))
@@ -244,7 +244,7 @@ static tic_error * apply_string_pair(tic_settings * settings,
       return tic_error_create(
         "The vin_multiplier_offset value is out of range.");
     }
-    tic_settings_vin_multiplier_offset_set(settings, vin_multiplier_offset);
+    tic_settings_set_vin_multiplier_offset(settings, vin_multiplier_offset);
   }
   else if (!strcmp(key, "rc_max_pulse_period"))
   {
@@ -258,7 +258,7 @@ static tic_error * apply_string_pair(tic_settings * settings,
       return tic_error_create(
         "The rc_max_pulse_period value is out of range.");
     }
-    tic_settings_rc_max_pulse_period_set(settings, rc_max_pulse_period);
+    tic_settings_set_rc_max_pulse_period(settings, rc_max_pulse_period);
   }
   else if (!strcmp(key, "rc_bad_signal_timeout"))
   {
@@ -272,7 +272,7 @@ static tic_error * apply_string_pair(tic_settings * settings,
       return tic_error_create(
         "The rc_bad_signal_timeout value is out of range.");
     }
-    tic_settings_rc_bad_signal_timeout_set(settings, rc_bad_signal_timeout);
+    tic_settings_set_rc_bad_signal_timeout(settings, rc_bad_signal_timeout);
   }
   else if (!strcmp(key, "rc_consecutive_good_pulses"))
   {
@@ -286,7 +286,7 @@ static tic_error * apply_string_pair(tic_settings * settings,
       return tic_error_create(
         "The rc_consecutive_good_pulses value is out of range.");
     }
-    tic_settings_rc_consecutive_good_pulses_set(settings,
+    tic_settings_set_rc_consecutive_good_pulses(settings,
       rc_consecutive_good_pulses);
   }
   else if (!strcmp(key, "input_averaging_enabled"))
@@ -296,7 +296,7 @@ static tic_error * apply_string_pair(tic_settings * settings,
     {
       return tic_error_create("Unrecognized input_averaging_enabled value.");
     }
-    tic_settings_input_averaging_enabled_set(settings, input_averaging_enabled);
+    tic_settings_set_input_averaging_enabled(settings, input_averaging_enabled);
   }
   else if (!strcmp(key, "input_hysteresis"))
   {
@@ -309,7 +309,7 @@ static tic_error * apply_string_pair(tic_settings * settings,
     {
       return tic_error_create("The input_hysteresis value is out of range.");
     }
-    tic_settings_input_hysteresis_set(settings, hysteresis);
+    tic_settings_set_input_hysteresis(settings, hysteresis);
   }
   else if (!strcmp(key, "input_error_min"))
   {
@@ -322,7 +322,7 @@ static tic_error * apply_string_pair(tic_settings * settings,
     {
       return tic_error_create("The input_error_min value is out of range.");
     }
-    tic_settings_input_error_min_set(settings, input_error_min);
+    tic_settings_set_input_error_min(settings, input_error_min);
   }
   else if (!strcmp(key, "input_error_max"))
   {
@@ -335,7 +335,7 @@ static tic_error * apply_string_pair(tic_settings * settings,
     {
       return tic_error_create("The input_error_max value is out of range.");
     }
-    tic_settings_input_error_max_set(settings, input_error_max);
+    tic_settings_set_input_error_max(settings, input_error_max);
   }
   else if (!strcmp(key, "input_scaling_degree"))
   {
@@ -344,7 +344,7 @@ static tic_error * apply_string_pair(tic_settings * settings,
     {
       return tic_error_create("Unrecognized input_scaling_degree value.");
     }
-    tic_settings_input_scaling_degree_set(settings, input_scaling_degree);
+    tic_settings_set_input_scaling_degree(settings, input_scaling_degree);
   }
   else if (!strcmp(key, "input_invert"))
   {
@@ -353,7 +353,7 @@ static tic_error * apply_string_pair(tic_settings * settings,
     {
       return tic_error_create("Unrecognized input_invert value.");
     }
-    tic_settings_input_invert_set(settings, input_invert);
+    tic_settings_set_input_invert(settings, input_invert);
   }
   else if (!strcmp(key, "input_min"))
   {
@@ -366,7 +366,7 @@ static tic_error * apply_string_pair(tic_settings * settings,
     {
       return tic_error_create("The input_min value is out of range.");
     }
-    tic_settings_input_min_set(settings, input_min);
+    tic_settings_set_input_min(settings, input_min);
   }
   else if (!strcmp(key, "input_neutral_min"))
   {
@@ -379,7 +379,7 @@ static tic_error * apply_string_pair(tic_settings * settings,
     {
       return tic_error_create("The input_neutral_min value is out of range.");
     }
-    tic_settings_input_neutral_min_set(settings, input_neutral_min);
+    tic_settings_set_input_neutral_min(settings, input_neutral_min);
   }
   else if (!strcmp(key, "input_neutral_max"))
   {
@@ -392,7 +392,7 @@ static tic_error * apply_string_pair(tic_settings * settings,
     {
       return tic_error_create("The input_neutral_max value is out of range.");
     }
-    tic_settings_input_neutral_max_set(settings, input_neutral_max);
+    tic_settings_set_input_neutral_max(settings, input_neutral_max);
   }
   else if (!strcmp(key, "input_max"))
   {
@@ -405,7 +405,7 @@ static tic_error * apply_string_pair(tic_settings * settings,
     {
       return tic_error_create("The input_max value is out of range.");
     }
-    tic_settings_input_max_set(settings, input_max);
+    tic_settings_set_input_max(settings, input_max);
   }
   else if (!strcmp(key, "output_min"))
   {
@@ -418,7 +418,7 @@ static tic_error * apply_string_pair(tic_settings * settings,
     {
       return tic_error_create("The output_min value is out of range.");
     }
-    tic_settings_output_min_set(settings, output_min);
+    tic_settings_set_output_min(settings, output_min);
   }
   else if (!strcmp(key, "output_max"))
   {
@@ -431,7 +431,7 @@ static tic_error * apply_string_pair(tic_settings * settings,
     {
       return tic_error_create("The output_max value is out of range.");
     }
-    tic_settings_output_max_set(settings, output_max);
+    tic_settings_set_output_max(settings, output_max);
   }
   else if (!strcmp(key, "encoder_prescaler"))
   {
@@ -444,7 +444,7 @@ static tic_error * apply_string_pair(tic_settings * settings,
     {
       return tic_error_create("The encoder_prescaler value is out of range.");
     }
-    tic_settings_encoder_prescaler_set(settings, encoder_prescaler);
+    tic_settings_set_encoder_prescaler(settings, encoder_prescaler);
   }
   else if (!strcmp(key, "encoder_postscaler"))
   {
@@ -457,7 +457,7 @@ static tic_error * apply_string_pair(tic_settings * settings,
     {
       return tic_error_create("The encoder_postscaler value is out of range.");
     }
-    tic_settings_encoder_postscaler_set(settings, encoder_postscaler);
+    tic_settings_set_encoder_postscaler(settings, encoder_postscaler);
   }
   else if (!strcmp(key, "encoder_unlimited"))
   {
@@ -466,7 +466,7 @@ static tic_error * apply_string_pair(tic_settings * settings,
     {
       return tic_error_create("Unrecognized encoder_unlimited value.");
     }
-    tic_settings_encoder_unlimited_set(settings, encoder_unlimited);
+    tic_settings_set_encoder_unlimited(settings, encoder_unlimited);
   }
   else if (!strcmp(key, "scl_config"))
   {
@@ -475,7 +475,7 @@ static tic_error * apply_string_pair(tic_settings * settings,
     {
       return tic_error_create("Invalid scl_config value.");
     }
-    tic_settings_scl_config_set(settings, pin_config);
+    tic_settings_set_scl_config(settings, pin_config);
   }
   else if (!strcmp(key, "sda_config"))
   {
@@ -484,7 +484,7 @@ static tic_error * apply_string_pair(tic_settings * settings,
     {
       return tic_error_create("Invalid sda_config value.");
     }
-    tic_settings_sda_config_set(settings, pin_config);
+    tic_settings_set_sda_config(settings, pin_config);
   }
   else if (!strcmp(key, "tx_config"))
   {
@@ -493,7 +493,7 @@ static tic_error * apply_string_pair(tic_settings * settings,
     {
       return tic_error_create("Invalid tx_config value.");
     }
-    tic_settings_tx_config_set(settings, pin_config);
+    tic_settings_set_tx_config(settings, pin_config);
   }
   else if (!strcmp(key, "rx_config"))
   {
@@ -502,7 +502,7 @@ static tic_error * apply_string_pair(tic_settings * settings,
     {
       return tic_error_create("Invalid rx_config value.");
     }
-    tic_settings_rx_config_set(settings, pin_config);
+    tic_settings_set_rx_config(settings, pin_config);
   }
   else if (!strcmp(key, "rc_config"))
   {
@@ -511,7 +511,7 @@ static tic_error * apply_string_pair(tic_settings * settings,
     {
       return tic_error_create("Invalid rc_config value.");
     }
-    tic_settings_rc_config_set(settings, pin_config);
+    tic_settings_set_rc_config(settings, pin_config);
   }
   else if (!strcmp(key, "current_limit"))
   {
@@ -524,7 +524,7 @@ static tic_error * apply_string_pair(tic_settings * settings,
     {
       return tic_error_create("The current_limit value is out of range.");
     }
-    tic_settings_current_limit_set(settings, current_limit);
+    tic_settings_set_current_limit(settings, current_limit);
   }
   else if (!strcmp(key, "current_limit_during_error"))
   {
@@ -537,7 +537,7 @@ static tic_error * apply_string_pair(tic_settings * settings,
     {
       return tic_error_create("The current_limit_during_error value is out of range.");
     }
-    tic_settings_current_limit_during_error_set(settings, current_limit);
+    tic_settings_set_current_limit_during_error(settings, current_limit);
   }
   else if (!strcmp(key, "step_mode"))
   {
@@ -546,7 +546,7 @@ static tic_error * apply_string_pair(tic_settings * settings,
     {
       return tic_error_create("Invalid step_mode value.");
     }
-    tic_settings_step_mode_set(settings, step_mode);
+    tic_settings_set_step_mode(settings, step_mode);
   }
   else if (!strcmp(key, "decay_mode"))
   {
@@ -555,7 +555,7 @@ static tic_error * apply_string_pair(tic_settings * settings,
     {
       return tic_error_create("Invalid decay_mode value.");
     }
-    tic_settings_decay_mode_set(settings, decay_mode);
+    tic_settings_set_decay_mode(settings, decay_mode);
   }
   else if (!strcmp(key, "speed_min"))
   {
@@ -568,7 +568,7 @@ static tic_error * apply_string_pair(tic_settings * settings,
     {
       return tic_error_create("The speed_min value is out of range.");
     }
-    tic_settings_speed_min_set(settings, speed_min);
+    tic_settings_set_speed_min(settings, speed_min);
   }
   else if (!strcmp(key, "speed_max"))
   {
@@ -581,7 +581,7 @@ static tic_error * apply_string_pair(tic_settings * settings,
     {
       return tic_error_create("The speed_max value is out of range.");
     }
-    tic_settings_speed_max_set(settings, speed_max);
+    tic_settings_set_speed_max(settings, speed_max);
   }
   else if (!strcmp(key, "decel_max"))
   {
@@ -594,7 +594,7 @@ static tic_error * apply_string_pair(tic_settings * settings,
     {
       return tic_error_create("The decel_max value is out of range.");
     }
-    tic_settings_decel_max_set(settings, decel_max);
+    tic_settings_set_decel_max(settings, decel_max);
   }
   else if (!strcmp(key, "accel_max"))
   {
@@ -607,7 +607,7 @@ static tic_error * apply_string_pair(tic_settings * settings,
     {
       return tic_error_create("The accel_max value is out of range.");
     }
-    tic_settings_accel_max_set(settings, accel_max);
+    tic_settings_set_accel_max(settings, accel_max);
   }
   else
   {

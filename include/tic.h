@@ -448,7 +448,7 @@ typedef struct tic_settings tic_settings;
 ///
 /// The new settings object will have no product specified and all settings set
 /// to zero.  After creating the settings object, you would typically call
-/// tic_settings_product_set() and then tic_settings_fill_with_defaults().
+/// tic_settings_set_product() and then tic_settings_fill_with_defaults().
 ///
 /// Then you would use setter and getter methods to work with the settings.  At
 /// some point, you should call tic_settings_fix() to make sure the settings are
@@ -526,62 +526,62 @@ tic_error * tic_settings_read_from_string(const char * string,
 /// Sets the product, which specifies what Tic product these settings are for.
 /// The value should be one of the TIC_PRODUCT_* macros.
 TIC_API
-void tic_settings_product_set(tic_settings *, uint8_t product);
+void tic_settings_set_product(tic_settings *, uint8_t product);
 
-/// Gets the product described in tic_settings_product_set().
+/// Gets the product described in tic_settings_set_product().
 TIC_API
-uint8_t tic_settings_product_get(const tic_settings *);
+uint8_t tic_settings_get_product(const tic_settings *);
 
 /// Sets the control mode, which should be one of the TIC_CONTROL_MODE_* macros.
 /// Silently obeys if the input is invalid so that you can see a warning later
 /// when calling tic_settings_fix().
 TIC_API
-void tic_settings_control_mode_set(tic_settings *, uint8_t control_mode);
+void tic_settings_set_control_mode(tic_settings *, uint8_t control_mode);
 
-/// Returns the control mode described in tic_settings_control_mode_set().
+/// Returns the control mode described in tic_settings_set_control_mode().
 TIC_API
-uint8_t tic_settings_control_mode_get(const tic_settings *);
+uint8_t tic_settings_get_control_mode(const tic_settings *);
 
 /// Sets the never sleep (ignore USB suspend) setting.  If true, prevents the
 /// device from going into deep sleep mode in order to comply with suspend
 /// current requirements of the USB specifications.
 TIC_API
-void tic_settings_never_sleep_set(tic_settings *, bool never_sleep);
+void tic_settings_set_never_sleep(tic_settings *, bool never_sleep);
 
 /// Gets the Never sleep (ignore USB suspend) setting described in
-/// tic_settings_never_sleep_set().
+/// tic_settings_set_never_sleep().
 TIC_API
-bool tic_settings_never_sleep_get(const tic_settings *);
+bool tic_settings_get_never_sleep(const tic_settings *);
 
 /// Sets the disable safe start setting.  If true, it disables some extra
 /// conditions that are required to let the device start moving the motor.
 TIC_API
-void tic_settings_disable_safe_start_set(tic_settings *, bool);
+void tic_settings_set_disable_safe_start(tic_settings *, bool);
 
 /// Gets the disable safe start setting described in
-/// tic_settings_disable_safe_start_get().
+/// tic_settings_get_disable_safe_start().
 TIC_API
-bool tic_settings_disable_safe_start_get(const tic_settings *);
+bool tic_settings_get_disable_safe_start(const tic_settings *);
 
 /// Sets the ignore ERR line high setting.  If true, allows the device to
 /// operate even if the ERR line is being driven high by something.
 TIC_API
-void tic_settings_ignore_err_line_high_set(tic_settings *, bool);
+void tic_settings_set_ignore_err_line_high(tic_settings *, bool);
 
 /// Gets the ignore ERR line high setting described in
-/// tic_settings_ignore_err_line_high_set().
+/// tic_settings_set_ignore_err_line_high().
 TIC_API
-bool tic_settings_ignore_err_line_high_get(const tic_settings *);
+bool tic_settings_get_ignore_err_line_high(const tic_settings *);
 
 /// Sets the Auto clear driver error setting.  If true, the Tic will attempt to
 /// automatically clear motor driver error if they happen.
 TIC_API
-void tic_settings_auto_clear_driver_error_set(tic_settings *, bool);
+void tic_settings_set_auto_clear_driver_error(tic_settings *, bool);
 
 /// Gets the Auto clear driver error setting described in
-/// tic_settings_auto_clear_driver_error_set().
+/// tic_settings_set_auto_clear_driver_error().
 TIC_API
-bool tic_settings_auto_clear_driver_error_get(const tic_settings *);
+bool tic_settings_get_auto_clear_driver_error(const tic_settings *);
 
 /// Sets the Input invalid response setting, which determines what the Tic will
 /// do when its input is considered to be invalid.  Should be one of:
@@ -590,36 +590,36 @@ bool tic_settings_auto_clear_driver_error_get(const tic_settings *);
 /// - TIC_RESPONSE_COAST_TO_STOP
 /// - TIC_RESPONSE_GO_TO_POSITION
 TIC_API
-void tic_settings_input_invalid_response_set(tic_settings *, uint8_t);
+void tic_settings_set_input_invalid_response(tic_settings *, uint8_t);
 
 /// Gets the Input invalid response setting described in
-/// tic_settings_input_invalid_response_set().
+/// tic_settings_set_input_invalid_response().
 TIC_API
-uint8_t tic_settings_input_invalid_response_get(const tic_settings *);
+uint8_t tic_settings_get_input_invalid_response(const tic_settings *);
 
 /// Sets the Input invalid position setting, which is the position the Tic will
 /// go to if its Input invalid response parameter is set to
 /// TIC_RESPONSE_GO_TO_POSITION.
 TIC_API
-void tic_settings_input_invalid_position_set(tic_settings *, int32_t);
+void tic_settings_set_input_invalid_position(tic_settings *, int32_t);
 
 /// Gets the Input invalid position setting described in
-/// tic_settings_input_invalid_response_set().
+/// tic_settings_set_input_invalid_response().
 TIC_API
-int32_t tic_settings_input_invalid_position_get(const tic_settings *);
+int32_t tic_settings_get_input_invalid_position(const tic_settings *);
 
 /// Sets the baud rate in bits per second.
 ///
 /// Only certain baud rates are actually achievable.  This function will change
 /// the supplied baud rate to the nearest achievable baud rate.  You can call
-/// tic_settings_serial_baud_rate_get() to see what baud rate was used.
+/// tic_settings_get_serial_baud_rate() to see what baud rate was used.
 TIC_API
-void tic_settings_serial_baud_rate_set(tic_settings *, uint32_t);
+void tic_settings_set_serial_baud_rate(tic_settings *, uint32_t);
 
 /// Returns an estimate of the baud rate the controller will use for its
 /// asynchronous serial port, in bits per second.
 TIC_API
-uint32_t tic_settings_serial_baud_rate_get(const tic_settings *);
+uint32_t tic_settings_get_serial_baud_rate(const tic_settings *);
 
 /// Returns an acheivable baud rate corresponding to the specified baud rate.
 /// Does not modify the settings object.
@@ -630,105 +630,105 @@ uint32_t tic_settings_achievable_serial_baud_rate(const tic_settings *, uint32_t
 /// identify the device when using the Pololu serial protocol and is also used
 /// as the 7-bit I2C address.
 TIC_API
-void tic_settings_serial_device_number_set(tic_settings *, uint8_t);
+void tic_settings_set_serial_device_number(tic_settings *, uint8_t);
 
 /// Gets the serial device number setting described in
-/// tic_settings_serial_device_number_set().
+/// tic_settings_set_serial_device_number().
 TIC_API
-uint8_t tic_settings_serial_device_number_get(const tic_settings *);
+uint8_t tic_settings_get_serial_device_number(const tic_settings *);
 
 /// Sets the command timeout, the time in milliseconds before the device
 /// considers it to be an error if we have not received certain commands.  A
 /// value of 0 disables the command timeout feature.
 TIC_API
-void tic_settings_command_timeout_set(tic_settings *, uint16_t);
+void tic_settings_set_command_timeout(tic_settings *, uint16_t);
 
 /// Gets the command timeout setting described in
-/// tic_settings_command_timeout_set().
+/// tic_settings_set_command_timeout().
 TIC_API
-uint16_t tic_settings_command_timeout_get(const tic_settings *);
+uint16_t tic_settings_get_command_timeout(const tic_settings *);
 
 /// Sets the serial CRC enabled setting.  If true, the device requires 7-bit CRC
 /// bytes on all serial commands.
 TIC_API
-void tic_settings_serial_crc_enabled_set(tic_settings *, bool);
+void tic_settings_set_serial_crc_enabled(tic_settings *, bool);
 
 /// Gets the serial CRC enabled setting described in
-/// tic_settings_serial_crc_enabled_set().
+/// tic_settings_set_serial_crc_enabled().
 TIC_API
-bool tic_settings_serial_crc_enabled_get(const tic_settings *);
+bool tic_settings_get_serial_crc_enabled(const tic_settings *);
 
 /// Sets the low VIN shutoff timeout.  This determines how long, in milliseconds,
 /// it takes for a low reading on VIN to be interpreted as an error.
 TIC_API
-void tic_settings_low_vin_timeout_set(tic_settings *, uint16_t);
+void tic_settings_set_low_vin_timeout(tic_settings *, uint16_t);
 
 /// Gets the low VIN shutoff timeout setting described in
-/// tic_settings_vin_shutoff_timeout_set().
+/// tic_settings_set_vin_shutoff_timeout().
 TIC_API
-uint16_t tic_settings_low_vin_timeout_get(const tic_settings *);
+uint16_t tic_settings_get_low_vin_timeout(const tic_settings *);
 
 /// Sets the low VIN shutoff voltage.  This determines how low, in millivolts,
 /// the VIN reading has to be for the controller to change from considering it
 /// to be adequate to considering it to be too low.
 TIC_API
-void tic_settings_low_vin_shutoff_voltage_set(tic_settings *, uint16_t);
+void tic_settings_set_low_vin_shutoff_voltage(tic_settings *, uint16_t);
 
 /// Gets the low VIN shutoff voltage setting described in
-/// tic_settings_low_vin_shutoff_voltage_set().
+/// tic_settings_set_low_vin_shutoff_voltage().
 TIC_API
-uint16_t tic_settings_low_vin_shutoff_voltage_get(const tic_settings *);
+uint16_t tic_settings_get_low_vin_shutoff_voltage(const tic_settings *);
 
 /// Sets the Low VIN startup voltage.  This determines how high, in millivolts,
 /// the VIN reading has to be for the controller to change from considering it
 /// to be too low to considering it to be adequate.
 TIC_API
-void tic_settings_low_vin_startup_voltage_set(tic_settings *, uint16_t);
+void tic_settings_set_low_vin_startup_voltage(tic_settings *, uint16_t);
 
 /// Gets the low VIN startup voltage setting described in
-/// tic_settings_low_vin_startup_voltage_set().
+/// tic_settings_set_low_vin_startup_voltage().
 TIC_API
-uint16_t tic_settings_low_vin_startup_voltage_get(const tic_settings *);
+uint16_t tic_settings_get_low_vin_startup_voltage(const tic_settings *);
 
 /// Sets the High VIN shutoff voltage.  This determines how high, in millivolts,
 /// the VIN reading has to be for the controller to change from considering it
 /// to be adequate to considering it to be too high.
 TIC_API
-void tic_settings_high_vin_shutoff_voltage_set(tic_settings *, uint16_t);
+void tic_settings_set_high_vin_shutoff_voltage(tic_settings *, uint16_t);
 
 /// Gets the High VIN shutoff voltage setting described in
-/// tic_settings_high_vin_shutoff_voltage_set().
+/// tic_settings_set_high_vin_shutoff_voltage().
 TIC_API
-uint16_t tic_settings_high_vin_shutoff_voltage_get(const tic_settings *);
+uint16_t tic_settings_get_high_vin_shutoff_voltage(const tic_settings *);
 
 /// Sets the VIN multiplier offset, a calibration factor used in computing VIN.
 TIC_API
-void tic_settings_vin_multiplier_offset_set(tic_settings *, uint16_t);
+void tic_settings_set_vin_multiplier_offset(tic_settings *, uint16_t);
 
 /// Sets the VIN multiplier offset setting described in
-/// tic_settings_vin_multiplier_offset_set().
+/// tic_settings_set_vin_multiplier_offset().
 TIC_API
-uint16_t tic_settings_vin_multiplier_offset_get(const tic_settings *);
+uint16_t tic_settings_get_vin_multiplier_offset(const tic_settings *);
 
 /// Sets the RC max pulse period.  This is the maximum allowed time between
 /// consecutive RC pulse rising edges, in milliseconds.
 TIC_API
-void tic_settings_rc_max_pulse_period_set(tic_settings *, uint16_t);
+void tic_settings_set_rc_max_pulse_period(tic_settings *, uint16_t);
 
 /// Gets the RC max pulse period setting described in
-/// tic_settings_rc_max_pulse_period_set().
+/// tic_settings_set_rc_max_pulse_period().
 TIC_API
-uint16_t tic_settings_rc_max_pulse_period_get(const tic_settings *);
+uint16_t tic_settings_get_rc_max_pulse_period(const tic_settings *);
 
 /// Sets the RC bad signal timeout.  This is the maximum time between valid RC
 /// pulses that we use to update the motor, in milliseconds.
 TIC_API
-void tic_settings_rc_bad_signal_timeout_set(tic_settings *, uint16_t);
+void tic_settings_set_rc_bad_signal_timeout(tic_settings *, uint16_t);
 
 /// Gets the RC bad signal timeout setting described in
-/// tic_settings_rc_bad_signal_timeout_set.
+/// tic_settings_set_rc_bad_signal_timeout.
 TIC_API
-uint16_t tic_settings_rc_bad_signal_timeout_get(const tic_settings *);
+uint16_t tic_settings_get_rc_bad_signal_timeout(const tic_settings *);
 
 /// Sets the RC consecutive good pulses setting.  This is the number of
 /// consecutive good pulses that must be received before the controller starts
@@ -737,32 +737,32 @@ uint16_t tic_settings_rc_bad_signal_timeout_get(const tic_settings *);
 /// motor.  A value of 0 means that every good pulse results in an update of the
 /// motor.
 TIC_API
-void tic_settings_rc_consecutive_good_pulses_set(tic_settings *, uint8_t);
+void tic_settings_set_rc_consecutive_good_pulses(tic_settings *, uint8_t);
 
 /// Gets the RC consecutive good pulses setting described in
-/// tic_settings_rc_consecutive_good_pulses_set().
+/// tic_settings_set_rc_consecutive_good_pulses().
 TIC_API
-uint8_t tic_settings_rc_consecutive_good_pulses_get(const tic_settings *);
+uint8_t tic_settings_get_rc_consecutive_good_pulses(const tic_settings *);
 
 /// Sets the input error minimum parameter.  In analog or RC control
 /// mode, values below this will cause an error.
 TIC_API
-void tic_settings_input_error_min_set(tic_settings *, uint16_t);
+void tic_settings_set_input_error_min(tic_settings *, uint16_t);
 
 /// Gets the input error minimum parameter.  See
-/// tic_settings_error_min_set().
+/// tic_settings_set_error_min().
 TIC_API
-uint16_t tic_settings_input_error_min_get(const tic_settings *);
+uint16_t tic_settings_get_input_error_min(const tic_settings *);
 
 /// Sets the input error maximum parameter.  In analog or RC control
 /// mode, values above this will cause an error.
 TIC_API
-void tic_settings_input_error_max_set(tic_settings *, uint16_t);
+void tic_settings_set_input_error_max(tic_settings *, uint16_t);
 
 /// Gets the input error maximum parameter.  See
-/// tic_settings_error_max_set().
+/// tic_settings_set_error_max().
 TIC_API
-uint16_t tic_settings_input_error_max_get(const tic_settings *);
+uint16_t tic_settings_get_input_error_max(const tic_settings *);
 
 /// Sets the input averaging enabled setting.
 ///
@@ -771,104 +771,104 @@ uint16_t tic_settings_input_error_max_get(const tic_settings *);
 /// keep a running average of the last four analog or RC input values and use
 /// the average value to control the motor.
 TIC_API
-void tic_settings_input_averaging_enabled_set(tic_settings *, bool);
+void tic_settings_set_input_averaging_enabled(tic_settings *, bool);
 
 /// Gets the input averaging enabled setting as described in
-/// tic_settings_input_averaging_enabled_set().
+/// tic_settings_set_input_averaging_enabled().
 TIC_API
-bool tic_settings_input_averaging_enabled_get(const tic_settings *);
+bool tic_settings_get_input_averaging_enabled(const tic_settings *);
 
 /// Sets the input hysteresis setting.
 ///
 /// TODO: document this setting
 TIC_API
-void tic_settings_input_hysteresis_set(tic_settings *, uint16_t);
+void tic_settings_set_input_hysteresis(tic_settings *, uint16_t);
 
 /// Gets the input hysteresis setting as described in
-/// tic_settings_input_hysteresis_set().
+/// tic_settings_set_input_hysteresis().
 TIC_API
-uint16_t tic_settings_input_hysteresis_get(const tic_settings *);
+uint16_t tic_settings_get_input_hysteresis(const tic_settings *);
 
 /// Sets the input scaling degree.  0 is linear, 1 is quadratic, 2 is cubic.
 TIC_API
-void tic_settings_input_scaling_degree_set(tic_settings *, uint8_t);
+void tic_settings_set_input_scaling_degree(tic_settings *, uint8_t);
 
 /// Gets the input scaling degree setting described in
-/// tic_settings_input_scaling_degree_set().
+/// tic_settings_set_input_scaling_degree().
 TIC_API
-uint8_t tic_settings_input_scaling_degree_get(const tic_settings *);
+uint8_t tic_settings_get_input_scaling_degree(const tic_settings *);
 
-/// Sets the input invert setting.  See tic_settings_output_max_set().
+/// Sets the input invert setting.  See tic_settings_set_output_max().
 TIC_API
-void tic_settings_input_invert_set(tic_settings *, bool);
+void tic_settings_set_input_invert(tic_settings *, bool);
 
 /// Gets the input invert setting described in
-/// tic_settings_input_invert_set().
+/// tic_settings_set_input_invert().
 TIC_API
-bool tic_settings_input_invert_get(const tic_settings *);
+bool tic_settings_get_input_invert(const tic_settings *);
 
 /// Sets the input minimum scaling parameter.  See
-/// tic_settings_output_max_set().
+/// tic_settings_set_output_max().
 TIC_API
-void tic_settings_input_min_set(tic_settings *, uint16_t);
+void tic_settings_set_input_min(tic_settings *, uint16_t);
 
 /// Gets the input minimum scaling parameter.  See
-/// tic_settings_output_max_set().
+/// tic_settings_set_output_max().
 TIC_API
-uint16_t tic_settings_input_min_get(const tic_settings *);
+uint16_t tic_settings_get_input_min(const tic_settings *);
 
 /// Sets the input neutral minimum scaling parameter.  See
-/// tic_settings_output_max_set().
+/// tic_settings_set_output_max().
 TIC_API
-void tic_settings_input_neutral_min_set(tic_settings *, uint16_t);
+void tic_settings_set_input_neutral_min(tic_settings *, uint16_t);
 
 /// Gets the input neutral minimum scaling parameter.  See
-/// tic_settings_output_max_set().
+/// tic_settings_set_output_max().
 TIC_API
-uint16_t tic_settings_input_neutral_min_get(const tic_settings *);
+uint16_t tic_settings_get_input_neutral_min(const tic_settings *);
 
 /// Sets the input neutral maximum scaling parameter.  See
-/// tic_settings_output_max_set().
+/// tic_settings_set_output_max().
 TIC_API
-void tic_settings_input_neutral_max_set(tic_settings *, uint16_t);
+void tic_settings_set_input_neutral_max(tic_settings *, uint16_t);
 
 /// Gets the input neutral maximum scaling parameter.  See
-/// tic_settings_output_max_set().
+/// tic_settings_set_output_max().
 TIC_API
-uint16_t tic_settings_input_neutral_max_get(const tic_settings *);
+uint16_t tic_settings_get_input_neutral_max(const tic_settings *);
 
 /// Sets the input maximum scaling parameter.  See
-/// tic_settings_output_max_set().
+/// tic_settings_set_output_max().
 TIC_API
-void tic_settings_input_max_set(tic_settings *, uint16_t);
+void tic_settings_set_input_max(tic_settings *, uint16_t);
 
 /// Gets the input maximum scaling parameter.  See
-/// tic_settings_output_max_set().
+/// tic_settings_set_output_max().
 TIC_API
-uint16_t tic_settings_input_max_get(const tic_settings *);
+uint16_t tic_settings_get_input_max(const tic_settings *);
 
 /// Sets the output minimum scaling parameter.  See
-/// tic_settings_output_max_set().
+/// tic_settings_set_output_max().
 TIC_API
-void tic_settings_output_min_set(tic_settings *, int32_t);
+void tic_settings_set_output_min(tic_settings *, int32_t);
 
 /// Gets the output minimum scaling parameter.  See
-/// tic_settings_output_max_set().
+/// tic_settings_set_output_max().
 TIC_API
-int32_t tic_settings_output_min_get(const tic_settings *);
+int32_t tic_settings_get_output_min(const tic_settings *);
 
 /// Sets the output maximum scaling parameter.
 ///
 /// The following functions control the settings that define how an RC or analog
 /// input gets mapped to a stepper motor position or speed:
 ///
-/// - tic_settings_input_invert_set()
-/// - tic_settings_input_min_set()
-/// - tic_settings_input_neutral_min_set()
-/// - tic_settings_input_neutral_max_set()
-/// - tic_settings_input_max_set()
-/// - tic_settings_output_min_set()
-/// - tic_settings_output_max_set()
+/// - tic_settings_set_input_invert()
+/// - tic_settings_set_input_min()
+/// - tic_settings_set_input_neutral_min()
+/// - tic_settings_set_input_neutral_max()
+/// - tic_settings_set_input_max()
+/// - tic_settings_set_output_min()
+/// - tic_settings_set_output_max()
 ///
 /// Input values between less than or equal to the input minimum are mapped to
 /// the output minimum (or output maximum if the input is inverted).
@@ -887,33 +887,33 @@ int32_t tic_settings_output_min_get(const tic_settings *);
 /// Input values greater than or equal to the input maximum map to an output
 /// value of output_max.
 TIC_API
-void tic_settings_output_max_set(tic_settings *, int32_t);
+void tic_settings_set_output_max(tic_settings *, int32_t);
 
 /// Gets the output maximum scaling parameter.  See
-/// tic_settings_output_max_set().
+/// tic_settings_set_output_max().
 TIC_API
-int32_t tic_settings_output_max_get(const tic_settings *);
+int32_t tic_settings_get_output_max(const tic_settings *);
 
 /// Sets the encoder prescaler.  For encoder control mode, this determines the
 /// number of counts from the encoder per unit change of the stepper motor
 /// position or speed.  The allowed values are 1 through
 /// TIC_MAX_ALLOWED_ENCODER_PRESCALER.
 TIC_API
-void tic_settings_encoder_prescaler_set(tic_settings *, uint32_t);
+void tic_settings_set_encoder_prescaler(tic_settings *, uint32_t);
 
-/// Gets the encoder prescaler described in tic_settings_encoder_prescaler_set().
+/// Gets the encoder prescaler described in tic_settings_set_encoder_prescaler().
 TIC_API
-uint32_t tic_settings_encoder_prescaler_get(const tic_settings *);
+uint32_t tic_settings_get_encoder_prescaler(const tic_settings *);
 
 /// Sets the encoder postscaler.  For encoder control mode, this determines the
 /// size of a unit change in the stepper motor position or speed.  The allowed
 /// values are 1 through TIC_MAX_ALLOWED_ENCODER_POSTSCALER.
 TIC_API
-void tic_settings_encoder_postscaler_set(tic_settings *, uint32_t);
+void tic_settings_set_encoder_postscaler(tic_settings *, uint32_t);
 
-/// Gets the encoder postscaler described in tic_settings_encoder_postscaler_set().
+/// Gets the encoder postscaler described in tic_settings_set_encoder_postscaler().
 TIC_API
-uint32_t tic_settings_encoder_postscaler_get(const tic_settings *);
+uint32_t tic_settings_get_encoder_postscaler(const tic_settings *);
 
 /// Sets the encoder unlimited option.  If the Control mode is set to Encoder
 /// position, normally the stepper motor position is limited by the output_min
@@ -922,51 +922,51 @@ uint32_t tic_settings_encoder_postscaler_get(const tic_settings *);
 /// very far in either direction, even past the point where the encoder position
 /// or the stepper motor position variables overflow.
 TIC_API
-void tic_settings_encoder_unlimited_set(tic_settings *, bool);
+void tic_settings_set_encoder_unlimited(tic_settings *, bool);
 
-/// Gets the encoder unlimited option described in tic_settings_encoder_unlimited_set().
+/// Gets the encoder unlimited option described in tic_settings_set_encoder_unlimited().
 TIC_API
-bool tic_settings_encoder_unlimited_get(const tic_settings *);
+bool tic_settings_get_encoder_unlimited(const tic_settings *);
 
 /// Sets the pin configuration for the SCL pin.  See
-/// tic_settings_rc_config_set().
+/// tic_settings_set_rc_config().
 TIC_API
-void tic_settings_scl_config_set(tic_settings *, uint8_t);
+void tic_settings_set_scl_config(tic_settings *, uint8_t);
 
 /// Gets the pin configuration for the SCL pin.  See
-/// tic_settings_rc_config_set().
+/// tic_settings_set_rc_config().
 TIC_API
-uint8_t tic_settings_scl_config_get(const tic_settings *);
+uint8_t tic_settings_get_scl_config(const tic_settings *);
 
 /// Sets the pin configuration for the SDA/AN pin.  See
-/// tic_settings_rc_config_set().
+/// tic_settings_set_rc_config().
 TIC_API
-void tic_settings_sda_config_set(tic_settings *, uint8_t);
+void tic_settings_set_sda_config(tic_settings *, uint8_t);
 
 /// Gets the pin configuration for the SDA/AN pin.  See
-/// tic_settings_rc_config_set().
+/// tic_settings_set_rc_config().
 TIC_API
-uint8_t tic_settings_sda_config_get(const tic_settings *);
+uint8_t tic_settings_get_sda_config(const tic_settings *);
 
 /// Sets the pin configuration for the TX pin.  See
-/// tic_settings_tx_config_set().
+/// tic_settings_set_tx_config().
 TIC_API
-void tic_settings_tx_config_set(tic_settings *, uint8_t);
+void tic_settings_set_tx_config(tic_settings *, uint8_t);
 
 /// Gets the pin configuration for the TX pin.  See
-/// tic_settings_rc_config_set().
+/// tic_settings_set_rc_config().
 TIC_API
-uint8_t tic_settings_tx_config_get(const tic_settings *);
+uint8_t tic_settings_get_tx_config(const tic_settings *);
 
 /// Sets the pin configuration for the RX pin.  See
-/// tic_settings_rx_config_set().
+/// tic_settings_set_rx_config().
 TIC_API
-void tic_settings_rx_config_set(tic_settings *, uint8_t);
+void tic_settings_set_rx_config(tic_settings *, uint8_t);
 
 /// Gets the pin configuration for the RX pin.  See
-/// tic_settings_rc_config_set().
+/// tic_settings_set_rc_config().
 TIC_API
-uint8_t tic_settings_rx_config_get(const tic_settings *);
+uint8_t tic_settings_get_rx_config(const tic_settings *);
 
 /// Sets the pin configuration for the RC pin.
 ///
@@ -988,33 +988,33 @@ uint8_t tic_settings_rx_config_get(const tic_settings *);
 /// Some bits are not valid on some pins, and certain combinations of bits are
 /// not allowed.  See the source for of tic_settings_fix() for details.
 TIC_API
-void tic_settings_rc_config_set(tic_settings *, uint8_t);
+void tic_settings_set_rc_config(tic_settings *, uint8_t);
 
 /// Gets the pin configuration for the RC pin.  See
-/// tic_settings_rc_config_set().
+/// tic_settings_set_rc_config().
 TIC_API
-uint8_t tic_settings_rc_config_get(const tic_settings *);
+uint8_t tic_settings_get_rc_config(const tic_settings *);
 
 /// Sets the default stepper motor coil current limit in milliamps.
 TIC_API
-void tic_settings_current_limit_set(tic_settings *, uint32_t);
+void tic_settings_set_current_limit(tic_settings *, uint32_t);
 
 /// Gets the current limit settings as described in
-/// tic_settings_current_limit_set().
+/// tic_settings_set_current_limit().
 TIC_API
-uint32_t tic_settings_current_limit_get(const tic_settings *);
+uint32_t tic_settings_get_current_limit(const tic_settings *);
 
 /// Sets the stepper motor coil current limit in milliamps when there is an
 /// error.
 ///
 /// A value of 0 means to use the default current limit.
 TIC_API
-void tic_settings_current_limit_during_error_set(tic_settings *, uint32_t);
+void tic_settings_set_current_limit_during_error(tic_settings *, uint32_t);
 
 /// Gets the current limit settings as described in
-/// tic_settings_current_limit_during_error_set().
+/// tic_settings_set_current_limit_during_error().
 TIC_API
-uint32_t tic_settings_current_limit_during_error_get(const tic_settings *);
+uint32_t tic_settings_get_current_limit_during_error(const tic_settings *);
 
 /// Returns the highest achievable current limit that is less than the given
 /// current limit.  Does not modify the settings object.
@@ -1026,60 +1026,60 @@ uint32_t tic_settings_achievable_current_limit(const tic_settings *, uint32_t);
 /// supported on all products.  If you specify an invalid or unsupported mode to
 /// this function, you can fix it with tic_settings_fix().
 TIC_API
-void tic_settings_step_mode_set(tic_settings *, uint8_t);
+void tic_settings_set_step_mode(tic_settings *, uint8_t);
 
 /// Gets the step mode described in
-/// tic_settings_step_mode_set().
+/// tic_settings_set_step_mode().
 TIC_API
-uint8_t tic_settings_step_mode_get(const tic_settings *);
+uint8_t tic_settings_get_step_mode(const tic_settings *);
 
 /// Sets the decay mode.  The argument should be TIC_DECAY_MIXED,
 /// TIC_DELAY_SLOW, or TIC_DECAY_FAST.
 TIC_API
-void tic_settings_decay_mode_set(tic_settings *, uint8_t);
+void tic_settings_set_decay_mode(tic_settings *, uint8_t);
 
-/// Gets the decay mode described in tic_settings_decay_mode_get().
+/// Gets the decay mode described in tic_settings_get_decay_mode().
 TIC_API
-uint8_t tic_settings_decay_mode_get(const tic_settings *);
+uint8_t tic_settings_get_decay_mode(const tic_settings *);
 
 /// Sets the speed minimum, or starting speed, in steps per 10000 seconds.
 /// Valid values are from -500000000 to 500000000.
 TIC_API
-void tic_settings_speed_min_set(tic_settings *, uint32_t);
+void tic_settings_set_speed_min(tic_settings *, uint32_t);
 
-/// Gets the speed minimum described in tic_settings_speed_min_set().
+/// Gets the speed minimum described in tic_settings_set_speed_min().
 TIC_API
-uint32_t tic_settings_speed_min_get(const tic_settings *);
+uint32_t tic_settings_get_speed_min(const tic_settings *);
 
 /// Sets the speed maximum, or speed limit, in steps per 10000 seconds.  Valid
 /// values are from 0 to 500000000 (50 kHz).  Values between 0 and 6 behave the
 /// same as 0.
 TIC_API
-void tic_settings_speed_max_set(tic_settings *, uint32_t);
+void tic_settings_set_speed_max(tic_settings *, uint32_t);
 
-/// Gets the speed maximum described in tic_settings_speed_max_set().
+/// Gets the speed maximum described in tic_settings_set_speed_max().
 TIC_API
-uint32_t tic_settings_speed_max_get(const tic_settings *);
+uint32_t tic_settings_get_speed_max(const tic_settings *);
 
 /// Sets the deceleration maximum, or deceleration limit, in steps per 100
 /// square seconds.  Valid values are 0 and 59 to 2147483647.  A value of 0
 /// causes the controller's deceleration limit to be equal to the acceleration
 /// limit.
 TIC_API
-void tic_settings_decel_max_set(tic_settings *, uint32_t);
+void tic_settings_set_decel_max(tic_settings *, uint32_t);
 
-/// Gets the deceleration maximum described in tic_settings_decel_max_set().
+/// Gets the deceleration maximum described in tic_settings_set_decel_max().
 TIC_API
-uint32_t tic_settings_decel_max_get(const tic_settings *);
+uint32_t tic_settings_get_decel_max(const tic_settings *);
 
 /// Sets the acceleration maximum, or acceleration limit, in steps per 100
 /// square seconds.  Valid values are 59 to 2147483647.
 TIC_API
-void tic_settings_accel_max_set(tic_settings *, uint32_t);
+void tic_settings_set_accel_max(tic_settings *, uint32_t);
 
-/// Gets the acceleration maximum described in tic_settings_accel_max_set().
+/// Gets the acceleration maximum described in tic_settings_set_accel_max().
 TIC_API
-uint32_t tic_settings_accel_max_get(const tic_settings *);
+uint32_t tic_settings_get_accel_max(const tic_settings *);
 
 
 // tic_device ///////////////////////////////////////////////////////////////////
