@@ -514,10 +514,6 @@ TIC_API TIC_WARN_UNUSED
 tic_error * tic_settings_read_from_string(const char * string,
   tic_settings ** settings, char ** warnings);
 
-// TODO: how about we move set and get to the beginning of these
-// accessor function names like normal people: tic_settings_get_product.
-// Consistent with tic_get_settings.
-
 /// Sets the product, which specifies what Tic product these settings are for.
 /// The value should be one of the TIC_PRODUCT_* macros.
 TIC_API
@@ -774,10 +770,9 @@ TIC_API
 bool tic_settings_get_input_averaging_enabled(const tic_settings *);
 
 /// Sets the input hysteresis setting.
-///
-/// TODO: document this setting
 TIC_API
 void tic_settings_set_input_hysteresis(tic_settings *, uint16_t);
+// TODO: document this setting
 
 /// Gets the input hysteresis setting as described in
 /// tic_settings_set_input_hysteresis().
