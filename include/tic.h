@@ -87,10 +87,6 @@ extern "C" {
 #  endif
 #endif
 
-// TODO: uint32_t tic_ez_enable_driver(); ?
-// TODO: uint32_t tic_ez_set_target_speed(int32_t);
-// TODO: uint32_t tic_ez_set_target_position(int32_t);
-
 /// Certain functions in the library return a newly-created string and require
 /// the caller to call this function to free the string.  Passing a NULL pointer
 /// to this function is OK.  Do not free the same non-NULL string twice.
@@ -275,7 +271,6 @@ int32_t tic_variables_get_target_velocity(const tic_variables *);
 /// tic_settings_get_speed_min().
 TIC_API
 uint32_t tic_variables_get_speed_min(const tic_variables *);
-// TODO: equivalent cross-referencing comments for tic_settings accessors
 
 /// Gets the current speed maximum, in microsteps per 10000 seconds.
 ///
@@ -1044,6 +1039,11 @@ uint8_t tic_settings_get_decay_mode(const tic_settings *);
 
 /// Sets the speed minimum, or starting speed, in steps per 10000 seconds.
 /// Valid values are from -500000000 to 500000000.
+///
+/// This sets the default value.  To set or get the current value, see:
+///
+/// - tic_set_speed_min()
+/// - tic_variables_get_speed_min()
 TIC_API
 void tic_settings_set_speed_min(tic_settings *, uint32_t);
 
@@ -1054,6 +1054,11 @@ uint32_t tic_settings_get_speed_min(const tic_settings *);
 /// Sets the speed maximum, or speed limit, in steps per 10000 seconds.  Valid
 /// values are from 0 to 500000000 (50 kHz).  Values between 0 and 6 behave the
 /// same as 0.
+///
+/// This sets the default value.  To set or get the current value, see:
+///
+/// - tic_set_speed_max()
+/// - tic_variables_get_speed_max()
 TIC_API
 void tic_settings_set_speed_max(tic_settings *, uint32_t);
 
@@ -1061,25 +1066,35 @@ void tic_settings_set_speed_max(tic_settings *, uint32_t);
 TIC_API
 uint32_t tic_settings_get_speed_max(const tic_settings *);
 
-/// Sets the deceleration maximum, or deceleration limit, in steps per 100
-/// square seconds.  Valid values are 0 and 59 to 2147483647.  A value of 0
-/// causes the controller's deceleration limit to be equal to the acceleration
-/// limit.
-TIC_API
-void tic_settings_set_decel_max(tic_settings *, uint32_t);
-
-/// Gets the deceleration maximum described in tic_settings_set_decel_max().
-TIC_API
-uint32_t tic_settings_get_decel_max(const tic_settings *);
-
 /// Sets the acceleration maximum, or acceleration limit, in steps per 100
 /// square seconds.  Valid values are 59 to 2147483647.
+///
+/// This sets the default value.  To set or get the current value, see:
+///
+/// - tic_set_accel_max()
+/// - tic_variables_get_accel_max()
 TIC_API
 void tic_settings_set_accel_max(tic_settings *, uint32_t);
 
 /// Gets the acceleration maximum described in tic_settings_set_accel_max().
 TIC_API
 uint32_t tic_settings_get_accel_max(const tic_settings *);
+
+/// Sets the deceleration maximum, or deceleration limit, in steps per 100
+/// square seconds.  Valid values are 0 and 59 to 2147483647.  A value of 0
+/// causes the controller's deceleration limit to be equal to the acceleration
+/// limit.
+///
+/// This sets the default value.  To set or get the current value, see:
+///
+/// - tic_set_decel_max()
+/// - tic_variables_get_decel_max()
+TIC_API
+void tic_settings_set_decel_max(tic_settings *, uint32_t);
+
+/// Gets the deceleration maximum described in tic_settings_set_decel_max().
+TIC_API
+uint32_t tic_settings_get_decel_max(const tic_settings *);
 
 
 // tic_device ///////////////////////////////////////////////////////////////////
@@ -1268,30 +1283,28 @@ tic_error * tic_clear_driver_error(tic_handle *);
 /// Temporarily sets the speed maximum.
 ///
 /// This function sends a Set Speed Max command to the Tic.  For more
-/// information on what the Speed Max is, see tic_settings_get_speed_max().
+/// information, see tic_settings_set_speed_max().
 TIC_API TIC_WARN_UNUSED
 tic_error * tic_set_speed_max(tic_handle *, uint32_t speed_max);
 
 /// Temporarily sets the speed minimum.
 ///
 /// This function sends a Set Speed Min command to the Tic.  For more
-/// information on what the Speed Min is, see tic_settings_get_speed_min().
+/// information, see tic_settings_set_speed_min().
 TIC_API TIC_WARN_UNUSED
 tic_error * tic_set_speed_min(tic_handle *, uint32_t speed_min);
 
 /// Temporarily sets the acceleration maximum.
 ///
 /// This function sends a Set Acceleration Max command to the Tic.  For more
-/// information on what the Acceleration Max is, see
-/// tic_settings_get_accel_max().
+/// information, see tic_settings_set_accel_max().
 TIC_API TIC_WARN_UNUSED
 tic_error * tic_set_accel_max(tic_handle *, uint32_t accel_max);
 
 /// Temporarily sets the deceleration maximum.
 ///
 /// This function sends a Set Deceleration Max command to the Tic.  For more
-/// information on what the Deceleration Max is, see
-/// tic_settings_get_decel_max().
+/// information, see tic_settings_set_decel_max().
 TIC_API TIC_WARN_UNUSED
 tic_error * tic_set_decel_max(tic_handle *, uint32_t decel_max);
 
