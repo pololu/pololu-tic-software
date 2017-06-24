@@ -129,7 +129,7 @@ namespace tic
     }
 
     /// Returns the underlying pointer.
-    T * pointer_get() const noexcept
+    T * get_pointer() const noexcept
     {
       return pointer;
     }
@@ -153,7 +153,7 @@ namespace tic
     }
 
     /// Returns a pointer to the underlying pointer.
-    T ** pointer_to_pointer_get() noexcept
+    T ** get_pointer_to_pointer() noexcept
     {
       return &pointer;
     }
@@ -476,7 +476,7 @@ namespace tic
 
       settings r;
       throw_if_needed(tic_settings_read_from_string(
-          settings_string.c_str(), r.pointer_to_pointer_get(), cstr_pointer));
+          settings_string.c_str(), r.get_pointer_to_pointer(), cstr_pointer));
 
       if (warnings) { *warnings = std::string(cstr); }
 
@@ -569,7 +569,7 @@ namespace tic
     /// Constructor that opens a handle to the specified device.
     explicit handle(const device & device)
     {
-      throw_if_needed(tic_handle_open(device.pointer_get(), &pointer));
+      throw_if_needed(tic_handle_open(device.get_pointer(), &pointer));
     }
 
     /// Closes the handle and puts this object into the null state.
@@ -705,7 +705,7 @@ namespace tic
     /// Wrapper for tic_set_settings().
     void set_settings(const settings & settings)
     {
-      throw_if_needed(tic_set_settings(pointer, settings.pointer_get()));
+      throw_if_needed(tic_set_settings(pointer, settings.get_pointer()));
     }
 
     /// Wrapper for tic_restore_defaults().

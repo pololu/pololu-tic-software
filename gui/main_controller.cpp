@@ -486,34 +486,34 @@ void main_controller::handle_variables_changed()
 void main_controller::handle_settings_changed()
 {
   // [all-settings]
-  window->set_control_mode(tic_settings_get_control_mode(settings.pointer_get()));
-  window->set_serial_baud_rate(tic_settings_get_serial_baud_rate(settings.pointer_get()));
-  window->set_serial_device_number(tic_settings_get_serial_device_number(settings.pointer_get()));
-  window->set_serial_crc_enabled(tic_settings_get_serial_crc_enabled(settings.pointer_get()));
+  window->set_control_mode(tic_settings_get_control_mode(settings.get_pointer()));
+  window->set_serial_baud_rate(tic_settings_get_serial_baud_rate(settings.get_pointer()));
+  window->set_serial_device_number(tic_settings_get_serial_device_number(settings.get_pointer()));
+  window->set_serial_crc_enabled(tic_settings_get_serial_crc_enabled(settings.get_pointer()));
 
-  window->set_input_min(tic_settings_get_input_min(settings.pointer_get()));
-  window->set_input_neutral_min(tic_settings_get_input_neutral_min(settings.pointer_get()));
-  window->set_input_neutral_max(tic_settings_get_input_neutral_max(settings.pointer_get()));
-  window->set_input_max(tic_settings_get_input_max(settings.pointer_get()));
-  window->set_output_min(tic_settings_get_output_min(settings.pointer_get()));
-  window->set_output_max(tic_settings_get_output_max(settings.pointer_get()));
+  window->set_input_min(tic_settings_get_input_min(settings.get_pointer()));
+  window->set_input_neutral_min(tic_settings_get_input_neutral_min(settings.get_pointer()));
+  window->set_input_neutral_max(tic_settings_get_input_neutral_max(settings.get_pointer()));
+  window->set_input_max(tic_settings_get_input_max(settings.get_pointer()));
+  window->set_output_min(tic_settings_get_output_min(settings.get_pointer()));
+  window->set_output_max(tic_settings_get_output_max(settings.get_pointer()));
 
-  window->set_input_averaging_enabled(tic_settings_get_input_averaging_enabled(settings.pointer_get()));
-  window->set_input_hysteresis(tic_settings_get_input_hysteresis(settings.pointer_get()));
-  window->set_encoder_prescaler(tic_settings_get_encoder_prescaler(settings.pointer_get()));
-  window->set_encoder_postscaler(tic_settings_get_encoder_postscaler(settings.pointer_get()));
-  window->set_encoder_unlimited(tic_settings_get_encoder_unlimited(settings.pointer_get()));
+  window->set_input_averaging_enabled(tic_settings_get_input_averaging_enabled(settings.get_pointer()));
+  window->set_input_hysteresis(tic_settings_get_input_hysteresis(settings.get_pointer()));
+  window->set_encoder_prescaler(tic_settings_get_encoder_prescaler(settings.get_pointer()));
+  window->set_encoder_postscaler(tic_settings_get_encoder_postscaler(settings.get_pointer()));
+  window->set_encoder_unlimited(tic_settings_get_encoder_unlimited(settings.get_pointer()));
 
-  window->set_speed_max(tic_settings_get_speed_max(settings.pointer_get()));
-  window->set_speed_min(tic_settings_get_speed_min(settings.pointer_get()));
-  window->set_accel_max(tic_settings_get_accel_max(settings.pointer_get()));
-  window->set_decel_max(tic_settings_get_decel_max(settings.pointer_get()));
-  window->set_step_mode(tic_settings_get_step_mode(settings.pointer_get()));
-  window->set_current_limit(tic_settings_get_current_limit(settings.pointer_get()));
-  window->set_decay_mode(tic_settings_get_decay_mode(settings.pointer_get()));
+  window->set_speed_max(tic_settings_get_speed_max(settings.get_pointer()));
+  window->set_speed_min(tic_settings_get_speed_min(settings.get_pointer()));
+  window->set_accel_max(tic_settings_get_accel_max(settings.get_pointer()));
+  window->set_decel_max(tic_settings_get_decel_max(settings.get_pointer()));
+  window->set_step_mode(tic_settings_get_step_mode(settings.get_pointer()));
+  window->set_current_limit(tic_settings_get_current_limit(settings.get_pointer()));
+  window->set_decay_mode(tic_settings_get_decay_mode(settings.get_pointer()));
 
-  window->set_disable_safe_start(tic_settings_get_disable_safe_start(settings.pointer_get()));
-  window->set_ignore_err_line_high(tic_settings_get_ignore_err_line_high(settings.pointer_get()));
+  window->set_disable_safe_start(tic_settings_get_disable_safe_start(settings.get_pointer()));
+  window->set_ignore_err_line_high(tic_settings_get_ignore_err_line_high(settings.get_pointer()));
 
   window->set_apply_settings_enabled(connected() && settings_modified);
 }
@@ -521,8 +521,8 @@ void main_controller::handle_settings_changed()
 void main_controller::handle_settings_applied(bool force_reset_manual_target)
 {
   window->set_manual_target_range(
-    tic_settings_get_output_min(settings.pointer_get()),
-    tic_settings_get_output_max(settings.pointer_get()));
+    tic_settings_get_output_min(settings.get_pointer()),
+    tic_settings_get_output_max(settings.get_pointer()));
 
   window->set_manual_target_box_enabled(control_mode_is_serial(settings));
 
@@ -538,7 +538,7 @@ void main_controller::handle_settings_applied(bool force_reset_manual_target)
 void main_controller::handle_control_mode_input(uint8_t control_mode)
 {
   if (!connected()) { return; }
-  tic_settings_set_control_mode(settings.pointer_get(), control_mode);
+  tic_settings_set_control_mode(settings.get_pointer(), control_mode);
   settings_modified = true;
   handle_settings_changed();
 }
@@ -546,7 +546,7 @@ void main_controller::handle_control_mode_input(uint8_t control_mode)
 void main_controller::handle_serial_baud_rate_input(uint32_t serial_baud_rate)
 {
   if (!connected()) { return; }
-  tic_settings_set_serial_baud_rate(settings.pointer_get(), serial_baud_rate);
+  tic_settings_set_serial_baud_rate(settings.get_pointer(), serial_baud_rate);
   settings_modified = true;
   handle_settings_changed();
 }
@@ -554,17 +554,17 @@ void main_controller::handle_serial_baud_rate_input(uint32_t serial_baud_rate)
 void main_controller::handle_serial_baud_rate_input_finished()
 {
   if (!connected()) { return; }
-  uint32_t serial_baud_rate = tic_settings_get_serial_baud_rate(settings.pointer_get());
+  uint32_t serial_baud_rate = tic_settings_get_serial_baud_rate(settings.get_pointer());
   serial_baud_rate = tic_settings_achievable_serial_baud_rate(
-    settings.pointer_get(), serial_baud_rate);
-  tic_settings_set_serial_baud_rate(settings.pointer_get(), serial_baud_rate);
+    settings.get_pointer(), serial_baud_rate);
+  tic_settings_set_serial_baud_rate(settings.get_pointer(), serial_baud_rate);
   handle_settings_changed();
 }
 
 void main_controller::handle_serial_device_number_input(uint8_t serial_device_number)
 {
   if (!connected()) { return; }
-  tic_settings_set_serial_device_number(settings.pointer_get(), serial_device_number);
+  tic_settings_set_serial_device_number(settings.get_pointer(), serial_device_number);
   settings_modified = true;
   handle_settings_changed();
 }
@@ -572,7 +572,7 @@ void main_controller::handle_serial_device_number_input(uint8_t serial_device_nu
 void main_controller::handle_serial_crc_enabled_input(bool serial_crc_enabled)
 {
   if (!connected()) { return; }
-  tic_settings_set_serial_crc_enabled(settings.pointer_get(), serial_crc_enabled);
+  tic_settings_set_serial_crc_enabled(settings.get_pointer(), serial_crc_enabled);
   settings_modified = true;
   handle_settings_changed();
 }
@@ -580,7 +580,7 @@ void main_controller::handle_serial_crc_enabled_input(bool serial_crc_enabled)
 void main_controller::handle_input_min_input(uint16_t input_min)
 {
   if (!connected()) { return; }
-  tic_settings_set_input_min(settings.pointer_get(), input_min);
+  tic_settings_set_input_min(settings.get_pointer(), input_min);
   settings_modified = true;
   handle_settings_changed();
 }
@@ -588,7 +588,7 @@ void main_controller::handle_input_min_input(uint16_t input_min)
 void main_controller::handle_input_neutral_min_input(uint16_t input_neutral_min)
 {
   if (!connected()) { return; }
-  tic_settings_set_input_neutral_min(settings.pointer_get(), input_neutral_min);
+  tic_settings_set_input_neutral_min(settings.get_pointer(), input_neutral_min);
   settings_modified = true;
   handle_settings_changed();
 }
@@ -596,7 +596,7 @@ void main_controller::handle_input_neutral_min_input(uint16_t input_neutral_min)
 void main_controller::handle_input_neutral_max_input(uint16_t input_neutral_max)
 {
   if (!connected()) { return; }
-  tic_settings_set_input_neutral_max(settings.pointer_get(), input_neutral_max);
+  tic_settings_set_input_neutral_max(settings.get_pointer(), input_neutral_max);
   settings_modified = true;
   handle_settings_changed();
 }
@@ -604,7 +604,7 @@ void main_controller::handle_input_neutral_max_input(uint16_t input_neutral_max)
 void main_controller::handle_input_max_input(uint16_t input_max)
 {
   if (!connected()) { return; }
-  tic_settings_set_input_max(settings.pointer_get(), input_max);
+  tic_settings_set_input_max(settings.get_pointer(), input_max);
   settings_modified = true;
   handle_settings_changed();
 }
@@ -612,7 +612,7 @@ void main_controller::handle_input_max_input(uint16_t input_max)
 void main_controller::handle_output_min_input(int32_t output_min)
 {
   if (!connected()) { return; }
-  tic_settings_set_output_min(settings.pointer_get(), output_min);
+  tic_settings_set_output_min(settings.get_pointer(), output_min);
   settings_modified = true;
   handle_settings_changed();
 }
@@ -620,7 +620,7 @@ void main_controller::handle_output_min_input(int32_t output_min)
 void main_controller::handle_output_max_input(int32_t output_max)
 {
   if (!connected()) { return; }
-  tic_settings_set_output_max(settings.pointer_get(), output_max);
+  tic_settings_set_output_max(settings.get_pointer(), output_max);
   settings_modified = true;
   handle_settings_changed();
 }
@@ -628,7 +628,7 @@ void main_controller::handle_output_max_input(int32_t output_max)
 void main_controller::handle_input_averaging_enabled_input(bool input_averaging_enabled)
 {
   if (!connected()) { return; }
-  tic_settings_set_input_averaging_enabled(settings.pointer_get(), input_averaging_enabled);
+  tic_settings_set_input_averaging_enabled(settings.get_pointer(), input_averaging_enabled);
   settings_modified = true;
   handle_settings_changed();
 }
@@ -636,7 +636,7 @@ void main_controller::handle_input_averaging_enabled_input(bool input_averaging_
 void main_controller::handle_input_hysteresis_input(uint16_t input_hysteresis)
 {
   if (!connected()) { return; }
-  tic_settings_set_input_hysteresis(settings.pointer_get(), input_hysteresis);
+  tic_settings_set_input_hysteresis(settings.get_pointer(), input_hysteresis);
   settings_modified = true;
   handle_settings_changed();
 }
@@ -644,7 +644,7 @@ void main_controller::handle_input_hysteresis_input(uint16_t input_hysteresis)
 void main_controller::handle_encoder_prescaler_input(uint32_t encoder_prescaler)
 {
   if (!connected()) { return; }
-  tic_settings_set_encoder_prescaler(settings.pointer_get(), encoder_prescaler);
+  tic_settings_set_encoder_prescaler(settings.get_pointer(), encoder_prescaler);
   settings_modified = true;
   handle_settings_changed();
 }
@@ -652,7 +652,7 @@ void main_controller::handle_encoder_prescaler_input(uint32_t encoder_prescaler)
 void main_controller::handle_encoder_postscaler_input(uint32_t encoder_postscaler)
 {
   if (!connected()) { return; }
-  tic_settings_set_encoder_postscaler(settings.pointer_get(), encoder_postscaler);
+  tic_settings_set_encoder_postscaler(settings.get_pointer(), encoder_postscaler);
   settings_modified = true;
   handle_settings_changed();
 }
@@ -660,7 +660,7 @@ void main_controller::handle_encoder_postscaler_input(uint32_t encoder_postscale
 void main_controller::handle_encoder_unlimited_input(bool encoder_unlimited)
 {
   if (!connected()) { return; }
-  tic_settings_set_encoder_unlimited(settings.pointer_get(), encoder_unlimited);
+  tic_settings_set_encoder_unlimited(settings.get_pointer(), encoder_unlimited);
   settings_modified = true;
   handle_settings_changed();
 }
@@ -668,7 +668,7 @@ void main_controller::handle_encoder_unlimited_input(bool encoder_unlimited)
 void main_controller::handle_speed_max_input(uint32_t speed_max)
 {
   if (!connected()) { return; }
-  tic_settings_set_speed_max(settings.pointer_get(), speed_max);
+  tic_settings_set_speed_max(settings.get_pointer(), speed_max);
   settings_modified = true;
   handle_settings_changed();
 }
@@ -676,7 +676,7 @@ void main_controller::handle_speed_max_input(uint32_t speed_max)
 void main_controller::handle_speed_min_input(uint32_t speed_min)
 {
   if (!connected()) { return; }
-  tic_settings_set_speed_min(settings.pointer_get(), speed_min);
+  tic_settings_set_speed_min(settings.get_pointer(), speed_min);
   settings_modified = true;
   handle_settings_changed();
 }
@@ -684,7 +684,7 @@ void main_controller::handle_speed_min_input(uint32_t speed_min)
 void main_controller::handle_accel_max_input(uint32_t accel_max)
 {
   if (!connected()) { return; }
-  tic_settings_set_accel_max(settings.pointer_get(), accel_max);
+  tic_settings_set_accel_max(settings.get_pointer(), accel_max);
   settings_modified = true;
   handle_settings_changed();
 }
@@ -692,7 +692,7 @@ void main_controller::handle_accel_max_input(uint32_t accel_max)
 void main_controller::handle_decel_max_input(uint32_t decel_max)
 {
   if (!connected()) { return; }
-  tic_settings_set_decel_max(settings.pointer_get(), decel_max);
+  tic_settings_set_decel_max(settings.get_pointer(), decel_max);
   settings_modified = true;
   handle_settings_changed();
 }
@@ -700,7 +700,7 @@ void main_controller::handle_decel_max_input(uint32_t decel_max)
 void main_controller::handle_step_mode_input(uint8_t step_mode)
 {
   if (!connected()) { return; }
-  tic_settings_set_step_mode(settings.pointer_get(), step_mode);
+  tic_settings_set_step_mode(settings.get_pointer(), step_mode);
   settings_modified = true;
   handle_settings_changed();
 }
@@ -708,7 +708,7 @@ void main_controller::handle_step_mode_input(uint8_t step_mode)
 void main_controller::handle_current_limit_input(uint32_t current_limit)
 {
   if (!connected()) { return; }
-  tic_settings_set_current_limit(settings.pointer_get(), current_limit);
+  tic_settings_set_current_limit(settings.get_pointer(), current_limit);
   settings_modified = true;
   handle_settings_changed();
 }
@@ -716,16 +716,16 @@ void main_controller::handle_current_limit_input(uint32_t current_limit)
 void main_controller::handle_current_limit_input_finished()
 {
   if (!connected()) { return; }
-  uint32_t current_limit = tic_settings_get_current_limit(settings.pointer_get());
-  current_limit = tic_settings_achievable_current_limit(settings.pointer_get(), current_limit);
-  tic_settings_set_current_limit(settings.pointer_get(), current_limit);
+  uint32_t current_limit = tic_settings_get_current_limit(settings.get_pointer());
+  current_limit = tic_settings_achievable_current_limit(settings.get_pointer(), current_limit);
+  tic_settings_set_current_limit(settings.get_pointer(), current_limit);
   handle_settings_changed();
 }
 
 void main_controller::handle_decay_mode_input(uint8_t decay_mode)
 {
   if (!connected()) { return; }
-  tic_settings_set_decay_mode(settings.pointer_get(), decay_mode);
+  tic_settings_set_decay_mode(settings.get_pointer(), decay_mode);
   settings_modified = true;
   handle_settings_changed();
 }
@@ -733,7 +733,7 @@ void main_controller::handle_decay_mode_input(uint8_t decay_mode)
 void main_controller::handle_disable_safe_start_input(bool disable_safe_start)
 {
   if (!connected()) { return; }
-  tic_settings_set_disable_safe_start(settings.pointer_get(), disable_safe_start);
+  tic_settings_set_disable_safe_start(settings.get_pointer(), disable_safe_start);
   settings_modified = true;
   handle_settings_changed();
 }
@@ -741,7 +741,7 @@ void main_controller::handle_disable_safe_start_input(bool disable_safe_start)
 void main_controller::handle_ignore_err_line_high_input(bool ignore_err_line_high)
 {
   if (!connected()) { return; }
-  tic_settings_set_ignore_err_line_high(settings.pointer_get(), ignore_err_line_high);
+  tic_settings_set_ignore_err_line_high(settings.get_pointer(), ignore_err_line_high);
   settings_modified = true;
   handle_settings_changed();
 }
@@ -894,6 +894,6 @@ void main_controller::reload_variables()
 
 bool main_controller::control_mode_is_serial(tic::settings const & s) const
 {
-  uint8_t control_mode = tic_settings_get_control_mode(s.pointer_get());
+  uint8_t control_mode = tic_settings_get_control_mode(s.get_pointer());
   return (control_mode == TIC_CONTROL_MODE_SERIAL);
 }
