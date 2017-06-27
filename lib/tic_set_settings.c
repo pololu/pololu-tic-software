@@ -74,9 +74,9 @@ static void tic_write_settings_to_buffer(const tic_settings * settings, uint8_t 
     buf[TIC_SETTING_HIGH_VIN_SHUTOFF_VOLTAGE + 1] = voltage >> 8 & 0xFF;
   }
   {
-    uint16_t offset = (uint16_t)tic_settings_get_vin_multiplier_offset(settings);
-    buf[TIC_SETTING_VIN_MULTIPLIER_OFFSET + 0] = offset >> 0 & 0xFF;
-    buf[TIC_SETTING_VIN_MULTIPLIER_OFFSET + 1] = offset >> 8 & 0xFF;
+    uint16_t offset = (uint16_t)tic_settings_get_vin_calibration(settings);
+    buf[TIC_SETTING_VIN_CALIBRATION + 0] = offset >> 0 & 0xFF;
+    buf[TIC_SETTING_VIN_CALIBRATION + 1] = offset >> 8 & 0xFF;
   }
 
   {

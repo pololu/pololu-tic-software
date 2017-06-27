@@ -232,19 +232,19 @@ static tic_error * apply_string_pair(tic_settings * settings,
     tic_settings_set_high_vin_shutoff_voltage(settings,
       high_vin_shutoff_voltage);
   }
-  else if (!strcmp(key, "vin_multiplier_offset"))
+  else if (!strcmp(key, "vin_calibration"))
   {
-    int64_t vin_multiplier_offset;
-    if (!tic_string_to_i64(value, &vin_multiplier_offset))
+    int64_t vin_calibration;
+    if (!tic_string_to_i64(value, &vin_calibration))
     {
-      return tic_error_create("Invalid vin_multiplier_offset value.");
+      return tic_error_create("Invalid vin_calibration value.");
     }
-    if (vin_multiplier_offset < INT16_MIN || vin_multiplier_offset > INT16_MAX)
+    if (vin_calibration < INT16_MIN || vin_calibration > INT16_MAX)
     {
       return tic_error_create(
-        "The vin_multiplier_offset value is out of range.");
+        "The vin_calibration value is out of range.");
     }
-    tic_settings_set_vin_multiplier_offset(settings, vin_multiplier_offset);
+    tic_settings_set_vin_calibration(settings, vin_calibration);
   }
   else if (!strcmp(key, "rc_max_pulse_period"))
   {

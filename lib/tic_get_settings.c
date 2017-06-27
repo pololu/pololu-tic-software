@@ -89,10 +89,9 @@ static void write_buffer_to_settings(const uint8_t * buf, tic_settings * setting
   }
 
   {
-    const uint8_t * p = buf + TIC_SETTING_VIN_MULTIPLIER_OFFSET;
-    int16_t vin_multiplier_offset = p[0] + (p[1] << 8);
-    tic_settings_set_vin_multiplier_offset(settings,
-      vin_multiplier_offset);
+    const uint8_t * p = buf + TIC_SETTING_VIN_CALIBRATION;
+    int16_t vin_calibration = p[0] + (p[1] << 8);
+    tic_settings_set_vin_calibration(settings, vin_calibration);
   }
 
   {

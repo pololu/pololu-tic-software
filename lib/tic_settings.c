@@ -19,7 +19,7 @@ struct tic_settings
   uint16_t low_vin_shutoff_voltage;
   uint16_t low_vin_startup_voltage;
   uint16_t high_vin_shutoff_voltage;
-  int16_t vin_multiplier_offset;
+  int16_t vin_calibration;
   uint16_t rc_max_pulse_period;
   uint16_t rc_bad_signal_timeout;
   uint8_t rc_consecutive_good_pulses;
@@ -904,17 +904,17 @@ uint16_t tic_settings_get_high_vin_shutoff_voltage(const tic_settings * settings
   return settings->high_vin_shutoff_voltage;
 }
 
-void tic_settings_set_vin_multiplier_offset(tic_settings * settings,
-  uint16_t vin_multiplier_offset)
+void tic_settings_set_vin_calibration(tic_settings * settings,
+  uint16_t vin_calibration)
 {
   if (!settings) { return; }
-  settings->vin_multiplier_offset = vin_multiplier_offset;
+  settings->vin_calibration = vin_calibration;
 }
 
-uint16_t tic_settings_get_vin_multiplier_offset(const tic_settings * settings)
+uint16_t tic_settings_get_vin_calibration(const tic_settings * settings)
 {
   if (!settings) { return 0; }
-  return settings->vin_multiplier_offset;
+  return settings->vin_calibration;
 }
 
 void tic_settings_set_rc_max_pulse_period(tic_settings * settings,

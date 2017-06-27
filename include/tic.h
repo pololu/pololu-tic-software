@@ -651,14 +651,17 @@ TIC_API
 bool tic_settings_get_serial_crc_enabled(const tic_settings *);
 
 
-/// Sets the VIN multiplier offset, a calibration factor used in computing VIN.
+/// Sets the VIN measurement calibration setting.
+///
+/// A higher number gives you higher VIN readings, while a lower number gives
+/// you lower VIN readings.
 TIC_API
-void tic_settings_set_vin_multiplier_offset(tic_settings *, uint16_t);
+void tic_settings_set_vin_calibration(tic_settings *, uint16_t);
 
-/// Sets the VIN multiplier offset setting described in
-/// tic_settings_set_vin_multiplier_offset().
+/// Sets the VIN measurement calibratoin setting described in
+/// tic_settings_set_vin_calibration().
 TIC_API
-uint16_t tic_settings_get_vin_multiplier_offset(const tic_settings *);
+uint16_t tic_settings_get_vin_calibration(const tic_settings *);
 
 
 /// Sets the input averaging enabled setting.

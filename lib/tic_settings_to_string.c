@@ -140,8 +140,8 @@ tic_error * tic_settings_to_string(const tic_settings * settings, char ** string
   }
 
   {
-    int16_t offset = tic_settings_get_vin_multiplier_offset(settings);
-    tic_sprintf(&str, "vin_multiplier_offset: %d\n", offset);
+    int16_t offset = tic_settings_get_vin_calibration(settings);
+    tic_sprintf(&str, "vin_calibration: %d\n", offset);
   }
 
   if (0) // not implemented in firmware
