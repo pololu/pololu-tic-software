@@ -387,14 +387,13 @@ void main_window::set_accel_max(uint32_t accel_max)
 void main_window::set_decel_max(uint32_t decel_max)
 {
   set_spin_box(decel_max_value, decel_max);
-  if (decel_max == 0)
-  {
-    decel_max_value_pretty->setText(tr("= acceleration max"));
-  }
-  else
-  {
-    decel_max_value_pretty->setText(QString(convert_accel_to_pps2_string(decel_max).c_str()));
-  }
+  decel_max_value_pretty->setText(QString(convert_accel_to_pps2_string(decel_max).c_str()));
+}
+
+void main_window::set_decel_accel_max_same(bool decel_accel_max_same)
+{
+  set_check_box(decel_accel_max_same_check, decel_accel_max_same);
+  decel_max_value->setEnabled(!decel_accel_max_same);    
 }
 
 void main_window::set_step_mode(uint8_t step_mode)
@@ -765,6 +764,21 @@ void main_window::on_decel_max_value_valueChanged(int value)
 {
   if (suppress_events) { return; }
   controller->handle_decel_max_input(value);
+}
+
+void main_window::on_decel_accel_max_same_check_stateChanged(int state)
+{
+  // Note: set_decel_accel_max_same() (called by controller) takes care of
+  // enabling/disabling the max_decel_value spin box.
+  if (suppress_events) { return; }
+  if (state == Qt::Checked)
+  {
+    controller->handle_decel_max_input(0);
+  }
+  else
+  {
+    controller->handle_decel_max_input(decel_max_value->value());
+  }
 }
 
 void main_window::on_step_mode_value_currentIndexChanged(int index)
@@ -1553,13 +1567,20 @@ QWidget * main_window::setup_motor_settings_box()
   {
     decel_max_value = new QSpinBox();
     decel_max_value->setObjectName("decel_max_value");
-    decel_max_value->setRange(0, TIC_MAX_ALLOWED_ACCEL);
+    decel_max_value->setRange(TIC_MIN_ALLOWED_ACCEL, TIC_MAX_ALLOWED_ACCEL);
     decel_max_label = new QLabel();
     decel_max_label->setBuddy(decel_max_value);
     decel_max_value_pretty = new QLabel();
     layout->addWidget(decel_max_label, row, 0, FIELD_LABEL_ALIGNMENT);
     layout->addWidget(decel_max_value, row, 1, Qt::AlignLeft);
     layout->addWidget(decel_max_value_pretty, row, 2, Qt::AlignLeft);
+    row++;
+  }
+  
+  {
+    decel_accel_max_same_check = new QCheckBox();
+    decel_accel_max_same_check->setObjectName("decel_accel_max_same_check");
+    layout->addWidget(decel_accel_max_same_check, row, 0, 1, 3, Qt::AlignLeft);
     row++;
   }
 
@@ -1712,7 +1733,7 @@ void main_window::retranslate()
   }
   auto_set_target_check->setText(tr("Set target when slider or entry box are changed"));
   auto_zero_target_check->setText(tr("Return slider to zero when it is released"));
-  stop_button->setText(tr("Stop motor"));
+  stop_button->setText(tr("Halt motor"));
   decel_stop_button->setText(tr("Decelerate motor"));
 
   // [all-settings]
@@ -1742,6 +1763,7 @@ void main_window::retranslate()
   speed_min_label->setText(tr("Speed min:"));
   accel_max_label->setText(tr("Acceleration max:"));
   decel_max_label->setText(tr("Deceleration max:"));
+  decel_accel_max_same_check->setText(tr("Use acceleration max for deceleration"));
   step_mode_label->setText(tr("Step mode:"));
   current_limit_label->setText(tr("Current limit:"));
   decay_mode_label->setText(tr("Decay mode:"));

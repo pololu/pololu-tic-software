@@ -506,8 +506,21 @@ void main_controller::handle_settings_changed()
 
   window->set_speed_max(tic_settings_get_speed_max(settings.get_pointer()));
   window->set_speed_min(tic_settings_get_speed_min(settings.get_pointer()));
-  window->set_accel_max(tic_settings_get_accel_max(settings.get_pointer()));
-  window->set_decel_max(tic_settings_get_decel_max(settings.get_pointer()));
+  
+  uint32_t accel_max = tic_settings_get_accel_max(settings.get_pointer());
+  uint32_t decel_max = tic_settings_get_decel_max(settings.get_pointer());
+  window->set_accel_max(accel_max);
+  if (decel_max == 0)
+  {
+    window->set_decel_max(accel_max);
+    window->set_decel_accel_max_same(true);
+  }
+  else
+  {
+    window->set_decel_max(decel_max);
+    window->set_decel_accel_max_same(false);
+  }
+  
   window->set_step_mode(tic_settings_get_step_mode(settings.get_pointer()));
   window->set_current_limit(tic_settings_get_current_limit(settings.get_pointer()));
   window->set_decay_mode(tic_settings_get_decay_mode(settings.get_pointer()));

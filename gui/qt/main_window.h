@@ -125,6 +125,7 @@ public:
   void set_speed_min(uint32_t speed_min);
   void set_accel_max(uint32_t accel_max);
   void set_decel_max(uint32_t decel_max);
+  void set_decel_accel_max_same(bool decel_accel_max_same);
   void set_step_mode(uint8_t step_mode);
   void set_current_limit(uint32_t current_limit);
   void set_decay_mode(uint8_t decay_mode);
@@ -201,6 +202,7 @@ private slots:
   void on_speed_min_value_valueChanged(int value);
   void on_accel_max_value_valueChanged(int value);
   void on_decel_max_value_valueChanged(int value);
+  void on_decel_accel_max_same_check_stateChanged(int state);
   void on_step_mode_value_currentIndexChanged(int index);
   void on_current_limit_value_valueChanged(int value);
   void on_current_limit_value_editingFinished();
@@ -386,6 +388,7 @@ private:
   QLabel * decel_max_label;
   QSpinBox * decel_max_value;
   QLabel * decel_max_value_pretty;
+  QCheckBox * decel_accel_max_same_check;
   QLabel * step_mode_label;
   QComboBox * step_mode_value;
   QLabel * current_limit_label;
