@@ -50,6 +50,7 @@ speed_min: 0
 speed_max: 2000000
 accel_max: 40000
 decel_max: 0
+invert_motor_direction: false
 END
 }
 
@@ -103,6 +104,7 @@ speed_min: 10000
 speed_max: 234567890
 accel_max: 934567820
 decel_max: 734567890
+invert_motor_direction: true
 END
 }
 

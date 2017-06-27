@@ -1033,20 +1033,6 @@ void tic_settings_set_decay_mode(tic_settings *, uint8_t);
 TIC_API
 uint8_t tic_settings_get_decay_mode(const tic_settings *);
 
-/// Sets the speed minimum, or starting speed, in steps per 10000 seconds.
-/// Valid values are from -500000000 to 500000000.
-///
-/// This sets the default value.  To set or get the current value, see:
-///
-/// - tic_set_speed_min()
-/// - tic_variables_get_speed_min()
-TIC_API
-void tic_settings_set_speed_min(tic_settings *, uint32_t);
-
-/// Gets the speed minimum described in tic_settings_set_speed_min().
-TIC_API
-uint32_t tic_settings_get_speed_min(const tic_settings *);
-
 /// Sets the speed maximum, or speed limit, in steps per 10000 seconds.  Valid
 /// values are from 0 to 500000000 (50 kHz).  Values between 0 and 6 behave the
 /// same as 0.
@@ -1061,6 +1047,20 @@ void tic_settings_set_speed_max(tic_settings *, uint32_t);
 /// Gets the speed maximum described in tic_settings_set_speed_max().
 TIC_API
 uint32_t tic_settings_get_speed_max(const tic_settings *);
+
+/// Sets the speed minimum, or starting speed, in steps per 10000 seconds.
+/// Valid values are from -500000000 to 500000000.
+///
+/// This sets the default value.  To set or get the current value, see:
+///
+/// - tic_set_speed_min()
+/// - tic_variables_get_speed_min()
+TIC_API
+void tic_settings_set_speed_min(tic_settings *, uint32_t);
+
+/// Gets the speed minimum described in tic_settings_set_speed_min().
+TIC_API
+uint32_t tic_settings_get_speed_min(const tic_settings *);
 
 /// Sets the acceleration maximum, or acceleration limit, in steps per 100
 /// square seconds.  Valid values are 59 to 2147483647.
@@ -1091,6 +1091,18 @@ void tic_settings_set_decel_max(tic_settings *, uint32_t);
 /// Gets the deceleration maximum described in tic_settings_set_decel_max().
 TIC_API
 uint32_t tic_settings_get_decel_max(const tic_settings *);
+
+/// Sets the Invert motor direction setting.
+///
+/// If true, then forward/positive motion corresponds to the DIR pin being low.
+/// Normally, forward/positive motion corresponds to the DIR pin being high.
+TIC_API
+void tic_settings_set_invert_motor_direction(tic_settings *, bool);
+
+/// Gets the Invert motor direction setting describe in
+/// tic_settings_set_invert_motor_direction().
+TIC_API
+bool tic_settings_get_invert_motor_direction(const tic_settings *);
 
 
 // tic_device ///////////////////////////////////////////////////////////////////

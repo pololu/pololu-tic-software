@@ -281,13 +281,13 @@ tic_error * tic_settings_to_string(const tic_settings * settings, char ** string
   }
 
   {
-    uint32_t speed_min = tic_settings_get_speed_min(settings);
-    tic_sprintf(&str, "speed_min: %u\n", speed_min);
+    uint32_t speed_max = tic_settings_get_speed_max(settings);
+    tic_sprintf(&str, "speed_max: %u\n", speed_max);
   }
 
   {
-    uint32_t speed_max = tic_settings_get_speed_max(settings);
-    tic_sprintf(&str, "speed_max: %u\n", speed_max);
+    uint32_t speed_min = tic_settings_get_speed_min(settings);
+    tic_sprintf(&str, "speed_min: %u\n", speed_min);
   }
 
   {
@@ -298,6 +298,12 @@ tic_error * tic_settings_to_string(const tic_settings * settings, char ** string
   {
     uint32_t decel = tic_settings_get_decel_max(settings);
     tic_sprintf(&str, "decel_max: %u\n", decel);
+  }
+
+  {
+    bool invert = tic_settings_get_invert_motor_direction(settings);
+    tic_sprintf(&str, "invert_motor_direction: %s\n",
+      invert ? "true" : "false");
   }
 
   if (error == NULL && str.data == NULL)

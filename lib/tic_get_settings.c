@@ -271,6 +271,11 @@ static void write_buffer_to_settings(const uint8_t * buf, tic_settings * setting
     uint32_t accel_max = p[0] + (p[1] << 8) + (p[2] << 16) + (p[3] << 24);
     tic_settings_set_accel_max(settings, accel_max);
   }
+
+  {
+    bool invert = buf[TIC_SETTING_INVERT_MOTOR_DIRECTION] & 1;
+    tic_settings_set_invert_motor_direction(settings, invert);
+  }
 }
 
 tic_error * tic_get_settings(tic_handle * handle, tic_settings ** settings)

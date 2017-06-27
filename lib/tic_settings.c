@@ -51,6 +51,7 @@ struct tic_settings
   uint32_t speed_max;
   uint32_t decel_max;
   uint32_t accel_max;
+  bool invert_motor_direction;
 };
 
 void tic_settings_fill_with_defaults(tic_settings * settings)
@@ -1302,4 +1303,16 @@ uint32_t tic_settings_get_accel_max(const tic_settings * settings)
 {
   if (!settings) { return 0; }
   return settings->accel_max;
+}
+
+void tic_settings_set_invert_motor_direction(tic_settings * settings, bool invert)
+{
+  if (!settings) { return; }
+  settings->invert_motor_direction = invert;
+}
+
+bool tic_settings_get_invert_motor_direction(const tic_settings * settings)
+{
+  if (!settings) { return 0; }
+  return settings->invert_motor_direction;
 }

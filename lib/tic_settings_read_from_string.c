@@ -557,6 +557,19 @@ static tic_error * apply_string_pair(tic_settings * settings,
     }
     tic_settings_set_decay_mode(settings, decay_mode);
   }
+  else if (!strcmp(key, "speed_max"))
+  {
+    int64_t speed_max;
+    if (!tic_string_to_i64(value, &speed_max))
+    {
+      return tic_error_create("Invalid speed_max value.");
+    }
+    if (speed_max < 0 || speed_max > UINT32_MAX)
+    {
+      return tic_error_create("The speed_max value is out of range.");
+    }
+    tic_settings_set_speed_max(settings, speed_max);
+  }
   else if (!strcmp(key, "speed_min"))
   {
     int64_t speed_min;
@@ -570,18 +583,18 @@ static tic_error * apply_string_pair(tic_settings * settings,
     }
     tic_settings_set_speed_min(settings, speed_min);
   }
-  else if (!strcmp(key, "speed_max"))
+  else if (!strcmp(key, "accel_max"))
   {
-    int64_t speed_max;
-    if (!tic_string_to_i64(value, &speed_max))
+    int64_t accel_max;
+    if (!tic_string_to_i64(value, &accel_max))
     {
-      return tic_error_create("Invalid speed_max value.");
+      return tic_error_create("Invalid accel_max value.");
     }
-    if (speed_max < 0 || speed_max > UINT32_MAX)
+    if (accel_max < 0 || accel_max > UINT32_MAX)
     {
-      return tic_error_create("The speed_max value is out of range.");
+      return tic_error_create("The accel_max value is out of range.");
     }
-    tic_settings_set_speed_max(settings, speed_max);
+    tic_settings_set_accel_max(settings, accel_max);
   }
   else if (!strcmp(key, "decel_max"))
   {
@@ -596,18 +609,14 @@ static tic_error * apply_string_pair(tic_settings * settings,
     }
     tic_settings_set_decel_max(settings, decel_max);
   }
-  else if (!strcmp(key, "accel_max"))
+  else if (!strcmp(key, "invert_motor_direction"))
   {
-    int64_t accel_max;
-    if (!tic_string_to_i64(value, &accel_max))
+    uint32_t invert;
+    if (!tic_name_to_code(tic_bool_names, value, &invert))
     {
-      return tic_error_create("Invalid accel_max value.");
+      return tic_error_create("Unrecognized invert_motor_direction value.");
     }
-    if (accel_max < 0 || accel_max > UINT32_MAX)
-    {
-      return tic_error_create("The accel_max value is out of range.");
-    }
-    tic_settings_set_accel_max(settings, accel_max);
+    tic_settings_set_invert_motor_direction(settings, invert);
   }
   else
   {
