@@ -88,7 +88,7 @@ public:
   void handle_encoder_unlimited_input(bool encoder_unlimited);
 
   void handle_speed_max_input(uint32_t speed_max);
-  void handle_speed_min_input(uint32_t speed_min);
+  void handle_starting_speed_input(uint32_t starting_speed);
   void handle_accel_max_input(uint32_t accel_max);
   void handle_decel_max_input(uint32_t decel_max);
   void handle_step_mode_input(uint8_t step_mode);

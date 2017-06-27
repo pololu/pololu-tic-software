@@ -10,7 +10,7 @@ struct tic_variables
   uint8_t planning_mode;
   int32_t target_position;
   int32_t target_velocity;
-  uint32_t speed_min;
+  uint32_t starting_speed;
   uint32_t speed_max;
   uint32_t decel_max;
   uint32_t accel_max;
@@ -121,7 +121,7 @@ static void write_buffer_to_variables(const uint8_t * buf, tic_variables * vars)
   vars->planning_mode = buf[TIC_VAR_PLANNING_MODE];
   vars->target_position = read_i32(buf + TIC_VAR_TARGET_POSITION);
   vars->target_velocity = read_i32(buf + TIC_VAR_TARGET_VELOCITY);
-  vars->speed_min = read_u32(buf + TIC_VAR_SPEED_MIN);
+  vars->starting_speed = read_u32(buf + TIC_VAR_STARTING_SPEED);
   vars->speed_max = read_u32(buf + TIC_VAR_SPEED_MAX);
   vars->decel_max = read_u32(buf + TIC_VAR_DECEL_MAX);
   vars->accel_max = read_u32(buf + TIC_VAR_ACCEL_MAX);
@@ -276,10 +276,10 @@ int32_t tic_variables_get_target_velocity(const tic_variables * variables)
   return variables->target_velocity;
 }
 
-uint32_t tic_variables_get_speed_min(const tic_variables * variables)
+uint32_t tic_variables_get_starting_speed(const tic_variables * variables)
 {
   if (variables == NULL) { return 0; }
-  return variables->speed_min;
+  return variables->starting_speed;
 }
 
 uint32_t tic_variables_get_speed_max(const tic_variables * variables)

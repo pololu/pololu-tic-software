@@ -166,14 +166,14 @@ describe 'Set Speed Max' do
   end
 end
 
-describe 'Set Speed Min' do
+describe 'Set Starting Speed' do
   it 'works', usb: true do
     ['512', '0']. each do |mode|
-      stdout, stderr, result = run_ticcmd("--speed-min #{mode}")
+      stdout, stderr, result = run_ticcmd("--starting-speed #{mode}")
       expect(stderr).to eq ''
       expect(stdout).to eq ''
       expect(result).to eq 0
-      expect(tic_get_status['Speed min'].to_s).to eq mode
+      expect(tic_get_status['Starting speed'].to_s).to eq mode
     end
   end
 end

@@ -248,9 +248,9 @@ static void write_buffer_to_settings(const uint8_t * buf, tic_settings * setting
   }
 
   {
-    const uint8_t * p = buf + TIC_SETTING_SPEED_MIN;
-    uint32_t speed_min = p[0] + (p[1] << 8) + (p[2] << 16) + (p[3] << 24);
-    tic_settings_set_speed_min(settings, speed_min);
+    const uint8_t * p = buf + TIC_SETTING_STARTING_SPEED;
+    uint32_t starting_speed = p[0] + (p[1] << 8) + (p[2] << 16) + (p[3] << 24);
+    tic_settings_set_starting_speed(settings, starting_speed);
   }
 
   {

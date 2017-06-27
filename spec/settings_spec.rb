@@ -36,8 +36,8 @@ current_limit: 192
 current_limit_during_error: 0
 step_mode: 1
 decay_mode: mixed
-speed_min: 0
 speed_max: 2000000
+starting_speed: 0
 accel_max: 40000
 decel_max: 0
 invert_motor_direction: false
@@ -80,8 +80,8 @@ current_limit: 384
 current_limit_during_error: 96
 step_mode: 32
 decay_mode: fast
-speed_min: 10000
 speed_max: 234567890
+starting_speed: 10000
 accel_max: 934567820
 decel_max: 734567890
 invert_motor_direction: true
@@ -163,9 +163,9 @@ def test_cases_for_settings_fix(product)
       "Warning: The maximum speed was too high " \
       "so it will be lowered to 500000000 (50 kHz).\n"
     ],
-    [ { 'speed_min' => 500_0000 },
-      { 'speed_min' => 200_0000 },
-      "Warning: The minimum speed was greater than the maximum speed " \
+    [ { 'starting_speed' => 500_0000 },
+      { 'starting_speed' => 200_0000 },
+      "Warning: The starting speed was greater than the maximum speed " \
       "so it will be lowered to 2000000.\n"
     ],
     [ { 'decel_max' => 0x80000000 },

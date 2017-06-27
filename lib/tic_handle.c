@@ -417,13 +417,13 @@ tic_error * tic_set_speed_max(tic_handle * handle, uint32_t speed_max)
   if (error != NULL)
   {
     error = tic_error_add(error,
-      "There was an error setting the speed max.");
+      "There was an error setting the maximum speed.");
   }
 
   return error;
 }
 
-tic_error * tic_set_speed_min(tic_handle * handle, uint32_t speed_min)
+tic_error * tic_set_starting_speed(tic_handle * handle, uint32_t starting_speed)
 {
   if (handle == NULL)
   {
@@ -432,15 +432,15 @@ tic_error * tic_set_speed_min(tic_handle * handle, uint32_t speed_min)
 
   tic_error * error = NULL;
 
-  uint16_t wValue = (uint32_t)speed_min & 0xFFFF;
-  uint16_t wIndex = (uint32_t)speed_min >> 16 & 0xFFFF;
+  uint16_t wValue = (uint32_t)starting_speed & 0xFFFF;
+  uint16_t wIndex = (uint32_t)starting_speed >> 16 & 0xFFFF;
   error = tic_usb_error(libusbp_control_transfer(handle->usb_handle,
-    0x40, TIC_CMD_SET_SPEED_MIN, wValue, wIndex, NULL, 0, NULL));
+    0x40, TIC_CMD_SET_STARTING_SPEED, wValue, wIndex, NULL, 0, NULL));
 
   if (error != NULL)
   {
     error = tic_error_add(error,
-      "There was an error setting the speed min.");
+      "There was an error setting the starting speed.");
   }
 
   return error;
@@ -463,7 +463,7 @@ tic_error * tic_set_accel_max(tic_handle * handle, uint32_t accel_max)
   if (error != NULL)
   {
     error = tic_error_add(error,
-      "There was an error setting the accel max.");
+      "There was an error setting the maximum acceleration.");
   }
 
   return error;
@@ -486,7 +486,7 @@ tic_error * tic_set_decel_max(tic_handle * handle, uint32_t decel_max)
   if (error != NULL)
   {
     error = tic_error_add(error,
-      "There was an error setting the decel max.");
+      "There was an error setting the maximum deceleration.");
   }
 
   return error;

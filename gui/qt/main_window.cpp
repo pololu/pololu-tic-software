@@ -372,10 +372,10 @@ void main_window::set_speed_max(uint32_t speed_max)
   speed_max_value_pretty->setText(QString(convert_speed_to_pps_string(speed_max).c_str()));
 }
 
-void main_window::set_speed_min(uint32_t speed_min)
+void main_window::set_starting_speed(uint32_t starting_speed)
 {
-  set_spin_box(speed_min_value, speed_min);
-  speed_min_value_pretty->setText(QString(convert_speed_to_pps_string(speed_min).c_str()));
+  set_spin_box(starting_speed_value, starting_speed);
+  starting_speed_value_pretty->setText(QString(convert_speed_to_pps_string(starting_speed).c_str()));
 }
 
 void main_window::set_accel_max(uint32_t accel_max)
@@ -749,10 +749,10 @@ void main_window::on_speed_max_value_valueChanged(int value)
   controller->handle_speed_max_input(value);
 }
 
-void main_window::on_speed_min_value_valueChanged(int value)
+void main_window::on_starting_speed_value_valueChanged(int value)
 {
   if (suppress_events) { return; }
-  controller->handle_speed_min_input(value);
+  controller->handle_starting_speed_input(value);
 }
 
 void main_window::on_accel_max_value_valueChanged(int value)
@@ -1516,15 +1516,15 @@ QWidget * main_window::setup_motor_settings_box()
   }
 
   {
-    speed_min_value = new QSpinBox();
-    speed_min_value->setObjectName("speed_min_value");
-    speed_min_value->setRange(0, TIC_MAX_ALLOWED_SPEED);
-    speed_min_label = new QLabel();
-    speed_min_label->setBuddy(speed_min_value);
-    speed_min_value_pretty = new QLabel();
-    layout->addWidget(speed_min_label, row, 0, FIELD_LABEL_ALIGNMENT);
-    layout->addWidget(speed_min_value, row, 1, Qt::AlignLeft);
-    layout->addWidget(speed_min_value_pretty, row, 2, Qt::AlignLeft);
+    starting_speed_value = new QSpinBox();
+    starting_speed_value->setObjectName("starting_speed_value");
+    starting_speed_value->setRange(0, TIC_MAX_ALLOWED_SPEED);
+    starting_speed_label = new QLabel();
+    starting_speed_label->setBuddy(starting_speed_value);
+    starting_speed_value_pretty = new QLabel();
+    layout->addWidget(starting_speed_label, row, 0, FIELD_LABEL_ALIGNMENT);
+    layout->addWidget(starting_speed_value, row, 1, Qt::AlignLeft);
+    layout->addWidget(starting_speed_value_pretty, row, 2, Qt::AlignLeft);
     row++;
   }
 
@@ -1739,7 +1739,7 @@ void main_window::retranslate()
 
   motor_settings_box->setTitle(tr("Motor settings"));
   speed_max_label->setText(tr("Speed max:"));
-  speed_min_label->setText(tr("Speed min:"));
+  starting_speed_label->setText(tr("Starting speed:"));
   accel_max_label->setText(tr("Acceleration max:"));
   decel_max_label->setText(tr("Deceleration max:"));
   step_mode_label->setText(tr("Step mode:"));

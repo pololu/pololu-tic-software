@@ -296,8 +296,8 @@ tic_error * tic_settings_to_string(const tic_settings * settings, char ** string
   }
 
   {
-    uint32_t speed_min = tic_settings_get_speed_min(settings);
-    tic_sprintf(&str, "speed_min: %u\n", speed_min);
+    uint32_t starting_speed = tic_settings_get_starting_speed(settings);
+    tic_sprintf(&str, "starting_speed: %u\n", starting_speed);
   }
 
   {
