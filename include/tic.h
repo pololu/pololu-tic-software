@@ -898,7 +898,6 @@ uint32_t tic_settings_get_current_limit(const tic_settings *);
 /// error.
 ///
 /// A value of -1 means to use the default current limit.
-/// (TODO: change to int32_t and make this true)
 TIC_API
 void tic_settings_set_current_limit_during_error(tic_settings *, int32_t);
 
