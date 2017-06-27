@@ -17,6 +17,7 @@
 /// If you want to control the position or speed of a stepper motor over USB,
 /// see these functions:
 ///
+/// - tic_exit_safe_start()
 /// - tic_set_target_speed()
 /// - tic_get_target_position()
 ///
@@ -1269,6 +1270,40 @@ tic_error * tic_energize(tic_handle *);
 TIC_API TIC_WARN_UNUSED
 tic_error * tic_exit_safe_start(tic_handle *);
 
+/// Sends the Enter Safe Start command.
+///
+/// This command has no effect if safe-start is disabled in the Tic settings (see
+/// tic_settings_set_disable_safe_start()).
+///
+/// In Serial/I2C/USB control mode, this command causes the Tic to stop the
+/// motor and set its Safe Start Violation error bit.  An Exit Safe Start
+/// command is required before the Tic will move the motor again.
+///
+/// In RC Speed, Analog Speed, or Encoder Speed control modes, this command
+/// causes the Tic to stop the motor and set its Safe Start Violation error bit.
+/// The control input needs to move to its neutral position before the Tic will
+/// move the motor again.
+TIC_API TIC_WARN_UNUSED
+tic_error * tic_enter_safe_start(tic_handle *);
+// TODO: In the RC Position, Analog Position, or Encoder Position control modes,
+// this command does what exactly?
+
+/// Sends the Reset command.
+///
+/// This command makes the Tic forget its current state.
+///
+/// This is similar to the tic_reinitialize() command that is used to apply new
+/// settings.  Both commands cause the Tic to reload its settings, so it will go
+/// back to using its default step mode, current limit, decay mode, speed max,
+/// speed min, accel max, and decel max settings.
+///
+/// Unlike tic_reinitialize(), which applies new settings seamlessly if
+/// possible, the tic_reset() command always abruptly stops the motor, resets
+/// the motor driver, sets the Tic's Operation state to "Reset", forgets the
+/// last movement command, and clears the encoder position.
+TIC_API TIC_WARN_UNUSED
+tic_error * tic_reset(tic_handle *);
+
 /// Attempts to clear a motor driver errors.
 ///
 /// This function sends a Clear Driver Error command to the Tic.
@@ -1383,7 +1418,7 @@ TIC_API TIC_WARN_UNUSED
 tic_error * tic_restore_defaults(tic_handle * handle);
 
 /// Causes the Tic to reload all of its settings from EEPROM and make them take
-/// effect.
+/// effect.  See also tic_reset().
 TIC_API TIC_WARN_UNUSED
 tic_error * tic_reinitialize(tic_handle * handle);
 

@@ -337,6 +337,48 @@ tic_error * tic_exit_safe_start(tic_handle * handle)
   return error;
 }
 
+tic_error * tic_enter_safe_start(tic_handle * handle)
+{
+  if (handle == NULL)
+  {
+    return tic_error_create("Handle is null.");
+  }
+
+  tic_error * error = NULL;
+
+  error = tic_usb_error(libusbp_control_transfer(handle->usb_handle,
+    0x40, TIC_CMD_ENTER_SAFE_START, 0, 0, NULL, 0, NULL));
+
+  if (error != NULL)
+  {
+    error = tic_error_add(error,
+      "There was an error entering safe start.");
+  }
+
+  return error;
+}
+
+tic_error * tic_reset(tic_handle * handle)
+{
+  if (handle == NULL)
+  {
+    return tic_error_create("Handle is null.");
+  }
+
+  tic_error * error = NULL;
+
+  error = tic_usb_error(libusbp_control_transfer(handle->usb_handle,
+    0x40, TIC_CMD_RESET, 0, 0, NULL, 0, NULL));
+
+  if (error != NULL)
+  {
+    error = tic_error_add(error,
+      "There was an error sending the Reset command.");
+  }
+
+  return error;
+}
+
 tic_error * tic_clear_driver_error(tic_handle * handle)
 {
   if (handle == NULL)

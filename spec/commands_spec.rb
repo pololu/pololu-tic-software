@@ -117,9 +117,27 @@ describe 'commands for controlling the motor', usb: true do
     end
   end
 
-  describe 'Clear Driver Error' do
+  describe 'Exit Safe Start' do
     it 'runs' do
       stdout, stderr, result = run_ticcmd('--exit-safe-start')
+      expect(stderr).to eq ''
+      expect(stdout).to eq ''
+      expect(result).to eq 0
+    end
+  end
+
+  describe 'Enter Safe Start' do
+    it 'runs' do
+      stdout, stderr, result = run_ticcmd('--enter-safe-start')
+      expect(stderr).to eq ''
+      expect(stdout).to eq ''
+      expect(result).to eq 0
+    end
+  end
+
+  describe 'Reset' do
+    it 'runs' do
+      stdout, stderr, result = run_ticcmd('--reset')
       expect(stderr).to eq ''
       expect(stdout).to eq ''
       expect(result).to eq 0

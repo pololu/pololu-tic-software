@@ -18,6 +18,8 @@ static const char help[] =
   "  --deenergize                 Disable the motor driver.\n"
   "  --energize                   Stop disabling the driver.\n"
   "  --exit-safe-start            Send the Exit Safe Start command.\n"
+  "  --enter-safe-start           Send the Enter Safe Start command.\n"
+  "  --reset                      Make the controller forget its current state.\n"
   "  --clear-driver-error         Attempt to clear a motor driver error.\n"
   "  --speed-max NUM              Set the speed maximum.\n"
   "  --speed-min NUM              Set the speed minimum.\n"
@@ -64,6 +66,10 @@ struct arguments
   bool energize = false;
 
   bool exit_safe_start = false;
+
+  bool enter_safe_start = false;
+
+  bool reset = false;
 
   bool clear_driver_error = false;
 
@@ -118,6 +124,8 @@ struct arguments
       deenergize ||
       energize ||
       exit_safe_start ||
+      enter_safe_start ||
+      reset ||
       clear_driver_error ||
       set_speed_max ||
       set_speed_min ||
@@ -306,6 +314,14 @@ static arguments parse_args(int argc, char ** argv)
     else if (arg == "--exit-safe-start")
     {
       args.exit_safe_start = true;
+    }
+    else if (arg == "--enter-safe-start")
+    {
+      args.enter_safe_start = true;
+    }
+    else if (arg == "--reset")
+    {
+      args.reset = true;
     }
     else if (arg == "--clear-driver-error")
     {
@@ -586,6 +602,11 @@ static void run(int argc, char ** argv)
     set_settings(selector, args.set_settings_filename);
   }
 
+  if (args.reset)
+  {
+    handle(selector).reset();
+  }
+
   if (args.set_speed_max)
   {
     handle(selector).set_speed_max(args.speed_max);
@@ -624,6 +645,11 @@ static void run(int argc, char ** argv)
   if (args.exit_safe_start)
   {
     handle(selector).exit_safe_start();
+  }
+
+  if (args.enter_safe_start)
+  {
+    handle(selector).enter_safe_start();
   }
 
   if (args.set_target_position)

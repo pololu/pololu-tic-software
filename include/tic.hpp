@@ -638,6 +638,18 @@ namespace tic
       throw_if_needed(tic_exit_safe_start(pointer));
     }
 
+    /// Wrapper for tic_enter_safe_start().
+    void enter_safe_start()
+    {
+      throw_if_needed(tic_enter_safe_start(pointer));
+    }
+
+    /// Wrapper for tic_reset().
+    void reset()
+    {
+      throw_if_needed(tic_reset(pointer));
+    }
+
     /// Wrapper for tic_clear_driver_error().
     void clear_driver_error()
     {
