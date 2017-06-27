@@ -1759,11 +1759,11 @@ void main_window::retranslate()
   encoder_unlimited_check->setText(tr("Enable unlimited encoder position control"));
 
   motor_settings_box->setTitle(tr("Motor settings"));
-  speed_max_label->setText(tr("Speed max:"));
+  speed_max_label->setText(tr("Max speed:"));
   starting_speed_label->setText(tr("Starting speed:"));
-  accel_max_label->setText(tr("Acceleration max:"));
-  decel_max_label->setText(tr("Deceleration max:"));
-  decel_accel_max_same_check->setText(tr("Use acceleration max for deceleration"));
+  accel_max_label->setText(tr("Max acceleration:"));
+  decel_max_label->setText(tr("Max deceleration:"));
+  decel_accel_max_same_check->setText(tr("Use max acceleration limit for deceleration"));
   step_mode_label->setText(tr("Step mode:"));
   current_limit_label->setText(tr("Current limit:"));
   decay_mode_label->setText(tr("Decay mode:"));
