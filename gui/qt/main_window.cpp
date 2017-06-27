@@ -565,7 +565,7 @@ void main_window::on_manual_target_scroll_bar_valueChanged(int value)
   manual_target_entry_value->setValue(value);
 }
 
-void main_window::on_manual_target_scroll_bar_sliderReleased()
+void main_window::on_manual_target_scroll_bar_scrollingFinished()
 {
   if (suppress_events) { return; }
   if (auto_zero_target_check->isChecked())

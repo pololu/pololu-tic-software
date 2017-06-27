@@ -165,7 +165,7 @@ private slots:
   void on_errors_reset_counts_button_clicked();
   void on_manual_target_position_mode_radio_toggled(bool checked);
   void on_manual_target_scroll_bar_valueChanged(int value);
-  void on_manual_target_scroll_bar_sliderReleased();
+  void on_manual_target_scroll_bar_scrollingFinished();
   void on_manual_target_entry_value_valueChanged(int value);
   void on_manual_target_return_key_shortcut_activated();
   void on_set_target_button_clicked();
