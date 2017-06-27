@@ -14,19 +14,9 @@ serial_baud_rate: 9600
 serial_device_number: 14
 command_timeout: 1000
 serial_crc_enabled: false
-low_vin_timeout: 250
-low_vin_shutoff_voltage: 6000
-low_vin_startup_voltage: 6500
-high_vin_shutoff_voltage: 35000
 vin_multiplier_offset: 0
-rc_max_pulse_period: 100
-rc_bad_signal_timeout: 500
-rc_consecutive_good_pulses: 2
 input_averaging_enabled: true
 input_hysteresis: 0
-input_error_min: 0
-input_error_max: 65535
-input_scaling_degree: linear
 input_invert: false
 input_min: 0
 input_neutral_min: 2048
@@ -68,19 +58,9 @@ serial_baud_rate: 115385
 serial_device_number: 40
 command_timeout: 2020
 serial_crc_enabled: true
-low_vin_timeout: 8000
-low_vin_shutoff_voltage: 14000
-low_vin_startup_voltage: 15000
-high_vin_shutoff_voltage: 32000
 vin_multiplier_offset: -345
-rc_max_pulse_period: 1234
-rc_bad_signal_timeout: 909
-rc_consecutive_good_pulses: 9
 input_averaging_enabled: false
 input_hysteresis: 4455
-input_error_min: 303
-input_error_max: 50050
-input_scaling_degree: quadratic
 input_invert: true
 input_min: 404
 input_neutral_min: 12312
@@ -127,18 +107,17 @@ def test_cases_for_settings_fix(product)
       { 'serial_device_number' => 127 },
       "Warning: The serial device number was too high so it was changed to 127.\n"
     ],
-    [ { 'low_vin_shutoff_voltage' => 9001, 'low_vin_startup_voltage' => 9000,
-        'high_vin_shutoff_voltage' => 8999 },
-      { 'low_vin_shutoff_voltage' => 9001, 'low_vin_startup_voltage' => 9501,
-        'high_vin_shutoff_voltage' => 10001 },
-        "Warning: The low VIN startup voltage was changed to 9501 mV.\n" \
-        "Warning: The high VIN shutoff voltage was changed to 10001 mV.\n"
-    ],
-    [ { 'input_error_min' => 10, 'input_min' => 9, 'input_neutral_min' => 8,
-        'input_neutral_max' => 7, 'input_max' => 6, 'input_error_max' => 5 },
-      { 'input_error_min' => 0, 'input_min' => 0, 'input_neutral_min' => 2048,
-        'input_neutral_max' => 2048, 'input_max' => 4095,
-        'input_error_max' => 0xFFFF },
+    #[ { 'low_vin_shutoff_voltage' => 9001, 'low_vin_startup_voltage' => 9000,
+    #    'high_vin_shutoff_voltage' => 8999 },
+    #  { 'low_vin_shutoff_voltage' => 9001, 'low_vin_startup_voltage' => 9501,
+    #    'high_vin_shutoff_voltage' => 10001 },
+    #    "Warning: The low VIN startup voltage was changed to 9501 mV.\n" \
+    #    "Warning: The high VIN shutoff voltage was changed to 10001 mV.\n"
+    #],
+    [ { 'input_min' => 9, 'input_neutral_min' => 8,
+        'input_neutral_max' => 7, 'input_max' => 6, },
+      { 'input_min' => 0, 'input_neutral_min' => 2048,
+        'input_neutral_max' => 2048, 'input_max' => 4095, },
       "Warning: The input scaling values were out of order " \
       "so they will be reset to their default values.\n"
     ],

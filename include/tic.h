@@ -650,48 +650,6 @@ void tic_settings_set_serial_crc_enabled(tic_settings *, bool);
 TIC_API
 bool tic_settings_get_serial_crc_enabled(const tic_settings *);
 
-/// Sets the low VIN shutoff timeout.  This determines how long, in milliseconds,
-/// it takes for a low reading on VIN to be interpreted as an error.
-TIC_API
-void tic_settings_set_low_vin_timeout(tic_settings *, uint16_t);
-
-/// Gets the low VIN shutoff timeout setting described in
-/// tic_settings_set_vin_shutoff_timeout().
-TIC_API
-uint16_t tic_settings_get_low_vin_timeout(const tic_settings *);
-
-/// Sets the low VIN shutoff voltage.  This determines how low, in millivolts,
-/// the VIN reading has to be for the controller to change from considering it
-/// to be adequate to considering it to be too low.
-TIC_API
-void tic_settings_set_low_vin_shutoff_voltage(tic_settings *, uint16_t);
-
-/// Gets the low VIN shutoff voltage setting described in
-/// tic_settings_set_low_vin_shutoff_voltage().
-TIC_API
-uint16_t tic_settings_get_low_vin_shutoff_voltage(const tic_settings *);
-
-/// Sets the Low VIN startup voltage.  This determines how high, in millivolts,
-/// the VIN reading has to be for the controller to change from considering it
-/// to be too low to considering it to be adequate.
-TIC_API
-void tic_settings_set_low_vin_startup_voltage(tic_settings *, uint16_t);
-
-/// Gets the low VIN startup voltage setting described in
-/// tic_settings_set_low_vin_startup_voltage().
-TIC_API
-uint16_t tic_settings_get_low_vin_startup_voltage(const tic_settings *);
-
-/// Sets the High VIN shutoff voltage.  This determines how high, in millivolts,
-/// the VIN reading has to be for the controller to change from considering it
-/// to be adequate to considering it to be too high.
-TIC_API
-void tic_settings_set_high_vin_shutoff_voltage(tic_settings *, uint16_t);
-
-/// Gets the High VIN shutoff voltage setting described in
-/// tic_settings_set_high_vin_shutoff_voltage().
-TIC_API
-uint16_t tic_settings_get_high_vin_shutoff_voltage(const tic_settings *);
 
 /// Sets the VIN multiplier offset, a calibration factor used in computing VIN.
 TIC_API
@@ -702,59 +660,6 @@ void tic_settings_set_vin_multiplier_offset(tic_settings *, uint16_t);
 TIC_API
 uint16_t tic_settings_get_vin_multiplier_offset(const tic_settings *);
 
-/// Sets the RC max pulse period.  This is the maximum allowed time between
-/// consecutive RC pulse rising edges, in milliseconds.
-TIC_API
-void tic_settings_set_rc_max_pulse_period(tic_settings *, uint16_t);
-
-/// Gets the RC max pulse period setting described in
-/// tic_settings_set_rc_max_pulse_period().
-TIC_API
-uint16_t tic_settings_get_rc_max_pulse_period(const tic_settings *);
-
-/// Sets the RC bad signal timeout.  This is the maximum time between valid RC
-/// pulses that we use to update the motor, in milliseconds.
-TIC_API
-void tic_settings_set_rc_bad_signal_timeout(tic_settings *, uint16_t);
-
-/// Gets the RC bad signal timeout setting described in
-/// tic_settings_set_rc_bad_signal_timeout.
-TIC_API
-uint16_t tic_settings_get_rc_bad_signal_timeout(const tic_settings *);
-
-/// Sets the RC consecutive good pulses setting.  This is the number of
-/// consecutive good pulses that must be received before the controller starts
-/// using good pulses to control the motor.  A value of 2 means that after 2
-/// good pulses in a row are received, the third one will be used to control the
-/// motor.  A value of 0 means that every good pulse results in an update of the
-/// motor.
-TIC_API
-void tic_settings_set_rc_consecutive_good_pulses(tic_settings *, uint8_t);
-
-/// Gets the RC consecutive good pulses setting described in
-/// tic_settings_set_rc_consecutive_good_pulses().
-TIC_API
-uint8_t tic_settings_get_rc_consecutive_good_pulses(const tic_settings *);
-
-/// Sets the input error minimum parameter.  In analog or RC control
-/// mode, values below this will cause an error.
-TIC_API
-void tic_settings_set_input_error_min(tic_settings *, uint16_t);
-
-/// Gets the input error minimum parameter.  See
-/// tic_settings_set_error_min().
-TIC_API
-uint16_t tic_settings_get_input_error_min(const tic_settings *);
-
-/// Sets the input error maximum parameter.  In analog or RC control
-/// mode, values above this will cause an error.
-TIC_API
-void tic_settings_set_input_error_max(tic_settings *, uint16_t);
-
-/// Gets the input error maximum parameter.  See
-/// tic_settings_set_error_max().
-TIC_API
-uint16_t tic_settings_get_input_error_max(const tic_settings *);
 
 /// Sets the input averaging enabled setting.
 ///
@@ -779,15 +684,6 @@ void tic_settings_set_input_hysteresis(tic_settings *, uint16_t);
 /// tic_settings_set_input_hysteresis().
 TIC_API
 uint16_t tic_settings_get_input_hysteresis(const tic_settings *);
-
-/// Sets the input scaling degree.  0 is linear, 1 is quadratic, 2 is cubic.
-TIC_API
-void tic_settings_set_input_scaling_degree(tic_settings *, uint8_t);
-
-/// Gets the input scaling degree setting described in
-/// tic_settings_set_input_scaling_degree().
-TIC_API
-uint8_t tic_settings_get_input_scaling_degree(const tic_settings *);
 
 /// Sets the input invert setting.  See tic_settings_set_output_max().
 TIC_API

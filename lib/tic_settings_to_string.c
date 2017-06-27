@@ -115,21 +115,25 @@ tic_error * tic_settings_to_string(const tic_settings * settings, char ** string
       serial_crc_enabled ? "true" : "false");
   }
 
+  if (0) // not implemented in firmware
   {
     uint16_t low_vin_timeout = tic_settings_get_low_vin_timeout(settings);
     tic_sprintf(&str, "low_vin_timeout: %u\n", low_vin_timeout);
   }
 
+  if (0) // not implemented in firmware
   {
     uint16_t voltage = tic_settings_get_low_vin_shutoff_voltage(settings);
     tic_sprintf(&str, "low_vin_shutoff_voltage: %u\n", voltage);
   }
 
+  if (0) // not implemented in firmware
   {
     uint16_t voltage = tic_settings_get_low_vin_startup_voltage(settings);
     tic_sprintf(&str, "low_vin_startup_voltage: %u\n", voltage);
   }
 
+  if (0) // not implemented in firmware
   {
     uint16_t voltage = tic_settings_get_high_vin_shutoff_voltage(settings);
     tic_sprintf(&str, "high_vin_shutoff_voltage: %u\n", voltage);
@@ -140,16 +144,19 @@ tic_error * tic_settings_to_string(const tic_settings * settings, char ** string
     tic_sprintf(&str, "vin_multiplier_offset: %d\n", offset);
   }
 
+  if (0) // not implemented in firmware
   {
     uint16_t pulse_period = tic_settings_get_rc_max_pulse_period(settings);
     tic_sprintf(&str, "rc_max_pulse_period: %u\n", pulse_period);
   }
 
+  if (0) // not implemented in firmware
   {
     uint16_t timeout = tic_settings_get_rc_bad_signal_timeout(settings);
     tic_sprintf(&str, "rc_bad_signal_timeout: %u\n", timeout);
   }
 
+  if (0) // not implemented in firmware
   {
     uint16_t pulses = tic_settings_get_rc_consecutive_good_pulses(settings);
     tic_sprintf(&str, "rc_consecutive_good_pulses: %u\n", pulses);
@@ -166,16 +173,19 @@ tic_error * tic_settings_to_string(const tic_settings * settings, char ** string
     tic_sprintf(&str, "input_hysteresis: %u\n", input_hysteresis);
   }
 
+  if (0) // not implemented in firmware
   {
     uint16_t input_error_min = tic_settings_get_input_error_min(settings);
     tic_sprintf(&str, "input_error_min: %u\n", input_error_min);
   }
 
+  if (0) // not implemented in firmware
   {
     uint16_t input_error_max = tic_settings_get_input_error_max(settings);
     tic_sprintf(&str, "input_error_max: %u\n", input_error_max);
   }
 
+  if (0) // not implemented in firmware
   {
     uint8_t degree = tic_settings_get_input_scaling_degree(settings);
     const char * degree_str;
