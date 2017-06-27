@@ -292,10 +292,10 @@ namespace tic
       return tic_variables_get_target_velocity(pointer);
     }
 
-    /// Wrapper for tic_variables_get_speed_min().
-    uint32_t get_speed_min() const noexcept
+    /// Wrapper for tic_variables_get_starting_speed().
+    uint32_t get_starting_speed() const noexcept
     {
-      return tic_variables_get_speed_min(pointer);
+      return tic_variables_get_starting_speed(pointer);
     }
 
     /// Wrapper for tic_variables_get_speed_max().
@@ -662,19 +662,19 @@ namespace tic
       throw_if_needed(tic_set_speed_max(pointer, speed_max));
     }
 
-    /// Wrapper for tic_set_speed_min().
-    void set_speed_min(uint32_t speed_min)
+    /// Wrapper for tic_set_starting_speed().
+    void set_starting_speed(uint32_t starting_speed)
     {
-      throw_if_needed(tic_set_speed_min(pointer, speed_min));
+      throw_if_needed(tic_set_starting_speed(pointer, starting_speed));
     }
 
-    /// Wrapper for tic_set_speed_min().
+    /// Wrapper for tic_set_starting_speed().
     void set_accel_max(uint32_t accel_max)
     {
       throw_if_needed(tic_set_accel_max(pointer, accel_max));
     }
 
-    /// Wrapper for tic_set_speed_min().
+    /// Wrapper for tic_set_starting_speed().
     void set_decel_max(uint32_t decel_max)
     {
       throw_if_needed(tic_set_decel_max(pointer, decel_max));

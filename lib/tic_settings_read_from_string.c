@@ -533,7 +533,7 @@ static tic_error * apply_string_pair(tic_settings * settings,
     {
       return tic_error_create("Invalid current_limit_during_error value.");
     }
-    if (current_limit < 0 || current_limit > UINT32_MAX)
+    if (current_limit < INT32_MIN || current_limit > INT32_MAX)
     {
       return tic_error_create("The current_limit_during_error value is out of range.");
     }
@@ -570,18 +570,18 @@ static tic_error * apply_string_pair(tic_settings * settings,
     }
     tic_settings_set_speed_max(settings, speed_max);
   }
-  else if (!strcmp(key, "speed_min"))
+  else if (!strcmp(key, "starting_speed"))
   {
-    int64_t speed_min;
-    if (!tic_string_to_i64(value, &speed_min))
+    int64_t starting_speed;
+    if (!tic_string_to_i64(value, &starting_speed))
     {
-      return tic_error_create("Invalid speed_min value.");
+      return tic_error_create("Invalid starting_speed value.");
     }
-    if (speed_min < 0 || speed_min > UINT32_MAX)
+    if (starting_speed < 0 || starting_speed > UINT32_MAX)
     {
-      return tic_error_create("The speed_min value is out of range.");
+      return tic_error_create("The starting_speed value is out of range.");
     }
-    tic_settings_set_speed_min(settings, speed_min);
+    tic_settings_set_starting_speed(settings, starting_speed);
   }
   else if (!strcmp(key, "accel_max"))
   {

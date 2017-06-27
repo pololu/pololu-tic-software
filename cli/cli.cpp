@@ -22,7 +22,7 @@ static const char help[] =
   "  --reset                      Make the controller forget its current state.\n"
   "  --clear-driver-error         Attempt to clear a motor driver error.\n"
   "  --speed-max NUM              Set the speed maximum.\n"
-  "  --speed-min NUM              Set the speed minimum.\n"
+  "  --starting-speed NUM         Set the starting speed.\n"
   "  --accel-max NUM              Set the acceleration maximum.\n"
   "  --decel-max NUM              Set the deceleration maximum.\n"
   "  --step-mode NUM              Set step mode: full, half, 1, 2, 4, 8, 16, 32.\n"
@@ -76,8 +76,8 @@ struct arguments
   bool set_speed_max = false;
   uint32_t speed_max;
 
-  bool set_speed_min = false;
-  uint32_t speed_min;
+  bool set_starting_speed = false;
+  uint32_t starting_speed;
 
   bool set_accel_max = false;
   uint32_t accel_max;
@@ -128,7 +128,7 @@ struct arguments
       reset ||
       clear_driver_error ||
       set_speed_max ||
-      set_speed_min ||
+      set_starting_speed ||
       set_accel_max ||
       set_decel_max ||
       set_step_mode ||
@@ -332,10 +332,10 @@ static arguments parse_args(int argc, char ** argv)
       args.set_speed_max = true;
       args.speed_max = parse_arg_int<uint32_t>(arg_reader);
     }
-    else if (arg == "--speed-min")
+    else if (arg == "--starting-speed")
     {
-      args.set_speed_min = true;
-      args.speed_min = parse_arg_int<uint32_t>(arg_reader);
+      args.set_starting_speed = true;
+      args.starting_speed = parse_arg_int<uint32_t>(arg_reader);
     }
     else if (arg == "--accel-max")
     {
@@ -612,9 +612,9 @@ static void run(int argc, char ** argv)
     handle(selector).set_speed_max(args.speed_max);
   }
 
-  if (args.set_speed_min)
+  if (args.set_starting_speed)
   {
-    handle(selector).set_speed_min(args.speed_min);
+    handle(selector).set_starting_speed(args.starting_speed);
   }
 
   if (args.set_accel_max)

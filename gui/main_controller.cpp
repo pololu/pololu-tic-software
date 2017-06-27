@@ -505,8 +505,8 @@ void main_controller::handle_settings_changed()
   window->set_encoder_unlimited(tic_settings_get_encoder_unlimited(settings.get_pointer()));
 
   window->set_speed_max(tic_settings_get_speed_max(settings.get_pointer()));
-  window->set_speed_min(tic_settings_get_speed_min(settings.get_pointer()));
-  
+  window->set_starting_speed(tic_settings_get_starting_speed(settings.get_pointer()));
+
   uint32_t accel_max = tic_settings_get_accel_max(settings.get_pointer());
   uint32_t decel_max = tic_settings_get_decel_max(settings.get_pointer());
   window->set_accel_max(accel_max);
@@ -520,7 +520,7 @@ void main_controller::handle_settings_changed()
     window->set_decel_max(decel_max);
     window->set_decel_accel_max_same(false);
   }
-  
+
   window->set_step_mode(tic_settings_get_step_mode(settings.get_pointer()));
   window->set_current_limit(tic_settings_get_current_limit(settings.get_pointer()));
   window->set_decay_mode(tic_settings_get_decay_mode(settings.get_pointer()));
@@ -686,10 +686,10 @@ void main_controller::handle_speed_max_input(uint32_t speed_max)
   handle_settings_changed();
 }
 
-void main_controller::handle_speed_min_input(uint32_t speed_min)
+void main_controller::handle_starting_speed_input(uint32_t starting_speed)
 {
   if (!connected()) { return; }
-  tic_settings_set_speed_min(settings.get_pointer(), speed_min);
+  tic_settings_set_starting_speed(settings.get_pointer(), starting_speed);
   settings_modified = true;
   handle_settings_changed();
 }

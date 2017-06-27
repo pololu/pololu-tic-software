@@ -44,10 +44,10 @@ struct tic_settings
   uint8_t rx_config;
   uint8_t rc_config;
   uint32_t current_limit;
-  uint32_t current_limit_during_error;
+  int32_t current_limit_during_error;
   uint8_t step_mode;
   uint8_t decay_mode;
-  uint32_t speed_min;
+  uint32_t starting_speed;
   uint32_t speed_max;
   uint32_t decel_max;
   uint32_t accel_max;
@@ -93,6 +93,7 @@ void tic_settings_fill_with_defaults(tic_settings * settings)
   tic_settings_set_encoder_prescaler(settings, 1);
   tic_settings_set_encoder_postscaler(settings, 1);
   tic_settings_set_current_limit(settings, 192);
+  tic_settings_set_current_limit_during_error(settings, -1);
   tic_settings_set_speed_max(settings, 2000000);
   tic_settings_set_accel_max(settings, 40000);
 }
@@ -359,19 +360,30 @@ static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings
     current = tic_settings_achievable_current_limit(settings, current);
     tic_settings_set_current_limit(settings, current);
 
-    uint32_t current_during_error =
+    int32_t current_during_error =
       tic_settings_get_current_limit_during_error(settings);
 
-    if (current_during_error > current)
+    if (current_during_error > (int32_t)current)
     {
-      current_during_error = 0;
+      current_during_error = -1;
       tic_sprintf(warnings,
         "Warning: The current limit during error was higher than "
         "the default current limit so it will be changed to be the same.\n");
     }
 
-    current_during_error = tic_settings_achievable_current_limit(
-      settings, current_during_error);
+    if (current_during_error < -1)
+    {
+      current_during_error = -1;
+      tic_sprintf(warnings,
+        "Warning: The current limit during error was an invalid negative number "
+        "so it will be changed to be the same as the default current limit.\n");
+    }
+
+    if (current_during_error >= 0)
+    {
+      current_during_error = tic_settings_achievable_current_limit(
+        settings, current_during_error);
+    }
     tic_settings_set_current_limit_during_error(settings, current_during_error);
   }
 
@@ -408,7 +420,7 @@ static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings
 
   {
     uint32_t speed_max = tic_settings_get_speed_max(settings);
-    uint32_t speed_min = tic_settings_get_speed_min(settings);
+    uint32_t starting_speed = tic_settings_get_starting_speed(settings);
 
     if (speed_max > TIC_MAX_ALLOWED_SPEED)
     {
@@ -419,16 +431,16 @@ static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings
         speed_max, speed_max_khz);
     }
 
-    if (speed_min > speed_max)
+    if (starting_speed > speed_max)
     {
-      speed_min = speed_max;
+      starting_speed = speed_max;
       tic_sprintf(warnings,
-        "Warning: The minimum speed was greater than the maximum speed "
-        "so it will be lowered to %u.\n", speed_min);
+        "Warning: The starting speed was greater than the maximum speed "
+        "so it will be lowered to %u.\n", starting_speed);
     }
 
     tic_settings_set_speed_max(settings, speed_max);
-    tic_settings_set_speed_min(settings, speed_min);
+    tic_settings_set_starting_speed(settings, starting_speed);
   }
 
   {
@@ -1221,13 +1233,13 @@ uint32_t tic_settings_get_current_limit(const tic_settings * settings)
 }
 
 void tic_settings_set_current_limit_during_error(tic_settings * settings,
-  uint32_t current_limit)
+  int32_t current_limit)
 {
   if (!settings) { return; }
   settings->current_limit_during_error = current_limit;
 }
 
-uint32_t tic_settings_get_current_limit_during_error(const tic_settings * settings)
+int32_t tic_settings_get_current_limit_during_error(const tic_settings * settings)
 {
   if (!settings) { return 0; }
   return settings->current_limit_during_error;
@@ -1257,16 +1269,16 @@ uint8_t tic_settings_get_decay_mode(const tic_settings * settings)
   return settings->decay_mode;
 }
 
-void tic_settings_set_speed_min(tic_settings * settings, uint32_t speed_min)
+void tic_settings_set_starting_speed(tic_settings * settings, uint32_t starting_speed)
 {
   if (!settings) { return; }
-  settings->speed_min = speed_min;
+  settings->starting_speed = starting_speed;
 }
 
-uint32_t tic_settings_get_speed_min(const tic_settings * settings)
+uint32_t tic_settings_get_starting_speed(const tic_settings * settings)
 {
   if (!settings) { return 0; }
-  return settings->speed_min;
+  return settings->starting_speed;
 }
 
 void tic_settings_set_speed_max(tic_settings * settings, uint32_t speed_max)

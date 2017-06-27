@@ -190,8 +190,19 @@ static void tic_write_settings_to_buffer(const tic_settings * settings, uint8_t 
   buf[TIC_SETTING_CURRENT_LIMIT] =
     tic_current_limit_to_code(tic_settings_get_current_limit(settings));
 
-  buf[TIC_SETTING_CURRENT_LIMIT_DURING_ERROR] =
-    tic_current_limit_to_code(tic_settings_get_current_limit_during_error(settings));
+  {
+    int32_t current = tic_settings_get_current_limit_during_error(settings);
+    uint8_t code;
+    if (current == -1)
+    {
+      code = 0xFF;
+    }
+    else
+    {
+      code = tic_current_limit_to_code(current);
+    }
+    buf[TIC_SETTING_CURRENT_LIMIT_DURING_ERROR] = code;
+  }
 
   buf[TIC_SETTING_STEP_MODE] =
     tic_settings_get_step_mode(settings);
@@ -199,11 +210,11 @@ static void tic_write_settings_to_buffer(const tic_settings * settings, uint8_t 
   buf[TIC_SETTING_DECAY_MODE] = tic_settings_get_decay_mode(settings);
 
   {
-    uint32_t speed = tic_settings_get_speed_min(settings);
-    buf[TIC_SETTING_SPEED_MIN + 0] = speed >> 0 & 0xFF;
-    buf[TIC_SETTING_SPEED_MIN + 1] = speed >> 8 & 0xFF;
-    buf[TIC_SETTING_SPEED_MIN + 2] = speed >> 16 & 0xFF;
-    buf[TIC_SETTING_SPEED_MIN + 3] = speed >> 24 & 0xFF;
+    uint32_t speed = tic_settings_get_starting_speed(settings);
+    buf[TIC_SETTING_STARTING_SPEED + 0] = speed >> 0 & 0xFF;
+    buf[TIC_SETTING_STARTING_SPEED + 1] = speed >> 8 & 0xFF;
+    buf[TIC_SETTING_STARTING_SPEED + 2] = speed >> 16 & 0xFF;
+    buf[TIC_SETTING_STARTING_SPEED + 3] = speed >> 24 & 0xFF;
   }
 
   {

@@ -122,7 +122,7 @@ public:
   void set_encoder_unlimited(bool encoder_unlimited);
 
   void set_speed_max(uint32_t speed_max);
-  void set_speed_min(uint32_t speed_min);
+  void set_starting_speed(uint32_t starting_speed);
   void set_accel_max(uint32_t accel_max);
   void set_decel_max(uint32_t decel_max);
   void set_decel_accel_max_same(bool decel_accel_max_same);
@@ -199,7 +199,7 @@ private slots:
   void on_encoder_unlimited_check_stateChanged(int state);
 
   void on_speed_max_value_valueChanged(int value);
-  void on_speed_min_value_valueChanged(int value);
+  void on_starting_speed_value_valueChanged(int value);
   void on_accel_max_value_valueChanged(int value);
   void on_decel_max_value_valueChanged(int value);
   void on_decel_accel_max_same_check_stateChanged(int state);
@@ -379,9 +379,9 @@ private:
   QLabel * speed_max_label;
   QSpinBox * speed_max_value;
   QLabel * speed_max_value_pretty;
-  QLabel * speed_min_label;
-  QSpinBox * speed_min_value;
-  QLabel * speed_min_value_pretty;
+  QLabel * starting_speed_label;
+  QSpinBox * starting_speed_value;
+  QLabel * starting_speed_value_pretty;
   QLabel * accel_max_label;
   QSpinBox * accel_max_value;
   QLabel * accel_max_value_pretty;
