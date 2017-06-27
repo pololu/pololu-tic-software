@@ -170,6 +170,7 @@ private slots:
   void on_manual_target_return_key_shortcut_activated();
   void on_set_target_button_clicked();
   void on_auto_set_target_check_stateChanged(int state);
+  void on_auto_zero_target_check_stateChanged(int state);
   void on_stop_button_clicked();
   void on_decel_stop_button_clicked();
 

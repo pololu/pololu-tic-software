@@ -622,6 +622,15 @@ void main_window::on_auto_set_target_check_stateChanged(int state)
   }
 }
 
+void main_window::on_auto_zero_target_check_stateChanged(int state)
+{
+  if (suppress_events) { return; }
+  if (state == Qt::Checked)
+  {
+    manual_target_scroll_bar->setValue(0);
+  }
+}
+
 void main_window::on_stop_button_clicked()
 {
   controller->halt_and_hold();
@@ -1156,6 +1165,7 @@ QWidget * main_window::setup_manual_target_box()
 
   {
     auto_zero_target_check = new QCheckBox();
+    auto_zero_target_check->setObjectName("auto_zero_target_check");
     layout->addWidget(auto_zero_target_check, 0, Qt::AlignLeft);
   }
 
