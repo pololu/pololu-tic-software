@@ -274,8 +274,8 @@ tic_error * tic_settings_to_string(const tic_settings * settings, char ** string
   }
 
   {
-    uint32_t current = tic_settings_get_current_limit_during_error(settings);
-    tic_sprintf(&str, "current_limit_during_error: %u\n", current);
+    int32_t current = tic_settings_get_current_limit_during_error(settings);
+    tic_sprintf(&str, "current_limit_during_error: %d\n", current);
   }
 
   {

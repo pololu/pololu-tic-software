@@ -232,8 +232,16 @@ static void write_buffer_to_settings(const uint8_t * buf, tic_settings * setting
   }
 
   {
-    uint32_t current_limit =
-      tic_current_limit_from_code(buf[TIC_SETTING_CURRENT_LIMIT_DURING_ERROR]);
+    uint8_t code = buf[TIC_SETTING_CURRENT_LIMIT_DURING_ERROR];
+    int32_t current_limit;
+    if (code == 0xFF)
+    {
+      current_limit = -1;
+    }
+    else
+    {
+      current_limit = tic_current_limit_from_code(code);
+    }
     tic_settings_set_current_limit_during_error(settings, current_limit);
   }
 

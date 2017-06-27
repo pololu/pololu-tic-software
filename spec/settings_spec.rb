@@ -33,7 +33,7 @@ tx_config: default
 rx_config: default
 rc_config: default
 current_limit: 192
-current_limit_during_error: 0
+current_limit_during_error: -1
 step_mode: 1
 decay_mode: mixed
 speed_max: 2000000
@@ -154,9 +154,14 @@ def test_cases_for_settings_fix(product)
       { }
     ],
     [ { 'current_limit' => 320, 'current_limit_during_error' => 640 },
-      { 'current_limit_during_error' => 0 },
+      { 'current_limit_during_error' => -1 },
       "Warning: The current limit during error was higher than the default " \
       "current limit so it will be changed to be the same.\n"
+    ],
+    [ { 'current_limit' => 320, 'current_limit_during_error' => -2 },
+      { 'current_limit_during_error' => -1 },
+      "Warning: The current limit during error was an invalid negative number " \
+      "so it will be changed to be the same as the default current limit.\n"
     ],
     [ { 'speed_max' => 70000_0000 },
       { 'speed_max' => 50000_0000 },

@@ -533,7 +533,7 @@ static tic_error * apply_string_pair(tic_settings * settings,
     {
       return tic_error_create("Invalid current_limit_during_error value.");
     }
-    if (current_limit < 0 || current_limit > UINT32_MAX)
+    if (current_limit < INT32_MIN || current_limit > INT32_MAX)
     {
       return tic_error_create("The current_limit_during_error value is out of range.");
     }
