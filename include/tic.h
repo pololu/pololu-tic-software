@@ -575,30 +575,30 @@ void tic_settings_set_auto_clear_driver_error(tic_settings *, bool);
 TIC_API
 bool tic_settings_get_auto_clear_driver_error(const tic_settings *);
 
-/// Sets the Input invalid response setting, which determines what the Tic will
-/// do when its input is considered to be invalid.  Should be one of:
-/// - TIC_RESPONSE_DISABLE_DRIVER
-/// - TIC_RESPONSE_STOP
-/// - TIC_RESPONSE_COAST_TO_STOP
+/// Sets the Soft error response setting, which determines what the Tic will
+/// do when there is a soft error.  Should be one of:
+/// - TIC_RESPONSE_DEENERGIZE
+/// - TIC_RESPONSE_HALT_AND_HOLD
+/// - TIC_RESPONSE_DECEL_TO_STOP
 /// - TIC_RESPONSE_GO_TO_POSITION
 TIC_API
-void tic_settings_set_input_invalid_response(tic_settings *, uint8_t);
+void tic_settings_set_soft_error_response(tic_settings *, uint8_t);
 
-/// Gets the Input invalid response setting described in
-/// tic_settings_set_input_invalid_response().
+/// Gets the Soft error response setting described in
+/// tic_settings_set_soft_error_response().
 TIC_API
-uint8_t tic_settings_get_input_invalid_response(const tic_settings *);
+uint8_t tic_settings_get_soft_error_response(const tic_settings *);
 
-/// Sets the Input invalid position setting, which is the position the Tic will
-/// go to if its Input invalid response parameter is set to
-/// TIC_RESPONSE_GO_TO_POSITION.
+/// Sets the Soft error position setting, which is the position the Tic will go
+/// to when there is a soft error and its Soft error response parameter is set
+/// to TIC_RESPONSE_GO_TO_POSITION.
 TIC_API
-void tic_settings_set_input_invalid_position(tic_settings *, int32_t);
+void tic_settings_set_soft_error_position(tic_settings *, int32_t);
 
 /// Gets the Input invalid position setting described in
-/// tic_settings_set_input_invalid_response().
+/// tic_settings_set_soft_error_response().
 TIC_API
-int32_t tic_settings_get_input_invalid_position(const tic_settings *);
+int32_t tic_settings_get_soft_error_position(const tic_settings *);
 
 /// Sets the baud rate in bits per second.
 ///
@@ -1283,10 +1283,13 @@ tic_error * tic_exit_safe_start(tic_handle *);
 /// causes the Tic to stop the motor and set its Safe Start Violation error bit.
 /// The control input needs to move to its neutral position before the Tic will
 /// move the motor again.
+///
+/// In the RC Position, Analog Position, or Encoder Position control modes, this
+/// command is not useful.  It will set the Safe Start Violation error bit,
+/// causing the motor to stop, but the error bit will be cleared very quickly
+/// and the motor will continue moving.
 TIC_API TIC_WARN_UNUSED
 tic_error * tic_enter_safe_start(tic_handle *);
-// TODO: In the RC Position, Analog Position, or Encoder Position control modes,
-// this command does what exactly?
 
 /// Sends the Reset command.
 ///

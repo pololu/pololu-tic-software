@@ -20,15 +20,15 @@ static void tic_write_settings_to_buffer(const tic_settings * settings, uint8_t 
   buf[TIC_SETTING_AUTO_CLEAR_DRIVER_ERROR] =
     tic_settings_get_auto_clear_driver_error(settings);
 
-  buf[TIC_SETTING_INPUT_INVALID_RESPONSE] =
-    tic_settings_get_input_invalid_response(settings);
+  buf[TIC_SETTING_SOFT_ERROR_RESPONSE] =
+    tic_settings_get_soft_error_response(settings);
 
   {
-    uint32_t position = (uint32_t)tic_settings_get_input_invalid_position(settings);
-    buf[TIC_SETTING_INPUT_INVALID_POSITION + 0] = position >> 0 & 0xFF;
-    buf[TIC_SETTING_INPUT_INVALID_POSITION + 1] = position >> 8 & 0xFF;
-    buf[TIC_SETTING_INPUT_INVALID_POSITION + 2] = position >> 16 & 0xFF;
-    buf[TIC_SETTING_INPUT_INVALID_POSITION + 3] = position >> 24 & 0xFF;
+    uint32_t position = (uint32_t)tic_settings_get_soft_error_position(settings);
+    buf[TIC_SETTING_SOFT_ERROR_POSITION + 0] = position >> 0 & 0xFF;
+    buf[TIC_SETTING_SOFT_ERROR_POSITION + 1] = position >> 8 & 0xFF;
+    buf[TIC_SETTING_SOFT_ERROR_POSITION + 2] = position >> 16 & 0xFF;
+    buf[TIC_SETTING_SOFT_ERROR_POSITION + 3] = position >> 24 & 0xFF;
   }
 
   {

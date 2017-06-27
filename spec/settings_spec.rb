@@ -8,8 +8,8 @@ never_sleep: false
 disable_safe_start: false
 ignore_err_line_high: false
 auto_clear_driver_error: true
-input_invalid_response: disable_driver
-input_invalid_position: 0
+soft_error_response: deenergize
+soft_error_position: 0
 serial_baud_rate: 9600
 serial_device_number: 14
 command_timeout: 1000
@@ -61,8 +61,8 @@ never_sleep: true
 disable_safe_start: true
 ignore_err_line_high: true
 auto_clear_driver_error: true
-input_invalid_response: coast_to_stop
-input_invalid_position: -234333890
+soft_error_response: decel_to_hold
+soft_error_position: -234333890
 serial_baud_rate: 115385
 serial_device_number: 40
 command_timeout: 2020

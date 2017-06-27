@@ -105,28 +105,28 @@ static tic_error * apply_string_pair(tic_settings * settings,
     }
     tic_settings_set_auto_clear_driver_error(settings, auto_clear_driver_error);
   }
-  else if (!strcmp(key, "input_invalid_response"))
+  else if (!strcmp(key, "soft_error_response"))
   {
     uint32_t response;
     if (!tic_name_to_code(tic_response_names, value, &response))
     {
-      return tic_error_create("Unrecognized input_invalid_response value.");
+      return tic_error_create("Unrecognized soft_error_response value.");
     }
-    tic_settings_set_input_invalid_response(settings, response);
+    tic_settings_set_soft_error_response(settings, response);
   }
-  else if (!strcmp(key, "input_invalid_position"))
+  else if (!strcmp(key, "soft_error_position"))
   {
     int64_t position;
     if (!tic_string_to_i64(value, &position))
     {
-      return tic_error_create("Invalid position value.");
+      return tic_error_create("Invalid soft_error_position value.");
     }
     if (position < INT32_MIN || position > INT32_MAX)
     {
       return tic_error_create(
-        "The input_invalid_position value is out of range.");
+        "The soft_error_position value is out of range.");
     }
-    tic_settings_set_input_invalid_position(settings, position);
+    tic_settings_set_soft_error_position(settings, position);
   }
   else if (!strcmp(key, "serial_baud_rate"))
   {

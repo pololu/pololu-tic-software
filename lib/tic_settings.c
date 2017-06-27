@@ -9,8 +9,8 @@ struct tic_settings
   bool disable_safe_start;
   bool ignore_err_line_high;
   bool auto_clear_driver_error;
-  uint8_t input_invalid_response;
-  int32_t input_invalid_position;
+  uint8_t soft_error_response;
+  int32_t soft_error_position;
   uint32_t serial_baud_rate;
   uint8_t serial_device_number;
   uint16_t command_timeout;
@@ -190,7 +190,7 @@ static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings
   // TODO: use present and future tense for these messages, not past tense
   // TODO: fix command_timeout; must be less than 60000
   // TODO: fix enum values to be valid?
-  // TODO: don't allow tic_input_invalid_response to be position in a speed control mode
+  // TODO: don't allow tic_soft_error_response to be position in a speed control mode
 
   uint8_t control_mode = tic_settings_get_control_mode(settings);
 
@@ -774,30 +774,30 @@ bool tic_settings_get_auto_clear_driver_error(const tic_settings * settings)
   return settings->auto_clear_driver_error;
 }
 
-void tic_settings_set_input_invalid_response(tic_settings * settings,
-  uint8_t input_invalid_response)
+void tic_settings_set_soft_error_response(tic_settings * settings,
+  uint8_t soft_error_response)
 {
   if (!settings) { return; }
-  settings->input_invalid_response = input_invalid_response;
+  settings->soft_error_response = soft_error_response;
 }
 
-uint8_t tic_settings_get_input_invalid_response(const tic_settings * settings)
+uint8_t tic_settings_get_soft_error_response(const tic_settings * settings)
 {
   if (!settings) { return 0; }
-  return settings->input_invalid_response;
+  return settings->soft_error_response;
 }
 
-void tic_settings_set_input_invalid_position(tic_settings * settings,
-  int32_t input_invalid_position)
+void tic_settings_set_soft_error_position(tic_settings * settings,
+  int32_t soft_error_position)
 {
   if (!settings) { return; }
-  settings->input_invalid_position = input_invalid_position;
+  settings->soft_error_position = soft_error_position;
 }
 
-int32_t tic_settings_get_input_invalid_position(const tic_settings * settings)
+int32_t tic_settings_get_soft_error_position(const tic_settings * settings)
 {
   if (!settings) { return 0; }
-  return settings->input_invalid_position;
+  return settings->soft_error_position;
 }
 
 void tic_settings_set_serial_baud_rate(tic_settings * settings, uint32_t serial_baud_rate)

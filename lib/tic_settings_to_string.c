@@ -83,15 +83,15 @@ tic_error * tic_settings_to_string(const tic_settings * settings, char ** string
   }
 
   {
-    uint8_t response = tic_settings_get_input_invalid_response(settings);
+    uint8_t response = tic_settings_get_soft_error_response(settings);
     const char * response_str;
     tic_code_to_name(tic_response_names, response, &response_str);
-    tic_sprintf(&str, "input_invalid_response: %s\n", response_str);
+    tic_sprintf(&str, "soft_error_response: %s\n", response_str);
   }
 
   {
-    int32_t position = tic_settings_get_input_invalid_position(settings);
-    tic_sprintf(&str, "input_invalid_position: %d\n", position);
+    int32_t position = tic_settings_get_soft_error_position(settings);
+    tic_sprintf(&str, "soft_error_position: %d\n", position);
   }
 
   {

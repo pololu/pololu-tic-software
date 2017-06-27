@@ -107,9 +107,9 @@ const tic_name tic_control_mode_names[] =
 
 const tic_name tic_response_names[] =
 {
-  { "disable_driver", TIC_RESPONSE_DISABLE_DRIVER },
-  { "stop", TIC_RESPONSE_STOP },
-  { "coast_to_stop", TIC_RESPONSE_COAST_TO_STOP },
+  { "deenergize", TIC_RESPONSE_DEENERGIZE },
+  { "halt_and_hold", TIC_RESPONSE_HALT_AND_HOLD },
+  { "decel_to_hold", TIC_RESPONSE_DECEL_TO_HOLD },
   { "go_to_position", TIC_RESPONSE_GO_TO_POSITION },
   { NULL, 0},
 };

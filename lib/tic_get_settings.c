@@ -30,13 +30,13 @@ static void write_buffer_to_settings(const uint8_t * buf, tic_settings * setting
   }
 
   {
-    uint8_t response = buf[TIC_SETTING_INPUT_INVALID_RESPONSE];
-    tic_settings_set_input_invalid_response(settings, response);
+    uint8_t response = buf[TIC_SETTING_SOFT_ERROR_RESPONSE];
+    tic_settings_set_soft_error_response(settings, response);
   }
 
   {
-    int32_t position = read_i32(buf + TIC_SETTING_INPUT_INVALID_POSITION);
-    tic_settings_set_input_invalid_position(settings, position);
+    int32_t position = read_i32(buf + TIC_SETTING_SOFT_ERROR_POSITION);
+    tic_settings_set_soft_error_position(settings, position);
   }
 
   {
