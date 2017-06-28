@@ -40,6 +40,16 @@ const tic_name tic_decay_mode_names[] =
   { NULL, 0 },
 };
 
+const tic_name tic_input_state_names[] =
+{
+  { "not_ready", TIC_INPUT_STATE_NOT_READY },
+  { "invalid", TIC_INPUT_STATE_INVALID },
+  { "halt", TIC_INPUT_STATE_HALT },
+  { "position", TIC_INPUT_STATE_POSITION },
+  { "velocity", TIC_INPUT_STATE_VELOCITY },
+  { NULL, 0 },
+};
+
 const tic_name tic_device_reset_names[] =
 {
   { "power_up", TIC_RESET_POWER_UP },
@@ -149,6 +159,13 @@ const char * tic_look_up_decay_mode_string(uint8_t decay_mode)
 {
   const char * str;
   tic_code_to_name(tic_decay_mode_names, decay_mode, &str);
+  return str;
+}
+
+const char * tic_look_up_input_state_string(uint8_t input_state)
+{
+  const char * str;
+  tic_code_to_name(tic_input_state_names, input_state, &str);
   return str;
 }
 

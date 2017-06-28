@@ -32,6 +32,7 @@ struct tic_variables
   uint8_t step_mode;
   uint32_t current_limit;
   uint8_t decay_mode;
+  uint8_t input_state;
   uint16_t input_after_averaging;
   uint16_t input_after_hysteresis;
   int32_t input_after_scaling;
@@ -137,6 +138,7 @@ static void write_buffer_to_variables(const uint8_t * buf, tic_variables * vars)
   vars->step_mode = buf[TIC_VAR_STEP_MODE];
   vars->current_limit = TIC_CURRENT_LIMIT_UNITS_MA * buf[TIC_VAR_CURRENT_LIMIT];
   vars->decay_mode = buf[TIC_VAR_DECAY_MODE];
+  vars->input_state = buf[TIC_VAR_INPUT_STATE];
   vars->input_after_averaging = read_u16(buf + TIC_VAR_INPUT_AFTER_AVERAGING);
   vars->input_after_hysteresis = read_u16(buf + TIC_VAR_INPUT_AFTER_HYSTERESIS);
   vars->input_after_scaling = read_i32(buf + TIC_VAR_INPUT_AFTER_SCALING);
@@ -370,6 +372,12 @@ uint8_t tic_variables_get_decay_mode(const tic_variables * variables)
 {
   if (variables == NULL) { return 0; }
   return variables->decay_mode;
+}
+
+uint8_t tic_variables_get_input_state(const tic_variables * variables)
+{
+  if (variables == NULL) { return 0; }
+  return variables->input_state;
 }
 
 uint16_t tic_variables_get_input_after_averaging(const tic_variables * variables)

@@ -111,6 +111,14 @@ const char * tic_look_up_nice_error_string(uint32_t error);
 TIC_API
 const char * tic_look_up_decay_mode_string(uint8_t decay_mode);
 
+/// Loops up the string corresponding to the specified input state,
+/// e.g. "not_ready".  The input_state argument should be one of the
+/// TIC_INPUT_STATE_* macros, but if it is not, this function returns an empty
+/// string.  The returned string will be valid indefinitely and should not be
+/// freed.  See tic_variables_get_input_state().
+TIC_API
+const char * tic_look_up_input_state_string(uint8_t input_state);
+
 /// Looks up the string corresponding to the specified device reset,
 /// e.g. "stack_underflow".  The device_reset argument should be one of the
 /// TIC_RESET_* macros, but if it is not, this function returns an empty string.
@@ -375,7 +383,11 @@ uint32_t tic_variables_get_current_limit(const tic_variables *);
 TIC_API
 uint8_t tic_variables_get_decay_mode(const tic_variables *);
 
-// TODO: add tic_variables_get_input_state function
+/// Gets the current state of the control input to Tic.
+///
+/// This will be one of the TIC_INPUT_STATE_* macros.
+TIC_API
+uint8_t tic_variables_get_input_state(const tic_variables *);
 
 /// Gets a variable used in the process that converts raw RC and analog values
 /// into a motor position or speed.
