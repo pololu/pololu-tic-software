@@ -8,6 +8,7 @@ class BallScrollBar;
 class QButtonGroup;
 class QCheckBox;
 class QComboBox;
+class QDoubleSpinBox;
 class QFrame;
 class QGridLayout;
 class QGroupBox;
@@ -108,6 +109,7 @@ public:
   void set_serial_baud_rate(uint32_t serial_baud_rate);
   void set_serial_device_number(uint8_t serial_device_number);
   void set_serial_crc_enabled(bool serial_crc_enabled);
+  void set_command_timeout(uint16_t command_timeout);
 
   void set_input_min(uint32_t input_min);
   void set_input_neutral_min(uint32_t input_neutral_min);
@@ -133,7 +135,7 @@ public:
 
   void set_disable_safe_start(bool disable_safe_start);
   void set_ignore_err_line_high(bool ignore_err_line_high);
-  
+
   void set_soft_error_response(uint8_t soft_error_response);
   void set_soft_error_position(int32_t soft_error_position);
   void set_current_limit_during_error(int32_t current_limit_during_error);
@@ -144,6 +146,7 @@ private:
    * value is not found. */
   void set_u8_combo_box(QComboBox * combo, uint8_t value);
   void set_spin_box(QSpinBox * box, int value);
+  void set_double_spin_box(QDoubleSpinBox * spin, double value);
   void set_check_box(QCheckBox * check, bool value);
 
 protected:
@@ -189,6 +192,8 @@ private slots:
   void on_serial_baud_rate_value_editingFinished();
   void on_serial_device_number_value_valueChanged(int value);
   void on_serial_crc_enabled_check_stateChanged(int state);
+  void on_command_timeout_check_stateChanged(int state);
+  void on_command_timeout_value_valueChanged(double value);
 
   void on_input_min_value_valueChanged(int value);
   void on_input_neutral_min_value_valueChanged(int value);
@@ -215,7 +220,7 @@ private slots:
 
   void on_disable_safe_start_check_stateChanged(int state);
   void on_ignore_err_line_high_check_stateChanged(int state);
-  
+
   void on_soft_error_response_radio_group_buttonToggled(int id, bool checked);
   void on_soft_error_position_value_valueChanged(int value);
   void on_current_limit_during_error_check_stateChanged(int state);
@@ -363,6 +368,8 @@ private:
   QLabel * serial_device_number_label;
   QSpinBox * serial_device_number_value;
   QCheckBox * serial_crc_enabled_check;
+  QCheckBox * command_timeout_check;
+  QDoubleSpinBox * command_timeout_value;
 
   QGroupBox * scaling_settings_box;
   QGridLayout * scaling_settings_box_layout;

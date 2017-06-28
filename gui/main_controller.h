@@ -73,7 +73,8 @@ public:
   void handle_serial_baud_rate_input_finished();
   void handle_serial_device_number_input(uint8_t serial_device_number);
   void handle_serial_crc_enabled_input(bool serial_crc_enabled);
-
+  void handle_command_timeout_input(uint16_t command_timeout);
+  
   void handle_input_min_input(uint16_t input_min);
   void handle_input_neutral_min_input(uint16_t input_neutral_min);
   void handle_input_neutral_max_input(uint16_t input_neutral_max);
@@ -98,7 +99,7 @@ public:
 
   void handle_disable_safe_start_input(bool disable_safe_start);
   void handle_ignore_err_line_high_input(bool ignore_err_line_high);
-  
+
   void handle_soft_error_response_input(uint8_t soft_error_response);
   void handle_soft_error_position_input(int32_t soft_error_position);
   void handle_current_limit_during_error_input(int32_t current_limit_during_error);

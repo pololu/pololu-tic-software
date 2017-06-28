@@ -9,6 +9,7 @@
 #include <QCloseEvent>
 #include <QComboBox>
 #include <QDesktopServices>
+#include <QDoubleSpinBox>
 #include <QGridLayout>
 #include <QGroupBox>
 #include <QHBoxLayout>
@@ -312,6 +313,22 @@ void main_window::set_serial_crc_enabled(bool serial_crc_enabled)
   set_check_box(serial_crc_enabled_check, serial_crc_enabled);
 }
 
+void main_window::set_command_timeout(uint16_t command_timeout)
+{
+  if (command_timeout == 0)
+  {
+    set_check_box(command_timeout_check, false);
+    command_timeout_value->setEnabled(false);
+    command_timeout = TIC_DEFAULT_COMMAND_TIMEOUT;
+  }
+  else
+  {
+    set_check_box(command_timeout_check, true);
+    command_timeout_value->setEnabled(true);
+  }
+  set_double_spin_box(command_timeout_value, command_timeout / 1000);
+}
+
 void main_window::set_input_min(uint32_t input_min)
 {
   set_spin_box(input_min_value, input_min);
@@ -479,6 +496,19 @@ void main_window::set_u8_combo_box(QComboBox * combo, uint8_t value)
 }
 
 void main_window::set_spin_box(QSpinBox * spin, int value)
+{
+  // Only set the QSpinBox's value if the new value is numerically different.
+  // This prevents, for example, a value of "0000" from being changed to "0"
+  // while you're trying to change "10000" to "20000".
+  if (spin->value() != value)
+  {
+    suppress_events = true;
+    spin->setValue(value);
+    suppress_events = false;
+  }
+}
+
+void main_window::set_double_spin_box(QDoubleSpinBox * spin, double value)
 {
   // Only set the QSpinBox's value if the new value is numerically different.
   // This prevents, for example, a value of "0000" from being changed to "0"
@@ -726,6 +756,27 @@ void main_window::on_serial_crc_enabled_check_stateChanged(int state)
   controller->handle_serial_crc_enabled_input(state == Qt::Checked);
 }
 
+void main_window::on_command_timeout_check_stateChanged(int state)
+{
+  // Note: set_command_timeout() (called by controller) takes care of enabling/
+  // disabling the command_timeout_value spin box.
+  if (suppress_events) { return; }
+  if (state == Qt::Checked)
+  {
+    controller->handle_command_timeout_input(command_timeout_value->value() * 1000);
+  }
+  else
+  {
+    controller->handle_command_timeout_input(0);
+  }
+}
+
+void main_window::on_command_timeout_value_valueChanged(double value)
+{
+  if (suppress_events) { return; }
+  controller->handle_command_timeout_input(command_timeout_value->value() * 1000);
+}
+
 void main_window::on_input_min_value_valueChanged(int value)
 {
   if (suppress_events) { return; }
@@ -819,7 +870,7 @@ void main_window::on_decel_max_value_valueChanged(int value)
 void main_window::on_decel_accel_max_same_check_stateChanged(int state)
 {
   // Note: set_decel_max() (called by controller) takes care of enabling/
-  // disabling the max_decel_value spin box.
+  // disabling the decel_max_value spin box.
   if (suppress_events) { return; }
   if (state == Qt::Checked)
   {
@@ -1481,6 +1532,24 @@ QWidget * main_window::setup_serial_settings_box()
     layout->addWidget(serial_crc_enabled_check, row, 0, 1, 2, Qt::AlignLeft);
     row++;
   }
+  
+  {
+    command_timeout_check = new QCheckBox();
+    command_timeout_check->setObjectName("command_timeout_check");
+    layout->addWidget(command_timeout_check, row, 0, 1, 2, Qt::AlignLeft);
+    row++;
+  }
+  
+  {
+    command_timeout_value = new QDoubleSpinBox();
+    command_timeout_value->setObjectName("command_timeout_value");
+    command_timeout_value->setRange(0.001, TIC_MAX_ALLOWED_COMMAND_TIMEOUT / 1000);
+    command_timeout_value->setDecimals(3);
+    command_timeout_value->setSuffix(" s");
+    layout->addWidget(command_timeout_value, row, 1, Qt::AlignLeft);
+    row++;
+  }
+
 
   serial_settings_box->setLayout(layout);
   return serial_settings_box;
@@ -1751,31 +1820,31 @@ QWidget * main_window::setup_error_settings_box()
   QGridLayout * layout = error_settings_box_layout = new QGridLayout();
   layout->setColumnStretch(1, 1);
   int row = 0;
-    
+
   soft_error_response_radio_group = new QButtonGroup(this);
   soft_error_response_radio_group->setObjectName("soft_error_response_radio_group");
   //connect(soft_error_response_radio_group, SIGNAL(buttonToggled(int, bool)), this, SLOT(on_soft_error_response_radio_group_buttonToggled(int, bool)));
-  
+
   {
-    soft_error_response_radio_group->addButton(new QRadioButton(), TIC_RESPONSE_DEENERGIZE); 
+    soft_error_response_radio_group->addButton(new QRadioButton(), TIC_RESPONSE_DEENERGIZE);
     layout->addWidget(soft_error_response_radio_group->button(TIC_RESPONSE_DEENERGIZE),
       row++, 0, 1, 2, Qt::AlignLeft);
   }
-  
+
   {
-    soft_error_response_radio_group->addButton(new QRadioButton(), TIC_RESPONSE_HALT_AND_HOLD); 
+    soft_error_response_radio_group->addButton(new QRadioButton(), TIC_RESPONSE_HALT_AND_HOLD);
     layout->addWidget(soft_error_response_radio_group->button(TIC_RESPONSE_HALT_AND_HOLD),
       row++, 0, 1, 2, Qt::AlignLeft);
   }
 
   {
-    soft_error_response_radio_group->addButton(new QRadioButton(), TIC_RESPONSE_DECEL_TO_HOLD); 
+    soft_error_response_radio_group->addButton(new QRadioButton(), TIC_RESPONSE_DECEL_TO_HOLD);
     layout->addWidget(soft_error_response_radio_group->button(TIC_RESPONSE_DECEL_TO_HOLD),
       row++, 0, 1, 2, Qt::AlignLeft);
   }
 
   {
-    soft_error_response_radio_group->addButton(new QRadioButton(), TIC_RESPONSE_GO_TO_POSITION); 
+    soft_error_response_radio_group->addButton(new QRadioButton(), TIC_RESPONSE_GO_TO_POSITION);
     soft_error_position_value = new QSpinBox();
     soft_error_position_value->setObjectName("soft_error_position_value");
     soft_error_position_value->setRange(-0x7FFFFFFF, 0x7FFFFFFF);
@@ -1791,7 +1860,7 @@ QWidget * main_window::setup_error_settings_box()
     layout->addWidget(current_limit_during_error_check, row, 0, 1, 2, Qt::AlignLeft);
     row++;
   }
-  
+
   {
     current_limit_during_error_value = new QSpinBox();
     current_limit_during_error_value->setObjectName("current_limit_during_error_value");
@@ -1799,11 +1868,11 @@ QWidget * main_window::setup_error_settings_box()
     current_limit_during_error_value->setSuffix(" mA");
     layout->addWidget(current_limit_during_error_value, row, 1, Qt::AlignLeft);
   }
-  
+
   error_settings_box->setLayout(layout);
   return error_settings_box;
 }
-  
+
 //// end of pages
 
 QLayout * main_window::setup_footer()
@@ -1843,7 +1912,7 @@ void main_window::retranslate()
   device_list_label->setText(tr("Connected to:"));
 
   //// status page
-  
+
   device_info_box->setTitle(tr("Device info"));
   device_name_label->setText(tr("Name:"));
   serial_number_label->setText(tr("Serial number:"));
@@ -1892,13 +1961,14 @@ void main_window::retranslate()
 
   //// settings page
   // [all-settings]
-  
+
   control_mode_label->setText(tr("Control mode:"));
 
   serial_settings_box->setTitle(tr("Serial"));
   serial_baud_rate_label->setText(tr("Baud rate:"));
   serial_device_number_label->setText(tr("Device number:"));
   serial_crc_enabled_check->setText(tr("Enable CRC"));
+  command_timeout_check->setText(tr("Enable command timeout:"));
 
   scaling_settings_box->setTitle(tr("Input and scaling"));
   scaling_input_label->setText(tr("Input"));
@@ -1927,14 +1997,14 @@ void main_window::retranslate()
   misc_settings_box->setTitle(tr("Miscellaneous"));
   disable_safe_start_check->setText(tr("Disable safe start"));
   ignore_err_line_high_check->setText(tr("Ignore ERR line high"));
-  
+
   error_settings_box->setTitle(tr("Soft error response"));
   soft_error_response_radio_group->button(TIC_RESPONSE_DEENERGIZE)->setText(tr("De-energize"));
   soft_error_response_radio_group->button(TIC_RESPONSE_HALT_AND_HOLD)->setText(tr("Halt and hold"));
   soft_error_response_radio_group->button(TIC_RESPONSE_DECEL_TO_HOLD)->setText(tr("Decelerate to hold"));
   soft_error_response_radio_group->button(TIC_RESPONSE_GO_TO_POSITION)->setText(tr("Go to position:"));
   current_limit_during_error_check->setText(tr("Use different current limit during soft error:"));
-  
+
   //// end pages
 
   deenergize_button->setText(tr("De-energize"));
