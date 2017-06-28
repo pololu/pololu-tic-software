@@ -8,6 +8,28 @@ Firmware version:             9.99
 Last reset:                   (unknown)
 
 Operation state:              (unknown)
+Energized:                    yes
+Planning mode:                (unknown)
+Speed max:                    4294967295
+Starting speed:               4294967295
+Accel max:                    4294967295
+Decel max:                    4294967295
+Current position:             (-1)
+Current velocity:             -1
+Acting target position:       -1
+Time since last step:         4294967295
+
+VIN:                          65535 mV
+Up time:                      4294967295 ms
+Encoder position:             -1
+RC pulse width:               N/A
+Step mode:                    (unknown)
+Current limit:                4294967295 mA
+Decay mode:                   (unknown)
+Input state:                  (unknown)
+Input after averaging:        N/A
+Input after hysteresis:       N/A
+Input after scaling:          -1
 
 Errors currently stopping the motor:
   - Intentionally de-energized
@@ -26,7 +48,6 @@ Errors currently stopping the motor:
   - (unknown)
   - (unknown)
   - (unknown)
-
 Errors that occurred since last check:
   - Intentionally de-energized
   - Motor driver error
@@ -60,28 +81,6 @@ Errors that occurred since last check:
   - (unknown)
   - (unknown)
   - (unknown)
-
-Planning mode:                (unknown)
-Speed max:                    4294967295
-Starting speed:               4294967295
-Accel max:                    4294967295
-Decel max:                    4294967295
-Current position:             (-1)
-Current velocity:             -1
-Acting target position:       -1
-Time since last step:         4294967295
-
-VIN:                          65535 mV
-Up time:                      4294967295 ms
-Encoder position:             -1
-RC pulse width:               N/A
-Step mode:                    (unknown)
-Current limit:                4294967295 mA
-Decay mode:                   (unknown)
-Input state:                  (unknown)
-Input after averaging:        N/A
-Input after hysteresis:       N/A
-Input after scaling:          -1
 
 SCL pin:
   State:                      (unknown)

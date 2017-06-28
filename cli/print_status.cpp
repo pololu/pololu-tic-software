@@ -97,15 +97,10 @@ void print_status(const tic::variables & vars,
   std::cout << left_column << "Operation state: "
     << pretty_enum(tic_look_up_operation_state_string(vars.get_operation_state()))
     << std::endl;
-  std::cout << std::endl;
 
-  print_errors(vars.get_error_status(),
-    "Errors currently stopping the motor");
-  std::cout << std::endl;
-
-  print_errors(vars.get_errors_occurred(),
-    "Errors that occurred since last check");
-  std::cout << std::endl;
+  std::cout << left_column << "Energized: "
+    << (vars.get_energized() ? "yes" : "no")
+    << std::endl;
 
   uint8_t planning_mode = vars.get_planning_mode();
 
@@ -203,6 +198,12 @@ void print_status(const tic::variables & vars,
     << vars.get_input_after_scaling()
     << std::endl;
 
+  std::cout << std::endl;
+
+  print_errors(vars.get_error_status(),
+    "Errors currently stopping the motor");
+  print_errors(vars.get_errors_occurred(),
+    "Errors that occurred since last check");
   std::cout << std::endl;
 
   print_pin_info(vars, TIC_PIN_NUM_SCL, "SCL");

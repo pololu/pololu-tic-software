@@ -262,6 +262,18 @@ namespace tic
       return tic_variables_get_operation_state(pointer);
     }
 
+    /// Wrapper for tic_variables_get_energized().
+    bool get_energized() const noexcept
+    {
+      return tic_variables_get_energized(pointer);
+    }
+
+    /// Wrapper for tic_variables_get_learn_position_later().
+    bool get_learn_position_later() const noexcept
+    {
+      return tic_variables_get_learn_position_later(pointer);
+    }
+
     /// Wrapper for tic_variables_get_error_status().
     uint16_t get_error_status() const noexcept
     {
@@ -410,12 +422,6 @@ namespace tic
     int32_t get_input_after_scaling() const noexcept
     {
       return tic_variables_get_input_after_scaling(pointer);
-    }
-
-    /// Wrapper for tic_variables_get_learn_position_later().
-    bool get_learn_position_later() const noexcept
-    {
-      return tic_variables_get_learn_position_later(pointer);
     }
 
     /// Wrapper for tic_variables_get_analog_reading().

@@ -239,6 +239,16 @@ void tic_variables_free(tic_variables *);
 TIC_API
 uint8_t tic_variables_get_operation_state(const tic_variables *);
 
+/// Returns true if the motor driver is energized (trying to send current to its
+/// outputs).
+TIC_API
+bool tic_variables_get_energized(const tic_variables *);
+
+/// Gets a flag that indicates whether the Tic will re-learn its current
+/// position the next time it starts operating normally.
+TIC_API
+bool tic_variables_get_learn_position_later(const tic_variables *);
+
 /// Gets the errors that are currently stopping the motor.
 ///
 /// This is a bitmask, and the bits are defined by the TIC_ERROR_* macros.
@@ -409,11 +419,6 @@ uint16_t tic_variables_get_input_after_hysteresis(const tic_variables *);
 /// A value of TIC_INPUT_NULL means the input value is not available.
 TIC_API
 int32_t tic_variables_get_input_after_scaling(const tic_variables *);
-
-/// Gets a flag that indicates whether the Tic will re-learn its current
-/// position the next time it starts operating normally.
-TIC_API
-bool tic_variables_get_learn_position_later(const tic_variables *);
 
 /// Gets the analog reading from the specified pin, if analog readings are
 /// enabled for that pin.
