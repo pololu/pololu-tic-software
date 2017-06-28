@@ -388,6 +388,12 @@ namespace tic
       return tic_variables_get_decay_mode(pointer);
     }
 
+    /// Wrapper for tic_variables_get_input_state().
+    uint8_t get_input_state() const noexcept
+    {
+      return tic_variables_get_input_state(pointer);
+    }
+
     /// Wrapper for tic_variables_get_input_after_averaging().
     uint16_t get_input_after_averaging() const noexcept
     {
