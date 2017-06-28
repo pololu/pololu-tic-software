@@ -412,6 +412,12 @@ namespace tic
       return tic_variables_get_input_after_scaling(pointer);
     }
 
+    /// Wrapper for tic_variables_get_learn_position_later().
+    bool get_learn_position_later() const noexcept
+    {
+      return tic_variables_get_learn_position_later(pointer);
+    }
+
     /// Wrapper for tic_variables_get_analog_reading().
     uint16_t get_analog_reading(uint8_t pin) const noexcept
     {

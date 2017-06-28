@@ -23,12 +23,6 @@ struct tic_variables
   uint32_t up_time;
   int32_t encoder_position;
   uint16_t rc_pulse_width;
-  struct {
-    bool switch_status;
-    uint16_t analog_reading;
-    bool digital_reading;
-    uint8_t pin_state;
-  } pin_info[PIN_COUNT];
   uint8_t step_mode;
   uint32_t current_limit;
   uint8_t decay_mode;
@@ -36,6 +30,14 @@ struct tic_variables
   uint16_t input_after_averaging;
   uint16_t input_after_hysteresis;
   int32_t input_after_scaling;
+  bool learn_position_later;
+
+  struct {
+    uint16_t analog_reading;
+    bool digital_reading;
+    bool switch_status;
+    uint8_t pin_state;
+  } pin_info[PIN_COUNT];
 };
 
 tic_error * tic_variables_create(tic_variables ** variables)
@@ -142,6 +144,7 @@ static void write_buffer_to_variables(const uint8_t * buf, tic_variables * vars)
   vars->input_after_averaging = read_u16(buf + TIC_VAR_INPUT_AFTER_AVERAGING);
   vars->input_after_hysteresis = read_u16(buf + TIC_VAR_INPUT_AFTER_HYSTERESIS);
   vars->input_after_scaling = read_i32(buf + TIC_VAR_INPUT_AFTER_SCALING);
+  vars->learn_position_later = buf[TIC_VAR_LEARN_POSITION_LATER] & 1;
 
   {
     uint8_t s = buf[TIC_VAR_SWITCH_STATUS];
@@ -396,6 +399,12 @@ int32_t tic_variables_get_input_after_scaling(const tic_variables * variables)
 {
   if (variables == NULL) { return 0xFFFF; }
   return variables->input_after_scaling;
+}
+
+bool tic_variables_get_learn_position_later(const tic_variables * variables)
+{
+  if (variables == NULL) { return 0xFFFF; }
+  return variables->learn_position_later;
 }
 
 uint16_t tic_variables_get_analog_reading(const tic_variables * variables,
