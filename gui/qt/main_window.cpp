@@ -4,6 +4,7 @@
 
 #include "BallScrollBar.h"
 
+#include <QButtonGroup>
 #include <QCheckBox>
 #include <QCloseEvent>
 #include <QComboBox>
@@ -386,14 +387,19 @@ void main_window::set_accel_max(uint32_t accel_max)
 
 void main_window::set_decel_max(uint32_t decel_max)
 {
+  if (decel_max == 0)
+  {
+    set_check_box(decel_accel_max_same_check, true);
+    decel_max_value->setEnabled(false);
+    decel_max = accel_max_value->value();
+  }
+  else
+  {
+    set_check_box(decel_accel_max_same_check, false);
+    decel_max_value->setEnabled(true);
+  }
   set_spin_box(decel_max_value, decel_max);
   decel_max_value_pretty->setText(QString(convert_accel_to_pps2_string(decel_max).c_str()));
-}
-
-void main_window::set_decel_accel_max_same(bool decel_accel_max_same)
-{
-  set_check_box(decel_accel_max_same_check, decel_accel_max_same);
-  decel_max_value->setEnabled(!decel_accel_max_same);
 }
 
 void main_window::set_step_mode(uint8_t step_mode)
@@ -419,6 +425,50 @@ void main_window::set_disable_safe_start(bool disable_safe_start)
 void main_window::set_ignore_err_line_high(bool ignore_err_line_high)
 {
   set_check_box(ignore_err_line_high_check, ignore_err_line_high);
+}
+
+void main_window::set_soft_error_response(uint8_t soft_error_response)
+{
+  suppress_events = true;
+  QAbstractButton * radio = soft_error_response_radio_group->button(soft_error_response);
+  if (radio)
+  {
+    radio->setChecked(true);
+  }
+  else
+  {
+    // The value doesn't correspond with any of the radio buttons, so clear
+    // the currently selected button, if any.
+    QAbstractButton * checked = soft_error_response_radio_group->checkedButton();
+    if (checked)
+    {
+      soft_error_response_radio_group->setExclusive(false);
+      checked->setChecked(false);
+      soft_error_response_radio_group->setExclusive(true);
+    }
+  }
+  suppress_events = false;
+}
+
+void main_window::set_soft_error_position(int32_t soft_error_position)
+{
+  set_spin_box(soft_error_position_value, soft_error_position);
+}
+
+void main_window::set_current_limit_during_error(int32_t current_limit_during_error)
+{
+  if (current_limit_during_error == -1)
+  {
+    set_check_box(current_limit_during_error_check, false);
+    current_limit_during_error_value->setEnabled(false);
+    current_limit_during_error = current_limit_value->value();
+  }
+  else
+  {
+    set_check_box(current_limit_during_error_check, true);
+    current_limit_during_error_value->setEnabled(true);
+  }
+  set_spin_box(current_limit_during_error_value, current_limit_during_error);
 }
 
 void main_window::set_u8_combo_box(QComboBox * combo, uint8_t value)
@@ -768,8 +818,8 @@ void main_window::on_decel_max_value_valueChanged(int value)
 
 void main_window::on_decel_accel_max_same_check_stateChanged(int state)
 {
-  // Note: set_decel_accel_max_same() (called by controller) takes care of
-  // enabling/disabling the max_decel_value spin box.
+  // Note: set_decel_max() (called by controller) takes care of enabling/
+  // disabling the max_decel_value spin box.
   if (suppress_events) { return; }
   if (state == Qt::Checked)
   {
@@ -817,6 +867,46 @@ void main_window::on_ignore_err_line_high_check_stateChanged(int state)
 {
   if (suppress_events) { return; }
   controller->handle_ignore_err_line_high_input(state == Qt::Checked);
+}
+
+void main_window::on_soft_error_response_radio_group_buttonToggled(int id, bool checked)
+{
+  if (suppress_events) { return; }
+  if (checked) { controller->handle_soft_error_response_input(id); }
+}
+
+void main_window::on_soft_error_position_value_valueChanged(int value)
+{
+  if (suppress_events) { return; }
+  controller->handle_soft_error_position_input(value);
+}
+
+void main_window::on_current_limit_during_error_check_stateChanged(int state)
+{
+  // Note: set_current_limit_during_error() (called by controller) takes care of
+  // enabling/disabling the current_limit_during_error_value spin box.
+  if (suppress_events) { return; }
+  if (state == Qt::Checked)
+  {
+    controller->handle_current_limit_during_error_input(
+      current_limit_during_error_value->value());
+  }
+  else
+  {
+    controller->handle_current_limit_during_error_input(-1);
+  }
+}
+
+void main_window::on_current_limit_during_error_value_valueChanged(int value)
+{
+  if (suppress_events) { return; }
+  controller->handle_current_limit_during_error_input(value);
+}
+
+void main_window::on_current_limit_during_error_value_editingFinished()
+{
+  if (suppress_events) { return; }
+  controller->handle_current_limit_during_error_input_finished();
 }
 
 // On Mac OS X, field labels are usually right-aligned.
@@ -1317,6 +1407,7 @@ QLayout * main_window::setup_settings_right_column()
   QVBoxLayout * layout = settings_right_column_layout = new QVBoxLayout();
 
   layout->addWidget(setup_motor_settings_box());
+  layout->addWidget(setup_error_settings_box());
   layout->addWidget(setup_misc_settings_box());
   layout->addStretch(1);
 
@@ -1654,6 +1745,67 @@ QWidget * main_window::setup_misc_settings_box()
   return misc_settings_box;
 }
 
+QWidget * main_window::setup_error_settings_box()
+{
+  error_settings_box = new QGroupBox();
+  QGridLayout * layout = error_settings_box_layout = new QGridLayout();
+  layout->setColumnStretch(1, 1);
+  int row = 0;
+    
+  soft_error_response_radio_group = new QButtonGroup(this);
+  soft_error_response_radio_group->setObjectName("soft_error_response_radio_group");
+  //connect(soft_error_response_radio_group, SIGNAL(buttonToggled(int, bool)), this, SLOT(on_soft_error_response_radio_group_buttonToggled(int, bool)));
+  
+  {
+    soft_error_response_radio_group->addButton(new QRadioButton(), TIC_RESPONSE_DEENERGIZE); 
+    layout->addWidget(soft_error_response_radio_group->button(TIC_RESPONSE_DEENERGIZE),
+      row++, 0, 1, 2, Qt::AlignLeft);
+  }
+  
+  {
+    soft_error_response_radio_group->addButton(new QRadioButton(), TIC_RESPONSE_HALT_AND_HOLD); 
+    layout->addWidget(soft_error_response_radio_group->button(TIC_RESPONSE_HALT_AND_HOLD),
+      row++, 0, 1, 2, Qt::AlignLeft);
+  }
+
+  {
+    soft_error_response_radio_group->addButton(new QRadioButton(), TIC_RESPONSE_DECEL_TO_HOLD); 
+    layout->addWidget(soft_error_response_radio_group->button(TIC_RESPONSE_DECEL_TO_HOLD),
+      row++, 0, 1, 2, Qt::AlignLeft);
+  }
+
+  {
+    soft_error_response_radio_group->addButton(new QRadioButton(), TIC_RESPONSE_GO_TO_POSITION); 
+    soft_error_position_value = new QSpinBox();
+    soft_error_position_value->setObjectName("soft_error_position_value");
+    soft_error_position_value->setRange(-0x7FFFFFFF, 0x7FFFFFFF);
+    layout->addWidget(soft_error_response_radio_group->button(TIC_RESPONSE_GO_TO_POSITION),
+      row, 0, Qt::AlignLeft);
+    layout->addWidget(soft_error_position_value, row, 1, Qt::AlignLeft);
+    row++;
+  }
+
+  {
+    current_limit_during_error_check = new QCheckBox();
+    current_limit_during_error_check->setObjectName("current_limit_during_error_check");
+    layout->addWidget(current_limit_during_error_check, row, 0, 1, 2, Qt::AlignLeft);
+    row++;
+  }
+  
+  {
+    current_limit_during_error_value = new QSpinBox();
+    current_limit_during_error_value->setObjectName("current_limit_during_error_value");
+    current_limit_during_error_value->setRange(0, 4000);
+    current_limit_during_error_value->setSuffix(" mA");
+    layout->addWidget(current_limit_during_error_value, row, 1, Qt::AlignLeft);
+  }
+  
+  error_settings_box->setLayout(layout);
+  return error_settings_box;
+}
+  
+//// end of pages
+
 QLayout * main_window::setup_footer()
 {
   QHBoxLayout * layout = footer_layout = new QHBoxLayout();
@@ -1690,6 +1842,8 @@ void main_window::retranslate()
 
   device_list_label->setText(tr("Connected to:"));
 
+  //// status page
+  
   device_info_box->setTitle(tr("Device info"));
   device_name_label->setText(tr("Name:"));
   serial_number_label->setText(tr("Serial number:"));
@@ -1736,15 +1890,17 @@ void main_window::retranslate()
   stop_button->setText(tr("Halt motor"));
   decel_stop_button->setText(tr("Decelerate motor"));
 
+  //// settings page
   // [all-settings]
+  
   control_mode_label->setText(tr("Control mode:"));
 
-  serial_settings_box->setTitle(tr("Serial settings"));
+  serial_settings_box->setTitle(tr("Serial"));
   serial_baud_rate_label->setText(tr("Baud rate:"));
   serial_device_number_label->setText(tr("Device number:"));
   serial_crc_enabled_check->setText(tr("Enable CRC"));
 
-  scaling_settings_box->setTitle(tr("Input and scaling settings"));
+  scaling_settings_box->setTitle(tr("Input and scaling"));
   scaling_input_label->setText(tr("Input"));
   scaling_target_label->setText(tr("Target"));
   scaling_min_label->setText(tr("Minimum:"));
@@ -1758,7 +1914,7 @@ void main_window::retranslate()
   encoder_postscaler_label->setText(tr("Encoder postscaler:"));
   encoder_unlimited_check->setText(tr("Enable unlimited encoder position control"));
 
-  motor_settings_box->setTitle(tr("Motor settings"));
+  motor_settings_box->setTitle(tr("Motor"));
   speed_max_label->setText(tr("Max speed:"));
   starting_speed_label->setText(tr("Starting speed:"));
   accel_max_label->setText(tr("Max acceleration:"));
@@ -1768,9 +1924,18 @@ void main_window::retranslate()
   current_limit_label->setText(tr("Current limit:"));
   decay_mode_label->setText(tr("Decay mode:"));
 
-  misc_settings_box->setTitle(tr("Miscellaneous settings"));
+  misc_settings_box->setTitle(tr("Miscellaneous"));
   disable_safe_start_check->setText(tr("Disable safe start"));
   ignore_err_line_high_check->setText(tr("Ignore ERR line high"));
+  
+  error_settings_box->setTitle(tr("Soft error response"));
+  soft_error_response_radio_group->button(TIC_RESPONSE_DEENERGIZE)->setText(tr("De-energize"));
+  soft_error_response_radio_group->button(TIC_RESPONSE_HALT_AND_HOLD)->setText(tr("Halt and hold"));
+  soft_error_response_radio_group->button(TIC_RESPONSE_DECEL_TO_HOLD)->setText(tr("Decelerate to hold"));
+  soft_error_response_radio_group->button(TIC_RESPONSE_GO_TO_POSITION)->setText(tr("Go to position:"));
+  current_limit_during_error_check->setText(tr("Use different current limit during soft error:"));
+  
+  //// end pages
 
   deenergize_button->setText(tr("De-energize"));
   energize_button->setText(tr("Energize"));

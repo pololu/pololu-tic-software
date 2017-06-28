@@ -5,6 +5,7 @@
 #include <QMainWindow>
 
 class BallScrollBar;
+class QButtonGroup;
 class QCheckBox;
 class QComboBox;
 class QFrame;
@@ -132,6 +133,10 @@ public:
 
   void set_disable_safe_start(bool disable_safe_start);
   void set_ignore_err_line_high(bool ignore_err_line_high);
+  
+  void set_soft_error_response(uint8_t soft_error_response);
+  void set_soft_error_position(int32_t soft_error_position);
+  void set_current_limit_during_error(int32_t current_limit_during_error);
 
 private:
   /** Helper method for setting the index of a combo box, given the desired
@@ -210,6 +215,12 @@ private slots:
 
   void on_disable_safe_start_check_stateChanged(int state);
   void on_ignore_err_line_high_check_stateChanged(int state);
+  
+  void on_soft_error_response_radio_group_buttonToggled(int id, bool checked);
+  void on_soft_error_position_value_valueChanged(int value);
+  void on_current_limit_during_error_check_stateChanged(int state);
+  void on_current_limit_during_error_value_valueChanged(int value);
+  void on_current_limit_during_error_value_editingFinished();
 
 private:
   bool start_event_reported = false;
@@ -248,6 +259,8 @@ private:
   QWidget * setup_scaling_settings_box();
   QWidget * setup_motor_settings_box();
   QWidget * setup_misc_settings_box();
+  QWidget * setup_error_settings_box();
+
   QLayout * setup_footer();
   void retranslate();
 
@@ -400,6 +413,15 @@ private:
   QGridLayout * misc_settings_box_layout;
   QCheckBox * disable_safe_start_check;
   QCheckBox * ignore_err_line_high_check;
+
+  QGroupBox * error_settings_box;
+  QGridLayout * error_settings_box_layout;
+  QButtonGroup * soft_error_response_radio_group;
+  QSpinBox * soft_error_position_value;
+  QCheckBox * current_limit_during_error_check;
+  QSpinBox * current_limit_during_error_value;
+
+  //// end of pages
 
   QHBoxLayout * footer_layout;
   QPushButton * deenergize_button;

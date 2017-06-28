@@ -98,6 +98,12 @@ public:
 
   void handle_disable_safe_start_input(bool disable_safe_start);
   void handle_ignore_err_line_high_input(bool ignore_err_line_high);
+  
+  void handle_soft_error_response_input(uint8_t soft_error_response);
+  void handle_soft_error_position_input(int32_t soft_error_position);
+  void handle_current_limit_during_error_input(int32_t current_limit_during_error);
+  void handle_current_limit_during_error_input_finished();
+
 
 private:
   /** This is called whenever it is possible that we have connected to a

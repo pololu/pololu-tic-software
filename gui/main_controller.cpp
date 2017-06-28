@@ -506,21 +506,8 @@ void main_controller::handle_settings_changed()
 
   window->set_speed_max(tic_settings_get_speed_max(settings.get_pointer()));
   window->set_starting_speed(tic_settings_get_starting_speed(settings.get_pointer()));
-
-  uint32_t accel_max = tic_settings_get_accel_max(settings.get_pointer());
-  uint32_t decel_max = tic_settings_get_decel_max(settings.get_pointer());
-  window->set_accel_max(accel_max);
-  if (decel_max == 0)
-  {
-    window->set_decel_max(accel_max);
-    window->set_decel_accel_max_same(true);
-  }
-  else
-  {
-    window->set_decel_max(decel_max);
-    window->set_decel_accel_max_same(false);
-  }
-
+  window->set_accel_max(tic_settings_get_accel_max(settings.get_pointer()));
+  window->set_decel_max(tic_settings_get_decel_max(settings.get_pointer()));
   window->set_step_mode(tic_settings_get_step_mode(settings.get_pointer()));
   window->set_current_limit(tic_settings_get_current_limit(settings.get_pointer()));
   window->set_decay_mode(tic_settings_get_decay_mode(settings.get_pointer()));
@@ -528,6 +515,10 @@ void main_controller::handle_settings_changed()
   window->set_disable_safe_start(tic_settings_get_disable_safe_start(settings.get_pointer()));
   window->set_ignore_err_line_high(tic_settings_get_ignore_err_line_high(settings.get_pointer()));
 
+  window->set_soft_error_response(tic_settings_get_soft_error_response(settings.get_pointer()));
+  window->set_soft_error_position(tic_settings_get_soft_error_position(settings.get_pointer()));
+  window->set_current_limit_during_error(tic_settings_get_current_limit_during_error(settings.get_pointer()));
+  
   window->set_apply_settings_enabled(connected() && settings_modified);
 }
 
@@ -756,6 +747,42 @@ void main_controller::handle_ignore_err_line_high_input(bool ignore_err_line_hig
   if (!connected()) { return; }
   tic_settings_set_ignore_err_line_high(settings.get_pointer(), ignore_err_line_high);
   settings_modified = true;
+  handle_settings_changed();
+}
+
+void main_controller::handle_soft_error_response_input(uint8_t soft_error_response)
+{
+  if (!connected()) { return; }
+  tic_settings_set_soft_error_response(settings.get_pointer(), soft_error_response);
+  settings_modified = true;
+  handle_settings_changed();
+
+}
+
+void main_controller::handle_soft_error_position_input(int32_t soft_error_position)
+{
+  if (!connected()) { return; }
+  tic_settings_set_soft_error_position(settings.get_pointer(), soft_error_position);
+  settings_modified = true;
+  handle_settings_changed();
+}
+
+void main_controller::handle_current_limit_during_error_input(int32_t current_limit_during_error)
+{
+  if (!connected()) { return; }
+  tic_settings_set_current_limit_during_error(settings.get_pointer(), current_limit_during_error);
+  settings_modified = true;
+  handle_settings_changed();
+}
+
+void main_controller::handle_current_limit_during_error_input_finished()
+{
+  if (!connected()) { return; }
+  uint32_t current_limit_during_error = 
+    tic_settings_get_current_limit_during_error(settings.get_pointer());
+  current_limit_during_error = tic_settings_achievable_current_limit(
+    settings.get_pointer(), current_limit_during_error);
+  tic_settings_set_current_limit_during_error(settings.get_pointer(), current_limit_during_error);
   handle_settings_changed();
 }
 
