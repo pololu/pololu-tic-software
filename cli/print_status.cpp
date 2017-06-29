@@ -121,18 +121,6 @@ void print_status(const tic::variables & vars,
       << std::endl;
   }
 
-  std::cout << left_column << "Speed max: "
-    << vars.get_speed_max() << std::endl;
-
-  std::cout << left_column << "Starting speed: "
-    << vars.get_starting_speed() << std::endl;
-
-  std::cout << left_column << "Accel max: "
-    << vars.get_accel_max() << std::endl;
-
-  std::cout << left_column << "Decel max: "
-    << vars.get_decel_max() << std::endl;
-
   std::cout << left_column << "Current position: ";
   if (vars.get_learn_position_later())
   {
@@ -146,11 +134,23 @@ void print_status(const tic::variables & vars,
   std::cout << left_column << "Current velocity: "
     << vars.get_current_velocity() << std::endl;
 
-  std::cout << left_column << "Acting target position: "
-    << vars.get_acting_target_position() << std::endl;
+  std::cout << left_column << "Speed max: "
+    << vars.get_speed_max() << std::endl;
 
-  std::cout << left_column << "Time since last step: "
-    << vars.get_time_since_last_step() << std::endl;
+  std::cout << left_column << "Starting speed: "
+    << vars.get_starting_speed() << std::endl;
+
+  std::cout << left_column << "Accel max: "
+    << vars.get_accel_max() << std::endl;
+
+  std::cout << left_column << "Decel max: "
+    << vars.get_decel_max() << std::endl;
+
+  //std::cout << left_column << "Acting target position: "
+  //  << vars.get_acting_target_position() << std::endl;
+
+  //std::cout << left_column << "Time since last step: "
+  //  << vars.get_time_since_last_step() << std::endl;
 
   std::cout << std::endl;
 

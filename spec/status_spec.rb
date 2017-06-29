@@ -10,14 +10,12 @@ Last reset:                   (unknown)
 Operation state:              (unknown)
 Energized:                    yes
 Planning mode:                (unknown)
+Current position:             (-1)
+Current velocity:             -1
 Speed max:                    4294967295
 Starting speed:               4294967295
 Accel max:                    4294967295
 Decel max:                    4294967295
-Current position:             (-1)
-Current velocity:             -1
-Acting target position:       -1
-Time since last step:         4294967295
 
 VIN:                          65535 mV
 Up time:                      4294967295 ms
