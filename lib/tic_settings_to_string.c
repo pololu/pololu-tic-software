@@ -185,7 +185,6 @@ tic_error * tic_settings_to_string(const tic_settings * settings, char ** string
     tic_sprintf(&str, "input_error_max: %u\n", input_error_max);
   }
 
-  if (0) // not implemented in firmware
   {
     uint8_t degree = tic_settings_get_input_scaling_degree(settings);
     const char * degree_str;

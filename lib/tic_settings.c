@@ -236,7 +236,7 @@ static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings
     {
       low_shutoff = 64000;
       tic_sprintf(warnings,
-        "Warning: The low VIN shutoff voltage was changed to %u mV.\n",
+        "Warning: The low VIN shutoff voltage will be changed to %u mV.\n",
         low_shutoff);
     }
 
@@ -244,7 +244,7 @@ static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings
     {
       low_startup = low_shutoff + 500;
       tic_sprintf(warnings,
-        "Warning: The low VIN startup voltage was changed to %u mV.\n",
+        "Warning: The low VIN startup voltage will be changed to %u mV.\n",
         low_startup);
     }
 
@@ -252,7 +252,7 @@ static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings
     {
       high_shutoff = low_startup + 500;
       tic_sprintf(warnings,
-        "Warning: The high VIN shutoff voltage was changed to %u mV.\n",
+        "Warning: The high VIN shutoff voltage will be changed to %u mV.\n",
         high_shutoff);
     }
 

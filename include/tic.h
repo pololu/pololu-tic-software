@@ -710,6 +710,18 @@ void tic_settings_set_input_hysteresis(tic_settings *, uint16_t);
 TIC_API
 uint16_t tic_settings_get_input_hysteresis(const tic_settings *);
 
+/// Sets the input scaling degree.
+///
+/// Should be TIC_SCALING_DEGREE_LINEAR, TIC_SCALING_DEGREE_QUADRATIC, or
+/// TIC_SCALING_DEGREE_CUBIC.
+TIC_API
+void tic_settings_set_input_scaling_degree(tic_settings *, uint8_t);
+
+/// Gets the input scaling degree setting described in
+/// tic_settings_set_input_scaling_degree().
+TIC_API
+uint8_t tic_settings_get_input_scaling_degree(const tic_settings *);
+
 /// Sets the input invert setting.  See tic_settings_set_output_max().
 TIC_API
 void tic_settings_set_input_invert(tic_settings *, bool);
@@ -1153,15 +1165,26 @@ tic_error * tic_set_target_velocity(tic_handle *, int32_t velocity);
 /// the "Current position" variable, which represents where the Tic currently
 /// thinks the motor's output is.
 ///
+/// This function sends a Halt and Set Position command to the Tic.  Besides
+/// stopping the motor and setting the current position, this command also
+/// clears the "Learn position later" flag, sets the "Input state" to "halt",
+/// and clears the "Input after scaling" variable.
+///
+/// NOTE: If the control mode is something other than Serial, ths command will be
+/// silently ignored.
+///
 /// This functions sends a Halt and Set Position command to the Tic.
 TIC_API TIC_WARN_UNUSED
 tic_error * tic_halt_and_set_position(tic_handle *, int32_t position);
 
 /// Stops the motor abruptly without respecting the deceleration limit.
 ///
-/// This function sends a Stop command to the Tic.  If the Control mode is set
-/// to Serial, the Tic will stop abruptly.  If the control mode is something
-/// other than Serial, ths command will be silently ignored.
+/// This function sends a Halt and Hold command to the Tic.  Besides stopping
+/// the motor, this command also sets the "Input state" to "halt", and clears
+/// the "Input after scaling" variable.
+///
+/// NOTE: If the control mode is something other than Serial, ths command will be
+/// silently ignored.
 ///
 /// See also tic_deenergize().
 TIC_API TIC_WARN_UNUSED
