@@ -132,19 +132,16 @@ const tic_name tic_scaling_degree_names[] =
   { NULL, 0 },
 };
 
-const tic_name tic_pin_config_names[] =
+const tic_name tic_pin_func_names[] =
 {
-  { "pullup", 1 << TIC_PIN_PULLUP },
-  { "analog", 1 << TIC_PIN_ANALOG },
-  { "active_high", 1 << TIC_PIN_ACTIVE_HIGH },
-  { "default", TIC_PIN_FUNC_DEFAULT << TIC_PIN_FUNC_POSN },
-  { "user_io", TIC_PIN_FUNC_USER_IO << TIC_PIN_FUNC_POSN },
-  { "user_input", TIC_PIN_FUNC_USER_INPUT << TIC_PIN_FUNC_POSN },
-  { "pot_power", TIC_PIN_FUNC_POT_POWER << TIC_PIN_FUNC_POSN },
-  { "serial", TIC_PIN_FUNC_SERIAL << TIC_PIN_FUNC_POSN },
-  { "rc", TIC_PIN_FUNC_RC << TIC_PIN_FUNC_POSN },
-  { "encoder", TIC_PIN_FUNC_ENCODER << TIC_PIN_FUNC_POSN },
-  { "kill_switch", TIC_PIN_FUNC_KILL_SWITCH << TIC_PIN_FUNC_POSN },
+  { "default", TIC_PIN_FUNC_DEFAULT },
+  { "user_io", TIC_PIN_FUNC_USER_IO },
+  { "user_input", TIC_PIN_FUNC_USER_INPUT },
+  { "pot_power", TIC_PIN_FUNC_POT_POWER },
+  { "serial", TIC_PIN_FUNC_SERIAL },
+  { "rc", TIC_PIN_FUNC_RC },
+  { "encoder", TIC_PIN_FUNC_ENCODER },
+  { "kill_switch", TIC_PIN_FUNC_KILL_SWITCH },
   { NULL, 0 },
 };
 

@@ -38,11 +38,12 @@ struct tic_settings
   uint32_t encoder_prescaler;
   uint32_t encoder_postscaler;
   bool encoder_unlimited;
-  uint8_t scl_config;
-  uint8_t sda_config;
-  uint8_t tx_config;
-  uint8_t rx_config;
-  uint8_t rc_config;
+  struct {
+    uint8_t func;
+    bool pullup;
+    bool analog;
+    bool polarity;
+  } pin_settings[TIC_CONTROL_PIN_COUNT];
   uint32_t current_limit;
   int32_t current_limit_during_error;
   uint8_t step_mode;
@@ -488,14 +489,12 @@ static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings
   }
 
   {
-    #if TIC_PIN_FUNC_POSN != 0
-    #error This code needs to be fixed.
-    #endif
-    uint8_t scl_config = tic_settings_get_scl_config(settings);
-    uint8_t sda_config = tic_settings_get_sda_config(settings);
-    uint8_t tx_config = tic_settings_get_tx_config(settings);
-    uint8_t rx_config = tic_settings_get_rx_config(settings);
-    uint8_t rc_config = tic_settings_get_rc_config(settings);
+    uint8_t scl_func = tic_settings_get_pin_func(settings, TIC_PIN_NUM_SCL);
+    uint8_t sda_func = tic_settings_get_pin_func(settings, TIC_PIN_NUM_SDA);
+    uint8_t tx_func = tic_settings_get_pin_func(settings, TIC_PIN_NUM_TX);
+    uint8_t rx_func = tic_settings_get_pin_func(settings, TIC_PIN_NUM_RX);
+    uint8_t rc_func = tic_settings_get_pin_func(settings, TIC_PIN_NUM_RC);
+    bool rc_analog = tic_settings_get_pin_analog(settings, TIC_PIN_NUM_RC);
 
     // First, we make sure the pins are configured to provide the primary
     // input that will be used to control the motor.
@@ -504,10 +503,10 @@ static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings
     {
     case TIC_CONTROL_MODE_ANALOG_POSITION:
     case TIC_CONTROL_MODE_ANALOG_SPEED:
-      if ((sda_config & TIC_PIN_FUNC_MASK) != TIC_PIN_FUNC_DEFAULT &&
-        (sda_config & TIC_PIN_FUNC_MASK) != TIC_PIN_FUNC_USER_INPUT)
+      if (sda_func != TIC_PIN_FUNC_DEFAULT &&
+        sda_func != TIC_PIN_FUNC_USER_INPUT)
       {
-        sda_config = (sda_config & ~TIC_PIN_FUNC_MASK) | TIC_PIN_FUNC_DEFAULT;
+        sda_func = TIC_PIN_FUNC_DEFAULT;
         tic_sprintf(warnings,
           "Warning: The SDA pin must be used as an analog input "
           "so its function will be changed to the default.\n");
@@ -515,10 +514,10 @@ static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings
       break;
     case TIC_CONTROL_MODE_RC_POSITION:
     case TIC_CONTROL_MODE_RC_SPEED:
-      if ((rc_config & TIC_PIN_FUNC_MASK) != TIC_PIN_FUNC_DEFAULT &&
-        (rc_config & TIC_PIN_FUNC_MASK) != TIC_PIN_FUNC_RC)
+      if (rc_func != TIC_PIN_FUNC_DEFAULT &&
+        rc_func != TIC_PIN_FUNC_RC)
       {
-        rc_config = (rc_config & ~TIC_PIN_FUNC_MASK) | TIC_PIN_FUNC_DEFAULT;
+        rc_func = TIC_PIN_FUNC_DEFAULT;
         tic_sprintf(warnings,
           "Warning: The RC pin must be used as an RC input "
           "so its function will be changed to the default.\n");
@@ -526,18 +525,18 @@ static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings
       break;
     case TIC_CONTROL_MODE_ENCODER_POSITION:
     case TIC_CONTROL_MODE_ENCODER_SPEED:
-      if ((tx_config & TIC_PIN_FUNC_MASK) != TIC_PIN_FUNC_DEFAULT &&
-        (tx_config & TIC_PIN_FUNC_MASK) != TIC_PIN_FUNC_ENCODER)
+      if (tx_func != TIC_PIN_FUNC_DEFAULT &&
+        tx_func != TIC_PIN_FUNC_ENCODER)
       {
-        tx_config = (tx_config & ~TIC_PIN_FUNC_MASK) | TIC_PIN_FUNC_DEFAULT;
+        tx_func = TIC_PIN_FUNC_DEFAULT;
         tic_sprintf(warnings,
           "Warning: The TX pin must be used as an encoder input "
           "so its function will be changed to the default.\n");
       }
-      if ((rx_config & TIC_PIN_FUNC_MASK) != TIC_PIN_FUNC_DEFAULT &&
-        (rx_config & TIC_PIN_FUNC_MASK) != TIC_PIN_FUNC_ENCODER)
+      if (rx_func != TIC_PIN_FUNC_DEFAULT &&
+        rx_func != TIC_PIN_FUNC_ENCODER)
       {
-        rx_config = (rx_config & ~TIC_PIN_FUNC_MASK) | TIC_PIN_FUNC_DEFAULT;
+        rx_func = TIC_PIN_FUNC_DEFAULT;
         tic_sprintf(warnings,
           "Warning: The RX pin must be used as an encoder input "
           "so its function will be changed to the default.\n");
@@ -548,73 +547,73 @@ static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings
     // In this section, we make sure no pin is configured to do something that
     // it cannot do.
 
-    if ((rc_config & TIC_PIN_FUNC_MASK) == TIC_PIN_FUNC_SERIAL)
+    if (rc_func == TIC_PIN_FUNC_SERIAL)
     {
-      rc_config = (rc_config & ~TIC_PIN_FUNC_MASK) | TIC_PIN_FUNC_DEFAULT;
+      rc_func = TIC_PIN_FUNC_DEFAULT;
       tic_sprintf(warnings,
         "Warning: The RC pin cannot be a serial pin "
         "so its function will be changed to the default.\n");
     }
 
-    if (rc_config >> TIC_PIN_ANALOG & 1)
+    if (rc_analog)
     {
-      rc_config &= ~(1 << TIC_PIN_ANALOG);
+      rc_analog = false;
       tic_sprintf(warnings,
         "Warning: The RC pin cannot be an analog input "
         "so that feature will be disabled.\n");
     }
 
-    if ((sda_config & TIC_PIN_FUNC_MASK) == TIC_PIN_FUNC_RC)
+    if (sda_func == TIC_PIN_FUNC_RC)
     {
-      sda_config = (sda_config & ~TIC_PIN_FUNC_MASK) | TIC_PIN_FUNC_DEFAULT;
+      sda_func = TIC_PIN_FUNC_DEFAULT;
       tic_sprintf(warnings,
         "Warning: The SDA pin cannot be used as an RC input "
         "so its function will be changed to the default.\n");
     }
 
-    if ((scl_config & TIC_PIN_FUNC_MASK) == TIC_PIN_FUNC_RC)
+    if (scl_func == TIC_PIN_FUNC_RC)
     {
-      scl_config = (scl_config & ~TIC_PIN_FUNC_MASK) | TIC_PIN_FUNC_DEFAULT;
+      scl_func = TIC_PIN_FUNC_DEFAULT;
       tic_sprintf(warnings,
         "Warning: The SCL pin cannot be used as an RC input "
         "so its function will be changed to the default.\n");
     }
 
-    if ((tx_config & TIC_PIN_FUNC_MASK) == TIC_PIN_FUNC_RC)
+    if (tx_func == TIC_PIN_FUNC_RC)
     {
-      tx_config = (tx_config & ~TIC_PIN_FUNC_MASK) | TIC_PIN_FUNC_DEFAULT;
+      tx_func = TIC_PIN_FUNC_DEFAULT;
       tic_sprintf(warnings,
         "Warning: The TX pin cannot be used as an RC input "
         "so its function will be changed to the default.\n");
     }
 
-    if ((rx_config & TIC_PIN_FUNC_MASK) == TIC_PIN_FUNC_RC)
+    if (rx_func == TIC_PIN_FUNC_RC)
     {
-      rx_config = (rx_config & ~TIC_PIN_FUNC_MASK) | TIC_PIN_FUNC_DEFAULT;
+      rx_func = TIC_PIN_FUNC_DEFAULT;
       tic_sprintf(warnings,
         "Warning: The RX pin cannot be used as an RC input "
         "so its function will be changed to the default.\n");
     }
 
-    if ((scl_config & TIC_PIN_FUNC_MASK) == TIC_PIN_FUNC_ENCODER)
+    if (scl_func == TIC_PIN_FUNC_ENCODER)
     {
-      scl_config = (scl_config & ~TIC_PIN_FUNC_MASK) | TIC_PIN_FUNC_DEFAULT;
+      scl_func = TIC_PIN_FUNC_DEFAULT;
       tic_sprintf(warnings,
         "Warning: The SCL pin cannot be used as an encoder input "
         "so its function will be changed to the default.\n");
     }
 
-    if ((sda_config & TIC_PIN_FUNC_MASK) == TIC_PIN_FUNC_ENCODER)
+    if (sda_func == TIC_PIN_FUNC_ENCODER)
     {
-      sda_config = (sda_config & ~TIC_PIN_FUNC_MASK) | TIC_PIN_FUNC_DEFAULT;
+      sda_func = TIC_PIN_FUNC_DEFAULT;
       tic_sprintf(warnings,
         "Warning: The SDA pin cannot be used as an encoder input "
         "so its function will be changed to the default.\n");
     }
 
-    if ((rc_config & TIC_PIN_FUNC_MASK) == TIC_PIN_FUNC_ENCODER)
+    if (rc_func == TIC_PIN_FUNC_ENCODER)
     {
-      rc_config = (rc_config & ~TIC_PIN_FUNC_MASK) | TIC_PIN_FUNC_DEFAULT;
+      rc_func = TIC_PIN_FUNC_DEFAULT;
       tic_sprintf(warnings,
         "Warning: The RC pin cannot be used as an encoder input "
         "so its function will be changed to the default.\n");
@@ -624,16 +623,14 @@ static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings
     // is configured that way too.
     bool analog_control = control_mode == TIC_CONTROL_MODE_ANALOG_POSITION ||
       control_mode == TIC_CONTROL_MODE_ANALOG_SPEED;
-    bool scl_is_i2c = ((scl_config & TIC_PIN_FUNC_MASK) == TIC_PIN_FUNC_DEFAULT
-      && !analog_control) ||
-      (scl_config & TIC_PIN_FUNC_MASK) == TIC_PIN_FUNC_SERIAL;
-    bool sda_is_i2c = ((sda_config & TIC_PIN_FUNC_MASK) == TIC_PIN_FUNC_DEFAULT
-      && !analog_control) ||
-      (sda_config & TIC_PIN_FUNC_MASK) == TIC_PIN_FUNC_SERIAL;
+    bool scl_is_i2c = (scl_func == TIC_PIN_FUNC_DEFAULT && !analog_control) ||
+      (scl_func == TIC_PIN_FUNC_SERIAL);
+    bool sda_is_i2c = (sda_func == TIC_PIN_FUNC_DEFAULT && !analog_control) ||
+      (sda_func == TIC_PIN_FUNC_SERIAL);
     if (sda_is_i2c != scl_is_i2c)
     {
-      scl_config = (scl_config & ~TIC_PIN_FUNC_MASK) | TIC_PIN_FUNC_DEFAULT;
-      sda_config = (sda_config & ~TIC_PIN_FUNC_MASK) | TIC_PIN_FUNC_DEFAULT;
+      scl_func = TIC_PIN_FUNC_DEFAULT;
+      sda_func = TIC_PIN_FUNC_DEFAULT;
       if (sda_is_i2c)
       {
         tic_sprintf(warnings,
@@ -648,18 +645,17 @@ static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings
       }
     }
 
-    // TODO: force the pull-up bool to be true for RX, TX, RC pins?
-
     // TODO: only SCL can be POT_POWER and it can't be any other non-default function
     // if the control mode is analog.
 
     // TODO: if the control mode is analog, SDA must be *input* (general is not allowed)
 
-    tic_settings_set_scl_config(settings, scl_config);
-    tic_settings_set_sda_config(settings, sda_config);
-    tic_settings_set_tx_config(settings, tx_config);
-    tic_settings_set_rx_config(settings, rx_config);
-    tic_settings_set_rc_config(settings, rc_config);
+    tic_settings_set_pin_func(settings, TIC_PIN_NUM_SCL, scl_func);
+    tic_settings_set_pin_func(settings, TIC_PIN_NUM_SDA, sda_func);
+    tic_settings_set_pin_func(settings, TIC_PIN_NUM_TX, tx_func);
+    tic_settings_set_pin_func(settings, TIC_PIN_NUM_RX, rx_func);
+    tic_settings_set_pin_func(settings, TIC_PIN_NUM_RC, rc_func);
+    tic_settings_set_pin_analog(settings, TIC_PIN_NUM_RC, rc_analog);
   }
 }
 
@@ -1158,65 +1154,55 @@ bool tic_settings_get_encoder_unlimited(const tic_settings * settings)
   return settings->encoder_unlimited;
 }
 
-void tic_settings_set_scl_config(tic_settings * settings, uint8_t scl_config)
+void tic_settings_set_pin_func(tic_settings * settings, uint8_t pin, uint8_t func)
 {
-  if (!settings) { return; }
-  settings->scl_config = scl_config;
+  if (!settings || pin >= TIC_CONTROL_PIN_COUNT) { return; }
+  settings->pin_settings[pin].func = func;
 }
 
-uint8_t tic_settings_get_scl_config(const tic_settings * settings)
+uint8_t tic_settings_get_pin_func(const tic_settings * settings, uint8_t pin)
 {
-  if (!settings) { return 0; }
-  return settings->scl_config;
+  if (!settings || pin >= TIC_CONTROL_PIN_COUNT) { return 0; }
+  return settings->pin_settings[pin].func;
 }
 
-
-void tic_settings_set_sda_config(tic_settings * settings, uint8_t sda_config)
+void tic_settings_set_pin_pullup(tic_settings * settings, uint8_t pin,
+  bool pullup)
 {
-  if (!settings) { return; }
-  settings->sda_config = sda_config;
+  if (!settings || pin >= TIC_CONTROL_PIN_COUNT) { return; }
+  settings->pin_settings[pin].pullup = pullup;
 }
 
-uint8_t tic_settings_get_sda_config(const tic_settings * settings)
+bool tic_settings_get_pin_pullup(const tic_settings * settings, uint8_t pin)
 {
-  if (!settings) { return 0; }
-  return settings->sda_config;
+  if (!settings || pin >= TIC_CONTROL_PIN_COUNT) { return 0; }
+  return settings->pin_settings[pin].pullup;
 }
 
-void tic_settings_set_tx_config(tic_settings * settings, uint8_t tx_config)
+void tic_settings_set_pin_analog(tic_settings * settings, uint8_t pin,
+  bool analog)
 {
-  if (!settings) { return; }
-  settings->tx_config = tx_config;
+  if (!settings || pin >= TIC_CONTROL_PIN_COUNT) { return; }
+  settings->pin_settings[pin].analog = analog;
 }
 
-uint8_t tic_settings_get_tx_config(const tic_settings * settings)
+bool tic_settings_get_pin_analog(const tic_settings * settings, uint8_t pin)
 {
-  if (!settings) { return 0; }
-  return settings->tx_config;
+  if (!settings || pin >= TIC_CONTROL_PIN_COUNT) { return 0; }
+  return settings->pin_settings[pin].analog;
 }
 
-void tic_settings_set_rx_config(tic_settings * settings, uint8_t rx_config)
+void tic_settings_set_pin_polarity(tic_settings * settings, uint8_t pin,
+  bool polarity)
 {
-  if (!settings) { return; }
-  settings->rx_config = rx_config;
+  if (!settings || pin >= TIC_CONTROL_PIN_COUNT) { return; }
+  settings->pin_settings[pin].polarity = polarity;
 }
 
-uint8_t tic_settings_get_rx_config(const tic_settings * settings)
+bool tic_settings_get_pin_polarity(const tic_settings * settings, uint8_t pin)
 {
-  if (!settings) { return 0; }
-  return settings->rx_config;
-}
-
-void tic_settings_set_rc_config(tic_settings * settings, uint8_t rc_config)
-{
-  if (!settings) { return; }
-  settings->rc_config = rc_config;
-}
-
-uint8_t tic_settings_get_rc_config(const tic_settings * settings)
-{
-  if (!settings) { return 0; }
-  return settings->rc_config;
+  if (!settings || pin >= TIC_CONTROL_PIN_COUNT) { return 0; }
+  return settings->pin_settings[pin].polarity;
 }
 
 void tic_settings_set_current_limit(tic_settings * settings,

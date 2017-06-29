@@ -438,15 +438,6 @@ uint16_t tic_variables_get_analog_reading(const tic_variables *, uint8_t pin);
 TIC_API
 bool tic_variables_get_digital_reading(const tic_variables *, uint8_t pin);
 
-/// Gets the switch status for the specified pin.
-///
-/// This will be false for pins not configured as switches.  It will be true for
-/// pins that are configured as switches and which are in the active position.
-///
-/// The pin argument should be one of the TIC_PIN_NUM_* macros.
-TIC_API
-bool tic_variables_get_switch_status(const tic_variables *, uint8_t pin);
-
 /// Gets the pin state for the specified pin.
 ///
 /// This pin argument should be one of the TIC_PIN_NUM_* macros.
@@ -852,72 +843,59 @@ void tic_settings_set_encoder_unlimited(tic_settings *, bool);
 TIC_API
 bool tic_settings_get_encoder_unlimited(const tic_settings *);
 
-/// Sets the pin configuration for the SCL pin.  See
-/// tic_settings_set_rc_config().
-TIC_API
-void tic_settings_set_scl_config(tic_settings *, uint8_t);
-
-/// Gets the pin configuration for the SCL pin.  See
-/// tic_settings_set_rc_config().
-TIC_API
-uint8_t tic_settings_get_scl_config(const tic_settings *);
-
-/// Sets the pin configuration for the SDA/AN pin.  See
-/// tic_settings_set_rc_config().
-TIC_API
-void tic_settings_set_sda_config(tic_settings *, uint8_t);
-
-/// Gets the pin configuration for the SDA/AN pin.  See
-/// tic_settings_set_rc_config().
-TIC_API
-uint8_t tic_settings_get_sda_config(const tic_settings *);
-
-/// Sets the pin configuration for the TX pin.  See
-/// tic_settings_set_tx_config().
-TIC_API
-void tic_settings_set_tx_config(tic_settings *, uint8_t);
-
-/// Gets the pin configuration for the TX pin.  See
-/// tic_settings_set_rc_config().
-TIC_API
-uint8_t tic_settings_get_tx_config(const tic_settings *);
-
-/// Sets the pin configuration for the RX pin.  See
-/// tic_settings_set_rx_config().
-TIC_API
-void tic_settings_set_rx_config(tic_settings *, uint8_t);
-
-/// Gets the pin configuration for the RX pin.  See
-/// tic_settings_set_rc_config().
-TIC_API
-uint8_t tic_settings_get_rx_config(const tic_settings *);
-
-/// Sets the pin configuration for the RC pin.
+/// Sets the assigned function for a control pin.
 ///
-/// There are several settings packed into the 8-bit configuration register.
+/// The pin argument should be one of the TIC_PIN_NUM_* macros.
 ///
-/// bit 7 (TIC_PIN_SERIAL_OR_I2C) - use pin for serial or I2C
-/// bit 6 (TIC_PIN_PULLUP) - enable internal pull-up
-/// bit 5 (TIC_PIN_ANALOG) - enable analog readings
-/// bit 4 - reserved, set to 0
-/// bit 3 (TIC_PIN_ACTIVE_HIGH) - if the pin is used as a switch, this bit
-///   specifies the switch polarity: 0 = active low, 1 = active high.
-/// bits 2,1,0 (TIC_PIN_SWITCH_POSN)-
-///   000 (TIC_PIN_SWITCH_NONE) = nothing
-///   001 (TIC_PIN_SWITCH_LIMIT_FORWARD) = limit forward
-///   010 (TIC_PIN_SWITCH_LIMIT_REVERSE) = limit reverse
-///   011 (TIC_PIN_SWITCH_LIMIT_HOME) = home switch
-///   100 (TIC_PIN_SWITCH_LIMIT_KILL) = kill switch
-///
-/// Some bits are not valid on some pins, and certain combinations of bits are
-/// not allowed.  See the source for of tic_settings_fix() for details.
+/// The func argument should be one of the TIC_PIN_FUNC_* macros.
 TIC_API
-void tic_settings_set_rc_config(tic_settings *, uint8_t);
+void tic_settings_set_pin_func(tic_settings *, uint8_t pin, uint8_t func);
 
-/// Gets the pin configuration for the RC pin.  See
-/// tic_settings_set_rc_config().
+/// Gets the pin function as described in tic_settings_set_pin_func().
 TIC_API
-uint8_t tic_settings_get_rc_config(const tic_settings *);
+uint8_t tic_settings_get_pin_func(const tic_settings *, uint8_t pin);
+
+/// Sets whether the pin will have its internal pull-up enabled (if applicable).
+///
+/// Note that this setting is ignored by the device if the pin function is
+/// TIC_PIN_FUNC_DEFAULT.
+///
+/// The pin argument should be one of the TIC_PIN_NUM_* macros.
+TIC_API
+void tic_settings_set_pin_pullup(tic_settings *, uint8_t pin, bool pullup);
+
+/// Gets the pullup flag for a pin as described in tic_settings_set_pin_pullup().
+TIC_API
+bool tic_settings_get_pin_pullup(const tic_settings *, uint8_t pin);
+
+/// Sets whether the pin will be used as an analog input (if applicable).
+///
+/// Note that this setting is ignored by the device if the pin function is
+/// TIC_PIN_FUNC_DEFAULT.
+///
+/// The pin argument should be one of the TIC_PIN_NUM_* macros.
+TIC_API
+void tic_settings_set_pin_analog(tic_settings *, uint8_t pin, bool analog);
+
+/// Gets the analog flag for a pin as described in tic_settings_set_pin_analog().
+TIC_API
+bool tic_settings_get_pin_analog(const tic_settings *, uint8_t pin);
+
+/// Sets whether the pin, when being used as a switch, is active high or active
+/// low.
+///
+/// Note that this setting is ignored by the device if the pin function is
+/// TIC_PIN_FUNC_DEFAULT.
+///
+/// The pin argument should be one of the TIC_PIN_NUM_* macros.
+///
+/// The polarity argument should be true if the pin is active high.
+TIC_API
+void tic_settings_set_pin_polarity(tic_settings *, uint8_t pin, bool polarity);
+
+/// Gets the pin polarity as described in tic_settings_set_pin_polarity().
+TIC_API
+bool tic_settings_get_pin_polarity(const tic_settings *, uint8_t pin);
 
 /// Sets the default stepper motor coil current limit in milliamps.
 TIC_API

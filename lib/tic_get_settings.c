@@ -202,28 +202,39 @@ static void write_buffer_to_settings(const uint8_t * buf, tic_settings * setting
   }
 
   {
-    uint8_t scl_config = buf[TIC_SETTING_SCL_CONFIG];
-    tic_settings_set_scl_config(settings, scl_config);
-  }
+    uint8_t config;
 
-  {
-    uint8_t sda_config = buf[TIC_SETTING_SDA_CONFIG];
-    tic_settings_set_sda_config(settings, sda_config);
-  }
+    config = buf[TIC_SETTING_SCL_CONFIG];
+    tic_settings_set_pin_func(settings, TIC_PIN_NUM_SCL, config & TIC_PIN_FUNC_MASK);
+    tic_settings_set_pin_analog(settings, TIC_PIN_NUM_SCL, config >> TIC_PIN_ANALOG & 1);
+    tic_settings_set_pin_pullup(settings, TIC_PIN_NUM_SCL, config >> TIC_PIN_PULLUP & 1);
 
-  {
-    uint8_t tx_config = buf[TIC_SETTING_TX_CONFIG];
-    tic_settings_set_tx_config(settings, tx_config);
-  }
+    config = buf[TIC_SETTING_SDA_CONFIG];
+    tic_settings_set_pin_func(settings, TIC_PIN_NUM_SDA, config & TIC_PIN_FUNC_MASK);
+    tic_settings_set_pin_analog(settings, TIC_PIN_NUM_SDA, config >> TIC_PIN_ANALOG & 1);
+    tic_settings_set_pin_pullup(settings, TIC_PIN_NUM_SDA, config >> TIC_PIN_PULLUP & 1);
 
-  {
-    uint8_t rx_config = buf[TIC_SETTING_RX_CONFIG];
-    tic_settings_set_rx_config(settings, rx_config);
-  }
+    config = buf[TIC_SETTING_TX_CONFIG];
+    tic_settings_set_pin_func(settings, TIC_PIN_NUM_TX, config & TIC_PIN_FUNC_MASK);
+    tic_settings_set_pin_analog(settings, TIC_PIN_NUM_TX, config >> TIC_PIN_ANALOG & 1);
+    tic_settings_set_pin_pullup(settings, TIC_PIN_NUM_TX, config >> TIC_PIN_PULLUP & 1);
 
-  {
-    uint8_t rc_config = buf[TIC_SETTING_RC_CONFIG];
-    tic_settings_set_rc_config(settings, rc_config);
+    config = buf[TIC_SETTING_RX_CONFIG];
+    tic_settings_set_pin_func(settings, TIC_PIN_NUM_RX, config & TIC_PIN_FUNC_MASK);
+    tic_settings_set_pin_analog(settings, TIC_PIN_NUM_RX, config >> TIC_PIN_ANALOG & 1);
+    tic_settings_set_pin_pullup(settings, TIC_PIN_NUM_RX, config >> TIC_PIN_PULLUP & 1);
+
+    config = buf[TIC_SETTING_RC_CONFIG];
+    tic_settings_set_pin_func(settings, TIC_PIN_NUM_RC, config & TIC_PIN_FUNC_MASK);
+    tic_settings_set_pin_analog(settings, TIC_PIN_NUM_RC, config >> TIC_PIN_ANALOG & 1);
+    tic_settings_set_pin_pullup(settings, TIC_PIN_NUM_RC, config >> TIC_PIN_PULLUP & 1);
+
+    uint8_t switch_polarity = buf[TIC_SETTING_SWITCH_POLARITY_MAP];
+    for (uint8_t i = 0; i < TIC_CONTROL_PIN_COUNT; i++)
+    {
+      tic_settings_set_pin_polarity(settings, i,
+        switch_polarity >> i & 1);
+    }
   }
 
   {

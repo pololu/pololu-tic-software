@@ -3,18 +3,19 @@
 // TODO: add RSpec examples for every error in this file
 // TODO: add RSpec examples ot make sure tic_string_to_i64 is handling errors properly
 
-static bool tic_parse_pin_config(const char * input, uint8_t * pin_config)
+static bool tic_parse_pin_config(const char * input,
+  tic_settings * settings, uint8_t pin)
 {
-  assert(input != NULL);
-  assert(pin_config != NULL);
+  assert(settings != NULL);
 
-  *pin_config = 0;
+  tic_settings_set_pin_func(settings, pin, 0);
+  tic_settings_set_pin_pullup(settings, pin, false);
+  tic_settings_set_pin_analog(settings, pin, false);
+  tic_settings_set_pin_polarity(settings, pin, false);
 
-  if (strlen(input) > 255) { return false; }
   char str[256];
   strcpy(str, input);
 
-  uint8_t config = 0;
   char * p = str;
   while (true)
   {
@@ -22,16 +23,28 @@ static bool tic_parse_pin_config(const char * input, uint8_t * pin_config)
     p = NULL;
     if (token == NULL) { break; }
 
-    uint32_t partial_config;
-    if (!tic_name_to_code(tic_pin_config_names, token, &partial_config))
+    if (0 == strcmp(token, "pullup"))
     {
-      return false;
+      tic_settings_set_pin_pullup(settings, pin, true);
     }
-    config |= partial_config;
-    // TODO: error if two different functions specified
+    else if (0 == strcmp(token, "analog"))
+    {
+      tic_settings_set_pin_analog(settings, pin, true);
+    }
+    else if (0 == strcmp(token, "active_high"))
+    {
+      tic_settings_set_pin_polarity(settings, pin, true);
+    }
+    else
+    {
+      uint32_t pin_func;
+      if (!tic_name_to_code(tic_pin_func_names, token, &pin_func))
+      {
+        return false;  // invalid token
+      }
+      tic_settings_set_pin_func(settings, pin, pin_func);
+    }
   }
-  *pin_config = config;
-
   return true;
 }
 
@@ -470,48 +483,38 @@ static tic_error * apply_string_pair(tic_settings * settings,
   }
   else if (!strcmp(key, "scl_config"))
   {
-    uint8_t pin_config;
-    if (!tic_parse_pin_config(value, &pin_config))
+    if (!tic_parse_pin_config(value, settings, TIC_PIN_NUM_SCL))
     {
       return tic_error_create("Invalid scl_config value.");
     }
-    tic_settings_set_scl_config(settings, pin_config);
   }
   else if (!strcmp(key, "sda_config"))
   {
-    uint8_t pin_config;
-    if (!tic_parse_pin_config(value, &pin_config))
+    if (!tic_parse_pin_config(value, settings, TIC_PIN_NUM_SDA))
     {
       return tic_error_create("Invalid sda_config value.");
     }
-    tic_settings_set_sda_config(settings, pin_config);
   }
   else if (!strcmp(key, "tx_config"))
   {
-    uint8_t pin_config;
-    if (!tic_parse_pin_config(value, &pin_config))
+    if (!tic_parse_pin_config(value, settings, TIC_PIN_NUM_TX))
     {
       return tic_error_create("Invalid tx_config value.");
     }
-    tic_settings_set_tx_config(settings, pin_config);
   }
   else if (!strcmp(key, "rx_config"))
   {
-    uint8_t pin_config;
-    if (!tic_parse_pin_config(value, &pin_config))
+    if (!tic_parse_pin_config(value, settings, TIC_PIN_NUM_RX))
     {
       return tic_error_create("Invalid rx_config value.");
     }
-    tic_settings_set_rx_config(settings, pin_config);
   }
   else if (!strcmp(key, "rc_config"))
   {
-    uint8_t pin_config;
-    if (!tic_parse_pin_config(value, &pin_config))
+    if (!tic_parse_pin_config(value, settings, TIC_PIN_NUM_RC))
     {
       return tic_error_create("Invalid rc_config value.");
     }
-    tic_settings_set_rc_config(settings, pin_config);
   }
   else if (!strcmp(key, "current_limit"))
   {

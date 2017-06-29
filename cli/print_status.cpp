@@ -63,8 +63,6 @@ static void print_pin_info(const tic::variables & vars,
   }
   std::cout << left_column << "  Digital reading: "
     << vars.get_digital_reading(pin) << std::endl;
-  //std::cout << left_column << "  Switch status: "
-  //  << vars.get_switch_status(pin) << std::endl;
 }
 
 void print_status(const tic::variables & vars,

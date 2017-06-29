@@ -177,15 +177,39 @@ static void tic_write_settings_to_buffer(const tic_settings * settings, uint8_t 
 
   buf[TIC_SETTING_ENCODER_UNLIMITED] = tic_settings_get_encoder_unlimited(settings);
 
-  buf[TIC_SETTING_SCL_CONFIG] = tic_settings_get_scl_config(settings);
+  {
+    buf[TIC_SETTING_SCL_CONFIG] = tic_settings_get_pin_func(settings, TIC_PIN_NUM_SCL)
+      | (tic_settings_get_pin_pullup(settings, TIC_PIN_NUM_SCL) << TIC_PIN_PULLUP)
+      | (tic_settings_get_pin_analog(settings, TIC_PIN_NUM_SCL) << TIC_PIN_ANALOG);
 
-  buf[TIC_SETTING_SDA_CONFIG] = tic_settings_get_sda_config(settings);
+    buf[TIC_SETTING_SDA_CONFIG] = tic_settings_get_pin_func(settings, TIC_PIN_NUM_SDA)
+      | (tic_settings_get_pin_pullup(settings, TIC_PIN_NUM_SDA) << TIC_PIN_PULLUP)
+      | (tic_settings_get_pin_analog(settings, TIC_PIN_NUM_SDA) << TIC_PIN_ANALOG);
 
-  buf[TIC_SETTING_TX_CONFIG] = tic_settings_get_tx_config(settings);
+    buf[TIC_SETTING_TX_CONFIG] = tic_settings_get_pin_func(settings, TIC_PIN_NUM_TX)
+      | (tic_settings_get_pin_pullup(settings, TIC_PIN_NUM_TX) << TIC_PIN_PULLUP)
+      | (tic_settings_get_pin_analog(settings, TIC_PIN_NUM_TX) << TIC_PIN_ANALOG);
 
-  buf[TIC_SETTING_RX_CONFIG] = tic_settings_get_rx_config(settings);
+    buf[TIC_SETTING_RX_CONFIG] = tic_settings_get_pin_func(settings, TIC_PIN_NUM_RX)
+      | (tic_settings_get_pin_pullup(settings, TIC_PIN_NUM_RX) << TIC_PIN_PULLUP)
+      | (tic_settings_get_pin_analog(settings, TIC_PIN_NUM_RX) << TIC_PIN_ANALOG);
 
-  buf[TIC_SETTING_RC_CONFIG] = tic_settings_get_rc_config(settings);
+    buf[TIC_SETTING_RC_CONFIG] = tic_settings_get_pin_func(settings, TIC_PIN_NUM_RC)
+      | (tic_settings_get_pin_pullup(settings, TIC_PIN_NUM_RC) << TIC_PIN_PULLUP)
+      | (tic_settings_get_pin_analog(settings, TIC_PIN_NUM_RC) << TIC_PIN_ANALOG);
+
+    for (uint8_t i = 0; i < TIC_CONTROL_PIN_COUNT; i++)
+    {
+      if (tic_settings_get_pin_func(settings, i) == TIC_PIN_FUNC_KILL_SWITCH)
+      {
+        buf[TIC_SETTING_KILL_SWITCH_MAP] |= (1 << i);
+      }
+      if (tic_settings_get_pin_polarity(settings, i))
+      {
+        buf[TIC_SETTING_SWITCH_POLARITY_MAP] |= (1 << i);
+      }
+    }
+  }
 
   buf[TIC_SETTING_CURRENT_LIMIT] =
     tic_current_limit_to_code(tic_settings_get_current_limit(settings));
