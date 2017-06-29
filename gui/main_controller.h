@@ -74,7 +74,7 @@ public:
   void handle_serial_device_number_input(uint8_t serial_device_number);
   void handle_serial_crc_enabled_input(bool serial_crc_enabled);
   void handle_command_timeout_input(uint16_t command_timeout);
-  
+
   void handle_input_min_input(uint16_t input_min);
   void handle_input_neutral_min_input(uint16_t input_neutral_min);
   void handle_input_neutral_max_input(uint16_t input_neutral_max);
@@ -110,12 +110,11 @@ private:
   /** This is called whenever it is possible that we have connected to a
    * different device. */
   void handle_device_changed();
-
   void handle_variables_changed();
-
   void handle_settings_changed();
+  void handle_settings_applied();
 
-  void handle_settings_applied(bool force_reset_manual_target = false);
+  void initialize_manual_target();
 
   /** Holds a list of the relevant devices that are connected to the computer. */
   std::vector<tic::device> device_list;

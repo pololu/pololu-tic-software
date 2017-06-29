@@ -121,6 +121,10 @@ void main_controller::connect_device(tic::device const & device)
 
   try
   {
+    // Reset command timeout BEFORE loading variables for the first time so we
+    // only count one occurrence of the command timeout error. (Otherwise, the
+    // Tic would again set the command_timeout bit in errors_occurred after we
+    // load the variables but before we reset the command timeout.)
     device_handle.reset_command_timeout();
     reload_variables();
   }
@@ -242,8 +246,11 @@ void main_controller::update()
       // Reload the variables from the device.
       try
       {
-        device_handle.reset_command_timeout();
+        // Reset command timeout AFTER reloading the variables so we can
+        // indicate an active error if the command timeout interval is shorter
+        // than the interval between calls to update().
         reload_variables();
+        device_handle.reset_command_timeout();
       }
       catch (std::exception const & e)
       {
@@ -380,6 +387,8 @@ void main_controller::handle_device_changed()
     window->set_connection_status("", false);
 
     window->reset_error_counts();
+
+    initialize_manual_target();
   }
   else
   {
@@ -404,6 +413,28 @@ void main_controller::handle_device_changed()
   window->set_reload_settings_enabled(connected());
   window->set_restore_defaults_enabled(connected());
   window->set_tab_pages_enabled(connected());
+}
+
+void main_controller::initialize_manual_target()
+{
+
+  if (control_mode_is_serial(cached_settings) &&
+    variables.get_input_state() == TIC_INPUT_STATE_POSITION)
+  {
+    window->set_manual_target_position_mode();
+    window->set_manual_target(variables.get_input_after_scaling());
+  }
+  else if (control_mode_is_serial(cached_settings) &&
+    variables.get_input_state() == TIC_INPUT_STATE_VELOCITY)
+  {
+    window->set_manual_target_speed_mode();
+    window->set_manual_target(variables.get_input_after_scaling());
+  }
+  else
+  {
+    window->set_manual_target_position_mode();
+    window->set_manual_target(0);
+  }
 }
 
 // TODO: move to separate file along with following 2 functions?
@@ -531,19 +562,13 @@ void main_controller::handle_settings_changed()
   window->set_apply_settings_enabled(connected() && settings_modified);
 }
 
-void main_controller::handle_settings_applied(bool force_reset_manual_target)
+void main_controller::handle_settings_applied()
 {
   window->set_manual_target_range(
     tic_settings_get_output_min(settings.get_pointer()),
     tic_settings_get_output_max(settings.get_pointer()));
 
   window->set_manual_target_box_enabled(control_mode_is_serial(settings));
-
-  // TODO rethink this
-  if (!control_mode_is_serial(settings) || force_reset_manual_target)
-  {
-    window->set_manual_target(0);
-  }
 
   // this must be last so the preceding code can compare old and new settings
   cached_settings = settings;

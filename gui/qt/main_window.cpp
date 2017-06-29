@@ -261,6 +261,23 @@ void main_window::set_control_mode(uint8_t control_mode)
   set_u8_combo_box(control_mode_value, control_mode);
 }
 
+void main_window::set_manual_target_position_mode()
+{
+  suppress_events = true;
+  manual_target_position_mode_radio->setChecked(true);
+  update_set_target_button();
+  suppress_events = false;
+}
+
+void main_window::set_manual_target_speed_mode()
+{
+  suppress_events = true;
+  manual_target_speed_mode_radio->setChecked(true);
+  update_set_target_button();
+  suppress_events = false;
+}
+
+
 void main_window::set_manual_target_range(int32_t target_min, int32_t target_max)
 {
   suppress_events = true;
@@ -529,6 +546,18 @@ void main_window::set_check_box(QCheckBox * check, bool value)
   suppress_events = false;
 }
 
+void main_window::update_set_target_button()
+{
+  if (manual_target_position_mode_radio->isChecked())
+  {
+    set_target_button->setText(tr("Set target position"));
+  }
+  else
+  {
+    set_target_button->setText(tr("Set target speed"));
+  }
+}
+
 void main_window::showEvent(QShowEvent * event)
 {
   Q_UNUSED(event);
@@ -627,14 +656,7 @@ void main_window::on_errors_reset_counts_button_clicked()
 void main_window::on_manual_target_position_mode_radio_toggled(bool checked)
 {
   if (suppress_events) { return; }
-  if (checked)
-  {
-    set_target_button->setText(tr("Set target position"));
-  }
-  else
-  {
-    set_target_button->setText(tr("Set target speed"));
-  }
+  update_set_target_button();
   set_manual_target(0);
   controller->halt_and_set_position(0);
 }
@@ -1535,14 +1557,14 @@ QWidget * main_window::setup_serial_settings_box()
     layout->addWidget(serial_crc_enabled_check, row, 0, 1, 2, Qt::AlignLeft);
     row++;
   }
-  
+
   {
     command_timeout_check = new QCheckBox();
     command_timeout_check->setObjectName("command_timeout_check");
     layout->addWidget(command_timeout_check, row, 0, 1, 2, Qt::AlignLeft);
     row++;
   }
-  
+
   {
     command_timeout_value = new QDoubleSpinBox();
     command_timeout_value->setObjectName("command_timeout_value");
@@ -1949,14 +1971,7 @@ void main_window::retranslate()
   manual_target_box->setTitle(tr(u8"Set target (Serial\u2009/\u2009I\u00B2C\u2009/\u2009USB mode only)"));
   manual_target_position_mode_radio->setText(tr("Set position"));
   manual_target_speed_mode_radio->setText(tr("Set speed"));
-  if (manual_target_position_mode_radio->isChecked())
-  {
-    set_target_button->setText(tr("Set target position"));
-  }
-  else
-  {
-    set_target_button->setText(tr("Set target speed"));
-  }
+  update_set_target_button();
   auto_set_target_check->setText(tr("Set target when slider or entry box are changed"));
   auto_zero_target_check->setText(tr("Return slider to zero when it is released"));
   stop_button->setText(tr("Halt motor"));

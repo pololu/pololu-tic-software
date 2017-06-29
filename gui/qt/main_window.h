@@ -101,6 +101,8 @@ public:
 
   void set_control_mode(uint8_t control_mode);
 
+  void set_manual_target_position_mode();
+  void set_manual_target_speed_mode();
   void set_manual_target_range(int32_t target_min, int32_t target_max);
   void set_manual_target(int32_t target);
   void set_manual_target_ball_position(int32_t current_position, bool on_target);
@@ -148,6 +150,8 @@ private:
   void set_spin_box(QSpinBox * box, int value);
   void set_double_spin_box(QDoubleSpinBox * spin, double value);
   void set_check_box(QCheckBox * check, bool value);
+
+  void update_set_target_button();
 
 protected:
   /** This is called by Qt just before the window is shown for the first time,
