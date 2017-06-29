@@ -27,6 +27,7 @@
 #include <QVBoxLayout>
 
 #include <cassert>
+#include <cmath>
 
 main_window::main_window(QWidget *parent)
   : QMainWindow(parent)
@@ -326,7 +327,7 @@ void main_window::set_command_timeout(uint16_t command_timeout)
     set_check_box(command_timeout_check, true);
     command_timeout_value->setEnabled(true);
   }
-  set_double_spin_box(command_timeout_value, command_timeout / 1000);
+  set_double_spin_box(command_timeout_value, command_timeout / 1000.);
 }
 
 void main_window::set_input_min(uint32_t input_min)
@@ -763,7 +764,8 @@ void main_window::on_command_timeout_check_stateChanged(int state)
   if (suppress_events) { return; }
   if (state == Qt::Checked)
   {
-    controller->handle_command_timeout_input(command_timeout_value->value() * 1000);
+    controller->handle_command_timeout_input(
+      std::round(command_timeout_value->value() * 1000));
   }
   else
   {
@@ -774,7 +776,8 @@ void main_window::on_command_timeout_check_stateChanged(int state)
 void main_window::on_command_timeout_value_valueChanged(double value)
 {
   if (suppress_events) { return; }
-  controller->handle_command_timeout_input(command_timeout_value->value() * 1000);
+  controller->handle_command_timeout_input(
+    std::round(command_timeout_value->value() * 1000));
 }
 
 void main_window::on_input_min_value_valueChanged(int value)
