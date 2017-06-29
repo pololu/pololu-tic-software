@@ -99,14 +99,16 @@ public:
   void increment_errors_occurred(uint32_t errors_occurred);
   void reset_error_counts();
 
-  void set_control_mode(uint8_t control_mode);
-
   void set_manual_target_position_mode();
   void set_manual_target_speed_mode();
   void set_manual_target_range(int32_t target_min, int32_t target_max);
   void set_manual_target(int32_t target);
   void set_manual_target_ball_position(int32_t current_position, bool on_target);
   void set_manual_target_ball_velocity(int32_t current_velocity, bool on_target);
+
+  // [all-settings]
+
+  void set_control_mode(uint8_t control_mode);
 
   void set_serial_baud_rate(uint32_t serial_baud_rate);
   void set_serial_device_number(uint8_t serial_device_number);
@@ -137,6 +139,7 @@ public:
 
   void set_disable_safe_start(bool disable_safe_start);
   void set_ignore_err_line_high(bool ignore_err_line_high);
+  void set_never_sleep(bool never_sleep);
 
   void set_soft_error_response(uint8_t soft_error_response);
   void set_soft_error_position(int32_t soft_error_position);
@@ -190,6 +193,8 @@ private slots:
   /** This is called by Qt when the user wants to apply settings. */
   void on_apply_settings_action_triggered();
 
+  // [all-settings]
+
   void on_control_mode_value_currentIndexChanged(int index);
 
   void on_serial_baud_rate_value_valueChanged(int value);
@@ -224,6 +229,7 @@ private slots:
 
   void on_disable_safe_start_check_stateChanged(int state);
   void on_ignore_err_line_high_check_stateChanged(int state);
+  void on_never_sleep_check_stateChanged(int state);
 
   void on_soft_error_response_radio_group_buttonToggled(int id, bool checked);
   void on_soft_error_position_value_valueChanged(int value);
@@ -360,6 +366,7 @@ private:
   QVBoxLayout * settings_right_column_layout;
 
   // [all-settings]
+
   QWidget * control_mode_widget;
   QGridLayout * control_mode_widget_layout;
   QLabel * control_mode_label;
@@ -424,6 +431,7 @@ private:
   QGridLayout * misc_settings_box_layout;
   QCheckBox * disable_safe_start_check;
   QCheckBox * ignore_err_line_high_check;
+  QCheckBox * never_sleep_check;
 
   QGroupBox * error_settings_box;
   QGridLayout * error_settings_box_layout;

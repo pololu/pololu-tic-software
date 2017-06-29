@@ -462,6 +462,11 @@ void main_window::set_ignore_err_line_high(bool ignore_err_line_high)
   set_check_box(ignore_err_line_high_check, ignore_err_line_high);
 }
 
+void main_window::set_never_sleep(bool never_sleep)
+{
+  set_check_box(never_sleep_check, never_sleep);
+}
+
 void main_window::set_soft_error_response(uint8_t soft_error_response)
 {
   suppress_events = true;
@@ -943,6 +948,12 @@ void main_window::on_ignore_err_line_high_check_stateChanged(int state)
 {
   if (suppress_events) { return; }
   controller->handle_ignore_err_line_high_input(state == Qt::Checked);
+}
+
+void main_window::on_never_sleep_check_stateChanged(int state)
+{
+  if (suppress_events) { return; }
+  controller->handle_never_sleep_input(state == Qt::Checked);
 }
 
 void main_window::on_soft_error_response_radio_group_buttonToggled(int id, bool checked)
@@ -1835,6 +1846,13 @@ QWidget * main_window::setup_misc_settings_box()
     row++;
   }
 
+  {
+    never_sleep_check = new QCheckBox();
+    never_sleep_check->setObjectName("never_sleep_check");
+    layout->addWidget(never_sleep_check, row, 0, Qt::AlignLeft);
+    row++;
+  }
+
   misc_settings_box->setLayout(layout);
   return misc_settings_box;
 }
@@ -2015,6 +2033,7 @@ void main_window::retranslate()
   misc_settings_box->setTitle(tr("Miscellaneous"));
   disable_safe_start_check->setText(tr("Disable safe start"));
   ignore_err_line_high_check->setText(tr("Ignore ERR line high"));
+  never_sleep_check->setText(tr("Never sleep (ignore USB suspend)"));
 
   error_settings_box->setTitle(tr("Soft error response"));
   soft_error_response_radio_group->button(TIC_RESPONSE_DEENERGIZE)->setText(tr("De-energize"));

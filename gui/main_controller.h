@@ -67,6 +67,8 @@ public:
   void apply_settings();
 
   // These are called when the user changes a setting.
+  // [all-settings]
+
   void handle_control_mode_input(uint8_t control_mode);
 
   void handle_serial_baud_rate_input(uint32_t serial_baud_rate);
@@ -99,6 +101,7 @@ public:
 
   void handle_disable_safe_start_input(bool disable_safe_start);
   void handle_ignore_err_line_high_input(bool ignore_err_line_high);
+  void handle_never_sleep_input(bool never_sleep);
 
   void handle_soft_error_response_input(uint8_t soft_error_response);
   void handle_soft_error_position_input(int32_t soft_error_position);

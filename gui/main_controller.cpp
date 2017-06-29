@@ -525,6 +525,7 @@ void main_controller::handle_variables_changed()
 void main_controller::handle_settings_changed()
 {
   // [all-settings]
+
   window->set_control_mode(tic_settings_get_control_mode(settings.get_pointer()));
   window->set_serial_baud_rate(tic_settings_get_serial_baud_rate(settings.get_pointer()));
   window->set_serial_device_number(tic_settings_get_serial_device_number(settings.get_pointer()));
@@ -554,6 +555,7 @@ void main_controller::handle_settings_changed()
 
   window->set_disable_safe_start(tic_settings_get_disable_safe_start(settings.get_pointer()));
   window->set_ignore_err_line_high(tic_settings_get_ignore_err_line_high(settings.get_pointer()));
+  window->set_never_sleep(tic_settings_get_never_sleep(settings.get_pointer()));
 
   window->set_soft_error_response(tic_settings_get_soft_error_response(settings.get_pointer()));
   window->set_soft_error_position(tic_settings_get_soft_error_position(settings.get_pointer()));
@@ -793,13 +795,20 @@ void main_controller::handle_ignore_err_line_high_input(bool ignore_err_line_hig
   handle_settings_changed();
 }
 
+void main_controller::handle_never_sleep_input(bool never_sleep)
+{
+  if (!connected()) { return; }
+  tic_settings_set_never_sleep(settings.get_pointer(), never_sleep);
+  settings_modified = true;
+  handle_settings_changed();
+}
+
 void main_controller::handle_soft_error_response_input(uint8_t soft_error_response)
 {
   if (!connected()) { return; }
   tic_settings_set_soft_error_response(settings.get_pointer(), soft_error_response);
   settings_modified = true;
   handle_settings_changed();
-
 }
 
 void main_controller::handle_soft_error_position_input(int32_t soft_error_position)
