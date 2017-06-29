@@ -5,6 +5,8 @@
 struct tic_variables
 {
   uint8_t operation_state;
+  bool energized;
+  bool learn_position_later;
   uint16_t error_status;
   uint32_t errors_occurred;
   uint8_t planning_mode;
@@ -30,7 +32,6 @@ struct tic_variables
   uint16_t input_after_averaging;
   uint16_t input_after_hysteresis;
   int32_t input_after_scaling;
-  bool learn_position_later;
 
   struct {
     uint16_t analog_reading;
@@ -119,6 +120,9 @@ static void write_buffer_to_variables(const uint8_t * buf, tic_variables * vars)
   assert(buf != NULL);
 
   vars->operation_state = buf[TIC_VAR_OPERATION_STATE];
+  uint8_t misc_flags1 = buf[TIC_VAR_MISC_FLAGS1];
+  vars->energized = misc_flags1 >> TIC_MISC_FLAGS1_ENERGIZED & 1;
+  vars->learn_position_later = misc_flags1 >> TIC_MISC_FLAGS1_LEARN_POSITION_LATER & 1;
   vars->error_status = read_u16(buf + TIC_VAR_ERROR_STATUS);
   vars->errors_occurred = read_u32(buf + TIC_VAR_ERRORS_OCCURRED);
   vars->planning_mode = buf[TIC_VAR_PLANNING_MODE];
@@ -144,7 +148,6 @@ static void write_buffer_to_variables(const uint8_t * buf, tic_variables * vars)
   vars->input_after_averaging = read_u16(buf + TIC_VAR_INPUT_AFTER_AVERAGING);
   vars->input_after_hysteresis = read_u16(buf + TIC_VAR_INPUT_AFTER_HYSTERESIS);
   vars->input_after_scaling = read_i32(buf + TIC_VAR_INPUT_AFTER_SCALING);
-  vars->learn_position_later = buf[TIC_VAR_LEARN_POSITION_LATER] & 1;
 
   {
     uint8_t s = buf[TIC_VAR_SWITCH_STATUS];
@@ -244,11 +247,22 @@ tic_error * tic_get_variables(tic_handle * handle, tic_variables ** variables,
   return error;
 }
 
-
 uint8_t tic_variables_get_operation_state(const tic_variables * variables)
 {
   if (variables == NULL) { return 0; }
   return variables->operation_state;
+}
+
+bool tic_variables_get_energized(const tic_variables * variables)
+{
+  if (variables == NULL) { return 0xFFFF; }
+  return variables->energized;
+}
+
+bool tic_variables_get_learn_position_later(const tic_variables * variables)
+{
+  if (variables == NULL) { return 0xFFFF; }
+  return variables->learn_position_later;
 }
 
 uint16_t tic_variables_get_error_status(const tic_variables * variables)
@@ -399,12 +413,6 @@ int32_t tic_variables_get_input_after_scaling(const tic_variables * variables)
 {
   if (variables == NULL) { return 0xFFFF; }
   return variables->input_after_scaling;
-}
-
-bool tic_variables_get_learn_position_later(const tic_variables * variables)
-{
-  if (variables == NULL) { return 0xFFFF; }
-  return variables->learn_position_later;
 }
 
 uint16_t tic_variables_get_analog_reading(const tic_variables * variables,

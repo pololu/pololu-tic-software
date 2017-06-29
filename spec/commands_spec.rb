@@ -5,6 +5,7 @@ describe 'commands for controlling the motor', usb: true do
     tic_change_settings do |s|
       s['control_mode'] = 'serial'
       s['speed_max'] = '500000000'
+      s['command_timeout'] = '0'
       s['disable_safe_start'] = false
     end
 
