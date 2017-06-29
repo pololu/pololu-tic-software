@@ -217,6 +217,14 @@ void main_controller::update()
   if (successfully_updated_list && device_list_changed)
   {
     window->set_device_list_contents(device_list);
+    if (connected())
+    {
+      window->set_device_list_selected(device_handle.get_device());
+    }
+    else
+    {
+      window->set_device_list_selected(tic::device()); // show "Not connected"
+    }
   }
 
   if (connected())
