@@ -17,6 +17,7 @@ serial_crc_enabled: false
 vin_calibration: 0
 input_averaging_enabled: true
 input_hysteresis: 0
+input_scaling_degree: linear
 input_invert: false
 input_min: 0
 input_neutral_min: 2048
@@ -61,6 +62,7 @@ serial_crc_enabled: true
 vin_calibration: -345
 input_averaging_enabled: false
 input_hysteresis: 4455
+input_scaling_degree: cubic
 input_invert: true
 input_min: 404
 input_neutral_min: 12312

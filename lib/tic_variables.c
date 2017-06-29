@@ -36,9 +36,8 @@ struct tic_variables
   struct {
     uint16_t analog_reading;
     bool digital_reading;
-    bool switch_status;
     uint8_t pin_state;
-  } pin_info[PIN_COUNT];
+  } pin_info[TIC_CONTROL_PIN_COUNT];
 };
 
 tic_error * tic_variables_create(tic_variables ** variables)
@@ -148,15 +147,6 @@ static void write_buffer_to_variables(const uint8_t * buf, tic_variables * vars)
   vars->input_after_averaging = read_u16(buf + TIC_VAR_INPUT_AFTER_AVERAGING);
   vars->input_after_hysteresis = read_u16(buf + TIC_VAR_INPUT_AFTER_HYSTERESIS);
   vars->input_after_scaling = read_i32(buf + TIC_VAR_INPUT_AFTER_SCALING);
-
-  {
-    uint8_t s = buf[TIC_VAR_SWITCH_STATUS];
-    vars->pin_info[TIC_PIN_NUM_SCL].switch_status = s >> TIC_PIN_NUM_SCL & 1;
-    vars->pin_info[TIC_PIN_NUM_SDA].switch_status = s >> TIC_PIN_NUM_SDA & 1;
-    vars->pin_info[TIC_PIN_NUM_TX].switch_status = s >> TIC_PIN_NUM_TX & 1;
-    vars->pin_info[TIC_PIN_NUM_RX].switch_status = s >> TIC_PIN_NUM_RX & 1;
-    vars->pin_info[TIC_PIN_NUM_RC].switch_status = s >> TIC_PIN_NUM_RC & 1;
-  }
 
   {
     uint8_t d = buf[TIC_VAR_DIGITAL_READINGS];
@@ -427,13 +417,6 @@ bool tic_variables_get_digital_reading(const tic_variables * variables,
 {
   if (variables == NULL || pin >= PIN_COUNT) { return 0; }
   return variables->pin_info[pin].digital_reading;
-}
-
-bool tic_variables_get_switch_status(const tic_variables * variables,
-  uint8_t pin)
-{
-  if (variables == NULL || pin >= PIN_COUNT) { return 0; }
-  return variables->pin_info[pin].switch_status;
 }
 
 uint8_t tic_variables_get_pin_state(const tic_variables * variables,

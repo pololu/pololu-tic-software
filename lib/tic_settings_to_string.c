@@ -1,22 +1,23 @@
 #include "tic_internal.h"
 
 static void print_pin_config_to_yaml(tic_string * str,
-  const char * config_name, uint8_t value)
+  const tic_settings * settings, uint8_t pin,  const char * config_name)
 {
   assert(str != NULL);
   assert(config_name != NULL);
 
   const char * pullup_str = "";
-  if (value >> TIC_PIN_PULLUP & 1) { pullup_str = " pullup"; }
+  if (tic_settings_get_pin_pullup(settings, pin)) { pullup_str = " pullup"; }
 
   const char * analog_str = "";
-  if (value >> TIC_PIN_ANALOG & 1) { analog_str = " analog"; }
+  if (tic_settings_get_pin_analog(settings, pin)) { analog_str = " analog"; }
 
   const char * polarity_str = "";
-  if (value >> TIC_PIN_ACTIVE_HIGH & 1) { polarity_str = " active_high"; }
+  if (tic_settings_get_pin_polarity(settings, pin)) { polarity_str = " active_high"; }
 
   const char * func_str;
-  tic_code_to_name(tic_pin_config_names, (value & TIC_PIN_FUNC_MASK), &func_str);
+  tic_code_to_name(tic_pin_func_names,
+    tic_settings_get_pin_func(settings, pin), &func_str);
 
   tic_sprintf(str, "%s: %s%s%s%s\n", config_name, func_str,
     pullup_str, analog_str, polarity_str);
@@ -185,7 +186,6 @@ tic_error * tic_settings_to_string(const tic_settings * settings, char ** string
     tic_sprintf(&str, "input_error_max: %u\n", input_error_max);
   }
 
-  if (0) // not implemented in firmware
   {
     uint8_t degree = tic_settings_get_input_scaling_degree(settings);
     const char * degree_str;
@@ -244,28 +244,11 @@ tic_error * tic_settings_to_string(const tic_settings * settings, char ** string
   }
 
   {
-    uint8_t scl_config = tic_settings_get_scl_config(settings);
-    print_pin_config_to_yaml(&str, "scl_config", scl_config);
-  }
-
-  {
-    uint8_t sda_config = tic_settings_get_sda_config(settings);
-    print_pin_config_to_yaml(&str, "sda_config", sda_config);
-  }
-
-  {
-    uint8_t tx_config = tic_settings_get_tx_config(settings);
-    print_pin_config_to_yaml(&str, "tx_config", tx_config);
-  }
-
-  {
-    uint8_t rx_config = tic_settings_get_rx_config(settings);
-    print_pin_config_to_yaml(&str, "rx_config", rx_config);
-  }
-
-  {
-    uint8_t rc_config = tic_settings_get_rc_config(settings);
-    print_pin_config_to_yaml(&str, "rc_config", rc_config);
+    print_pin_config_to_yaml(&str, settings, TIC_PIN_NUM_SCL, "scl_config");
+    print_pin_config_to_yaml(&str, settings, TIC_PIN_NUM_SDA, "sda_config");
+    print_pin_config_to_yaml(&str, settings, TIC_PIN_NUM_TX, "tx_config");
+    print_pin_config_to_yaml(&str, settings, TIC_PIN_NUM_RX, "rx_config");
+    print_pin_config_to_yaml(&str, settings, TIC_PIN_NUM_RC, "rc_config");
   }
 
   {

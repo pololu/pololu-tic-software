@@ -65,7 +65,7 @@ extern const tic_name tic_control_mode_names[];
 extern const tic_name tic_response_names[];
 extern const tic_name tic_scaling_degree_names[];
 extern const tic_name tic_decay_mode_names[];
-extern const tic_name tic_pin_config_names[];
+extern const tic_name tic_pin_func_names[];
 
 
 // Intenral variables functions.
@@ -231,12 +231,3 @@ void tic_settings_set_input_error_max(tic_settings *, uint16_t);
 /// tic_settings_set_error_max().
 TIC_API
 uint16_t tic_settings_get_input_error_max(const tic_settings *);
-
-/// Sets the input scaling degree.  0 is linear, 1 is quadratic, 2 is cubic.
-TIC_API
-void tic_settings_set_input_scaling_degree(tic_settings *, uint8_t);
-
-/// Gets the input scaling degree setting described in
-/// tic_settings_set_input_scaling_degree().
-TIC_API
-uint8_t tic_settings_get_input_scaling_degree(const tic_settings *);
