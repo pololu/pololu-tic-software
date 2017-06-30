@@ -109,6 +109,10 @@ def test_cases_for_settings_fix(product)
       { 'serial_device_number' => 127 },
       "Warning: The serial device number is too high so it will be changed to 127.\n"
     ],
+    [ { 'command_timeout' => 60001 },
+      { 'command_timeout' => 60000 },
+      "Warning: The command timeout is too high so it will be changed to 60000 ms.\n"
+    ],
     #[ { 'low_vin_shutoff_voltage' => 9001, 'low_vin_startup_voltage' => 9000,
     #    'high_vin_shutoff_voltage' => 8999 },
     #  { 'low_vin_shutoff_voltage' => 9001, 'low_vin_startup_voltage' => 9501,
