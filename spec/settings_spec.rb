@@ -99,46 +99,46 @@ def test_cases_for_settings_fix(product)
     ],
     [ { 'serial_baud_rate' => 101 },
       { 'serial_baud_rate' => 200 },
-      "Warning: The serial baud rate was too low so it was changed to 200.\n"
+      "Warning: The serial baud rate is too low so it will be changed to 200.\n"
     ],
     [ { 'serial_baud_rate' => 115386 },
       { 'serial_baud_rate' => 115385 },
-      "Warning: The serial baud rate was too high so it was changed to 115385.\n"
+      "Warning: The serial baud rate is too high so it will be changed to 115385.\n"
     ],
     [ { 'serial_device_number' => 128 },
       { 'serial_device_number' => 127 },
-      "Warning: The serial device number was too high so it was changed to 127.\n"
+      "Warning: The serial device number is too high so it will be changed to 127.\n"
     ],
     #[ { 'low_vin_shutoff_voltage' => 9001, 'low_vin_startup_voltage' => 9000,
     #    'high_vin_shutoff_voltage' => 8999 },
     #  { 'low_vin_shutoff_voltage' => 9001, 'low_vin_startup_voltage' => 9501,
     #    'high_vin_shutoff_voltage' => 10001 },
-    #    "Warning: The low VIN startup voltage was changed to 9501 mV.\n" \
-    #    "Warning: The high VIN shutoff voltage was changed to 10001 mV.\n"
+    #    "Warning: The low VIN startup voltage will be changed to 9501 mV.\n" \
+    #    "Warning: The high VIN shutoff voltage will be changed to 10001 mV.\n"
     #],
     [ { 'input_min' => 9, 'input_neutral_min' => 8,
         'input_neutral_max' => 7, 'input_max' => 6, },
       { 'input_min' => 0, 'input_neutral_min' => 2048,
         'input_neutral_max' => 2048, 'input_max' => 4095, },
-      "Warning: The input scaling values were out of order " \
+      "Warning: The input scaling values are out of order " \
       "so they will be reset to their default values.\n"
     ],
     [ { 'encoder_prescaler' => 0 },
       { 'encoder_prescaler' => 1 },
-      "Warning: The encoder prescaler was zero so it will be changed to 1.\n"
+      "Warning: The encoder prescaler is zero so it will be changed to 1.\n"
     ],
     [ { 'encoder_prescaler' => 2147483648 },
       { 'encoder_prescaler' => 2147483647 },
-      "Warning: The encoder prescaler was too high " \
+      "Warning: The encoder prescaler is too high " \
       "so it will be lowered to 2147483647.\n"
     ],
     [ { 'encoder_postscaler' => 0 },
       { 'encoder_postscaler' => 1 },
-      "Warning: The encoder postscaler was zero so it will be changed to 1.\n"
+      "Warning: The encoder postscaler is zero so it will be changed to 1.\n"
     ],
     [ { 'encoder_postscaler' => 2147483648 },
       { 'encoder_postscaler' => 2147483647 },
-      "Warning: The encoder postscaler was too high " \
+      "Warning: The encoder postscaler is too high " \
       "so it will be lowered to 2147483647.\n"
     ],
     [ { 'current_limit' => 0 },
@@ -149,7 +149,7 @@ def test_cases_for_settings_fix(product)
     ],
     [ { 'current_limit' => 3969 },
       { 'current_limit' => 3968 },
-      "Warning: The current limit was too high " \
+      "Warning: The current limit is too high " \
       "so it will be lowered to 3968 mA.\n"
     ],
     [ { 'current_limit' => 320, 'current_limit_during_error' => 64 },
@@ -157,32 +157,32 @@ def test_cases_for_settings_fix(product)
     ],
     [ { 'current_limit' => 320, 'current_limit_during_error' => 640 },
       { 'current_limit_during_error' => -1 },
-      "Warning: The current limit during error was higher than the default " \
+      "Warning: The current limit during error is higher than the default " \
       "current limit so it will be changed to be the same.\n"
     ],
     [ { 'current_limit' => 320, 'current_limit_during_error' => -2 },
       { 'current_limit_during_error' => -1 },
-      "Warning: The current limit during error was an invalid negative number " \
+      "Warning: The current limit during error is an invalid negative number " \
       "so it will be changed to be the same as the default current limit.\n"
     ],
     [ { 'speed_max' => 70000_0000 },
       { 'speed_max' => 50000_0000 },
-      "Warning: The maximum speed was too high " \
+      "Warning: The maximum speed is too high " \
       "so it will be lowered to 500000000 (50 kHz).\n"
     ],
     [ { 'starting_speed' => 500_0000 },
       { 'starting_speed' => 200_0000 },
-      "Warning: The starting speed was greater than the maximum speed " \
+      "Warning: The starting speed is greater than the maximum speed " \
       "so it will be lowered to 2000000.\n"
     ],
     [ { 'decel_max' => 0x80000000 },
       { 'decel_max' => 0x7FFFFFFF },
-      "Warning: The maximum deceleration was too high " \
+      "Warning: The maximum deceleration is too high " \
       "so it will be lowered to 2147483647.\n"
     ],
     [ { 'decel_max' => 99 },
       { 'decel_max' => 100 },
-      "Warning: The maximum deceleration was too low " \
+      "Warning: The maximum deceleration is too low " \
       "so it will be raised to 100.\n"
     ],
     [ { 'decel_max' => 0 },  # 0 means same as accel_max
@@ -190,17 +190,17 @@ def test_cases_for_settings_fix(product)
     ],
     [ { 'accel_max' => 0x80000000 },
       { 'accel_max' => 0x7FFFFFFF },
-      "Warning: The maximum acceleration was too high " \
+      "Warning: The maximum acceleration is too high " \
       "so it will be lowered to 2147483647.\n"
     ],
     [ { 'accel_max' => 99 },
       { 'accel_max' => 100 },
-      "Warning: The maximum acceleration was too low " \
+      "Warning: The maximum acceleration is too low " \
       "so it will be raised to 100.\n"
     ],
     [ { 'accel_max' => 0 },
       { 'accel_max' => 100 },
-      "Warning: The maximum acceleration was too low " \
+      "Warning: The maximum acceleration is too low " \
       "so it will be raised to 100.\n"
     ],
     [ { 'control_mode' => 'analog_position', 'sda_config' => 'user_io active_high' },

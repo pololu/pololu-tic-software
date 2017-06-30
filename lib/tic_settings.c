@@ -190,10 +190,11 @@ uint32_t tic_settings_achievable_current_limit(const tic_settings * settings,
 
 static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings)
 {
-  // TODO: use present and future tense for these messages, not past tense
   // TODO: fix command_timeout; must be less than 60000
   // TODO: fix enum values to be valid?
   // TODO: don't allow tic_soft_error_response to be position in a speed control mode
+  // TODO: enforce 0-4095 range of input scaling settings
+  // TODO: enforce -500 to 500 range for vin_calibration
 
   uint8_t control_mode = tic_settings_get_control_mode(settings);
 
@@ -203,13 +204,16 @@ static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings
     {
       baud = TIC_MIN_ALLOWED_BAUD_RATE;
       tic_sprintf(warnings,
-        "Warning: The serial baud rate was too low so it was changed to %u.\n", baud);
+        "Warning: The serial baud rate is too low "
+        "so it will be changed to %u.\n", baud);
     }
     if (baud > TIC_MAX_ALLOWED_BAUD_RATE)
     {
       baud = TIC_MAX_ALLOWED_BAUD_RATE;
       tic_sprintf(warnings,
-        "Warning: The serial baud rate was too high so it was changed to %u.\n", baud);
+        "Warning: The serial baud rate is too high "
+        "so it will be changed to %u.\n",
+        baud);
     }
 
     baud = tic_settings_achievable_serial_baud_rate(settings, baud);
@@ -217,14 +221,15 @@ static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings
   }
 
   {
-    uint8_t serial_device_number = tic_settings_get_serial_device_number(settings);
-    if (serial_device_number > 127)
+    uint8_t device_number = tic_settings_get_serial_device_number(settings);
+    if (device_number > 127)
     {
-      serial_device_number = 127;
+      device_number = 127;
       tic_sprintf(warnings,
-        "Warning: The serial device number was too high so it was changed to 127.\n");
+        "Warning: The serial device number is too high "
+        "so it will be changed to 127.\n");
     }
-    tic_settings_set_serial_device_number(settings, serial_device_number);
+    tic_settings_set_serial_device_number(settings, device_number);
   }
 
   {
@@ -281,7 +286,7 @@ static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings
       error_max = 0xFFFF;
 
       tic_sprintf(warnings,
-        "Warning: The input scaling values were out of order "
+        "Warning: The input scaling values are out of order "
         "so they will be reset to their default values.\n");
     }
 
@@ -310,7 +315,7 @@ static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings
     {
       prescaler = TIC_MAX_ALLOWED_ENCODER_PRESCALER;
       tic_sprintf(warnings,
-        "Warning: The encoder prescaler was too high "
+        "Warning: The encoder prescaler is too high "
         "so it will be lowered to %u.\n", prescaler);
     }
 
@@ -318,7 +323,7 @@ static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings
     {
       prescaler = 1;
       tic_sprintf(warnings,
-        "Warning: The encoder prescaler was zero "
+        "Warning: The encoder prescaler is zero "
         "so it will be changed to 1.\n");
     }
 
@@ -332,7 +337,7 @@ static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings
     {
       postscaler = TIC_MAX_ALLOWED_ENCODER_POSTSCALER;
       tic_sprintf(warnings,
-        "Warning: The encoder postscaler was too high "
+        "Warning: The encoder postscaler is too high "
         "so it will be lowered to %u.\n", postscaler);
     }
 
@@ -340,7 +345,7 @@ static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings
     {
       postscaler = 1;
       tic_sprintf(warnings,
-        "Warning: The encoder postscaler was zero "
+        "Warning: The encoder postscaler is zero "
         "so it will be changed to 1.\n");
     }
 
@@ -354,7 +359,7 @@ static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings
     {
       current = TIC_MAX_ALLOWED_CURRENT;
       tic_sprintf(warnings,
-        "Warning: The current limit was too high "
+        "Warning: The current limit is too high "
         "so it will be lowered to %u mA.\n", current);
     }
 
@@ -368,7 +373,7 @@ static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings
     {
       current_during_error = -1;
       tic_sprintf(warnings,
-        "Warning: The current limit during error was higher than "
+        "Warning: The current limit during error is higher than "
         "the default current limit so it will be changed to be the same.\n");
     }
 
@@ -376,7 +381,7 @@ static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings
     {
       current_during_error = -1;
       tic_sprintf(warnings,
-        "Warning: The current limit during error was an invalid negative number "
+        "Warning: The current limit during error is an invalid negative number "
         "so it will be changed to be the same as the default current limit.\n");
     }
 
@@ -396,7 +401,7 @@ static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings
     {
       decay_mode = TIC_DECAY_MODE_MIXED;
       tic_sprintf(warnings,
-        "Warning: The decay mode was invalid "
+        "Warning: The decay mode is invalid "
         "so it will be changed to mixed.\n");
     }
   }
@@ -412,7 +417,7 @@ static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings
     {
       mode = TIC_STEP_MODE_MICROSTEP1;
       tic_sprintf(warnings,
-        "Warning: The step mode was invalid "
+        "Warning: The step mode is invalid "
         "so it will be changed to 1 (full step).\n");
     }
 
@@ -428,7 +433,8 @@ static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings
       speed_max = TIC_MAX_ALLOWED_SPEED;
       uint32_t speed_max_khz = speed_max / TIC_SPEED_UNITS_PER_HZ / 1000;
       tic_sprintf(warnings,
-        "Warning: The maximum speed was too high so it will be lowered to %u (%u kHz).\n",
+        "Warning: The maximum speed is too high "
+        "so it will be lowered to %u (%u kHz).\n",
         speed_max, speed_max_khz);
     }
 
@@ -436,7 +442,7 @@ static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings
     {
       starting_speed = speed_max;
       tic_sprintf(warnings,
-        "Warning: The starting speed was greater than the maximum speed "
+        "Warning: The starting speed is greater than the maximum speed "
         "so it will be lowered to %u.\n", starting_speed);
     }
 
@@ -451,7 +457,7 @@ static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings
     {
       decel_max = TIC_MAX_ALLOWED_ACCEL;
       tic_sprintf(warnings,
-        "Warning: The maximum deceleration was too high "
+        "Warning: The maximum deceleration is too high "
         "so it will be lowered to %u.\n", decel_max);
     }
 
@@ -459,7 +465,7 @@ static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings
     {
       decel_max = TIC_MIN_ALLOWED_ACCEL;
       tic_sprintf(warnings,
-        "Warning: The maximum deceleration was too low "
+        "Warning: The maximum deceleration is too low "
         "so it will be raised to %u.\n", decel_max);
     }
 
@@ -473,7 +479,7 @@ static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings
     {
       accel_max = TIC_MAX_ALLOWED_ACCEL;
       tic_sprintf(warnings,
-        "Warning: The maximum acceleration was too high "
+        "Warning: The maximum acceleration is too high "
         "so it will be lowered to %u.\n", accel_max);
     }
 
@@ -481,7 +487,7 @@ static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings
     {
       accel_max = TIC_MIN_ALLOWED_ACCEL;
       tic_sprintf(warnings,
-        "Warning: The maximum acceleration was too low "
+        "Warning: The maximum acceleration is too low "
         "so it will be raised to %u.\n", accel_max);
     }
 
