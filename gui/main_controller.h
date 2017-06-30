@@ -77,19 +77,23 @@ public:
   void handle_serial_crc_enabled_input(bool serial_crc_enabled);
   void handle_command_timeout_input(uint16_t command_timeout);
 
+  void handle_encoder_prescaler_input(uint32_t encoder_prescaler);
+  void handle_encoder_postscaler_input(uint32_t encoder_postscaler);
+  void handle_encoder_unlimited_input(bool encoder_unlimited);
+
+  void handle_input_averaging_enabled_input(bool input_averaging_enabled);
+  void handle_input_hysteresis_input(uint16_t input_hysteresis);
+
+  void handle_input_invert_input(bool input_invert);
   void handle_input_min_input(uint16_t input_min);
   void handle_input_neutral_min_input(uint16_t input_neutral_min);
   void handle_input_neutral_max_input(uint16_t input_neutral_max);
   void handle_input_max_input(uint16_t input_max);
   void handle_output_min_input(int32_t output_min);
   void handle_output_max_input(int32_t output_max);
+  void handle_input_scaling_degree_input(uint8_t input_scaling_degree);
 
-  void handle_input_averaging_enabled_input(bool input_averaging_enabled);
-  void handle_input_hysteresis_input(uint16_t input_hysteresis);
-  void handle_encoder_prescaler_input(uint32_t encoder_prescaler);
-  void handle_encoder_postscaler_input(uint32_t encoder_postscaler);
-  void handle_encoder_unlimited_input(bool encoder_unlimited);
-
+  void handle_invert_motor_direction_input(bool invert_motor_direction);
   void handle_speed_max_input(uint32_t speed_max);
   void handle_starting_speed_input(uint32_t starting_speed);
   void handle_accel_max_input(uint32_t accel_max);
@@ -99,15 +103,16 @@ public:
   void handle_current_limit_input_finished();
   void handle_decay_mode_input(uint8_t decay_mode);
 
-  void handle_disable_safe_start_input(bool disable_safe_start);
-  void handle_ignore_err_line_high_input(bool ignore_err_line_high);
-  void handle_never_sleep_input(bool never_sleep);
-
   void handle_soft_error_response_input(uint8_t soft_error_response);
   void handle_soft_error_position_input(int32_t soft_error_position);
   void handle_current_limit_during_error_input(int32_t current_limit_during_error);
   void handle_current_limit_during_error_input_finished();
 
+  void handle_disable_safe_start_input(bool disable_safe_start);
+  void handle_ignore_err_line_high_input(bool ignore_err_line_high);
+  void handle_auto_clear_driver_error_input(bool auto_clear_driver_error);
+  void handle_never_sleep_input(bool never_sleep);
+  void handle_vin_calibration_input(int16_t vin_calibration);
 
 private:
   /** This is called whenever it is possible that we have connected to a

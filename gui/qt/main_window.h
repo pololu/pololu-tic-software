@@ -115,19 +115,23 @@ public:
   void set_serial_crc_enabled(bool serial_crc_enabled);
   void set_command_timeout(uint16_t command_timeout);
 
+  void set_encoder_prescaler(uint32_t encoder_prescaler);
+  void set_encoder_postscaler(uint32_t encoder_postscaler);
+  void set_encoder_unlimited(bool encoder_unlimited);
+
+  void set_input_averaging_enabled(bool input_averaging_enabled);
+  void set_input_hysteresis(uint16_t input_hysteresis);
+
+  void set_input_invert(bool input_invert);
   void set_input_min(uint32_t input_min);
   void set_input_neutral_min(uint32_t input_neutral_min);
   void set_input_neutral_max(uint32_t input_neutral_max);
   void set_input_max(uint32_t input_max);
   void set_output_min(int32_t output_min);
   void set_output_max(int32_t output_max);
+  void set_input_scaling_degree(uint8_t input_scaling_degree);
 
-  void set_input_averaging_enabled(bool input_averaging_enabled);
-  void set_input_hysteresis(uint16_t input_hysteresis);
-  void set_encoder_prescaler(uint32_t encoder_prescaler);
-  void set_encoder_postscaler(uint32_t encoder_postscaler);
-  void set_encoder_unlimited(bool encoder_unlimited);
-
+  void set_invert_motor_direction(bool invert_motor_direction);
   void set_speed_max(uint32_t speed_max);
   void set_starting_speed(uint32_t starting_speed);
   void set_accel_max(uint32_t accel_max);
@@ -137,13 +141,15 @@ public:
   void set_current_limit(uint32_t current_limit);
   void set_decay_mode(uint8_t decay_mode);
 
-  void set_disable_safe_start(bool disable_safe_start);
-  void set_ignore_err_line_high(bool ignore_err_line_high);
-  void set_never_sleep(bool never_sleep);
-
   void set_soft_error_response(uint8_t soft_error_response);
   void set_soft_error_position(int32_t soft_error_position);
   void set_current_limit_during_error(int32_t current_limit_during_error);
+
+  void set_disable_safe_start(bool disable_safe_start);
+  void set_ignore_err_line_high(bool ignore_err_line_high);
+  void set_auto_clear_driver_error(bool auto_clear_driver_error);
+  void set_never_sleep(bool never_sleep);
+  void set_vin_calibration(int16_t vin_calibration);
 
 private:
   /** Helper method for setting the index of a combo box, given the desired
@@ -204,19 +210,23 @@ private slots:
   void on_command_timeout_check_stateChanged(int state);
   void on_command_timeout_value_valueChanged(double value);
 
+  void on_encoder_prescaler_value_valueChanged(int value);
+  void on_encoder_postscaler_value_valueChanged(int value);
+  void on_encoder_unlimited_check_stateChanged(int state);
+
+  void on_input_hysteresis_value_valueChanged(int value);
+  void on_input_averaging_enabled_check_stateChanged(int state);
+
+  void on_input_invert_check_stateChanged(int state);
   void on_input_min_value_valueChanged(int value);
   void on_input_neutral_min_value_valueChanged(int value);
   void on_input_neutral_max_value_valueChanged(int value);
   void on_input_max_value_valueChanged(int value);
   void on_output_min_value_valueChanged(int value);
   void on_output_max_value_valueChanged(int value);
+  void on_input_scaling_degree_value_currentIndexChanged(int index);
 
-  void on_input_averaging_enabled_check_stateChanged(int state);
-  void on_input_hysteresis_value_valueChanged(int value);
-  void on_encoder_prescaler_value_valueChanged(int value);
-  void on_encoder_postscaler_value_valueChanged(int value);
-  void on_encoder_unlimited_check_stateChanged(int state);
-
+  void on_invert_motor_direction_check_stateChanged(int state);
   void on_speed_max_value_valueChanged(int value);
   void on_starting_speed_value_valueChanged(int value);
   void on_accel_max_value_valueChanged(int value);
@@ -227,15 +237,17 @@ private slots:
   void on_current_limit_value_editingFinished();
   void on_decay_mode_value_currentIndexChanged(int index);
 
-  void on_disable_safe_start_check_stateChanged(int state);
-  void on_ignore_err_line_high_check_stateChanged(int state);
-  void on_never_sleep_check_stateChanged(int state);
-
   void on_soft_error_response_radio_group_buttonToggled(int id, bool checked);
   void on_soft_error_position_value_valueChanged(int value);
   void on_current_limit_during_error_check_stateChanged(int state);
   void on_current_limit_during_error_value_valueChanged(int value);
   void on_current_limit_during_error_value_editingFinished();
+
+  void on_disable_safe_start_check_stateChanged(int state);
+  void on_ignore_err_line_high_check_stateChanged(int state);
+  void on_auto_clear_driver_error_check_stateChanged(int state);
+  void on_never_sleep_check_stateChanged(int state);
+  void on_vin_calibration_value_valueChanged(int value);
 
 private:
   bool start_event_reported = false;
@@ -271,6 +283,8 @@ private:
   QLayout * setup_settings_left_column();
   QLayout * setup_settings_right_column();
   QWidget * setup_serial_settings_box();
+  QWidget * setup_encoder_settings_box();
+  QWidget * setup_conditioning_settings_box();
   QWidget * setup_scaling_settings_box();
   QWidget * setup_motor_settings_box();
   QWidget * setup_misc_settings_box();
@@ -382,8 +396,23 @@ private:
   QCheckBox * command_timeout_check;
   QDoubleSpinBox * command_timeout_value;
 
+  QGroupBox * encoder_settings_box;
+  QGridLayout * encoder_settings_box_layout;
+  QLabel * encoder_prescaler_label;
+  QSpinBox * encoder_prescaler_value;
+  QLabel * encoder_postscaler_label;
+  QSpinBox * encoder_postscaler_value;
+  QCheckBox * encoder_unlimited_check;
+
+  QGroupBox * conditioning_settings_box;
+  QGridLayout * conditioning_settings_box_layout;
+  QCheckBox * input_averaging_enabled_check;
+  QLabel * input_hysteresis_label;
+  QSpinBox * input_hysteresis_value;
+
   QGroupBox * scaling_settings_box;
   QGridLayout * scaling_settings_box_layout;
+  QCheckBox * input_invert_check;
   QLabel * scaling_input_label;
   QLabel * scaling_target_label;
   QLabel * scaling_min_label;
@@ -396,17 +425,12 @@ private:
   QSpinBox * input_max_value;
   QSpinBox * output_min_value;
   QSpinBox * output_max_value;
-  QCheckBox * input_averaging_enabled_check;
-  QLabel * input_hysteresis_label;
-  QSpinBox * input_hysteresis_value;
-  QLabel * encoder_prescaler_label;
-  QSpinBox * encoder_prescaler_value;
-  QLabel * encoder_postscaler_label;
-  QSpinBox * encoder_postscaler_value;
-  QCheckBox * encoder_unlimited_check;
+  QLabel * input_scaling_degree_label;
+  QComboBox * input_scaling_degree_value;
 
   QGroupBox * motor_settings_box;
   QGridLayout * motor_settings_box_layout;
+  QCheckBox * invert_motor_direction_check;
   QLabel * speed_max_label;
   QSpinBox * speed_max_value;
   QLabel * speed_max_value_pretty;
@@ -427,18 +451,21 @@ private:
   QLabel * decay_mode_label;
   QComboBox * decay_mode_value;
 
-  QGroupBox * misc_settings_box;
-  QGridLayout * misc_settings_box_layout;
-  QCheckBox * disable_safe_start_check;
-  QCheckBox * ignore_err_line_high_check;
-  QCheckBox * never_sleep_check;
-
   QGroupBox * error_settings_box;
   QGridLayout * error_settings_box_layout;
   QButtonGroup * soft_error_response_radio_group;
   QSpinBox * soft_error_position_value;
   QCheckBox * current_limit_during_error_check;
   QSpinBox * current_limit_during_error_value;
+
+  QGroupBox * misc_settings_box;
+  QGridLayout * misc_settings_box_layout;
+  QCheckBox * disable_safe_start_check;
+  QCheckBox * ignore_err_line_high_check;
+  QCheckBox * auto_clear_driver_error_check;
+  QCheckBox * never_sleep_check;
+  QLabel * vin_calibration_label;
+  QSpinBox * vin_calibration_value;
 
   //// end of pages
 
