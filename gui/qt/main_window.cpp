@@ -2028,7 +2028,7 @@ QWidget * main_window::setup_misc_settings_box()
   {
     vin_calibration_value = new QSpinBox();
     vin_calibration_value->setObjectName("vin_calibration_value");
-    vin_calibration_value->setRange(-5000, 5000);
+    vin_calibration_value->setRange(-500, 500);
     vin_calibration_label = new QLabel();
     vin_calibration_label->setBuddy(vin_calibration_value);
     layout->addWidget(vin_calibration_label, row, 0, FIELD_LABEL_ALIGNMENT);
