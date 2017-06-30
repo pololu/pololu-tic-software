@@ -488,12 +488,11 @@ void main_controller::handle_variables_changed()
 
   if (variables.get_planning_mode() == TIC_PLANNING_MODE_TARGET_POSITION)
   {
-    window->set_target_position(std::to_string(target_position));
+    window->set_target_position(target_position);
   }
   else if (variables.get_planning_mode() == TIC_PLANNING_MODE_TARGET_VELOCITY)
   {
-    window->set_target_velocity(std::to_string(target_velocity) +
-      " (" + convert_speed_to_pps_string(target_velocity) + ")");
+    window->set_target_velocity(target_velocity);
   }
   else
   {
@@ -505,9 +504,8 @@ void main_controller::handle_variables_changed()
   window->set_manual_target_ball_velocity(current_velocity,
     current_velocity == target_velocity);
 
-  window->set_current_position(std::to_string(current_position));
-  window->set_current_velocity(std::to_string(current_velocity) +
-    " (" + convert_speed_to_pps_string(current_velocity) + ")");
+  window->set_current_position(current_position);
+  window->set_current_velocity(current_velocity);
 
   uint16_t error_status = variables.get_error_status();
 

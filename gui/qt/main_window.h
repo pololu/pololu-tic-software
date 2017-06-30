@@ -89,11 +89,11 @@ public:
   void set_firmware_version(std::string const & firmware_version);
 
   void set_vin_voltage(std::string const & vin_voltage);
-  void set_target_position(std::string const & target_position);
-  void set_target_velocity(std::string const & target_velocity);
+  void set_target_position(int32_t target_position);
+  void set_target_velocity(int32_t target_velocity);
   void set_target_none();
-  void set_current_position(std::string const & current_position);
-  void set_current_velocity(std::string const & current_velocity);
+  void set_current_position(int32_t current_position);
+  void set_current_velocity(int32_t current_velocity);
 
   void set_error_status(uint16_t error_status);
   void increment_errors_occurred(uint32_t errors_occurred);
@@ -339,10 +339,12 @@ private:
   QLabel * vin_voltage_value;
   QLabel * target_label;
   QLabel * target_value;
+  QLabel * target_velocity_pretty;
   QLabel * current_position_label;
   QLabel * current_position_value;
   QLabel * current_velocity_label;
   QLabel * current_velocity_value;
+  QLabel * current_velocity_pretty;
 
   QGroupBox * manual_target_box;
   QVBoxLayout * manual_target_box_layout;

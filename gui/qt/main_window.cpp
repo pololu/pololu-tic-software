@@ -183,32 +183,38 @@ void main_window::set_vin_voltage(std::string const & vin_voltage)
   vin_voltage_value->setText(QString(vin_voltage.c_str()));
 }
 
-void main_window::set_target_position(std::string const & target_position)
+void main_window::set_target_position(int32_t target_position)
 {
   target_label->setText(tr("Target position:"));
-  target_value->setText(QString(target_position.c_str()));
+  target_value->setText(QString::number(target_position));
+  target_velocity_pretty->setText("");
 }
 
-void main_window::set_target_velocity(std::string const & target_velocity)
+void main_window::set_target_velocity(int32_t target_velocity)
 {
   target_label->setText(tr("Target velocity:"));
-  target_value->setText(QString(target_velocity.c_str()));
+  target_value->setText(QString::number(target_velocity));
+  target_velocity_pretty->setText(
+    "(" + QString(convert_speed_to_pps_string(target_velocity).c_str()) + ")");
 }
 
 void main_window::set_target_none()
 {
   target_label->setText(tr("Target:"));
   target_value->setText(tr("No target"));
+  target_velocity_pretty->setText("");
 }
 
-void main_window::set_current_position(std::string const & current_position)
+void main_window::set_current_position(int32_t current_position)
 {
-  current_position_value->setText(QString(current_position.c_str()));
+  current_position_value->setText(QString::number(current_position));
 }
 
-void main_window::set_current_velocity(std::string const & current_velocity)
+void main_window::set_current_velocity(int32_t current_velocity)
 {
-  current_velocity_value->setText(QString(current_velocity.c_str()));
+  current_velocity_value->setText(QString::number(current_velocity));
+  current_velocity_pretty->setText(
+    "(" + QString(convert_speed_to_pps_string(current_velocity).c_str()) + ")");
 }
 
 void main_window::set_error_status(uint16_t error_status)
@@ -1300,21 +1306,33 @@ QWidget * main_window::setup_status_box()
 {
   status_box = new QGroupBox();
   QGridLayout * layout = status_box_layout = new QGridLayout();
-  layout->setColumnStretch(1, 1);
+  layout->setColumnStretch(2, 1);
   int row = 0;
 
   setup_read_only_text_field(layout, row++, &vin_voltage_label, &vin_voltage_value);
-  setup_read_only_text_field(layout, row++, &target_label, &target_value);
+  {
+    setup_read_only_text_field(layout, row, &target_label, &target_value);
+    target_velocity_pretty = new QLabel();
+    layout->addWidget(target_velocity_pretty, row, 2, Qt::AlignLeft);
+    row++;
+  }
   setup_read_only_text_field(layout, row++, &current_position_label, &current_position_value);
-  setup_read_only_text_field(layout, row++, &current_velocity_label, &current_velocity_value);
+  {
+    setup_read_only_text_field(layout, row, &current_velocity_label, &current_velocity_value);
+    current_velocity_pretty = new QLabel();
+    layout->addWidget(current_velocity_pretty, row, 2, Qt::AlignLeft);
+    row++;
+  }
 
-  // Make the right column wide enough to display the largest possible current
+  // Make the right two columns wide enough to display the largest possible
   // velocity.
   {
     QLabel tmp_label;
-    tmp_label.setText(QString((std::to_string(TIC_MAX_ALLOWED_SPEED) +
-      " (" + convert_speed_to_pps_string(TIC_MAX_ALLOWED_SPEED) + ")").c_str()));
+    tmp_label.setText(QString((std::to_string(TIC_MAX_ALLOWED_SPEED)).c_str()));
     layout->setColumnMinimumWidth(1, tmp_label.sizeHint().width());
+    tmp_label.setText(QString(("(" +
+      convert_speed_to_pps_string(TIC_MAX_ALLOWED_SPEED) + ")").c_str()));
+    layout->setColumnMinimumWidth(2, tmp_label.sizeHint().width());
   }
 
   status_box->setLayout(layout);
