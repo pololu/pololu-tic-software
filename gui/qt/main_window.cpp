@@ -132,9 +132,9 @@ void main_window::set_deenergize_button_enabled(bool enabled)
   deenergize_button->setEnabled(enabled);
 }
 
-void main_window::set_energize_button_enabled(bool enabled)
+void main_window::set_resume_button_enabled(bool enabled)
 {
-  energize_button->setEnabled(enabled);
+  resume_button->setEnabled(enabled);
 }
 
 void main_window::set_apply_settings_enabled(bool enabled)
@@ -235,6 +235,19 @@ void main_window::set_error_status(uint16_t error_status)
       error_rows[i].stopping_value->setStyleSheet(styleSheet());
     }
   }
+}
+
+void main_window::set_motor_status_message(std::string const & message, bool stopped)
+{
+  if (stopped)
+  {
+    motor_status_value->setStyleSheet("QLabel { color: red; }");
+  }
+  else
+  {
+    motor_status_value->setStyleSheet("");
+  }
+  motor_status_value->setText(message.c_str());
 }
 
 void main_window::increment_errors_occurred(uint32_t errors_occurred)
@@ -679,7 +692,7 @@ void main_window::on_deenergize_button_clicked()
   controller->deenergize();
 }
 
-void main_window::on_energize_button_clicked()
+void main_window::on_resume_button_clicked()
 {
   controller->energize();
 }
@@ -2064,17 +2077,33 @@ QLayout * main_window::setup_footer()
 {
   QHBoxLayout * layout = footer_layout = new QHBoxLayout();
 
-  deenergize_button = new QPushButton();
-  deenergize_button->setObjectName("deenergize_button");
-  energize_button = new QPushButton();
-  energize_button->setObjectName("energize_button");
-  apply_settings_button = new QPushButton();
-  connect(apply_settings_button, SIGNAL(clicked()),
-    this, SLOT(on_apply_settings_action_triggered()));
-  layout->addWidget(deenergize_button);
-  layout->addWidget(energize_button);
+  {
+    deenergize_button = new QPushButton();
+    deenergize_button->setObjectName("deenergize_button");
+    deenergize_button->setStyleSheet("QPushButton:enabled { background-color: red; color: white; font-weight: bold; }");
+    layout->addWidget(deenergize_button);
+  }
+
+  {
+    resume_button = new QPushButton();
+    resume_button->setObjectName("resume_button");
+    resume_button->setStyleSheet("QPushButton:enabled { background-color: green; color: white; font-weight: bold; }");
+    layout->addWidget(resume_button);
+  }
+
+  {
+    motor_status_value = new QLabel();
+    layout->addWidget(motor_status_value);
+  }
+
   layout->addStretch(1);
-  layout->addWidget(apply_settings_button);
+
+  {
+    apply_settings_button = new QPushButton();
+    connect(apply_settings_button, SIGNAL(clicked()),
+      this, SLOT(on_apply_settings_action_triggered()));
+    layout->addWidget(apply_settings_button);
+  }
 
   return footer_layout;
 }
@@ -2195,6 +2224,6 @@ void main_window::retranslate()
   //// end pages
 
   deenergize_button->setText(tr("De-energize"));
-  energize_button->setText(tr("Energize"));
+  resume_button->setText(tr("Resume"));
   apply_settings_button->setText(apply_settings_action->text());
 }

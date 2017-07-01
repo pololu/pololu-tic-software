@@ -69,7 +69,7 @@ public:
 
   void set_manual_target_box_enabled(bool enabled);
   void set_deenergize_button_enabled(bool enabled);
-  void set_energize_button_enabled(bool enabled);
+  void set_resume_button_enabled(bool enabled);
 
   /** Controls whether the apply settings action/button is enabled or
    * disabled. */
@@ -151,6 +151,8 @@ public:
   void set_never_sleep(bool never_sleep);
   void set_vin_calibration(int16_t vin_calibration);
 
+  void set_motor_status_message(std::string const & message, bool stopped = true);
+
 private:
   /** Helper method for setting the index of a combo box, given the desired
    * uint8_t item value. Sets index of -1 for no selection if the specified
@@ -182,7 +184,7 @@ private slots:
 
   void on_device_list_value_currentIndexChanged(int index);
   void on_deenergize_button_clicked();
-  void on_energize_button_clicked();
+  void on_resume_button_clicked();
 
   void on_errors_reset_counts_button_clicked();
   void on_manual_target_position_mode_radio_toggled(bool checked);
@@ -473,7 +475,8 @@ private:
 
   QHBoxLayout * footer_layout;
   QPushButton * deenergize_button;
-  QPushButton * energize_button;
+  QPushButton * resume_button;
+  QLabel * motor_status_value;
   QPushButton * apply_settings_button;
 
   main_controller * controller;

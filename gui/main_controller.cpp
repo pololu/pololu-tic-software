@@ -512,12 +512,122 @@ void main_controller::handle_variables_changed()
   window->set_error_status(error_status);
   window->increment_errors_occurred(variables.get_errors_occurred());
 
-  window->set_deenergize_button_enabled(
-    !(error_status & (1 << TIC_ERROR_INTENTIONALLY_DEENERGIZED)));
-  window->set_energize_button_enabled(
-    (error_status & (1 << TIC_ERROR_INTENTIONALLY_DEENERGIZED)) ||
-    ((error_status & (1 << TIC_ERROR_SAFE_START_VIOLATION)) &&
-    control_mode_is_serial(cached_settings)));
+  // We could enable the de-energize button only when the motor is not
+  // intentionally de-energized, but instead we enable it all the time (when
+  // connected to a device) so that people aren't nervous to see it disabled.
+  window->set_deenergize_button_enabled(connected());
+
+  uint16_t resumable_errors = 1 << TIC_ERROR_INTENTIONALLY_DEENERGIZED;
+  bool resume_button_enabled, prompt_to_resume;
+  if (control_mode_is_serial(cached_settings))
+  {
+    resumable_errors |= 1 << TIC_ERROR_SERIAL_ERROR;
+    resumable_errors |= 1 << TIC_ERROR_COMMAND_TIMEOUT;
+    resumable_errors |= 1 << TIC_ERROR_SAFE_START_VIOLATION;
+
+    // Enable the resume button and prompt to resume if and only if we are
+    // connected, there are errors, and there are no errors that the resume
+    // button can't clear.
+    resume_button_enabled = connected() && error_status &&
+      !(error_status & ~resumable_errors);
+    prompt_to_resume = resume_button_enabled;
+  }
+  else
+  {
+    // Enable the resume button if we are connected and the motor is
+    // intentionally de-energized. This means that the resume button is simpler
+    // in non-serial modes: it isn't guaranteed to clear all the errors, but it
+    // exactly reverses the action of the de-energize button.
+    resume_button_enabled = connected() && (error_status & resumable_errors);
+    // Prompt to resume if and only if we are connected, there are errors, and
+    // there are no errors that the resume button can't clear.
+    prompt_to_resume = connected() && error_status &&
+      !(error_status & ~resumable_errors);
+  }
+  window->set_resume_button_enabled(resume_button_enabled);
+  update_motor_status_message(prompt_to_resume);
+}
+
+void main_controller::update_motor_status_message(bool prompt_to_resume)
+{
+  std::string msg;
+  bool stopped = true;
+  uint16_t error_status = variables.get_error_status();
+
+  if (!connected())
+  {
+    msg = "";
+  }
+  else if (!error_status)
+  {
+    msg = "Driving";
+    stopped = false;
+  }
+  else if (error_status & (1 << TIC_ERROR_MOTOR_DRIVER_ERROR))
+  {
+    msg = "Motor de-energized because of motor driver error.";
+  }
+  else if (error_status & (1 << TIC_ERROR_LOW_VIN))
+  {
+    msg = "Motor de-energized because VIN is too low.";
+  }
+  else if (error_status & (1 << TIC_ERROR_INTENTIONALLY_DEENERGIZED))
+  {
+    msg = "Motor intentionally de-energized.";
+  }
+  else
+  {
+    msg = "Motor ";
+
+    if (!variables.get_energized())
+    {
+      msg += "de-energized ";
+    }
+    else if (variables.get_current_velocity() == 0)
+    {
+      msg += "holding ";
+    }
+    else if (variables.get_planning_mode() == TIC_PLANNING_MODE_TARGET_VELOCITY)
+    {
+      msg += "decelerating ";
+    }
+    else if (variables.get_planning_mode() == TIC_PLANNING_MODE_TARGET_POSITION)
+    {
+      msg += "moving to error position ";
+    }
+
+    if (error_status & (1 << TIC_ERROR_KILL_SWITCH))
+    {
+      msg += "because kill switch is active.";
+    }
+    else if (error_status & (1 << TIC_ERROR_REQUIRED_INPUT_INVALID))
+    {
+      msg += "because required input is invalid.";
+    }
+    else if (error_status & (1 << TIC_ERROR_SERIAL_ERROR))
+    {
+      msg += "because of serial error.";
+    }
+    else if (error_status & (1 << TIC_ERROR_COMMAND_TIMEOUT))
+    {
+      msg += "because of command timeout.";
+    }
+    else if (error_status & (1 << TIC_ERROR_SAFE_START_VIOLATION))
+    {
+      msg += "because of safe start violation.";
+    }
+    else if (error_status & (1 << TIC_ERROR_ERR_LINE_HIGH))
+    {
+      msg += "because ERR line is high.";
+    }
+  }
+
+  if (prompt_to_resume)
+  {
+    msg += " Press Resume to start.";
+  }
+
+  window->set_motor_status_message(msg, stopped);
 }
 
 void main_controller::handle_settings_changed()

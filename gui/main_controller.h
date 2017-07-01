@@ -123,6 +123,7 @@ private:
   void handle_settings_applied();
 
   void initialize_manual_target();
+  void update_motor_status_message(bool prompt_to_resume);
 
   /** Holds a list of the relevant devices that are connected to the computer. */
   std::vector<tic::device> device_list;
