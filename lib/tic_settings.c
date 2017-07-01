@@ -190,7 +190,6 @@ uint32_t tic_settings_achievable_current_limit(const tic_settings * settings,
 
 static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings)
 {
-  // TODO: fix command_timeout; must be less than 60000
   // TODO: fix enum values to be valid?
   // TODO: don't allow tic_soft_error_response to be position in a speed control mode
   // TODO: enforce 0-4095 range of input scaling settings
@@ -230,6 +229,18 @@ static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings
         "so it will be changed to 127.\n");
     }
     tic_settings_set_serial_device_number(settings, device_number);
+  }
+
+  {
+    uint16_t command_timeout = tic_settings_get_command_timeout(settings);
+    if (command_timeout > TIC_MAX_ALLOWED_COMMAND_TIMEOUT)
+    {
+      command_timeout = TIC_MAX_ALLOWED_COMMAND_TIMEOUT;
+      tic_sprintf(warnings,
+        "Warning: The command timeout is too high "
+        "so it will be changed to %u ms.\n", command_timeout);
+    }
+    tic_settings_set_command_timeout(settings, command_timeout);
   }
 
   {
