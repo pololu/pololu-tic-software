@@ -33,6 +33,28 @@ struct error_row
   QFrame * background = NULL;
 };
 
+class pin_config_row : QObject
+{
+  Q_OBJECT
+
+private:
+  friend class main_window;
+
+  void setup(main_controller * controller, uint8_t pin, QGridLayout * layout, int row);
+
+  uint8_t pin = 255;
+  QLabel * name_label = NULL;
+  QComboBox * func_value = NULL;
+  QCheckBox * pullup_check = NULL;
+  //TODO active high?
+  QCheckBox * analog_check = NULL;
+
+  main_controller * controller;
+
+private slots:
+  void on_func_value_indexChanged(int index);
+};
+
 class main_window : public QMainWindow
 {
   Q_OBJECT
@@ -289,8 +311,10 @@ private:
   QWidget * setup_conditioning_settings_box();
   QWidget * setup_scaling_settings_box();
   QWidget * setup_motor_settings_box();
-  QWidget * setup_misc_settings_box();
   QWidget * setup_error_settings_box();
+  QWidget * setup_misc_settings_box();
+
+  QWidget * setup_pin_config_page_widget();
 
   QLayout * setup_footer();
   void retranslate();
@@ -470,6 +494,12 @@ private:
   QCheckBox * never_sleep_check;
   QLabel * vin_calibration_label;
   QSpinBox * vin_calibration_value;
+
+  //// pin configuration page
+
+  QWidget * pin_config_page_widget;
+  QGridLayout * pin_config_page_layout;
+  std::array<pin_config_row, 5> pin_config_rows;
 
   //// end of pages
 

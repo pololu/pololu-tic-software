@@ -118,8 +118,10 @@ void main_window::set_connection_status(std::string const & status, bool error)
 
 void main_window::set_tab_pages_enabled(bool enabled)
 {
-  status_page_widget->setEnabled(enabled);
-  settings_page_widget->setEnabled(enabled);
+  for (int i = 0; i < tab_widget->count(); i++)
+  {
+    tab_widget->widget(i)->setEnabled(enabled);
+  }
 }
 
 void main_window::set_manual_target_box_enabled(bool enabled)
@@ -1096,24 +1098,24 @@ static void setup_read_only_text_field(QGridLayout * layout, int row,
   if (value) { *value = new_value; }
 }
 
-static void setup_error_row(QGridLayout * layout, int row, error_row & line)
+static void setup_error_row(QGridLayout * layout, int row, error_row & er)
 {
   // TODO make sure this all looks good on mac/linux/high dpi
-  line.count = 0;
-  line.name_label = new QLabel();
+  er.count = 0;
+  er.name_label = new QLabel();
   // Add left margin to offset from edge of row background fill.
-  line.name_label->setContentsMargins(
-    line.name_label->style()->pixelMetric(QStyle::PM_LayoutLeftMargin), 0, 0, 0);
-  line.stopping_value = new QLabel();
-  line.stopping_value->setAlignment(Qt::AlignCenter);
-  line.count_value = new QLabel();
+  er.name_label->setContentsMargins(
+    er.name_label->style()->pixelMetric(QStyle::PM_LayoutLeftMargin), 0, 0, 0);
+  er.stopping_value = new QLabel();
+  er.stopping_value->setAlignment(Qt::AlignCenter);
+  er.count_value = new QLabel();
   // Add right margin to offset from edge of row background fill.
-  line.count_value->setContentsMargins(
-    0, 0, line.count_value->style()->pixelMetric(QStyle::PM_LayoutRightMargin), 0);
-  line.background = new QFrame();
+  er.count_value->setContentsMargins(
+    0, 0, er.count_value->style()->pixelMetric(QStyle::PM_LayoutRightMargin), 0);
+  er.background = new QFrame();
   if (row & 1)
   {
-    line.background->setStyleSheet("QFrame { background-color: palette(alternate-base); }");
+    er.background->setStyleSheet("QFrame { background-color: palette(alternate-base); }");
   }
 
   // Increase the width of the Yes/No label to make it have a good width when
@@ -1122,16 +1124,38 @@ static void setup_error_row(QGridLayout * layout, int row, error_row & line)
   {
     QLabel tmp_label;
     tmp_label.setText("Yes");
-    line.stopping_value->setMinimumWidth(tmp_label.sizeHint().width() +
-      2 * line.stopping_value->fontMetrics().height());
+    er.stopping_value->setMinimumWidth(tmp_label.sizeHint().width() +
+      2 * er.stopping_value->fontMetrics().height());
     layout->setRowMinimumHeight(row, tmp_label.sizeHint().height() +
-      line.background->style()->pixelMetric(QStyle::PM_LayoutVerticalSpacing));
+      er.background->style()->pixelMetric(QStyle::PM_LayoutVerticalSpacing));
   }
 
-  layout->addWidget(line.background, row, 0, 1, 3);
-  layout->addWidget(line.name_label, row, 0, FIELD_LABEL_ALIGNMENT);
-  layout->addWidget(line.stopping_value, row, 1, Qt::AlignCenter);
-  layout->addWidget(line.count_value, row, 2, Qt::AlignLeft);
+  layout->addWidget(er.background, row, 0, 1, 3);
+  layout->addWidget(er.name_label, row, 0, FIELD_LABEL_ALIGNMENT);
+  layout->addWidget(er.stopping_value, row, 1, Qt::AlignCenter);
+  layout->addWidget(er.count_value, row, 2, Qt::AlignLeft);
+}
+
+void pin_config_row::setup(main_controller * controller, uint8_t pin, QGridLayout * layout, int row)
+{
+  this->controller = controller;
+  this->pin = pin;
+
+  name_label = new QLabel();
+  func_value = new QComboBox();
+  func_value->setObjectName("func_value");
+  pullup_check = new QCheckBox();
+  pullup_check->setObjectName("pullup_check");
+  analog_check = new QCheckBox();
+  analog_check->setObjectName("analog_check");
+  layout->addWidget(name_label, row, 0, FIELD_LABEL_ALIGNMENT);
+  layout->addWidget(func_value, row, 1, 0);
+  layout->addWidget(pullup_check, row, 2, 0);
+  layout->addWidget(analog_check, row, 3, 0);
+}
+
+void pin_config_row::on_func_value_indexChanged(int index)
+{
 }
 
 void main_window::setup_window()
@@ -1246,6 +1270,7 @@ QWidget * main_window::setup_tab_widget()
 
   tab_widget->addTab(setup_status_page_widget(), tr("Status"));
   tab_widget->addTab(setup_settings_page_widget(), tr("Settings"));
+  tab_widget->addTab(setup_pin_config_page_widget(), tr("Pin configuration"));
 
   return tab_widget;
 }
@@ -2071,6 +2096,27 @@ QWidget * main_window::setup_misc_settings_box()
   return misc_settings_box;
 }
 
+//// pin configuration page
+
+QWidget * main_window::setup_pin_config_page_widget()
+{
+  pin_config_page_widget = new QWidget();
+  QGridLayout * layout = pin_config_page_layout = new QGridLayout();
+  layout->setColumnStretch(3, 1);
+  int row = 0;
+
+  pin_config_rows[TIC_PIN_NUM_SCL].setup(controller, TIC_PIN_NUM_SCL, layout, row++);
+  pin_config_rows[TIC_PIN_NUM_SDA].setup(controller, TIC_PIN_NUM_SDA, layout, row++);
+  pin_config_rows[TIC_PIN_NUM_TX].setup(controller, TIC_PIN_NUM_TX, layout, row++);
+  pin_config_rows[TIC_PIN_NUM_RX].setup(controller, TIC_PIN_NUM_RX, layout, row++);
+  pin_config_rows[TIC_PIN_NUM_RC].setup(controller, TIC_PIN_NUM_RC, layout, row++);
+
+  layout->setRowStretch(row, 1);
+
+  pin_config_page_widget->setLayout(layout);
+  return pin_config_page_widget;
+}
+
 //// end of pages
 
 QLayout * main_window::setup_footer()
@@ -2142,19 +2188,19 @@ void main_window::retranslate()
   errors_stopping_header_label->setText(tr("Stopping motor?"));
   errors_count_header_label->setText(tr("Count"));
   error_rows[TIC_ERROR_INTENTIONALLY_DEENERGIZED].name_label->setText(tr("Intentionally de-energized"));
-  error_rows[TIC_ERROR_MOTOR_DRIVER_ERROR]      .name_label->setText(tr("Motor driver error"));
-  error_rows[TIC_ERROR_LOW_VIN]                 .name_label->setText(tr("Low VIN"));
-  error_rows[TIC_ERROR_KILL_SWITCH]             .name_label->setText(tr("Kill switch"));
-  error_rows[TIC_ERROR_REQUIRED_INPUT_INVALID]  .name_label->setText(tr("Required input invalid"));
-  error_rows[TIC_ERROR_COMMAND_TIMEOUT]         .name_label->setText(tr("Command timeout"));
-  error_rows[TIC_ERROR_SAFE_START_VIOLATION]    .name_label->setText(tr("Safe start violation"));
-  error_rows[TIC_ERROR_ERR_LINE_HIGH]           .name_label->setText(tr("ERR line high"));
-  error_rows[TIC_ERROR_SERIAL_ERROR]            .name_label->setText(tr("Serial errors:"));
-  error_rows[TIC_ERROR_SERIAL_FRAMING]          .name_label->setText(tr(INDENT("Frame")));
-  error_rows[TIC_ERROR_SERIAL_RX_OVERRUN]       .name_label->setText(tr(INDENT("RX overrun")));
-  error_rows[TIC_ERROR_SERIAL_FORMAT]           .name_label->setText(tr(INDENT("Format")));
-  error_rows[TIC_ERROR_SERIAL_CRC]              .name_label->setText(tr(INDENT("CRC")));
-  error_rows[TIC_ERROR_ENCODER_SKIP]            .name_label->setText(tr("Encoder skip"));
+  error_rows[TIC_ERROR_MOTOR_DRIVER_ERROR]       .name_label->setText(tr("Motor driver error"));
+  error_rows[TIC_ERROR_LOW_VIN]                  .name_label->setText(tr("Low VIN"));
+  error_rows[TIC_ERROR_KILL_SWITCH]              .name_label->setText(tr("Kill switch"));
+  error_rows[TIC_ERROR_REQUIRED_INPUT_INVALID]   .name_label->setText(tr("Required input invalid"));
+  error_rows[TIC_ERROR_COMMAND_TIMEOUT]          .name_label->setText(tr("Command timeout"));
+  error_rows[TIC_ERROR_SAFE_START_VIOLATION]     .name_label->setText(tr("Safe start violation"));
+  error_rows[TIC_ERROR_ERR_LINE_HIGH]            .name_label->setText(tr("ERR line high"));
+  error_rows[TIC_ERROR_SERIAL_ERROR]             .name_label->setText(tr("Serial errors:"));
+  error_rows[TIC_ERROR_SERIAL_FRAMING]           .name_label->setText(tr(INDENT("Frame")));
+  error_rows[TIC_ERROR_SERIAL_RX_OVERRUN]        .name_label->setText(tr(INDENT("RX overrun")));
+  error_rows[TIC_ERROR_SERIAL_FORMAT]            .name_label->setText(tr(INDENT("Format")));
+  error_rows[TIC_ERROR_SERIAL_CRC]               .name_label->setText(tr(INDENT("CRC")));
+  error_rows[TIC_ERROR_ENCODER_SKIP]             .name_label->setText(tr("Encoder skip"));
   errors_reset_counts_button->setText(tr("Reset counts"));
 
   manual_target_box->setTitle(tr(u8"Set target (Serial\u2009/\u2009I\u00B2C\u2009/\u2009USB mode only)"));
@@ -2220,6 +2266,20 @@ void main_window::retranslate()
   auto_clear_driver_error_check->setText(tr("Automatically clear driver errors"));
   never_sleep_check->setText(tr("Never sleep (ignore USB suspend)"));
   vin_calibration_label->setText(tr("VIN measurement calibration:"));
+
+  //// pin configuration page
+
+  pin_config_rows[TIC_PIN_NUM_SCL].name_label->setText("SCL:");
+  pin_config_rows[TIC_PIN_NUM_SDA].name_label->setText(u8"SDA\u200A/\u200AAN:");
+  pin_config_rows[TIC_PIN_NUM_TX].name_label->setText("TX:");
+  pin_config_rows[TIC_PIN_NUM_RX].name_label->setText("RX:");
+  pin_config_rows[TIC_PIN_NUM_RC].name_label->setText("RC:");
+
+  for (pin_config_row & pcr : pin_config_rows)
+  {
+    pcr.pullup_check->setText(tr("Pull-up"));
+    pcr.analog_check->setText(tr("Analog"));
+  }
 
   //// end pages
 
