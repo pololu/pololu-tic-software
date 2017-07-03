@@ -114,6 +114,11 @@ public:
   void handle_never_sleep_input(bool never_sleep);
   void handle_vin_calibration_input(int16_t vin_calibration);
 
+  void handle_pin_func_input(uint8_t pin, uint8_t func);
+  void handle_pin_pullup_input(uint8_t pin, bool pullup);
+  void handle_pin_polarity_input(uint8_t pin, bool polarity);
+  void handle_pin_analog_input(uint8_t pin, bool analog);
+
 private:
   /** This is called whenever it is possible that we have connected to a
    * different device. */

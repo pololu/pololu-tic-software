@@ -675,6 +675,14 @@ void main_controller::handle_settings_changed()
   window->set_never_sleep(tic_settings_get_never_sleep(settings.get_pointer()));
   window->set_vin_calibration(tic_settings_get_vin_calibration(settings.get_pointer()));
 
+  for (int i = 0; i <= 4; i++)
+  {
+    window->set_pin_func(i, tic_settings_get_pin_func(settings.get_pointer(), i));
+    window->set_pin_pullup(i, tic_settings_get_pin_pullup(settings.get_pointer(), i));
+    window->set_pin_polarity(i, tic_settings_get_pin_polarity(settings.get_pointer(), i));
+    window->set_pin_analog(i, tic_settings_get_pin_analog(settings.get_pointer(), i));
+  }
+
   window->set_apply_settings_enabled(connected() && settings_modified);
 }
 
@@ -988,6 +996,38 @@ void main_controller::handle_vin_calibration_input(int16_t vin_calibration)
 {
   if (!connected()) { return; }
   tic_settings_set_vin_calibration(settings.get_pointer(), vin_calibration);
+  settings_modified = true;
+  handle_settings_changed();
+}
+
+void main_controller::handle_pin_func_input(uint8_t pin, uint8_t func)
+{
+  if (!connected()) { return; }
+  tic_settings_set_pin_func(settings.get_pointer(), pin, func);
+  settings_modified = true;
+  handle_settings_changed();
+}
+
+void main_controller::handle_pin_pullup_input(uint8_t pin, bool pullup)
+{
+  if (!connected()) { return; }
+  tic_settings_set_pin_pullup(settings.get_pointer(), pin, pullup);
+  settings_modified = true;
+  handle_settings_changed();
+}
+
+void main_controller::handle_pin_polarity_input(uint8_t pin, bool polarity)
+{
+  if (!connected()) { return; }
+  tic_settings_set_pin_polarity(settings.get_pointer(), pin, polarity);
+  settings_modified = true;
+  handle_settings_changed();
+}
+
+void main_controller::handle_pin_analog_input(uint8_t pin, bool analog)
+{
+  if (!connected()) { return; }
+  tic_settings_set_pin_analog(settings.get_pointer(), pin, analog);
   settings_modified = true;
   handle_settings_changed();
 }

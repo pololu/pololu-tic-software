@@ -37,22 +37,37 @@ class pin_config_row : QObject
 {
   Q_OBJECT
 
-private:
-  friend class main_window;
+public:
+  explicit pin_config_row(QObject * parent = Q_NULLPTR) : QObject(parent)
+    {}
+  explicit pin_config_row(uint8_t pin, QObject * parent = Q_NULLPTR) :
+    pin(pin), QObject(parent)
+    {}
 
-  void setup(main_controller * controller, uint8_t pin, QGridLayout * layout, int row);
+  void setup(QGridLayout * layout, int row);
+  void add_funcs(uint16_t funcs);
+
+private:
+
+  bool window_suppress_events() const;
+  void set_window_suppress_events(bool suppress_events);
+  main_controller * window_controller() const;
 
   uint8_t pin = 255;
   QLabel * name_label = NULL;
   QComboBox * func_value = NULL;
   QCheckBox * pullup_check = NULL;
-  //TODO active high?
+  QCheckBox * polarity_check = NULL;
   QCheckBox * analog_check = NULL;
 
-  main_controller * controller;
-
 private slots:
-  void on_func_value_indexChanged(int index);
+  void on_func_value_currentIndexChanged(int index);
+  void on_pullup_check_stateChanged(int state);
+  void on_polarity_check_stateChanged(int state);
+  void on_analog_check_stateChanged(int state);
+
+private:
+  friend class main_window;
 };
 
 class main_window : public QMainWindow
@@ -72,12 +87,12 @@ public:
    */
   void start_update_timer(uint32_t interval_ms);
 
-  void show_error_message(std::string const & message);
-  void show_warning_message(std::string const & message);
-  void show_info_message(std::string const & message);
+  void show_error_message(std::string const & message) const;
+  void show_warning_message(std::string const & message) const;
+  void show_info_message(std::string const & message) const;
 
   /** Show an OK/Cancel dialog, return true if the user selects OK. */
-  bool confirm(std::string const & question);
+  bool confirm(std::string const & question) const;
 
   void set_device_list_contents(std::vector<tic::device> const & device_list);
   void set_device_list_selected(tic::device const & device);
@@ -172,6 +187,11 @@ public:
   void set_auto_clear_driver_error(bool auto_clear_driver_error);
   void set_never_sleep(bool never_sleep);
   void set_vin_calibration(int16_t vin_calibration);
+
+  void set_pin_func(uint8_t pin, uint8_t func);
+  void set_pin_pullup(uint8_t pin, bool pullup);
+  void set_pin_polarity(uint8_t pin, bool polarity);
+  void set_pin_analog(uint8_t pin, bool analog);
 
   void set_motor_status_message(std::string const & message, bool stopped = true);
 
@@ -499,7 +519,7 @@ private:
 
   QWidget * pin_config_page_widget;
   QGridLayout * pin_config_page_layout;
-  std::array<pin_config_row, 5> pin_config_rows;
+  std::array<pin_config_row *, 5> pin_config_rows;
 
   //// end of pages
 
@@ -510,4 +530,6 @@ private:
   QPushButton * apply_settings_button;
 
   main_controller * controller;
+
+  friend class pin_config_row;
 };
