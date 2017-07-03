@@ -190,12 +190,44 @@ uint32_t tic_settings_achievable_current_limit(const tic_settings * settings,
 
 static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings)
 {
-  // TODO: fix enum values to be valid?
-  // TODO: don't allow tic_soft_error_response to be position in a speed control mode
+  // TODO: fix enum values to be valid
   // TODO: enforce 0-4095 range of input scaling settings
   // TODO: enforce -500 to 500 range for vin_calibration
 
   uint8_t control_mode = tic_settings_get_control_mode(settings);
+
+  bool speed_control_mode = false;
+
+  switch (control_mode)
+  {
+  case TIC_CONTROL_MODE_RC_SPEED:
+  case TIC_CONTROL_MODE_ANALOG_SPEED:
+  case TIC_CONTROL_MODE_ENCODER_SPEED:
+    speed_control_mode = true;
+    break;
+  }
+
+  {
+    uint8_t response = tic_settings_get_soft_error_response(settings);
+    switch (response)
+    {
+    case TIC_RESPONSE_DEENERGIZE:
+    case TIC_RESPONSE_HALT_AND_HOLD:
+    case TIC_RESPONSE_DECEL_TO_HOLD:
+      break;
+
+    case TIC_RESPONSE_GO_TO_POSITION:
+      response = TIC_RESPONSE_DEENERGIZE;
+      tic_sprintf(warnings,
+        "Warning: The soft error response cannot be \"Go to position\" in a "
+        "speed control mode, so it will be changed to \"De-energize\".\n");
+      break;
+
+    default:
+      break;
+    }
+    tic_settings_set_soft_error_response(settings, response);
+  }
 
   {
     uint32_t baud = tic_settings_get_serial_baud_rate(settings);
@@ -311,11 +343,25 @@ static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings
 
   {
     int32_t output_min = tic_settings_get_output_min(settings);
-    int32_t output_max = tic_settings_get_output_max(settings);
-
-    // TODO: enforce allowed range of output_min, output_max
-
+    if (output_min > 0)
+    {
+      output_min = 0;
+      tic_sprintf(warnings,
+        "Warning: The scaling output minimum is above 0 "
+        "so it will be lowered to 0.\n");
+    }
     tic_settings_set_output_min(settings, output_min);
+  }
+
+  {
+    int32_t output_max = tic_settings_get_output_max(settings);
+    if (output_max < 0)
+    {
+      output_max = 0;
+      tic_sprintf(warnings,
+        "Warning: The scaling output maximum is below 0 "
+        "so it will be raised to 0.\n");
+    }
     tic_settings_set_output_max(settings, output_max);
   }
 
@@ -563,6 +609,16 @@ static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings
 
     // In this section, we make sure no pin is configured to do something that
     // it cannot do.
+
+    // TODO: enforce that only SCL can be a potentiometer power pin
+
+    if (rc_func == TIC_PIN_FUNC_USER_IO)
+    {
+      rc_func = TIC_PIN_FUNC_DEFAULT;
+      tic_sprintf(warnings,
+        "Warning: The RC pin cannot be a user I/O pin "
+        "so its function will be changed to the default.\n");
+    }
 
     if (rc_func == TIC_PIN_FUNC_SERIAL)
     {

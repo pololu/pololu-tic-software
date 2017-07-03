@@ -94,6 +94,11 @@ def test_cases_for_settings_fix(product)
   defaults = YAML.load(DefaultSettings.fetch(product))
 
   [
+    [ { 'control_mode' => 'rc_speed', 'soft_error_response' => 'go_to_position' },
+      { 'soft_error_response' => 'deenergize' },
+      "Warning: The soft error response cannot be \"Go to position\" in a " \
+      "speed control mode, so it will be changed to \"De-energize\".\n"
+    ],
     [ { 'serial_baud_rate' => 115200 },
       { 'serial_baud_rate' => 115385 }
     ],
@@ -126,6 +131,16 @@ def test_cases_for_settings_fix(product)
         'input_neutral_max' => 2048, 'input_max' => 4095, },
       "Warning: The input scaling values are out of order " \
       "so they will be reset to their default values.\n"
+    ],
+    [ { 'output_min' => 1 },
+      { 'output_min' => 0 },
+      "Warning: The scaling output minimum is above 0 " \
+      "so it will be lowered to 0.\n"
+    ],
+    [ { 'output_max' => -1 },
+      { 'output_max' => 0 },
+      "Warning: The scaling output maximum is below 0 " \
+      "so it will be raised to 0.\n"
     ],
     [ { 'encoder_prescaler' => 0 },
       { 'encoder_prescaler' => 1 },
@@ -244,13 +259,18 @@ def test_cases_for_settings_fix(product)
       "Warning: The RX pin must be used as an encoder input " \
       "so its function will be changed to the default.\n"
     ],
+    [ { 'rc_config' => 'user_io active_high' },
+      { 'rc_config' => 'default active_high' },
+      "Warning: The RC pin cannot be a user I/O pin " \
+      "so its function will be changed to the default.\n"
+    ],
     [ { 'rc_config' => 'serial pullup active_high' },
       { 'rc_config' => 'default pullup active_high' },
       "Warning: The RC pin cannot be a serial pin " \
       "so its function will be changed to the default.\n"
     ],
-    [ { 'rc_config' => 'user_io analog' },
-      { 'rc_config' => 'user_io' },
+    [ { 'rc_config' => 'user_input analog' },
+      { 'rc_config' => 'user_input' },
       "Warning: The RC pin cannot be an analog input " \
       "so that feature will be disabled.\n"
     ],
@@ -347,12 +367,16 @@ describe 'settings' do
   specify 'tic_settings_fix is correct' do
     defaults = YAML.load(DefaultSettings[product])
     test_cases_for_settings_fix(product).each do |input_part, output_part, warnings|
+      warnings ||= ""
+      if !warnings.empty? && !warnings.end_with?("\n")
+        raise "Warnings should end with newline: #{warnings.inspect}"
+      end
       input = defaults.merge(input_part)
       output = input.merge(output_part)
 
       stdout, stderr, result = run_ticcmd('--fix-settings - -',
         input: YAML.dump(input))
-      expect(stderr).to eq (warnings || "")
+      expect(stderr).to eq warnings
       expect(YAML.load(stdout)).to eq output
       expect(result).to eq 0
     end
