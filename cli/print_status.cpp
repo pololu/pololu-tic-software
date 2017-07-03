@@ -132,16 +132,16 @@ void print_status(const tic::variables & vars,
   std::cout << left_column << "Current velocity: "
     << vars.get_current_velocity() << std::endl;
 
-  std::cout << left_column << "Speed max: "
+  std::cout << left_column << "Max speed: "
     << vars.get_speed_max() << std::endl;
 
   std::cout << left_column << "Starting speed: "
     << vars.get_starting_speed() << std::endl;
 
-  std::cout << left_column << "Accel max: "
+  std::cout << left_column << "Max acceleration: "
     << vars.get_accel_max() << std::endl;
 
-  std::cout << left_column << "Decel max: "
+  std::cout << left_column << "Max deceleration: "
     << vars.get_decel_max() << std::endl;
 
   //std::cout << left_column << "Acting target position: "
