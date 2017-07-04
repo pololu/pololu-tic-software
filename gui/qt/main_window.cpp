@@ -46,28 +46,28 @@ void main_window::start_update_timer(uint32_t interval_ms)
   update_timer->start(interval_ms);
 }
 
-void main_window::show_error_message(std::string const & message)
+void main_window::show_error_message(std::string const & message) const
 {
   QMessageBox mbox(QMessageBox::Critical, windowTitle(),
     QString(message.c_str()));
   mbox.exec();
 }
 
-void main_window::show_warning_message(std::string const & message)
+void main_window::show_warning_message(std::string const & message) const
 {
   QMessageBox mbox(QMessageBox::Warning, windowTitle(),
     QString(message.c_str()));
   mbox.exec();
 }
 
-void main_window::show_info_message(std::string const & message)
+void main_window::show_info_message(std::string const & message) const
 {
   QMessageBox mbox(QMessageBox::Information, windowTitle(),
     QString(message.c_str()));
   mbox.exec();
 }
 
-bool main_window::confirm(std::string const & question)
+bool main_window::confirm(std::string const & question) const
 {
   QMessageBox mbox(QMessageBox::Question, windowTitle(),
     QString(question.c_str()), QMessageBox::Ok | QMessageBox::Cancel);
@@ -557,6 +557,26 @@ void main_window::set_vin_calibration(int16_t vin_calibration)
   set_spin_box(vin_calibration_value, vin_calibration);
 }
 
+void main_window::set_pin_func(uint8_t pin, uint8_t func)
+{
+  set_u8_combo_box(pin_config_rows[pin]->func_value, func);
+}
+
+void main_window::set_pin_pullup(uint8_t pin, bool pullup)
+{
+  set_check_box(pin_config_rows[pin]->pullup_check, pullup);
+}
+
+void main_window::set_pin_polarity(uint8_t pin, bool polarity)
+{
+  set_check_box(pin_config_rows[pin]->polarity_check, polarity);
+}
+
+void main_window::set_pin_analog(uint8_t pin, bool analog)
+{
+  set_check_box(pin_config_rows[pin]->analog_check, analog);
+}
+
 void main_window::set_u8_combo_box(QComboBox * combo, uint8_t value)
 {
   suppress_events = true;
@@ -928,6 +948,7 @@ void main_window::on_output_max_value_valueChanged(int value)
 void main_window::on_input_scaling_degree_value_currentIndexChanged(int index)
 {
   if (suppress_events) { return; }
+  show_info_message("hiiii");
   uint8_t input_scaling_degree = input_scaling_degree_value->itemData(index).toUInt();
   controller->handle_input_scaling_degree_input(input_scaling_degree);
 }
@@ -1073,6 +1094,32 @@ void main_window::on_vin_calibration_value_valueChanged(int value)
   controller->handle_vin_calibration_input(value);
 }
 
+void pin_config_row::on_func_value_currentIndexChanged(int index)
+{
+  if (window_suppress_events()) { return; }
+  uint8_t func = func_value->itemData(index).toUInt();
+  window_controller()->handle_pin_func_input(pin, func);
+}
+
+void pin_config_row::on_pullup_check_stateChanged(int state)
+{
+  if (window_suppress_events()) { return; }
+  ((main_window *)parent())->show_info_message("pullup");
+  window_controller()->handle_pin_pullup_input(pin, state == Qt::Checked);
+}
+
+void pin_config_row::on_polarity_check_stateChanged(int state)
+{
+  if (window_suppress_events()) { return; }
+  window_controller()->handle_pin_polarity_input(pin, state == Qt::Checked);
+}
+
+void pin_config_row::on_analog_check_stateChanged(int state)
+{
+  if (window_suppress_events()) { return; }
+  window_controller()->handle_pin_analog_input(pin, state == Qt::Checked);
+}
+
 // On Mac OS X, field labels are usually right-aligned.
 #ifdef __APPLE__
 #define FIELD_LABEL_ALIGNMENT Qt::AlignRight
@@ -1136,26 +1183,78 @@ static void setup_error_row(QGridLayout * layout, int row, error_row & er)
   layout->addWidget(er.count_value, row, 2, Qt::AlignLeft);
 }
 
-void pin_config_row::setup(main_controller * controller, uint8_t pin, QGridLayout * layout, int row)
+bool pin_config_row::window_suppress_events() const
 {
-  this->controller = controller;
-  this->pin = pin;
+  return ((main_window *)parent())->suppress_events;
+}
+
+void pin_config_row::set_window_suppress_events(bool suppress_events)
+{
+  ((main_window *)parent())->suppress_events = suppress_events;
+}
+
+main_controller * pin_config_row::window_controller() const
+{
+  return ((main_window *)parent())->controller;
+}
+
+void pin_config_row::setup(QGridLayout * layout, int row)
+{
+  // Note that the slots must be manually connected because connectSlotsByName()
+  // requires the object emitting the signal to be a child of the object that
+  // owns the slot, which is not true here (the widgets are children of a layout
+  // in the main window).
 
   name_label = new QLabel();
+
   func_value = new QComboBox();
-  func_value->setObjectName("func_value");
+  connect(func_value, SIGNAL(currentIndexChanged(int)), this,
+    SLOT(on_func_value_currentIndexChanged(int)));
+
   pullup_check = new QCheckBox();
-  pullup_check->setObjectName("pullup_check");
+  connect(pullup_check, SIGNAL(stateChanged(int)), this,
+    SLOT(on_pullup_check_stateChanged(int)));
+
+  polarity_check = new QCheckBox();
+  connect(polarity_check, SIGNAL(stateChanged(int)), this,
+    SLOT(on_polarity_check_stateChanged(int)));
+
   analog_check = new QCheckBox();
-  analog_check->setObjectName("analog_check");
+  connect(analog_check, SIGNAL(stateChanged(int)), this,
+    SLOT(on_analog_check_stateChanged(int)));
+
   layout->addWidget(name_label, row, 0, FIELD_LABEL_ALIGNMENT);
   layout->addWidget(func_value, row, 1, 0);
   layout->addWidget(pullup_check, row, 2, 0);
-  layout->addWidget(analog_check, row, 3, 0);
+  layout->addWidget(polarity_check, row, 3, 0);
+  layout->addWidget(analog_check, row, 4, 0);
 }
 
-void pin_config_row::on_func_value_indexChanged(int index)
+static std::array<char const * const, 8> const pin_func_names =
 {
+  "Default",
+  "User I/O",
+  "User input",
+  "Potentiometer power",
+  "Serial",
+  "RC input",
+  "Encoder input",
+  "Kill switch",
+};
+
+void pin_config_row::add_funcs(uint16_t funcs)
+{
+  set_window_suppress_events(true);
+
+  for (int i = 0; i < pin_func_names.size(); i++)
+  {
+    if (funcs & (1 << i))
+    {
+      func_value->addItem(pin_func_names[i], i);
+    }
+  }
+
+  set_window_suppress_events(false);
 }
 
 void main_window::setup_window()
@@ -2102,14 +2201,50 @@ QWidget * main_window::setup_pin_config_page_widget()
 {
   pin_config_page_widget = new QWidget();
   QGridLayout * layout = pin_config_page_layout = new QGridLayout();
-  layout->setColumnStretch(3, 1);
+  layout->setColumnStretch(4, 1);
   int row = 0;
 
-  pin_config_rows[TIC_PIN_NUM_SCL].setup(controller, TIC_PIN_NUM_SCL, layout, row++);
-  pin_config_rows[TIC_PIN_NUM_SDA].setup(controller, TIC_PIN_NUM_SDA, layout, row++);
-  pin_config_rows[TIC_PIN_NUM_TX].setup(controller, TIC_PIN_NUM_TX, layout, row++);
-  pin_config_rows[TIC_PIN_NUM_RX].setup(controller, TIC_PIN_NUM_RX, layout, row++);
-  pin_config_rows[TIC_PIN_NUM_RC].setup(controller, TIC_PIN_NUM_RC, layout, row++);
+  pin_config_rows[TIC_PIN_NUM_SCL] = new pin_config_row(TIC_PIN_NUM_SCL, this);
+  pin_config_rows[TIC_PIN_NUM_SCL]->setup(layout, row++);
+  pin_config_rows[TIC_PIN_NUM_SCL]->add_funcs((1 << TIC_PIN_FUNC_DEFAULT) |
+                                              (1 << TIC_PIN_FUNC_USER_IO) |
+                                              (1 << TIC_PIN_FUNC_USER_INPUT) |
+                                              (1 << TIC_PIN_FUNC_POT_POWER) |
+                                              (1 << TIC_PIN_FUNC_SERIAL) |
+                                              (1 << TIC_PIN_FUNC_KILL_SWITCH));
+
+  pin_config_rows[TIC_PIN_NUM_SDA] = new pin_config_row(TIC_PIN_NUM_SDA, this);
+  pin_config_rows[TIC_PIN_NUM_SDA]->setup(layout, row++);
+  pin_config_rows[TIC_PIN_NUM_SDA]->add_funcs((1 << TIC_PIN_FUNC_DEFAULT) |
+                                              (1 << TIC_PIN_FUNC_USER_IO) |
+                                              (1 << TIC_PIN_FUNC_USER_INPUT) |
+                                              (1 << TIC_PIN_FUNC_SERIAL) |
+                                              (1 << TIC_PIN_FUNC_KILL_SWITCH));
+
+  pin_config_rows[TIC_PIN_NUM_TX] = new pin_config_row(TIC_PIN_NUM_TX, this);
+  pin_config_rows[TIC_PIN_NUM_TX]->setup(layout, row++);
+  pin_config_rows[TIC_PIN_NUM_TX]->add_funcs((1 << TIC_PIN_FUNC_DEFAULT) |
+                                             (1 << TIC_PIN_FUNC_USER_IO) |
+                                             (1 << TIC_PIN_FUNC_USER_INPUT) |
+                                             (1 << TIC_PIN_FUNC_SERIAL) |
+                                             (1 << TIC_PIN_FUNC_ENCODER) |
+                                             (1 << TIC_PIN_FUNC_KILL_SWITCH));
+
+  pin_config_rows[TIC_PIN_NUM_RX] = new pin_config_row(TIC_PIN_NUM_RX, this);
+  pin_config_rows[TIC_PIN_NUM_RX]->setup(layout, row++);
+  pin_config_rows[TIC_PIN_NUM_RX]->add_funcs((1 << TIC_PIN_FUNC_DEFAULT) |
+                                             (1 << TIC_PIN_FUNC_USER_IO) |
+                                             (1 << TIC_PIN_FUNC_USER_INPUT) |
+                                             (1 << TIC_PIN_FUNC_SERIAL) |
+                                             (1 << TIC_PIN_FUNC_ENCODER) |
+                                             (1 << TIC_PIN_FUNC_KILL_SWITCH));
+
+  pin_config_rows[TIC_PIN_NUM_RC] = new pin_config_row(TIC_PIN_NUM_RC, this);
+  pin_config_rows[TIC_PIN_NUM_RC]->setup(layout, row++);
+  pin_config_rows[TIC_PIN_NUM_RC]->add_funcs((1 << TIC_PIN_FUNC_DEFAULT) |
+                                             (1 << TIC_PIN_FUNC_USER_INPUT) |
+                                             (1 << TIC_PIN_FUNC_RC) |
+                                             (1 << TIC_PIN_FUNC_KILL_SWITCH));
 
   layout->setRowStretch(row, 1);
 
@@ -2269,16 +2404,17 @@ void main_window::retranslate()
 
   //// pin configuration page
 
-  pin_config_rows[TIC_PIN_NUM_SCL].name_label->setText("SCL:");
-  pin_config_rows[TIC_PIN_NUM_SDA].name_label->setText(u8"SDA\u200A/\u200AAN:");
-  pin_config_rows[TIC_PIN_NUM_TX].name_label->setText("TX:");
-  pin_config_rows[TIC_PIN_NUM_RX].name_label->setText("RX:");
-  pin_config_rows[TIC_PIN_NUM_RC].name_label->setText("RC:");
+  pin_config_rows[TIC_PIN_NUM_SCL]->name_label->setText("SCL:");
+  pin_config_rows[TIC_PIN_NUM_SDA]->name_label->setText(u8"SDA\u200A/\u200AAN:");
+  pin_config_rows[TIC_PIN_NUM_TX]->name_label->setText("TX:");
+  pin_config_rows[TIC_PIN_NUM_RX]->name_label->setText("RX:");
+  pin_config_rows[TIC_PIN_NUM_RC]->name_label->setText("RC:");
 
-  for (pin_config_row & pcr : pin_config_rows)
+  for (pin_config_row * pcr : pin_config_rows)
   {
-    pcr.pullup_check->setText(tr("Pull-up"));
-    pcr.analog_check->setText(tr("Analog"));
+    pcr->pullup_check->setText(tr("Pull-up"));
+    pcr->polarity_check->setText(tr("Active high"));
+    pcr->analog_check->setText(tr("Analog"));
   }
 
   //// end pages
