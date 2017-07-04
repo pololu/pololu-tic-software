@@ -90,6 +90,10 @@ void print_status(const tic::variables & vars,
     << pretty_enum(tic_look_up_device_reset_string(vars.get_device_reset()))
     << std::endl;
 
+  std::cout << left_column << "Up time: "
+    << vars.get_up_time() << " ms"  // TODO: HH:MM:SS:mmm format
+    << std::endl;
+
   std::cout << std::endl;
 
   std::cout << left_column << "Operation state: "
@@ -154,10 +158,6 @@ void print_status(const tic::variables & vars,
 
   std::cout << left_column << "VIN: "
     << vars.get_vin_voltage() << " mV"
-    << std::endl;
-
-  std::cout << left_column << "Up time: "
-    << vars.get_up_time() << " ms"  // TODO: HH:MM:SS:mmm format
     << std::endl;
 
   std::cout << left_column << "Encoder position: "

@@ -85,10 +85,10 @@ void tic_settings_fill_with_defaults(tic_settings * settings)
   tic_settings_set_rc_bad_signal_timeout(settings, 500);
   tic_settings_set_rc_consecutive_good_pulses(settings, 2);
   tic_settings_set_input_averaging_enabled(settings, true);
-  tic_settings_set_input_error_max(settings, 0xFFFF);
-  tic_settings_set_input_neutral_min(settings, 0x0800);
-  tic_settings_set_input_neutral_max(settings, 0x0800);
-  tic_settings_set_input_max(settings, 0x0FFF);
+  tic_settings_set_input_error_max(settings, 4095);
+  tic_settings_set_input_neutral_min(settings, 2015);
+  tic_settings_set_input_neutral_max(settings, 2080);
+  tic_settings_set_input_max(settings, 4095);
   tic_settings_set_output_min(settings, -200);
   tic_settings_set_output_max(settings, 200);
   tic_settings_set_encoder_prescaler(settings, 1);
@@ -217,10 +217,13 @@ static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings
       break;
 
     case TIC_RESPONSE_GO_TO_POSITION:
-      response = TIC_RESPONSE_DEENERGIZE;
-      tic_sprintf(warnings,
-        "Warning: The soft error response cannot be \"Go to position\" in a "
-        "speed control mode, so it will be changed to \"De-energize\".\n");
+      if (speed_control_mode)
+      {
+        response = TIC_RESPONSE_DEENERGIZE;
+        tic_sprintf(warnings,
+          "Warning: The soft error response cannot be \"Go to position\" in a "
+          "speed control mode, so it will be changed to \"De-energize\".\n");
+      }
       break;
 
     default:
@@ -323,8 +326,8 @@ static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings
     {
       error_min = 0;
       min = 0;
-      neutral_min = 2048;
-      neutral_max = 2048;
+      neutral_min = 2015;
+      neutral_max = 2080;
       max = 4095;
       error_max = 0xFFFF;
 
