@@ -217,10 +217,13 @@ static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings
       break;
 
     case TIC_RESPONSE_GO_TO_POSITION:
-      response = TIC_RESPONSE_DEENERGIZE;
-      tic_sprintf(warnings,
-        "Warning: The soft error response cannot be \"Go to position\" in a "
-        "speed control mode, so it will be changed to \"De-energize\".\n");
+      if (speed_control_mode)
+      {
+        response = TIC_RESPONSE_DEENERGIZE;
+        tic_sprintf(warnings,
+          "Warning: The soft error response cannot be \"Go to position\" in a "
+          "speed control mode, so it will be changed to \"De-energize\".\n");
+      }
       break;
 
     default:

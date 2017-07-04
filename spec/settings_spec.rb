@@ -99,6 +99,9 @@ def test_cases_for_settings_fix(product)
       "Warning: The soft error response cannot be \"Go to position\" in a " \
       "speed control mode, so it will be changed to \"De-energize\".\n"
     ],
+    [ { 'control_mode' => 'rc_position', 'soft_error_response' => 'go_to_position' },
+      { },
+    ],
     [ { 'serial_baud_rate' => 115200 },
       { 'serial_baud_rate' => 115385 }
     ],
