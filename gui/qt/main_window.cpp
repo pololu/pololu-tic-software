@@ -180,6 +180,16 @@ void main_window::set_firmware_version(std::string const & firmware_version)
   firmware_version_value->setText(QString(firmware_version.c_str()));
 }
 
+void main_window::set_device_reset(std::string const & device_reset)
+{
+  device_reset_value->setText(tr(device_reset.c_str()));
+}
+
+void main_window::set_up_time(std::string const & up_time)
+{
+  up_time_value->setText(QString(up_time.c_str()));
+}
+
 void main_window::set_vin_voltage(std::string const & vin_voltage)
 {
   vin_voltage_value->setText(QString(vin_voltage.c_str()));
@@ -1424,6 +1434,8 @@ QWidget * main_window::setup_device_info_box()
 
   setup_read_only_text_field(layout, row++, &serial_number_label, &serial_number_value);
   setup_read_only_text_field(layout, row++, &firmware_version_label, &firmware_version_value);
+  setup_read_only_text_field(layout, row++, &device_reset_label, &device_reset_value);
+  setup_read_only_text_field(layout, row++, &up_time_label, &up_time_value);
 
   // Make the right column wide enough to display the name of the Tic,
   // which should be the widest thing that needs to fit in that column.
@@ -2312,6 +2324,8 @@ void main_window::retranslate()
   device_name_label->setText(tr("Name:"));
   serial_number_label->setText(tr("Serial number:"));
   firmware_version_label->setText(tr("Firmware version:"));
+  device_reset_label->setText(tr("Last reset:"));
+  up_time_label->setText(tr("Up time:"));
 
   status_box->setTitle(tr("Status"));
   vin_voltage_label->setText(tr("VIN voltage:"));

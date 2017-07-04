@@ -367,6 +367,22 @@ void main_controller::show_exception(std::exception const & e,
     window->show_error_message(message);
 }
 
+static std::string sentence_case(std::string const & str)
+{
+  std::string new_str = str;
+
+  if (new_str == "")
+  {
+    return std::string("(Unknown)");
+  }
+
+  new_str[0] = std::toupper(new_str[0]);
+
+  // Replace underscores with spaces.
+  std::replace(new_str.begin(), new_str.end(), '_', ' ');
+  return new_str;
+}
+
 void main_controller::handle_model_changed()
 {
   handle_device_changed();
@@ -382,6 +398,8 @@ void main_controller::handle_device_changed()
     window->set_device_name(device.get_name(), true);
     window->set_serial_number(device.get_serial_number());
     window->set_firmware_version(device_handle.get_firmware_version_string());
+    window->set_device_reset(
+      sentence_case(tic_look_up_device_reset_string(variables.get_device_reset())));
 
     window->set_device_list_selected(device);
     window->set_connection_status("", false);
@@ -437,10 +455,22 @@ void main_controller::initialize_manual_target()
   }
 }
 
+static std::string pretty_up_time(uint32_t up_time)
+{
+  std::ostringstream ss;
+  uint32_t seconds = up_time / 1000;
+  uint32_t minutes = seconds / 60;
+  uint16_t hours = minutes / 60;
+
+  ss << hours << ":" << std::setfill('0') << std::setw(2) << minutes % 60 <<
+    ":" << std::setfill('0') << std::setw(2) << seconds % 60;
+  return ss.str();
+  }
+
 // TODO: move to separate file along with following 2 functions?
 static std::string convert_mv_to_v_string(uint32_t mv)
 {
-  std::stringstream ss;
+  std::ostringstream ss;
   uint32_t dv = (mv + 50) / 100;
 
   ss << (dv / 10) << "." << (dv % 10) << " V";
@@ -452,7 +482,7 @@ std::string convert_speed_to_pps_string(int32_t speed)
 {
   static uint8_t const decimal_digits = std::log10(TIC_SPEED_UNITS_PER_HZ);
 
-  std::stringstream ss;
+  std::ostringstream ss;
   std::string sign = (speed < 0) ? "-" : "";
 
   ss << sign << std::abs(speed / TIC_SPEED_UNITS_PER_HZ) << "." <<
@@ -466,7 +496,7 @@ std::string convert_accel_to_pps2_string(int32_t accel)
 {
   static uint8_t const decimal_digits = std::log10(TIC_ACCEL_UNITS_PER_HZ2);
 
-  std::stringstream ss;
+  std::ostringstream ss;
   std::string sign = (accel < 0) ? "-" : "";
 
   ss << sign << std::abs(accel / TIC_ACCEL_UNITS_PER_HZ2) << "." <<
@@ -477,7 +507,7 @@ std::string convert_accel_to_pps2_string(int32_t accel)
 
 void main_controller::handle_variables_changed()
 {
-  //todo get_device_reset()
+  window->set_up_time(pretty_up_time(variables.get_up_time()));
 
   window->set_vin_voltage(convert_mv_to_v_string(variables.get_vin_voltage()));
 

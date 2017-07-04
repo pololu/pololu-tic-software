@@ -48,7 +48,6 @@ public:
   void add_funcs(uint16_t funcs);
 
 private:
-
   bool window_suppress_events() const;
   void set_window_suppress_events(bool suppress_events);
   main_controller * window_controller() const;
@@ -124,6 +123,8 @@ public:
   void set_device_name(std::string const & name, bool link_enabled);
   void set_serial_number(std::string const & serial_number);
   void set_firmware_version(std::string const & firmware_version);
+  void set_device_reset(std::string const & device_reset);
+  void set_up_time(std::string const & up_time);
 
   void set_vin_voltage(std::string const & vin_voltage);
   void set_target_position(int32_t target_position);
@@ -378,6 +379,10 @@ private:
   QLabel * serial_number_value;
   QLabel * firmware_version_label;
   QLabel * firmware_version_value;
+  QLabel * device_reset_label;
+  QLabel * device_reset_value;
+  QLabel * up_time_label;
+  QLabel * up_time_value;
 
   QGroupBox * status_box;
   QGridLayout * status_box_layout;
