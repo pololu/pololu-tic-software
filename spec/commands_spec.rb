@@ -162,7 +162,7 @@ describe 'Set Speed Max' do
       expect(stderr).to eq ''
       expect(stdout).to eq ''
       expect(result).to eq 0
-      expect(tic_get_status['Speed max'].to_s).to eq mode
+      expect(tic_get_status['Max speed'].to_s).to eq mode
     end
   end
 end
@@ -186,7 +186,7 @@ describe 'Set Accel Max' do
       expect(stderr).to eq ''
       expect(stdout).to eq ''
       expect(result).to eq 0
-      expect(tic_get_status['Accel max'].to_s).to eq mode
+      expect(tic_get_status['Max acceleration'].to_s).to eq mode
     end
   end
 end
@@ -198,7 +198,7 @@ describe 'Set Decel Max' do
       expect(stderr).to eq ''
       expect(stdout).to eq ''
       expect(result).to eq 0
-      expect(tic_get_status['Decel max'].to_s).to eq mode
+      expect(tic_get_status['Max deceleration'].to_s).to eq mode
     end
   end
 end

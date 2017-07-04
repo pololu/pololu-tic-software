@@ -20,8 +20,8 @@ input_hysteresis: 0
 input_scaling_degree: linear
 input_invert: false
 input_min: 0
-input_neutral_min: 2048
-input_neutral_max: 2048
+input_neutral_min: 2015
+input_neutral_max: 2080
 input_max: 4095
 output_min: -200
 output_max: 200
@@ -65,9 +65,9 @@ input_hysteresis: 4455
 input_scaling_degree: cubic
 input_invert: true
 input_min: 404
-input_neutral_min: 12312
-input_neutral_max: 13412
-input_max: 50000
+input_neutral_min: 505
+input_neutral_max: 606
+input_max: 3000
 output_min: -999
 output_max: 999
 encoder_prescaler: 5
@@ -127,8 +127,8 @@ def test_cases_for_settings_fix(product)
     #],
     [ { 'input_min' => 9, 'input_neutral_min' => 8,
         'input_neutral_max' => 7, 'input_max' => 6, },
-      { 'input_min' => 0, 'input_neutral_min' => 2048,
-        'input_neutral_max' => 2048, 'input_max' => 4095, },
+      { 'input_min' => 0, 'input_neutral_min' => 2015,
+        'input_neutral_max' => 2080, 'input_max' => 4095, },
       "Warning: The input scaling values are out of order " \
       "so they will be reset to their default values.\n"
     ],

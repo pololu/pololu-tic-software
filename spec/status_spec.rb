@@ -6,19 +6,19 @@ Name:                         Fake name
 Serial number:                123
 Firmware version:             9.99
 Last reset:                   (unknown)
+Up time:                      4294967295 ms
 
 Operation state:              (unknown)
 Energized:                    yes
 Planning mode:                (unknown)
 Current position:             (-1)
 Current velocity:             -1
-Speed max:                    4294967295
+Max speed:                    4294967295
 Starting speed:               4294967295
-Accel max:                    4294967295
-Decel max:                    4294967295
+Max acceleration:             4294967295
+Max deceleration:             4294967295
 
 VIN:                          65535 mV
-Up time:                      4294967295 ms
 Encoder position:             -1
 RC pulse width:               N/A
 Step mode:                    (unknown)
