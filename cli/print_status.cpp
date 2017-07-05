@@ -123,15 +123,12 @@ void print_status(const tic::variables & vars,
       << std::endl;
   }
 
-  std::cout << left_column << "Current position: ";
-  if (vars.get_learn_position_later())
-  {
-    std::cout << "(" << vars.get_current_position() << ")" << std::endl;
-  }
-  else
-  {
-    std::cout << vars.get_current_position() << std::endl;
-  }
+  std::cout << left_column << "Current position: "
+            << vars.get_current_position() << std::endl;
+
+  std::cout << left_column << "Position uncertain: "
+            << (vars.get_position_uncertain() ? "yes" : "no")
+            << std::endl;
 
   std::cout << left_column << "Current velocity: "
     << vars.get_current_velocity() << std::endl;

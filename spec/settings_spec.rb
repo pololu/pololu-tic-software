@@ -8,7 +8,7 @@ never_sleep: false
 disable_safe_start: false
 ignore_err_line_high: false
 auto_clear_driver_error: true
-soft_error_response: deenergize
+soft_error_response: decel_to_hold
 soft_error_position: 0
 serial_baud_rate: 9600
 serial_device_number: 14

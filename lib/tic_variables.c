@@ -6,7 +6,7 @@ struct tic_variables
 {
   uint8_t operation_state;
   bool energized;
-  bool learn_position_later;
+  bool position_uncertain;
   uint16_t error_status;
   uint32_t errors_occurred;
   uint8_t planning_mode;
@@ -121,7 +121,7 @@ static void write_buffer_to_variables(const uint8_t * buf, tic_variables * vars)
   vars->operation_state = buf[TIC_VAR_OPERATION_STATE];
   uint8_t misc_flags1 = buf[TIC_VAR_MISC_FLAGS1];
   vars->energized = misc_flags1 >> TIC_MISC_FLAGS1_ENERGIZED & 1;
-  vars->learn_position_later = misc_flags1 >> TIC_MISC_FLAGS1_LEARN_POSITION_LATER & 1;
+  vars->position_uncertain = misc_flags1 >> TIC_MISC_FLAGS1_POSITION_UNCERTAIN & 1;
   vars->error_status = read_u16(buf + TIC_VAR_ERROR_STATUS);
   vars->errors_occurred = read_u32(buf + TIC_VAR_ERRORS_OCCURRED);
   vars->planning_mode = buf[TIC_VAR_PLANNING_MODE];
@@ -249,10 +249,10 @@ bool tic_variables_get_energized(const tic_variables * variables)
   return variables->energized;
 }
 
-bool tic_variables_get_learn_position_later(const tic_variables * variables)
+bool tic_variables_get_position_uncertain(const tic_variables * variables)
 {
   if (variables == NULL) { return 0xFFFF; }
-  return variables->learn_position_later;
+  return variables->position_uncertain;
 }
 
 uint16_t tic_variables_get_error_status(const tic_variables * variables)
