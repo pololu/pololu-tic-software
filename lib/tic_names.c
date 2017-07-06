@@ -65,6 +65,7 @@ const tic_name tic_device_reset_names[] =
 const tic_name tic_operation_state_names[] =
 {
   { "reset", TIC_OPERATION_STATE_RESET },
+  { "de-energized", TIC_OPERATION_STATE_DEENERGIZED },
   { "soft_error", TIC_OPERATION_STATE_SOFT_ERROR },
   { "waiting_for_err_line", TIC_OPERATION_STATE_WAITING_FOR_ERR_LINE },
   { "starting_up", TIC_OPERATION_STATE_STARTING_UP },
