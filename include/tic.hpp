@@ -268,10 +268,10 @@ namespace tic
       return tic_variables_get_energized(pointer);
     }
 
-    /// Wrapper for tic_variables_get_learn_position_later().
-    bool get_learn_position_later() const noexcept
+    /// Wrapper for tic_variables_get_position_uncertain().
+    bool get_position_uncertain() const noexcept
     {
-      return tic_variables_get_learn_position_later(pointer);
+      return tic_variables_get_position_uncertain(pointer);
     }
 
     /// Wrapper for tic_variables_get_error_status().

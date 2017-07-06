@@ -74,6 +74,7 @@ void tic_settings_fill_with_defaults(tic_settings * settings)
   tic_settings_set_product(settings, product);
 
   tic_settings_set_auto_clear_driver_error(settings, true);
+  tic_settings_set_soft_error_response(settings, TIC_RESPONSE_DECEL_TO_HOLD);
   tic_settings_set_serial_baud_rate(settings, 9600);
   tic_settings_set_serial_device_number(settings, 14);
   tic_settings_set_command_timeout(settings, 1000);

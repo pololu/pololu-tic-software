@@ -244,10 +244,13 @@ uint8_t tic_variables_get_operation_state(const tic_variables *);
 TIC_API
 bool tic_variables_get_energized(const tic_variables *);
 
-/// Gets a flag that indicates whether the Tic will re-learn its current
-/// position the next time it starts operating normally.
+/// Gets a flag that indicates whether there has been external confirmation that
+/// the value of the Tic's Current position variable is correct.
+///
+/// See the documentation for the Position uncertain flag in the Tic user's
+/// guide.
 TIC_API
-bool tic_variables_get_learn_position_later(const tic_variables *);
+bool tic_variables_get_position_uncertain(const tic_variables *);
 
 /// Gets the errors that are currently stopping the motor.
 ///

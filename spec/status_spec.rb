@@ -11,7 +11,8 @@ Up time:                      4294967295 ms
 Operation state:              (unknown)
 Energized:                    yes
 Planning mode:                (unknown)
-Current position:             (-1)
+Current position:             -1
+Position uncertain:           yes
 Current velocity:             -1
 Max speed:                    4294967295
 Starting speed:               4294967295
