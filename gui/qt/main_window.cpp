@@ -18,7 +18,6 @@
 #include <QMessageBox>
 #include <QPushButton>
 #include <QRadioButton>
-#include <QScrollBar>
 #include <QShortcut>
 #include <QSpinBox>
 #include <QTabWidget>
@@ -107,7 +106,7 @@ void main_window::set_connection_status(std::string const & status, bool error)
 {
   if (error)
   {
-    connection_status_value->setStyleSheet("QLabel { color: red; }");
+    connection_status_value->setStyleSheet("color: red;");
   }
   else
   {
@@ -235,31 +234,29 @@ void main_window::set_error_status(uint16_t error_status)
   {
     if (error_rows[i].stopping_value == NULL) { continue; }
 
+    // setStyleSheet() is expensive, so only call it if something actually
+    // changed. Check if there's currently a stylesheet applied and decide
+    // whether we need to do anything based on that.
+    bool styled = !error_rows[i].stopping_value->styleSheet().isEmpty();
+
     if (error_status & (1 << i))
     {
       error_rows[i].stopping_value->setText(tr("Yes"));
-      error_rows[i].stopping_value->setStyleSheet(
-        "QLabel:enabled { background-color: red; color: white; }");
+      if (!styled)
+      {
+        error_rows[i].stopping_value->setStyleSheet(
+          ":enabled { background-color: red; color: white; }");
+      }
     }
     else
     {
       error_rows[i].stopping_value->setText(tr("No"));
-      error_rows[i].stopping_value->setStyleSheet(styleSheet());
+      if (styled)
+      {
+        error_rows[i].stopping_value->setStyleSheet("");
+      }
     }
   }
-}
-
-void main_window::set_motor_status_message(std::string const & message, bool stopped)
-{
-  if (stopped)
-  {
-    motor_status_value->setStyleSheet("QLabel { color: red; }");
-  }
-  else
-  {
-    motor_status_value->setStyleSheet("");
-  }
-  motor_status_value->setText(message.c_str());
 }
 
 void main_window::increment_errors_occurred(uint32_t errors_occurred)
@@ -585,6 +582,24 @@ void main_window::set_pin_polarity(uint8_t pin, bool polarity)
 void main_window::set_pin_analog(uint8_t pin, bool analog)
 {
   set_check_box(pin_config_rows[pin]->analog_check, analog);
+}
+
+void main_window::set_motor_status_message(std::string const & message, bool stopped)
+{
+  // setStyleSheet() is expensive, so only call it if something actually
+  // changed. Check if there's currently a stylesheet applied and decide
+  // whether we need to do anything based on that.
+  bool styled = !motor_status_value->styleSheet().isEmpty();
+
+  if (!styled && stopped)
+  {
+    motor_status_value->setStyleSheet("color: red;");
+  }
+  else if (styled && !stopped)
+  {
+    motor_status_value->setStyleSheet("");
+  }
+  motor_status_value->setText(message.c_str());
 }
 
 void main_window::set_u8_combo_box(QComboBox * combo, uint8_t value)
@@ -1158,21 +1173,31 @@ static void setup_read_only_text_field(QGridLayout * layout, int row,
 static void setup_error_row(QGridLayout * layout, int row, error_row & er)
 {
   // TODO make sure this all looks good on mac/linux/high dpi
+
   er.count = 0;
+
   er.name_label = new QLabel();
   // Add left margin to offset from edge of row background fill.
   er.name_label->setContentsMargins(
     er.name_label->style()->pixelMetric(QStyle::PM_LayoutLeftMargin), 0, 0, 0);
+
   er.stopping_value = new QLabel();
   er.stopping_value->setAlignment(Qt::AlignCenter);
+
   er.count_value = new QLabel();
   // Add right margin to offset from edge of row background fill.
   er.count_value->setContentsMargins(
     0, 0, er.count_value->style()->pixelMetric(QStyle::PM_LayoutRightMargin), 0);
+  // Set a fixed size for performance, big enough to display the largest
+  // possible count.
+  er.count_value->setText(QString::number(UINT_MAX));
+  er.count_value->setFixedSize(er.count_value->sizeHint());
+
   er.background = new QFrame();
+
   if (row & 1)
   {
-    er.background->setStyleSheet("QFrame { background-color: palette(alternate-base); }");
+    er.background->setStyleSheet("background-color: palette(alternate-base);");
   }
 
   // Increase the width of the Yes/No label to make it have a good width when
@@ -1234,10 +1259,10 @@ void pin_config_row::setup(QGridLayout * layout, int row)
     SLOT(on_analog_check_stateChanged(int)));
 
   layout->addWidget(name_label, row, 0, FIELD_LABEL_ALIGNMENT);
-  layout->addWidget(func_value, row, 1, 0);
-  layout->addWidget(pullup_check, row, 2, 0);
-  layout->addWidget(polarity_check, row, 3, 0);
-  layout->addWidget(analog_check, row, 4, 0);
+  layout->addWidget(func_value, row, 1);
+  layout->addWidget(pullup_check, row, 2);
+  layout->addWidget(polarity_check, row, 3);
+  layout->addWidget(analog_check, row, 4);
 }
 
 static std::array<char const * const, 8> const pin_func_names =
@@ -1477,11 +1502,18 @@ QWidget * main_window::setup_status_box()
   // velocity.
   {
     QLabel tmp_label;
-    tmp_label.setText(QString((std::to_string(TIC_MAX_ALLOWED_SPEED)).c_str()));
-    layout->setColumnMinimumWidth(1, tmp_label.sizeHint().width());
+    tmp_label.setText(QString((std::to_string(-TIC_MAX_ALLOWED_SPEED)).c_str()));
+
+    vin_voltage_value->setFixedSize(tmp_label.sizeHint());
+    target_value->setFixedSize(tmp_label.sizeHint());
+    current_position_value->setFixedSize(tmp_label.sizeHint());
+    current_velocity_value->setFixedSize(tmp_label.sizeHint());
+
     tmp_label.setText(QString(("(" +
-      convert_speed_to_pps_string(TIC_MAX_ALLOWED_SPEED) + ")").c_str()));
-    layout->setColumnMinimumWidth(2, tmp_label.sizeHint().width());
+      convert_speed_to_pps_string(-TIC_MAX_ALLOWED_SPEED) + ")").c_str()));
+
+    target_velocity_pretty->setFixedSize(tmp_label.sizeHint());
+    current_velocity_pretty->setFixedSize(tmp_label.sizeHint());
   }
 
   status_box->setLayout(layout);
@@ -1540,13 +1572,6 @@ QLayout * main_window::setup_error_table_layout()
 
   // Adjust height of header row to match error rows.
   layout->setRowMinimumHeight(0, layout->rowMinimumHeight(1));
-
-  // Make the right column wide enough to display the largest possible count.
-  {
-    QLabel tmp_label;
-    tmp_label.setText(QString::number(UINT_MAX));
-    layout->setColumnMinimumWidth(2, tmp_label.sizeHint().width());
-  }
 
   return layout;
 }
@@ -2273,14 +2298,14 @@ QLayout * main_window::setup_footer()
   {
     deenergize_button = new QPushButton();
     deenergize_button->setObjectName("deenergize_button");
-    deenergize_button->setStyleSheet("QPushButton:enabled { background-color: red; color: white; font-weight: bold; }");
+    deenergize_button->setStyleSheet(":enabled { background-color: red; color: white; font-weight: bold; }");
     layout->addWidget(deenergize_button);
   }
 
   {
     resume_button = new QPushButton();
     resume_button->setObjectName("resume_button");
-    resume_button->setStyleSheet("QPushButton:enabled { background-color: green; color: white; font-weight: bold; }");
+    resume_button->setStyleSheet(":enabled { background-color: green; color: white; font-weight: bold; }");
     layout->addWidget(resume_button);
   }
 

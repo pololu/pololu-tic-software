@@ -16,7 +16,6 @@ class QHBoxLayout;
 class QLabel;
 class QPushButton;
 class QRadioButton;
-class QScrollBar;
 class QShortcut;
 class QSpinBox;
 class QTabWidget;

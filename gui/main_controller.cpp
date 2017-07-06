@@ -462,7 +462,8 @@ static std::string pretty_up_time(uint32_t up_time)
   uint32_t minutes = seconds / 60;
   uint16_t hours = minutes / 60;
 
-  ss << hours << ":" << std::setfill('0') << std::setw(2) << minutes % 60 <<
+  ss << hours <<
+    ":" << std::setfill('0') << std::setw(2) << minutes % 60 <<
     ":" << std::setfill('0') << std::setw(2) << seconds % 60;
   return ss.str();
   }
