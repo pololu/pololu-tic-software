@@ -126,10 +126,13 @@ public:
   void set_up_time(std::string const & up_time);
 
   void set_vin_voltage(std::string const & vin_voltage);
+  void set_operation_state(std::string const & operation_state);
+  void set_energized(bool energized);
   void set_target_position(int32_t target_position);
   void set_target_velocity(int32_t target_velocity);
   void set_target_none();
   void set_current_position(int32_t current_position);
+  void set_position_uncertain(bool position_uncertain);
   void set_current_velocity(int32_t current_velocity);
 
   void set_error_status(uint16_t error_status);
@@ -387,11 +390,17 @@ private:
   QGridLayout * status_box_layout;
   QLabel * vin_voltage_label;
   QLabel * vin_voltage_value;
+  QLabel * operation_state_label;
+  QLabel * operation_state_value;
+  QLabel * energized_label;
+  QLabel * energized_value;
   QLabel * target_label;
   QLabel * target_value;
   QLabel * target_velocity_pretty;
   QLabel * current_position_label;
   QLabel * current_position_value;
+  QLabel * position_uncertain_label;
+  QLabel * position_uncertain_value;
   QLabel * current_velocity_label;
   QLabel * current_velocity_value;
   QLabel * current_velocity_pretty;

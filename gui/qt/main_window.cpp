@@ -194,6 +194,16 @@ void main_window::set_vin_voltage(std::string const & vin_voltage)
   vin_voltage_value->setText(QString(vin_voltage.c_str()));
 }
 
+void main_window::set_operation_state(std::string const & operation_state)
+{
+  operation_state_value->setText(tr(operation_state.c_str()));
+}
+
+void main_window::set_energized(bool energized)
+{
+  energized_value->setText(energized ? tr("Yes") : tr("No"));
+}
+
 void main_window::set_target_position(int32_t target_position)
 {
   target_label->setText(tr("Target position:"));
@@ -219,6 +229,11 @@ void main_window::set_target_none()
 void main_window::set_current_position(int32_t current_position)
 {
   current_position_value->setText(QString::number(current_position));
+}
+
+void main_window::set_position_uncertain(bool position_uncertain)
+{
+  position_uncertain_value->setText(position_uncertain ? tr("Yes") : tr("No"));
 }
 
 void main_window::set_current_velocity(int32_t current_velocity)
@@ -1484,6 +1499,8 @@ QWidget * main_window::setup_status_box()
   int row = 0;
 
   setup_read_only_text_field(layout, row++, &vin_voltage_label, &vin_voltage_value);
+  setup_read_only_text_field(layout, row++, &operation_state_label, &operation_state_value);
+  setup_read_only_text_field(layout, row++, &energized_label, &energized_value);
   {
     setup_read_only_text_field(layout, row, &target_label, &target_value);
     target_velocity_pretty = new QLabel();
@@ -1491,6 +1508,7 @@ QWidget * main_window::setup_status_box()
     row++;
   }
   setup_read_only_text_field(layout, row++, &current_position_label, &current_position_value);
+  setup_read_only_text_field(layout, row++, &position_uncertain_label, &position_uncertain_value);
   {
     setup_read_only_text_field(layout, row, &current_velocity_label, &current_velocity_value);
     current_velocity_pretty = new QLabel();
@@ -2354,8 +2372,11 @@ void main_window::retranslate()
 
   status_box->setTitle(tr("Status"));
   vin_voltage_label->setText(tr("VIN voltage:"));
+  operation_state_label->setText(tr("Operation state:"));
+  energized_label->setText(tr("Energized:"));
   set_target_none(); // TODO: display correct target mode if we retranslate on the fly
   current_position_label->setText(tr("Current position:"));
+  position_uncertain_label->setText(tr("Position uncertain:"));
   current_velocity_label->setText(tr("Current velocity:"));
 
   errors_box->setTitle(tr("Errors"));

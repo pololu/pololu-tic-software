@@ -511,6 +511,9 @@ void main_controller::handle_variables_changed()
   window->set_up_time(pretty_up_time(variables.get_up_time()));
 
   window->set_vin_voltage(convert_mv_to_v_string(variables.get_vin_voltage()));
+  window->set_energized(variables.get_energized());
+  window->set_operation_state(
+    sentence_case(tic_look_up_operation_state_string(variables.get_operation_state())));
 
   int32_t target_position = variables.get_target_position();
   int32_t target_velocity = variables.get_target_velocity();
@@ -536,6 +539,7 @@ void main_controller::handle_variables_changed()
     current_velocity == target_velocity);
 
   window->set_current_position(current_position);
+  window->set_position_uncertain(variables.get_position_uncertain());
   window->set_current_velocity(current_velocity);
 
   uint16_t error_status = variables.get_error_status();
