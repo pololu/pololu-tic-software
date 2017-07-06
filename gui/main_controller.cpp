@@ -510,6 +510,14 @@ void main_controller::handle_variables_changed()
 {
   window->set_up_time(pretty_up_time(variables.get_up_time()));
 
+  window->set_encoder_position(variables.get_encoder_position());
+  window->set_rc_pulse_width(variables.get_rc_pulse_width());
+  window->set_input_state(
+    sentence_case(tic_look_up_input_state_string(variables.get_input_state())));
+  window->set_input_after_averaging(variables.get_input_after_averaging());
+  window->set_input_after_hysteresis(variables.get_input_after_hysteresis());
+  window->set_input_after_scaling(variables.get_input_after_scaling());
+  
   window->set_vin_voltage(convert_mv_to_v_string(variables.get_vin_voltage()));
   window->set_energized(variables.get_energized());
   window->set_operation_state(

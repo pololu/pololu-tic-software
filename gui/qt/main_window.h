@@ -124,6 +124,13 @@ public:
   void set_firmware_version(std::string const & firmware_version);
   void set_device_reset(std::string const & device_reset);
   void set_up_time(std::string const & up_time);
+  
+  void set_encoder_position(int32_t encoder_position);
+  void set_rc_pulse_width(uint16_t rc_pulse_width);
+  void set_input_state(std::string const & input_state);
+  void set_input_after_averaging(uint16_t input_after_averaging);
+  void set_input_after_hysteresis(uint16_t input_after_hysteresis);
+  void set_input_after_scaling(int32_t input_after_scaling);
 
   void set_vin_voltage(std::string const & vin_voltage);
   void set_operation_state(std::string const & operation_state);
@@ -207,6 +214,8 @@ private:
   void set_double_spin_box(QDoubleSpinBox * spin, double value);
   void set_check_box(QCheckBox * check, bool value);
 
+  QString input_format(uint16_t input);
+  
   void update_set_target_button();
 
 protected:
@@ -317,7 +326,8 @@ private:
   QLayout * setup_status_left_column();
   QLayout * setup_status_right_column();
   QWidget * setup_device_info_box();
-  QWidget * setup_status_box();
+  QWidget * setup_input_status_box();
+  QWidget * setup_operation_status_box();
   QWidget * setup_errors_box();
   QLayout * setup_error_table_layout();
   QWidget * setup_manual_target_box();
@@ -386,8 +396,24 @@ private:
   QLabel * up_time_label;
   QLabel * up_time_value;
 
-  QGroupBox * status_box;
-  QGridLayout * status_box_layout;
+  QGroupBox * input_status_box;
+  QGridLayout * input_status_box_layout;
+  QLabel * encoder_position_label;
+  QLabel * encoder_position_value;
+  QLabel * rc_pulse_width_label;
+  QLabel * rc_pulse_width_value;
+  QLabel * rc_pulse_width_pretty;
+  QLabel * input_state_label;
+  QLabel * input_state_value;
+  QLabel * input_after_averaging_label;
+  QLabel * input_after_averaging_value;
+  QLabel * input_after_hysteresis_label;
+  QLabel * input_after_hysteresis_value;
+  QLabel * input_after_scaling_label;
+  QLabel * input_after_scaling_value;
+  
+  QGroupBox * operation_status_box;
+  QGridLayout * operation_status_box_layout;
   QLabel * vin_voltage_label;
   QLabel * vin_voltage_value;
   QLabel * operation_state_label;

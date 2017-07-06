@@ -189,6 +189,36 @@ void main_window::set_up_time(std::string const & up_time)
   up_time_value->setText(QString(up_time.c_str()));
 }
 
+void main_window::set_encoder_position(int32_t encoder_position)
+{
+  encoder_position_value->setText(QString::number(encoder_position));
+}
+
+void main_window::set_rc_pulse_width(uint16_t rc_pulse_width)
+{
+  rc_pulse_width_value->setText(input_format(rc_pulse_width));
+}
+
+void main_window::set_input_state(std::string const & input_state)
+{
+  input_state_value->setText(tr(input_state.c_str()));
+}
+
+void main_window::set_input_after_averaging(uint16_t input_after_averaging)
+{
+  input_after_averaging_value->setText(input_format(input_after_averaging));
+}
+
+void main_window::set_input_after_hysteresis(uint16_t input_after_hysteresis)
+{
+  input_after_hysteresis_value->setText(input_format(input_after_hysteresis));
+}
+
+void main_window::set_input_after_scaling(int32_t input_after_scaling)
+{
+  input_after_scaling_value->setText(QString::number(input_after_scaling));
+}
+
 void main_window::set_vin_voltage(std::string const & vin_voltage)
 {
   vin_voltage_value->setText(QString(vin_voltage.c_str()));
@@ -655,6 +685,16 @@ void main_window::set_check_box(QCheckBox * check, bool value)
   suppress_events = true;
   check->setChecked(value);
   suppress_events = false;
+}
+
+QString main_window::input_format(uint16_t input)
+{
+  if (input == TIC_INPUT_NULL)
+  {
+    return tr("N/A");
+  }
+
+  return QString::number(input);
 }
 
 void main_window::update_set_target_button()
@@ -1169,7 +1209,7 @@ void pin_config_row::on_analog_check_stateChanged(int state)
 #define INDENT(s) ((std::string("    ") + (s)).c_str())
 #endif
 
-static void setup_read_only_text_field(QGridLayout * layout, int row,
+static void setup_read_only_text_field(QGridLayout * layout, int row, int col_offset,
   QLabel ** label, QLabel ** value)
 {
   QLabel * new_value = new QLabel();
@@ -1178,11 +1218,17 @@ static void setup_read_only_text_field(QGridLayout * layout, int row,
   QLabel * new_label = new QLabel();
   new_label->setBuddy(new_value);
 
-  layout->addWidget(new_label, row, 0, FIELD_LABEL_ALIGNMENT);
-  layout->addWidget(new_value, row, 1);
+  layout->addWidget(new_label, row, col_offset, FIELD_LABEL_ALIGNMENT | Qt::AlignTop);
+  layout->addWidget(new_value, row, col_offset + 1, Qt::AlignTop);
 
   if (label) { *label = new_label; }
   if (value) { *value = new_value; }
+}
+
+static void setup_read_only_text_field(QGridLayout * layout, int row,
+  QLabel ** label, QLabel ** value)
+{
+  setup_read_only_text_field(layout, row, 0, label, value);
 }
 
 static void setup_error_row(QGridLayout * layout, int row, error_row & er)
@@ -1219,11 +1265,10 @@ static void setup_error_row(QGridLayout * layout, int row, error_row & er)
   // highlighted red. Increase the minimum height of the row in the layout to
   // make up for the vertical spacing being removed.
   {
-    QLabel tmp_label;
-    tmp_label.setText("Yes");
-    er.stopping_value->setMinimumWidth(tmp_label.sizeHint().width() +
+    er.stopping_value->setText("Yes");
+    er.stopping_value->setMinimumWidth(er.stopping_value->sizeHint().width() +
       2 * er.stopping_value->fontMetrics().height());
-    layout->setRowMinimumHeight(row, tmp_label.sizeHint().height() +
+    layout->setRowMinimumHeight(row, er.stopping_value->sizeHint().height() +
       er.background->style()->pixelMetric(QStyle::PM_LayoutVerticalSpacing));
   }
 
@@ -1444,6 +1489,8 @@ QLayout * main_window::setup_status_left_column()
   QVBoxLayout * layout = status_left_column_layout = new QVBoxLayout();
 
   layout->addWidget(setup_device_info_box());
+  layout->addWidget(setup_operation_status_box());
+  layout->addWidget(setup_input_status_box());
   layout->addWidget(setup_manual_target_box());
   layout->addStretch(1);
 
@@ -1454,7 +1501,6 @@ QLayout * main_window::setup_status_right_column()
 {
   QVBoxLayout * layout = status_right_column_layout = new QVBoxLayout();
 
-  layout->addWidget(setup_status_box());
   layout->addWidget(setup_errors_box());
   layout->addStretch(1);
 
@@ -1491,51 +1537,95 @@ QWidget * main_window::setup_device_info_box()
   return device_info_box;
 }
 
-QWidget * main_window::setup_status_box()
+QWidget * main_window::setup_input_status_box()
 {
-  status_box = new QGroupBox();
-  QGridLayout * layout = status_box_layout = new QGridLayout();
+  input_status_box = new QGroupBox();
+  QGridLayout * layout = input_status_box_layout = new QGridLayout();
   layout->setColumnStretch(2, 1);
+  int row = 0;
+  
+  setup_read_only_text_field(layout, row++, &encoder_position_label, &encoder_position_value);
+  {
+    setup_read_only_text_field(layout, row, &rc_pulse_width_label, &rc_pulse_width_value);
+    rc_pulse_width_pretty = new QLabel();
+    layout->addWidget(rc_pulse_width_pretty, row, 2, 1, 2, Qt::AlignLeft);
+    row++;
+  }
+  setup_read_only_text_field(layout, row++, &input_state_label, &input_state_value);
+  setup_read_only_text_field(layout, row++, &input_after_averaging_label, &input_after_averaging_value);
+  setup_read_only_text_field(layout, row++, &input_after_hysteresis_label, &input_after_hysteresis_value);
+  setup_read_only_text_field(layout, row++, &input_after_scaling_label, &input_after_scaling_value);
+  
+  // Set fixed sizes for performance.
+  {
+    input_after_scaling_value->setText(QString::number(-INT_MAX));
+   
+    encoder_position_value->setFixedSize(input_after_scaling_value->sizeHint());
+    rc_pulse_width_value->setFixedSize(input_after_scaling_value->sizeHint());
+    input_state_value->setFixedSize(input_after_scaling_value->sizeHint());
+    input_after_averaging_value->setFixedSize(input_after_scaling_value->sizeHint());
+    input_after_hysteresis_value->setFixedSize(input_after_scaling_value->sizeHint());
+    input_after_scaling_value->setFixedSize(input_after_scaling_value->sizeHint());
+    
+    //todo: rc_pulse_width_pretty
+  }
+
+  input_status_box->setLayout(layout);
+  return input_status_box;
+}
+
+
+QWidget * main_window::setup_operation_status_box()
+{
+  operation_status_box = new QGroupBox();
+  QGridLayout * layout = operation_status_box_layout = new QGridLayout();
+  layout->setColumnStretch(3, 1);
   int row = 0;
 
   setup_read_only_text_field(layout, row++, &vin_voltage_label, &vin_voltage_value);
   setup_read_only_text_field(layout, row++, &operation_state_label, &operation_state_value);
-  setup_read_only_text_field(layout, row++, &energized_label, &energized_value);
+  {
+    setup_read_only_text_field(layout, row, &energized_label, &energized_value);
+    layout->setRowMinimumHeight(row, energized_label->sizeHint().height() * 2);
+    row++;
+  }
+  
   {
     setup_read_only_text_field(layout, row, &target_label, &target_value);
     target_velocity_pretty = new QLabel();
-    layout->addWidget(target_velocity_pretty, row, 2, Qt::AlignLeft);
+    layout->addWidget(target_velocity_pretty, row, 2, 1, 2, Qt::AlignLeft);
     row++;
   }
-  setup_read_only_text_field(layout, row++, &current_position_label, &current_position_value);
-  setup_read_only_text_field(layout, row++, &position_uncertain_label, &position_uncertain_value);
+  {
+    setup_read_only_text_field(layout, row, &current_position_label, &current_position_value);
+    setup_read_only_text_field(layout, row, 2, &position_uncertain_label, &position_uncertain_value);
+    row++;
+  }
   {
     setup_read_only_text_field(layout, row, &current_velocity_label, &current_velocity_value);
     current_velocity_pretty = new QLabel();
-    layout->addWidget(current_velocity_pretty, row, 2, Qt::AlignLeft);
+    layout->addWidget(current_velocity_pretty, row, 2, 1, 2, Qt::AlignLeft);
     row++;
   }
 
-  // Make the right two columns wide enough to display the largest possible
-  // velocity.
+  // Set fixed sizes for performance.
   {
-    QLabel tmp_label;
-    tmp_label.setText(QString((std::to_string(-TIC_MAX_ALLOWED_SPEED)).c_str()));
+    target_value->setText(QString::number(-TIC_MAX_ALLOWED_SPEED));
 
-    vin_voltage_value->setFixedSize(tmp_label.sizeHint());
-    target_value->setFixedSize(tmp_label.sizeHint());
-    current_position_value->setFixedSize(tmp_label.sizeHint());
-    current_velocity_value->setFixedSize(tmp_label.sizeHint());
+    vin_voltage_value->setFixedSize(target_value->sizeHint());
+    target_value->setFixedSize(target_value->sizeHint());
+    current_position_value->setFixedSize(target_value->sizeHint());
+    current_velocity_value->setFixedSize(target_value->sizeHint());
 
-    tmp_label.setText(QString(("(" +
-      convert_speed_to_pps_string(-TIC_MAX_ALLOWED_SPEED) + ")").c_str()));
+    target_velocity_pretty->setText("(" + QString(
+      convert_speed_to_pps_string(-TIC_MAX_ALLOWED_SPEED).c_str()) + ")");
 
-    target_velocity_pretty->setFixedSize(tmp_label.sizeHint());
-    current_velocity_pretty->setFixedSize(tmp_label.sizeHint());
+    target_velocity_pretty->setFixedSize(target_velocity_pretty->sizeHint());
+    current_velocity_pretty->setFixedSize(target_velocity_pretty->sizeHint());
   }
 
-  status_box->setLayout(layout);
-  return status_box;
+  operation_status_box->setLayout(layout);
+  return operation_status_box;
 }
 
 QWidget * main_window::setup_errors_box()
@@ -1683,9 +1773,9 @@ QWidget * main_window::setup_manual_target_entry_widget()
 
     // Make the spin box wide enough to display the largest possible target value.
     {
-      QSpinBox tmp_box;
-      tmp_box.setMinimum(-0x7FFFFFF);
-      manual_target_entry_value->setMinimumWidth(tmp_box.sizeHint().width());
+      manual_target_entry_value->setMinimum(-0x7FFFFFF);
+      manual_target_entry_value->setMinimumWidth(
+        manual_target_entry_value->sizeHint().width());
     }
 
     layout->addWidget(manual_target_min_label, row, 0, Qt::AlignLeft);
@@ -2069,9 +2159,8 @@ QWidget * main_window::setup_motor_settings_box()
     // Make the right column wide enough to display the largest possible pretty
     // values.
     {
-      QLabel tmp_label;
-      tmp_label.setText(QString(convert_accel_to_pps2_string(0x7FFFFFF).c_str()));
-      layout->setColumnMinimumWidth(2, tmp_label.sizeHint().width());
+      accel_max_value_pretty->setText(QString(convert_accel_to_pps2_string(TIC_MAX_ALLOWED_ACCEL).c_str()));
+      layout->setColumnMinimumWidth(2, accel_max_value_pretty->sizeHint().width());
     }
 
     row++;
@@ -2370,13 +2459,22 @@ void main_window::retranslate()
   device_reset_label->setText(tr("Last reset:"));
   up_time_label->setText(tr("Up time:"));
 
-  status_box->setTitle(tr("Status"));
+  input_status_box->setTitle(tr("Inputs"));
+  encoder_position_label->setText(tr("Encoder position:"));
+  rc_pulse_width_label->setText(tr("RC pulse width:"));
+  input_state_label->setText(tr("Input state:"));
+  input_after_averaging_label->setText(tr("Input after averaging:"));
+  input_after_hysteresis_label->setText(tr("Input after hysteresis:"));
+  input_after_scaling_label->setText(tr("Input after scaling:"));
+  
+  
+  operation_status_box->setTitle(tr("Operation"));
   vin_voltage_label->setText(tr("VIN voltage:"));
   operation_state_label->setText(tr("Operation state:"));
   energized_label->setText(tr("Energized:"));
   set_target_none(); // TODO: display correct target mode if we retranslate on the fly
   current_position_label->setText(tr("Current position:"));
-  position_uncertain_label->setText(tr("Position uncertain:"));
+  position_uncertain_label->setText(tr("Uncertain:"));
   current_velocity_label->setText(tr("Current velocity:"));
 
   errors_box->setTitle(tr("Errors"));
