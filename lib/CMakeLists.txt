@@ -7,9 +7,9 @@ set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra")
 
 # Find libusbp using pkg-config and use it.
 pkg_check_modules(LIBUSBP REQUIRED libusbp-1)
+string (REPLACE ";" " " LIBUSBP_CFLAGS "${LIBUSBP_CFLAGS}")
 
 if (USE_SYSTEM_LIBYAML)
-  # TODO: make sure using the system libyaml actually works
   pkg_check_modules(YAML REQUIRED yaml)
   STRING(REPLACE ";" " " LIBYAML_LDFLAGS "${LIBYAML_LDFLAGS}")
 else ()
@@ -26,7 +26,7 @@ if (CMAKE_C_COMPILER_ID STREQUAL "GNU")
   set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fvisibility=hidden")
 endif ()
 
-add_library (lib SHARED
+add_library (lib
   tic_baud_rate.c
   tic_current_limit.c
   tic_device.c
@@ -42,10 +42,6 @@ add_library (lib SHARED
   tic_variables.c
   ${LIBYAML_SRC}
 )
-
-#include_directories (
-#  "${CMAKE_CURRENT_SOURCE_DIR}"
-#)
 
 set_target_properties(lib PROPERTIES
   OUTPUT_NAME pololu-tic

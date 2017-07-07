@@ -1,6 +1,11 @@
 cmake_minimum_required (VERSION 2.8.11)
 project (tic)
 
+option (BUILD_SHARED_LIBS "Build a shared library" TRUE)
+if (NOT BUILD_SHARED_LIBS)
+  add_definitions (-DTIC_STATIC)
+endif ()
+
 set(POLOLU_BUILD FALSE CACHE BOOL
   "True if this software is being built by Pololu, and should use the Pololu logo.")
 
