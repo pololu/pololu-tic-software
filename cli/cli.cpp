@@ -21,6 +21,7 @@ static const char help[] =
   "  --deenergize                 Disable the motor driver.\n"
   "  --energize                   Stop disabling the driver.\n"
   "  --exit-safe-start            Send the Exit Safe Start command.\n"
+  "  --resume                     Equivalent to --energize with --exit-safe-start.\n"
   "  --enter-safe-start           Send the Enter Safe Start command.\n"
   "  --reset                      Make the controller forget its current state.\n"
   "  --clear-driver-error         Attempt to clear a motor driver error.\n"
@@ -328,6 +329,10 @@ static arguments parse_args(int argc, char ** argv)
     else if (arg == "--exit-safe-start")
     {
       args.exit_safe_start = true;
+    }
+    else if (arg == "--resume")
+    {
+      args.energize = args.exit_safe_start = true;
     }
     else if (arg == "--enter-safe-start")
     {
@@ -656,6 +661,8 @@ static void run(int argc, char ** argv)
     handle(selector).energize();
   }
 
+  // This should be after energize so that --resume does things in the same
+  // order as the GUI.
   if (args.exit_safe_start)
   {
     handle(selector).exit_safe_start();
