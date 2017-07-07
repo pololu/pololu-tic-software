@@ -192,7 +192,6 @@ uint32_t tic_settings_achievable_current_limit(const tic_settings * settings,
 static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings)
 {
   // TODO: fix enum values to be valid
-  // TODO: enforce 0-4095 range of input scaling settings
   // TODO: enforce -500 to 500 range for vin_calibration
 
   uint8_t control_mode = tic_settings_get_control_mode(settings);
@@ -330,6 +329,35 @@ static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings
       tic_sprintf(warnings,
         "Warning: The input scaling values are out of order "
         "so they will be reset to their default values.\n");
+    }
+
+    if (min > 4095)
+    {
+      tic_sprintf(warnings,
+        "Warning: The input minimum is too high "
+        "so it will be lowered to 4095.\n");
+      min = 4095;
+    }
+    if (neutral_min > 4095)
+    {
+      tic_sprintf(warnings,
+        "Warning: The input neutral min is too high "
+        "so it will be lowered to 4095.\n");
+      neutral_min = 4095;
+    }
+    if (neutral_max > 4095)
+    {
+      tic_sprintf(warnings,
+        "Warning: The input neutral max is too high "
+        "so it will be lowered to 4095.\n");
+      neutral_max = 4095;
+    }
+    if (max > 4095)
+    {
+      tic_sprintf(warnings,
+        "Warning: The input maximum is too high "
+        "so it will be lowered to 4095.\n");
+      max = 4095;
     }
 
     tic_settings_set_input_min(settings, min);
