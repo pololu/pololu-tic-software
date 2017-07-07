@@ -192,7 +192,6 @@ uint32_t tic_settings_achievable_current_limit(const tic_settings * settings,
 static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings)
 {
   // TODO: fix enum values to be valid
-  // TODO: enforce -500 to 500 range for vin_calibration
 
   uint8_t control_mode = tic_settings_get_control_mode(settings);
 
@@ -311,6 +310,28 @@ static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings
     tic_settings_set_low_vin_shutoff_voltage(settings, low_shutoff);
     tic_settings_set_low_vin_startup_voltage(settings, low_startup);
     tic_settings_set_high_vin_shutoff_voltage(settings, high_shutoff);
+  }
+
+  {
+    int16_t calibration = tic_settings_get_vin_calibration(settings);
+
+    if (calibration < -500)
+    {
+      calibration = -500;
+      tic_sprintf(warnings,
+        "Warning: The VIN calibration was too low "
+        "so it will be raised to -500.\n");
+    }
+
+    if (calibration > 500)
+    {
+      calibration = 500;
+      tic_sprintf(warnings,
+        "Warning: The VIN calibration was too high "
+        "so it will be lowered to 500.\n");
+    }
+
+    tic_settings_set_vin_calibration(settings, calibration);
   }
 
   {

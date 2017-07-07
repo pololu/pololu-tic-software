@@ -121,6 +121,14 @@ def test_cases_for_settings_fix(product)
       { 'command_timeout' => 60000 },
       "Warning: The command timeout is too high so it will be changed to 60000 ms.\n"
     ],
+    [ { 'vin_calibration' => -501 },
+      { 'vin_calibration' => -500 },
+      "Warning: The VIN calibration was too low so it will be raised to -500.\n"
+    ],
+    [ { 'vin_calibration' => 501 },
+      { 'vin_calibration' => 500 },
+      "Warning: The VIN calibration was too high so it will be lowered to 500.\n"
+    ],
     #[ { 'low_vin_shutoff_voltage' => 9001, 'low_vin_startup_voltage' => 9000,
     #    'high_vin_shutoff_voltage' => 8999 },
     #  { 'low_vin_shutoff_voltage' => 9001, 'low_vin_startup_voltage' => 9501,
