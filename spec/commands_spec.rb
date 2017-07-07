@@ -212,8 +212,8 @@ describe 'Set Step Mode' do
   end
 
   it 'it works', usb: true do
-    ['1', '2', '4', '8', '16', '32']. each do |mode|
-      stdout, stderr, result = run_ticcmd("--step-mode #{mode}")
+    ['Full step', '1/2 step', '1/32 step']. each do |mode|
+      stdout, stderr, result = run_ticcmd("--step-mode \"#{mode}\"")
       expect(stderr).to eq ''
       expect(stdout).to eq ''
       expect(result).to eq 0
@@ -253,7 +253,7 @@ describe 'Set Decay Mode' do
   end
 
   it 'it works', usb: true do
-    ['fast', 'slow', 'mixed']. each do |mode|
+    ['Fast', 'Slow', 'Mixed']. each do |mode|
       stdout, stderr, result = run_ticcmd("--decay #{mode}")
       expect(stderr).to eq ''
       expect(stdout).to eq ''

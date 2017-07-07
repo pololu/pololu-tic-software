@@ -5,12 +5,12 @@ FakeStatus = <<END
 Name:                         Fake name
 Serial number:                123
 Firmware version:             9.99
-Last reset:                   (unknown)
+Last reset:                   (Unknown)
 Up time:                      4294967295 ms
 
-Operation state:              (unknown)
+Operation state:              (Unknown)
 Energized:                    yes
-Planning mode:                (unknown)
+Planning mode:                (Unknown)
 Current position:             -1
 Position uncertain:           yes
 Current velocity:             -1
@@ -18,14 +18,16 @@ Max speed:                    4294967295
 Starting speed:               4294967295
 Max acceleration:             4294967295
 Max deceleration:             4294967295
+Acting target position:       -1
+Time since last step:         4294967295
 
 VIN:                          65535 mV
 Encoder position:             -1
 RC pulse width:               N/A
-Step mode:                    (unknown)
+Step mode:                    (Unknown)
 Current limit:                4294967295 mA
-Decay mode:                   (unknown)
-Input state:                  (unknown)
+Decay mode:                   (Unknown)
+Input state:                  (Unknown)
 Input after averaging:        N/A
 Input after hysteresis:       N/A
 Input after scaling:          -1
@@ -40,13 +42,13 @@ Errors currently stopping the motor:
   - Command timeout
   - Safe start violation
   - ERR line high
-  - (unknown)
-  - (unknown)
-  - (unknown)
-  - (unknown)
-  - (unknown)
-  - (unknown)
-  - (unknown)
+  - (Unknown)
+  - (Unknown)
+  - (Unknown)
+  - (Unknown)
+  - (Unknown)
+  - (Unknown)
+  - (Unknown)
 Errors that occurred since last check:
   - Intentionally de-energized
   - Motor driver error
@@ -57,41 +59,41 @@ Errors that occurred since last check:
   - Command timeout
   - Safe start violation
   - ERR line high
-  - (unknown)
-  - (unknown)
-  - (unknown)
-  - (unknown)
-  - (unknown)
-  - (unknown)
-  - (unknown)
+  - (Unknown)
+  - (Unknown)
+  - (Unknown)
+  - (Unknown)
+  - (Unknown)
+  - (Unknown)
+  - (Unknown)
   - Serial framing
   - Serial RX overrun
   - Serial format
   - Serial CRC
   - Encoder skip
-  - (unknown)
-  - (unknown)
-  - (unknown)
-  - (unknown)
-  - (unknown)
-  - (unknown)
-  - (unknown)
-  - (unknown)
-  - (unknown)
-  - (unknown)
-  - (unknown)
+  - (Unknown)
+  - (Unknown)
+  - (Unknown)
+  - (Unknown)
+  - (Unknown)
+  - (Unknown)
+  - (Unknown)
+  - (Unknown)
+  - (Unknown)
+  - (Unknown)
+  - (Unknown)
 
 SCL pin:
-  State:                      (unknown)
+  State:                      (Unknown)
   Digital reading:            255
 SDA pin:
-  State:                      (unknown)
+  State:                      (Unknown)
   Digital reading:            255
 TX pin:
-  State:                      (unknown)
+  State:                      (Unknown)
   Digital reading:            255
 RX pin:
-  State:                      (unknown)
+  State:                      (Unknown)
   Digital reading:            255
 RC pin:
   Digital reading:            255
@@ -102,12 +104,15 @@ describe '--status' do
     stdout, stderr, result = run_ticcmd('--status')
     expect(stderr).to eq ''
     expect(result).to eq 0
-    expect(stdout).to_not include '(unknown)'
+    expect(stdout).to_not include '(Unknown)'
     expect(stdout).to_not include '_'
     status = YAML.load(stdout)
 
     # These keys are not always in the output
-    unreliable_keys = ["Planning mode", "Target velocity", "Target position"]
+    unreliable_keys = [
+      "Planning mode", "Target velocity", "Target position",
+      "Acting target position", "Time since last step",
+    ]
 
     actual_keys = status.keys.sort - unreliable_keys
     expected_keys = YAML.load(FakeStatus).keys.sort - unreliable_keys

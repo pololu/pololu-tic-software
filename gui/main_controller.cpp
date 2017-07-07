@@ -367,22 +367,6 @@ void main_controller::show_exception(std::exception const & e,
     window->show_error_message(message);
 }
 
-static std::string sentence_case(std::string const & str)
-{
-  std::string new_str = str;
-
-  if (new_str == "")
-  {
-    return std::string("(Unknown)");
-  }
-
-  new_str[0] = std::toupper(new_str[0]);
-
-  // Replace underscores with spaces.
-  std::replace(new_str.begin(), new_str.end(), '_', ' ');
-  return new_str;
-}
-
 void main_controller::handle_model_changed()
 {
   handle_device_changed();
@@ -399,7 +383,7 @@ void main_controller::handle_device_changed()
     window->set_serial_number(device.get_serial_number());
     window->set_firmware_version(device_handle.get_firmware_version_string());
     window->set_device_reset(
-      sentence_case(tic_look_up_device_reset_string(variables.get_device_reset())));
+      tic_look_up_device_reset_name_ui(variables.get_device_reset()));
 
     window->set_device_list_selected(device);
     window->set_connection_status("", false);
@@ -513,7 +497,7 @@ void main_controller::handle_variables_changed()
   window->set_encoder_position(variables.get_encoder_position());
   window->set_rc_pulse_width(variables.get_rc_pulse_width());
   window->set_input_state(
-    sentence_case(tic_look_up_input_state_string(variables.get_input_state())));
+    tic_look_up_input_state_name_ui(variables.get_input_state()));
   window->set_input_after_averaging(variables.get_input_after_averaging());
   window->set_input_after_hysteresis(variables.get_input_after_hysteresis());
   window->set_input_after_scaling(variables.get_input_after_scaling());
@@ -521,7 +505,7 @@ void main_controller::handle_variables_changed()
   window->set_vin_voltage(convert_mv_to_v_string(variables.get_vin_voltage()));
   window->set_energized(variables.get_energized());
   window->set_operation_state(
-    sentence_case(tic_look_up_operation_state_string(variables.get_operation_state())));
+    tic_look_up_operation_state_name_ui(variables.get_operation_state()));
 
   int32_t target_position = variables.get_target_position();
   int32_t target_velocity = variables.get_target_velocity();

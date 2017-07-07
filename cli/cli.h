@@ -21,4 +21,5 @@
 void print_status(const tic::variables & vars,
   const std::string & name,
   const std::string & serial_number,
-  const std::string & firmware_version);
+  const std::string & firmware_version,
+  bool full_output);

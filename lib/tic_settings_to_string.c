@@ -15,7 +15,7 @@ static void print_pin_config_to_yaml(tic_string * str,
   const char * polarity_str = "";
   if (tic_settings_get_pin_polarity(settings, pin)) { polarity_str = " active_high"; }
 
-  const char * func_str;
+  const char * func_str = "";
   tic_code_to_name(tic_pin_func_names,
     tic_settings_get_pin_func(settings, pin), &func_str);
 
@@ -47,14 +47,14 @@ tic_error * tic_settings_to_string(const tic_settings * settings, char ** string
 
   {
     uint32_t product = tic_settings_get_product(settings);
-    const char * product_str;
+    const char * product_str = "";
     tic_code_to_name(tic_product_names, product, &product_str);
     tic_sprintf(&str, "product: %s\n", product_str);
   }
 
   {
     uint8_t control_mode = tic_settings_get_control_mode(settings);
-    const char * mode_str;
+    const char * mode_str = "";
     tic_code_to_name(tic_control_mode_names, control_mode, &mode_str);
     tic_sprintf(&str, "control_mode: %s\n", mode_str);
   }
@@ -85,7 +85,7 @@ tic_error * tic_settings_to_string(const tic_settings * settings, char ** string
 
   {
     uint8_t response = tic_settings_get_soft_error_response(settings);
-    const char * response_str;
+    const char * response_str = "";
     tic_code_to_name(tic_response_names, response, &response_str);
     tic_sprintf(&str, "soft_error_response: %s\n", response_str);
   }
@@ -188,7 +188,7 @@ tic_error * tic_settings_to_string(const tic_settings * settings, char ** string
 
   {
     uint8_t degree = tic_settings_get_input_scaling_degree(settings);
-    const char * degree_str;
+    const char * degree_str = "";
     tic_code_to_name(tic_scaling_degree_names, degree, &degree_str);
     tic_sprintf(&str, "input_scaling_degree: %s\n", degree_str);
   }
@@ -263,14 +263,16 @@ tic_error * tic_settings_to_string(const tic_settings * settings, char ** string
 
   {
     uint8_t mode = tic_settings_get_step_mode(settings);
-    const char * mode_str = tic_look_up_step_mode_string(mode);
+    const char * mode_str = "";
+    tic_code_to_name(tic_step_mode_names, mode, &mode_str);
     tic_sprintf(&str, "step_mode: %s\n", mode_str);
   }
 
   {
-    uint8_t decay_mode = tic_settings_get_decay_mode(settings);
-    const char * decay_mode_str = tic_look_up_decay_mode_string(decay_mode);
-    tic_sprintf(&str, "decay_mode: %s\n", decay_mode_str);
+    uint8_t mode = tic_settings_get_decay_mode(settings);
+    const char * mode_str = "";
+    tic_code_to_name(tic_decay_mode_names, mode, &mode_str);
+    tic_sprintf(&str, "decay_mode: %s\n", mode_str);
   }
 
   {

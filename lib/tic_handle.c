@@ -646,6 +646,9 @@ tic_error * tic_restore_defaults(tic_handle * handle)
     error = tic_reinitialize(handle);
   }
 
+  // TODO: just like pgm04a, loop here and wait for the settings to be reinitialized
+  // https://github.com/pololu/pololu-usb-avr-programmer-v2/blob/master/lib/programmer.cpp#L703
+
   return error;
 }
 

@@ -3,20 +3,6 @@
 static const int left_column_width = 30;
 static auto left_column = std::setw(left_column_width);
 
-static std::string pretty_enum(const char * c_str)
-{
-  std::string str = c_str;
-
-  if (str == "")
-  {
-    return std::string("(unknown)");
-  }
-
-  // Replace underscores with spaces.
-  std::replace(str.begin(), str.end(), '_', ' ');
-  return str;
-}
-
 static void print_errors(uint32_t errors, const char * error_set_name)
 {
   if (!errors)
@@ -31,7 +17,7 @@ static void print_errors(uint32_t errors, const char * error_set_name)
     uint32_t error = (1 << i);
     if (errors & error)
     {
-      std::cout << "  - " << pretty_enum(tic_look_up_nice_error_string(error)) << std::endl;
+      std::cout << "  - " << tic_look_up_error_name_ui(error) << std::endl;
     }
   }
 }
@@ -47,14 +33,17 @@ static std::string input_format(uint16_t input)
 }
 
 static void print_pin_info(const tic::variables & vars,
-  uint8_t pin, const char * pin_name)
+  uint8_t pin, const char * pin_name, bool full_output)
 {
   std::cout<< pin_name << " pin:" << std::endl;
   if (pin != TIC_PIN_NUM_RC)
   {
-    std::cout << left_column << "  State: "
-      << pretty_enum(tic_look_up_pin_state_string(vars.get_pin_state(pin)))
-      << std::endl;
+    if (full_output)
+    {
+      std::cout << left_column << "  State: "
+        << tic_look_up_pin_state_name_ui(vars.get_pin_state(pin))
+        << std::endl;
+    }
     if (vars.get_analog_reading(pin) != TIC_INPUT_NULL)
     {
       std::cout << left_column << "  Analog reading: "
@@ -68,12 +57,11 @@ static void print_pin_info(const tic::variables & vars,
 void print_status(const tic::variables & vars,
   const std::string & name,
   const std::string & serial_number,
-  const std::string & firmware_version)
+  const std::string & firmware_version,
+  bool full_output)
 {
   // The output here is YAML so that people can more easily write scripts that
   // use it.
-
-  // TODO: probably want "nice" names with capitals for all enums here
 
   std::cout << std::left << std::setfill(' ');
 
@@ -87,7 +75,7 @@ void print_status(const tic::variables & vars,
     << firmware_version << std::endl;
 
   std::cout << left_column << "Last reset: "
-    << pretty_enum(tic_look_up_device_reset_string(vars.get_device_reset()))
+    << tic_look_up_device_reset_name_ui(vars.get_device_reset())
     << std::endl;
 
   std::cout << left_column << "Up time: "
@@ -97,7 +85,7 @@ void print_status(const tic::variables & vars,
   std::cout << std::endl;
 
   std::cout << left_column << "Operation state: "
-    << pretty_enum(tic_look_up_operation_state_string(vars.get_operation_state()))
+    << tic_look_up_operation_state_name_ui(vars.get_operation_state())
     << std::endl;
 
   std::cout << left_column << "Energized: "
@@ -119,7 +107,7 @@ void print_status(const tic::variables & vars,
   else
   {
     std::cout << left_column << "Planning mode: "
-      << pretty_enum(tic_look_up_planning_mode_string(planning_mode))
+      << tic_look_up_planning_mode_name_ui(planning_mode)
       << std::endl;
   }
 
@@ -145,11 +133,14 @@ void print_status(const tic::variables & vars,
   std::cout << left_column << "Max deceleration: "
     << vars.get_decel_max() << std::endl;
 
-  //std::cout << left_column << "Acting target position: "
-  //  << vars.get_acting_target_position() << std::endl;
+  if (full_output)
+  {
+    std::cout << left_column << "Acting target position: "
+      << vars.get_acting_target_position() << std::endl;
 
-  //std::cout << left_column << "Time since last step: "
-  //  << vars.get_time_since_last_step() << std::endl;
+    std::cout << left_column << "Time since last step: "
+      << vars.get_time_since_last_step() << std::endl;
+  }
 
   std::cout << std::endl;
 
@@ -166,7 +157,7 @@ void print_status(const tic::variables & vars,
     << std::endl;
 
   std::cout << left_column << "Step mode: "
-    << pretty_enum(tic_look_up_step_mode_string(vars.get_step_mode()))
+    << tic_look_up_step_mode_name_ui(vars.get_step_mode())
     << std::endl;
 
   std::cout << left_column << "Current limit: "
@@ -174,11 +165,11 @@ void print_status(const tic::variables & vars,
     << std::endl;
 
   std::cout << left_column << "Decay mode: "
-    << pretty_enum(tic_look_up_decay_mode_string(vars.get_decay_mode()))
+    << tic_look_up_decay_mode_name_ui(vars.get_decay_mode())
     << std::endl;
 
   std::cout << left_column << "Input state: "
-    << pretty_enum(tic_look_up_input_state_string(vars.get_input_state()))
+    << tic_look_up_input_state_name_ui(vars.get_input_state())
     << std::endl;
 
   std::cout << left_column << "Input after averaging: "
@@ -201,9 +192,9 @@ void print_status(const tic::variables & vars,
     "Errors that occurred since last check");
   std::cout << std::endl;
 
-  print_pin_info(vars, TIC_PIN_NUM_SCL, "SCL");
-  print_pin_info(vars, TIC_PIN_NUM_SDA, "SDA");
-  print_pin_info(vars, TIC_PIN_NUM_TX, "TX");
-  print_pin_info(vars, TIC_PIN_NUM_RX, "RX");
-  print_pin_info(vars, TIC_PIN_NUM_RC, "RC");
+  print_pin_info(vars, TIC_PIN_NUM_SCL, "SCL", full_output);
+  print_pin_info(vars, TIC_PIN_NUM_SDA, "SDA", full_output);
+  print_pin_info(vars, TIC_PIN_NUM_TX, "TX", full_output);
+  print_pin_info(vars, TIC_PIN_NUM_RX, "RX", full_output);
+  print_pin_info(vars, TIC_PIN_NUM_RC, "RC", full_output);
 }
