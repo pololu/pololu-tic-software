@@ -517,7 +517,7 @@ void main_controller::handle_variables_changed()
   window->set_input_after_averaging(variables.get_input_after_averaging());
   window->set_input_after_hysteresis(variables.get_input_after_hysteresis());
   window->set_input_after_scaling(variables.get_input_after_scaling());
-  
+
   window->set_vin_voltage(convert_mv_to_v_string(variables.get_vin_voltage()));
   window->set_energized(variables.get_energized());
   window->set_operation_state(

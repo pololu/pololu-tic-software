@@ -4,6 +4,7 @@
 
 int main(int argc, char ** argv)
 {
+  QApplication::setAttribute(Qt::AA_EnableHighDpiScaling); 
   QApplication app(argc, argv);
   main_controller controller;
   main_window window;

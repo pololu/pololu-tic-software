@@ -124,7 +124,7 @@ public:
   void set_firmware_version(std::string const & firmware_version);
   void set_device_reset(std::string const & device_reset);
   void set_up_time(std::string const & up_time);
-  
+
   void set_encoder_position(int32_t encoder_position);
   void set_rc_pulse_width(uint16_t rc_pulse_width);
   void set_input_state(std::string const & input_state);
@@ -216,7 +216,7 @@ private:
 
   QString input_format(uint16_t input);
   QString convert_rc_pulse_width_to_us_string(uint16_t rc_pulse_width);
-  
+
   void update_set_target_button();
 
 protected:
@@ -250,8 +250,8 @@ private slots:
   void on_set_target_button_clicked();
   void on_auto_set_target_check_stateChanged(int state);
   void on_auto_zero_target_check_stateChanged(int state);
-  void on_stop_button_clicked();
-  void on_decel_stop_button_clicked();
+  void on_halt_button_clicked();
+  void on_decelerate_button_clicked();
 
   /** This is called by Qt when the user wants to apply settings. */
   void on_apply_settings_action_triggered();
@@ -329,26 +329,25 @@ private:
   QWidget * setup_device_info_box();
   QWidget * setup_input_status_box();
   QWidget * setup_operation_status_box();
-  QWidget * setup_errors_box();
-  QLayout * setup_error_table_layout();
   QWidget * setup_manual_target_box();
-  QLayout * setup_manual_target_mode_layout();
+  QLayout * setup_manual_target_input_layout();
   QWidget * setup_manual_target_entry_widget();
   QLayout * setup_manual_target_buttons_layout();
+  QWidget * setup_errors_box();
+  QLayout * setup_error_table_layout();
 
-  QWidget * setup_settings_page_widget();
+  QWidget * setup_input_motor_settings_page_widget();
   QWidget * setup_control_mode_widget();
-  QLayout * setup_settings_left_column();
-  QLayout * setup_settings_right_column();
   QWidget * setup_serial_settings_box();
   QWidget * setup_encoder_settings_box();
   QWidget * setup_conditioning_settings_box();
   QWidget * setup_scaling_settings_box();
   QWidget * setup_motor_settings_box();
+
+  QWidget * setup_advanced_settings_page_widget();
+  QWidget * setup_pin_config_box();
   QWidget * setup_error_settings_box();
   QWidget * setup_misc_settings_box();
-
-  QWidget * setup_pin_config_page_widget();
 
   QLayout * setup_footer();
   void retranslate();
@@ -380,9 +379,7 @@ private:
   //// status page
 
   QWidget * status_page_widget;
-  QHBoxLayout * status_page_layout;
-  QVBoxLayout * status_left_column_layout;
-  QVBoxLayout * status_right_column_layout;
+  QGridLayout * status_page_layout;
 
   QGroupBox * device_info_box;
   QGridLayout * device_info_box_layout;
@@ -412,7 +409,7 @@ private:
   QLabel * input_after_hysteresis_value;
   QLabel * input_after_scaling_label;
   QLabel * input_after_scaling_value;
-  
+
   QGroupBox * operation_status_box;
   QGridLayout * operation_status_box_layout;
   QLabel * vin_voltage_label;
@@ -433,9 +430,9 @@ private:
   QLabel * current_velocity_pretty;
 
   QGroupBox * manual_target_box;
-  QVBoxLayout * manual_target_box_layout;
-  QHBoxLayout * manual_target_mode_layout;
-  QHBoxLayout * manual_target_buttons_layout;
+  QGridLayout * manual_target_box_layout;
+  QVBoxLayout * manual_target_input_layout;
+  QGridLayout * manual_target_buttons_layout;
   QWidget * manual_target_entry_widget;
   QGridLayout * manual_target_entry_widget_layout;
   QRadioButton * manual_target_position_mode_radio;
@@ -449,8 +446,8 @@ private:
   QPushButton * set_target_button;
   QCheckBox * auto_set_target_check;
   QCheckBox * auto_zero_target_check;
-  QPushButton * stop_button;
-  QPushButton * decel_stop_button;
+  QPushButton * halt_button;
+  QPushButton * decelerate_button;
 
   QGroupBox * errors_box;
   QVBoxLayout * errors_box_layout;
@@ -460,14 +457,12 @@ private:
   std::array<error_row, 32> error_rows;
   QPushButton * errors_reset_counts_button;
 
-  //// settings page
-
-  QWidget * settings_page_widget;
-  QHBoxLayout * settings_page_layout;
-  QVBoxLayout * settings_left_column_layout;
-  QVBoxLayout * settings_right_column_layout;
-
   // [all-settings]
+
+  //// input and motor settings page
+
+  QWidget * input_motor_settings_page_widget;
+  QGridLayout * input_motor_settings_page_layout;
 
   QWidget * control_mode_widget;
   QGridLayout * control_mode_widget_layout;
@@ -539,6 +534,15 @@ private:
   QLabel * decay_mode_label;
   QComboBox * decay_mode_value;
 
+  //// advanced settings page
+
+  QWidget * advanced_settings_page_widget;
+  QGridLayout * advanced_settings_page_layout;
+
+  QGroupBox * pin_config_box;
+  QGridLayout * pin_config_box_layout;
+  std::array<pin_config_row *, 5> pin_config_rows;
+
   QGroupBox * error_settings_box;
   QGridLayout * error_settings_box_layout;
   QButtonGroup * soft_error_response_radio_group;
@@ -554,12 +558,6 @@ private:
   QCheckBox * never_sleep_check;
   QLabel * vin_calibration_label;
   QSpinBox * vin_calibration_value;
-
-  //// pin configuration page
-
-  QWidget * pin_config_page_widget;
-  QGridLayout * pin_config_page_layout;
-  std::array<pin_config_row *, 5> pin_config_rows;
 
   //// end of pages
 
