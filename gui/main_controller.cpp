@@ -450,7 +450,7 @@ static std::string pretty_up_time(uint32_t up_time)
     ":" << std::setfill('0') << std::setw(2) << minutes % 60 <<
     ":" << std::setfill('0') << std::setw(2) << seconds % 60;
   return ss.str();
-  }
+}
 
 // TODO: move to separate file along with following 2 functions?
 static std::string convert_mv_to_v_string(uint32_t mv)
@@ -1139,6 +1139,7 @@ void main_controller::deenergize()
   }
 }
 
+// TODO: rename to resume to match the button name
 void main_controller::energize()
 {
   if (!connected()) { return; }
@@ -1149,9 +1150,6 @@ void main_controller::energize()
 
     device_handle.energize();
 
-    // This is here for backwards compatibility with the old GUI behavior for
-    // now.  TODO: do we really want to do this?  Shouldn't the button be named
-    // something else like Resume if we are calling two commands?
     device_handle.exit_safe_start();
   }
   catch (std::exception const & e)

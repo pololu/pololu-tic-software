@@ -6,7 +6,7 @@ Name:                         Fake name
 Serial number:                123
 Firmware version:             9.99
 Last reset:                   (Unknown)
-Up time:                      4294967295 ms
+Up time:                      1193:02:47
 
 Encoder position:             -1
 RC pulse width:               N/A
@@ -15,7 +15,7 @@ Input after averaging:        N/A
 Input after hysteresis:       N/A
 Input after scaling:          -1
 
-VIN voltage:                  65535 mV
+VIN voltage:                  65.5 V
 Operation state:              (Unknown)
 Energized:                    Yes
 

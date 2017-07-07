@@ -3,6 +3,28 @@
 static const int left_column_width = 30;
 static auto left_column = std::setw(left_column_width);
 
+static std::string pretty_up_time(uint32_t up_time)
+{
+  std::ostringstream ss;
+  uint32_t seconds = up_time / 1000;
+  uint32_t minutes = seconds / 60;
+  uint16_t hours = minutes / 60;
+
+  ss << hours <<
+    ":" << std::setfill('0') << std::setw(2) << minutes % 60 <<
+    ":" << std::setfill('0') << std::setw(2) << seconds % 60;
+  return ss.str();
+}
+
+static std::string convert_mv_to_v_string(uint32_t mv)
+{
+  std::ostringstream ss;
+  uint32_t dv = (mv + 50) / 100;
+
+  ss << (dv / 10) << "." << (dv % 10) << " V";
+  return ss.str();
+}
+
 static void print_errors(uint32_t errors, const char * error_set_name)
 {
   if (!errors)
@@ -73,7 +95,7 @@ void print_status(const tic::variables & vars,
     << std::endl;
 
   std::cout << left_column << "Up time: "
-    << vars.get_up_time() << " ms"  // TODO: HH:MM:SS:mmm format
+    << pretty_up_time(vars.get_up_time())
     << std::endl;
 
   std::cout << std::endl;
@@ -105,7 +127,7 @@ void print_status(const tic::variables & vars,
   std::cout << std::endl;
 
   std::cout << left_column << "VIN voltage: "
-    << vars.get_vin_voltage() << " mV"
+    << convert_mv_to_v_string(vars.get_vin_voltage())
     << std::endl;
 
   std::cout << left_column << "Operation state: "
