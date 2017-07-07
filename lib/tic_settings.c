@@ -315,34 +315,27 @@ static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings
   }
 
   {
-    uint16_t error_min = tic_settings_get_input_error_min(settings);
     uint16_t min = tic_settings_get_input_min(settings);
     uint16_t neutral_min = tic_settings_get_input_neutral_min(settings);
     uint16_t neutral_max = tic_settings_get_input_neutral_max(settings);
     uint16_t max = tic_settings_get_input_max(settings);
-    uint16_t error_max = tic_settings_get_input_error_max(settings);
 
-    if (error_min > min || min > neutral_min || neutral_min > neutral_max ||
-      neutral_max > max || max > error_max)
+    if (min > neutral_min || neutral_min > neutral_max || neutral_max > max)
     {
-      error_min = 0;
       min = 0;
       neutral_min = 2015;
       neutral_max = 2080;
       max = 4095;
-      error_max = 0xFFFF;
 
       tic_sprintf(warnings,
         "Warning: The input scaling values are out of order "
         "so they will be reset to their default values.\n");
     }
 
-    tic_settings_set_input_error_min(settings, error_min);
     tic_settings_set_input_min(settings, min);
     tic_settings_set_input_neutral_min(settings, neutral_min);
     tic_settings_set_input_neutral_max(settings, neutral_max);
     tic_settings_set_input_max(settings, max);
-    tic_settings_set_input_error_max(settings, error_max);
   }
 
   {
