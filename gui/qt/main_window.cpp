@@ -27,6 +27,7 @@
 
 #include <cassert>
 #include <cmath>
+#include <sstream>
 
 main_window::main_window(QWidget *parent)
   : QMainWindow(parent)
@@ -197,6 +198,15 @@ void main_window::set_encoder_position(int32_t encoder_position)
 void main_window::set_rc_pulse_width(uint16_t rc_pulse_width)
 {
   rc_pulse_width_value->setText(input_format(rc_pulse_width));
+  if (rc_pulse_width != TIC_INPUT_NULL)
+  {
+    rc_pulse_width_pretty->setText("(" +
+      convert_rc_pulse_width_to_us_string(rc_pulse_width) + ")");
+  }
+  else
+  {
+    rc_pulse_width_pretty->setText("");
+  }
 }
 
 void main_window::set_input_state(std::string const & input_state)
@@ -695,6 +705,15 @@ QString main_window::input_format(uint16_t input)
   }
 
   return QString::number(input);
+}
+
+QString main_window::convert_rc_pulse_width_to_us_string(uint16_t rc_pulse_width)
+{
+  std::ostringstream ss;
+  uint16_t tenth_us = (((uint32_t)rc_pulse_width * 10) + 6) / 12;
+
+  ss << (tenth_us / 10) << "." << (tenth_us % 10) << u8" \u03BCs";
+  return QString::fromStdString(ss.str());
 }
 
 void main_window::update_set_target_button()
@@ -1567,7 +1586,8 @@ QWidget * main_window::setup_input_status_box()
     input_after_hysteresis_value->setFixedSize(input_after_scaling_value->sizeHint());
     input_after_scaling_value->setFixedSize(input_after_scaling_value->sizeHint());
     
-    //todo: rc_pulse_width_pretty
+    rc_pulse_width_pretty->setText("(" + convert_rc_pulse_width_to_us_string(1500 * 12) + ")");
+    rc_pulse_width_pretty->setFixedSize(rc_pulse_width_pretty->sizeHint());
   }
 
   input_status_box->setLayout(layout);

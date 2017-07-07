@@ -215,6 +215,7 @@ private:
   void set_check_box(QCheckBox * check, bool value);
 
   QString input_format(uint16_t input);
+  QString convert_rc_pulse_width_to_us_string(uint16_t rc_pulse_width);
   
   void update_set_target_button();
 
