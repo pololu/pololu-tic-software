@@ -33,7 +33,7 @@ def tic_change_settings
 end
 
 def tic_get_status
-  stdout, stderr, result = run_ticcmd("-s")
+  stdout, stderr, result = run_ticcmd("-s --full")
   if result != 0 || !stderr.empty?
     raise "Failed to get status.  stderr=#{stderr.inspect}, result=#{result}"
   end

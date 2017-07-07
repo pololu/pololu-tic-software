@@ -33,22 +33,16 @@ static std::string input_format(uint16_t input)
 }
 
 static void print_pin_info(const tic::variables & vars,
-  uint8_t pin, const char * pin_name, bool full_output)
+  uint8_t pin, const char * pin_name)
 {
   std::cout<< pin_name << " pin:" << std::endl;
   if (pin != TIC_PIN_NUM_RC)
   {
-    if (full_output)
-    {
-      std::cout << left_column << "  State: "
-        << tic_look_up_pin_state_name_ui(vars.get_pin_state(pin))
-        << std::endl;
-    }
-    if (vars.get_analog_reading(pin) != TIC_INPUT_NULL)
-    {
-      std::cout << left_column << "  Analog reading: "
-        << vars.get_analog_reading(pin) << std::endl;
-    }
+    std::cout << left_column << "  State: "
+      << tic_look_up_pin_state_name_ui(vars.get_pin_state(pin))
+      << std::endl;
+    std::cout << left_column << "  Analog reading: "
+      << input_format(vars.get_analog_reading(pin)) << std::endl;
   }
   std::cout << left_column << "  Digital reading: "
     << vars.get_digital_reading(pin) << std::endl;
@@ -84,88 +78,12 @@ void print_status(const tic::variables & vars,
 
   std::cout << std::endl;
 
-  std::cout << left_column << "Operation state: "
-    << tic_look_up_operation_state_name_ui(vars.get_operation_state())
-    << std::endl;
-
-  std::cout << left_column << "Energized: "
-    << (vars.get_energized() ? "yes" : "no")
-    << std::endl;
-
-  uint8_t planning_mode = vars.get_planning_mode();
-
-  if (planning_mode == TIC_PLANNING_MODE_TARGET_POSITION)
-  {
-    std::cout << left_column << "Target position: "
-      << vars.get_target_position() << std::endl;
-  }
-  else if (planning_mode == TIC_PLANNING_MODE_TARGET_VELOCITY)
-  {
-    std::cout << left_column << "Target velocity: "
-      << vars.get_target_velocity() << std::endl;
-  }
-  else
-  {
-    std::cout << left_column << "Planning mode: "
-      << tic_look_up_planning_mode_name_ui(planning_mode)
-      << std::endl;
-  }
-
-  std::cout << left_column << "Current position: "
-            << vars.get_current_position() << std::endl;
-
-  std::cout << left_column << "Position uncertain: "
-            << (vars.get_position_uncertain() ? "yes" : "no")
-            << std::endl;
-
-  std::cout << left_column << "Current velocity: "
-    << vars.get_current_velocity() << std::endl;
-
-  std::cout << left_column << "Max speed: "
-    << vars.get_speed_max() << std::endl;
-
-  std::cout << left_column << "Starting speed: "
-    << vars.get_starting_speed() << std::endl;
-
-  std::cout << left_column << "Max acceleration: "
-    << vars.get_accel_max() << std::endl;
-
-  std::cout << left_column << "Max deceleration: "
-    << vars.get_decel_max() << std::endl;
-
-  if (full_output)
-  {
-    std::cout << left_column << "Acting target position: "
-      << vars.get_acting_target_position() << std::endl;
-
-    std::cout << left_column << "Time since last step: "
-      << vars.get_time_since_last_step() << std::endl;
-  }
-
-  std::cout << std::endl;
-
-  std::cout << left_column << "VIN: "
-    << vars.get_vin_voltage() << " mV"
-    << std::endl;
-
   std::cout << left_column << "Encoder position: "
     << vars.get_encoder_position()
     << std::endl;
 
   std::cout << left_column << "RC pulse width: "
     << input_format(vars.get_rc_pulse_width())
-    << std::endl;
-
-  std::cout << left_column << "Step mode: "
-    << tic_look_up_step_mode_name_ui(vars.get_step_mode())
-    << std::endl;
-
-  std::cout << left_column << "Current limit: "
-    << vars.get_current_limit() << " mA"
-    << std::endl;
-
-  std::cout << left_column << "Decay mode: "
-    << tic_look_up_decay_mode_name_ui(vars.get_decay_mode())
     << std::endl;
 
   std::cout << left_column << "Input state: "
@@ -186,15 +104,94 @@ void print_status(const tic::variables & vars,
 
   std::cout << std::endl;
 
+  std::cout << left_column << "VIN voltage: "
+    << vars.get_vin_voltage() << " mV"
+    << std::endl;
+
+  std::cout << left_column << "Operation state: "
+    << tic_look_up_operation_state_name_ui(vars.get_operation_state())
+    << std::endl;
+
+  std::cout << left_column << "Energized: "
+    << (vars.get_energized() ? "Yes" : "No")
+    << std::endl;
+
+  std::cout << std::endl;
+
+  uint8_t planning_mode = vars.get_planning_mode();
+
+  if (planning_mode == TIC_PLANNING_MODE_TARGET_POSITION)
+  {
+    std::cout << left_column << "Target position: "
+      << vars.get_target_position() << std::endl;
+  }
+  else if (planning_mode == TIC_PLANNING_MODE_TARGET_VELOCITY)
+  {
+    std::cout << left_column << "Target velocity: "
+      << vars.get_target_velocity() << std::endl;
+  }
+  else
+  {
+    std::cout << left_column << "Target: " << "No target" << std::endl;
+  }
+
+  std::cout << left_column << "Current position: "
+            << vars.get_current_position() << std::endl;
+
+  std::cout << left_column << "Position uncertain: "
+            << (vars.get_position_uncertain() ? "Yes" : "No")
+            << std::endl;
+
+  std::cout << left_column << "Current velocity: "
+    << vars.get_current_velocity() << std::endl;
+
+  if (full_output)
+  {
+    std::cout << left_column << "Max speed: "
+      << vars.get_speed_max() << std::endl;
+
+    std::cout << left_column << "Starting speed: "
+      << vars.get_starting_speed() << std::endl;
+
+    std::cout << left_column << "Max acceleration: "
+      << vars.get_accel_max() << std::endl;
+
+    std::cout << left_column << "Max deceleration: "
+      << vars.get_decel_max() << std::endl;
+
+    std::cout << left_column << "Acting target position: "
+      << vars.get_acting_target_position() << std::endl;
+
+    std::cout << left_column << "Time since last step: "
+      << vars.get_time_since_last_step() << std::endl;
+
+    std::cout << left_column << "Step mode: "
+      << tic_look_up_step_mode_name_ui(vars.get_step_mode())
+      << std::endl;
+
+    std::cout << left_column << "Current limit: "
+      << vars.get_current_limit() << " mA"
+      << std::endl;
+
+    std::cout << left_column << "Decay mode: "
+      << tic_look_up_decay_mode_name_ui(vars.get_decay_mode())
+      << std::endl;
+  }
+
+  std::cout << std::endl;
+
   print_errors(vars.get_error_status(),
     "Errors currently stopping the motor");
   print_errors(vars.get_errors_occurred(),
     "Errors that occurred since last check");
   std::cout << std::endl;
 
-  print_pin_info(vars, TIC_PIN_NUM_SCL, "SCL", full_output);
-  print_pin_info(vars, TIC_PIN_NUM_SDA, "SDA", full_output);
-  print_pin_info(vars, TIC_PIN_NUM_TX, "TX", full_output);
-  print_pin_info(vars, TIC_PIN_NUM_RX, "RX", full_output);
-  print_pin_info(vars, TIC_PIN_NUM_RC, "RC", full_output);
+  if (full_output)
+  {
+    print_pin_info(vars, TIC_PIN_NUM_SCL, "SCL");
+    print_pin_info(vars, TIC_PIN_NUM_SDA, "SDA");
+    print_pin_info(vars, TIC_PIN_NUM_TX, "TX");
+    print_pin_info(vars, TIC_PIN_NUM_RX, "RX");
+    print_pin_info(vars, TIC_PIN_NUM_RC, "RC");
+  }
 }

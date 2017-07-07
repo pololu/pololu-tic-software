@@ -8,11 +8,20 @@ Firmware version:             9.99
 Last reset:                   (Unknown)
 Up time:                      4294967295 ms
 
+Encoder position:             -1
+RC pulse width:               N/A
+Input state:                  (Unknown)
+Input after averaging:        N/A
+Input after hysteresis:       N/A
+Input after scaling:          -1
+
+VIN voltage:                  65535 mV
 Operation state:              (Unknown)
-Energized:                    yes
-Planning mode:                (Unknown)
+Energized:                    Yes
+
+Target:                       No target
 Current position:             -1
-Position uncertain:           yes
+Position uncertain:           Yes
 Current velocity:             -1
 Max speed:                    4294967295
 Starting speed:               4294967295
@@ -20,17 +29,9 @@ Max acceleration:             4294967295
 Max deceleration:             4294967295
 Acting target position:       -1
 Time since last step:         4294967295
-
-VIN:                          65535 mV
-Encoder position:             -1
-RC pulse width:               N/A
 Step mode:                    (Unknown)
 Current limit:                4294967295 mA
 Decay mode:                   (Unknown)
-Input state:                  (Unknown)
-Input after averaging:        N/A
-Input after hysteresis:       N/A
-Input after scaling:          -1
 
 Errors currently stopping the motor:
   - Intentionally de-energized
@@ -85,15 +86,19 @@ Errors that occurred since last check:
 
 SCL pin:
   State:                      (Unknown)
+  Analog reading:             N/A
   Digital reading:            255
 SDA pin:
   State:                      (Unknown)
+  Analog reading:             N/A
   Digital reading:            255
 TX pin:
   State:                      (Unknown)
+  Analog reading:             N/A
   Digital reading:            255
 RX pin:
   State:                      (Unknown)
+  Analog reading:             N/A
   Digital reading:            255
 RC pin:
   Digital reading:            255
@@ -107,11 +112,19 @@ describe '--status' do
     expect(stdout).to_not include '(Unknown)'
     expect(stdout).to_not include '_'
     status = YAML.load(stdout)
+  end
+
+  it 'can get the full status', usb: true do
+    stdout, stderr, result = run_ticcmd('--status --full')
+    expect(stderr).to eq ''
+    expect(result).to eq 0
+    expect(stdout).to_not include '(Unknown)'
+    expect(stdout).to_not include '_'
+    status = YAML.load(stdout)
 
     # These keys are not always in the output
     unreliable_keys = [
-      "Planning mode", "Target velocity", "Target position",
-      "Acting target position", "Time since last step",
+      "Target", "Target velocity", "Target position",
     ]
 
     actual_keys = status.keys.sort - unreliable_keys

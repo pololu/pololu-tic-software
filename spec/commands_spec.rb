@@ -85,7 +85,7 @@ describe 'commands for controlling the motor', usb: true do
       expect(result).to eq 0
 
       # Ruby converts 'off' to false
-      expect(tic_get_status['Planning mode']).to eq false
+      expect(tic_get_status['Target']).to eq 'No target'
     end
   end
 
