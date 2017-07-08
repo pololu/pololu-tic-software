@@ -85,12 +85,12 @@ public:
    */
   void start_update_timer(uint32_t interval_ms);
 
-  void show_error_message(std::string const & message) const;
-  void show_warning_message(std::string const & message) const;
-  void show_info_message(std::string const & message) const;
+  void show_error_message(std::string const & message);
+  void show_warning_message(std::string const & message);
+  void show_info_message(std::string const & message);
 
   /** Show an OK/Cancel dialog, return true if the user selects OK. */
-  bool confirm(std::string const & question) const;
+  bool confirm(std::string const & question);
 
   void set_device_list_contents(std::vector<tic::device> const & device_list);
   void set_device_list_selected(tic::device const & device);

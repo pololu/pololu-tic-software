@@ -46,31 +46,31 @@ void main_window::start_update_timer(uint32_t interval_ms)
   update_timer->start(interval_ms);
 }
 
-void main_window::show_error_message(std::string const & message) const
+void main_window::show_error_message(std::string const & message)
 {
   QMessageBox mbox(QMessageBox::Critical, windowTitle(),
-    QString(message.c_str()));
+    QString(message.c_str()), QMessageBox::NoButton, this);
   mbox.exec();
 }
 
-void main_window::show_warning_message(std::string const & message) const
+void main_window::show_warning_message(std::string const & message)
 {
   QMessageBox mbox(QMessageBox::Warning, windowTitle(),
-    QString(message.c_str()));
+    QString(message.c_str()), QMessageBox::NoButton, this);
   mbox.exec();
 }
 
-void main_window::show_info_message(std::string const & message) const
+void main_window::show_info_message(std::string const & message)
 {
   QMessageBox mbox(QMessageBox::Information, windowTitle(),
-    QString(message.c_str()));
+    QString(message.c_str()), QMessageBox::NoButton, this);
   mbox.exec();
 }
 
-bool main_window::confirm(std::string const & question) const
+bool main_window::confirm(std::string const & question)
 {
   QMessageBox mbox(QMessageBox::Question, windowTitle(),
-    QString(question.c_str()), QMessageBox::Ok | QMessageBox::Cancel);
+    QString(question.c_str()), QMessageBox::Ok | QMessageBox::Cancel, this);
   int button = mbox.exec();
   return button == QMessageBox::Ok;
 }
