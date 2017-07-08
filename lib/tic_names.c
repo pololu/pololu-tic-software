@@ -13,7 +13,7 @@ const tic_name tic_product_names[] =
   { NULL, 0 },
 };
 
-const tic_name tic_nice_error_names[] =
+const tic_name tic_error_names_ui[] =
 {
   { "Intentionally de-energized", 1 << TIC_ERROR_INTENTIONALLY_DEENERGIZED },
   { "Motor driver error", 1 << TIC_ERROR_MOTOR_DRIVER_ERROR },
@@ -40,36 +40,44 @@ const tic_name tic_decay_mode_names[] =
   { NULL, 0 },
 };
 
-const tic_name tic_input_state_names[] =
+const tic_name tic_decay_mode_names_ui[] =
 {
-  { "not_ready", TIC_INPUT_STATE_NOT_READY },
-  { "invalid", TIC_INPUT_STATE_INVALID },
-  { "halt", TIC_INPUT_STATE_HALT },
-  { "position", TIC_INPUT_STATE_POSITION },
-  { "velocity", TIC_INPUT_STATE_VELOCITY },
+  { "Mixed", TIC_DECAY_MODE_MIXED },
+  { "Slow", TIC_DECAY_MODE_SLOW },
+  { "Fast", TIC_DECAY_MODE_FAST },
   { NULL, 0 },
 };
 
-const tic_name tic_device_reset_names[] =
+const tic_name tic_input_state_names_ui[] =
 {
-  { "power_up", TIC_RESET_POWER_UP },
-  { "brownout", TIC_RESET_BROWNOUT },
-  { "reset_line", TIC_RESET_RESET_LINE },
-  { "watchdog", TIC_RESET_WATCHDOG },
-  { "software", TIC_RESET_SOFTWARE },
-  { "stack_overflow", TIC_RESET_STACK_OVERFLOW },
-  { "stack_underflow", TIC_RESET_STACK_UNDERFLOW },
+  { "Not ready", TIC_INPUT_STATE_NOT_READY },
+  { "Invalid", TIC_INPUT_STATE_INVALID },
+  { "Halt", TIC_INPUT_STATE_HALT },
+  { "Position", TIC_INPUT_STATE_POSITION },
+  { "Velocity", TIC_INPUT_STATE_VELOCITY },
   { NULL, 0 },
 };
 
-const tic_name tic_operation_state_names[] =
+const tic_name tic_device_reset_names_ui[] =
 {
-  { "reset", TIC_OPERATION_STATE_RESET },
-  { "de-energized", TIC_OPERATION_STATE_DEENERGIZED },
-  { "soft_error", TIC_OPERATION_STATE_SOFT_ERROR },
-  { "waiting_for_err_line", TIC_OPERATION_STATE_WAITING_FOR_ERR_LINE },
-  { "starting_up", TIC_OPERATION_STATE_STARTING_UP },
-  { "normal", TIC_OPERATION_STATE_NORMAL },
+  { "Power-on reset", TIC_RESET_POWER_UP },
+  { "Brown-out reset", TIC_RESET_BROWNOUT },
+  { "Reset pin driven low", TIC_RESET_RESET_LINE },
+  { "Watchdog reset", TIC_RESET_WATCHDOG },
+  { "Software reset (bootloader)", TIC_RESET_SOFTWARE },
+  { "Stack overflow", TIC_RESET_STACK_OVERFLOW },
+  { "Stack underflow", TIC_RESET_STACK_UNDERFLOW },
+  { NULL, 0 },
+};
+
+const tic_name tic_operation_state_names_ui[] =
+{
+  { "Reset", TIC_OPERATION_STATE_RESET },
+  { "De-energized", TIC_OPERATION_STATE_DEENERGIZED },
+  { "Soft error", TIC_OPERATION_STATE_SOFT_ERROR },
+  { "Waiting for ERR line", TIC_OPERATION_STATE_WAITING_FOR_ERR_LINE },
+  { "Starting up", TIC_OPERATION_STATE_STARTING_UP },
+  { "Normal", TIC_OPERATION_STATE_NORMAL },
   { NULL, 0 },
 };
 
@@ -86,20 +94,31 @@ const tic_name tic_step_mode_names[] =
   { NULL, 0 },
 };
 
-const tic_name tic_pin_state_names[] =
+const tic_name tic_step_mode_names_ui[] =
 {
-  { "high_impedance", TIC_PIN_STATE_HIGH_IMPEDANCE },
-  { "pulled_up", TIC_PIN_STATE_PULLED_UP },
-  { "output_low", TIC_PIN_STATE_OUTPUT_LOW },
-  { "output_high", TIC_PIN_STATE_OUTPUT_HIGH },
+  { "Full step", TIC_STEP_MODE_MICROSTEP1 },
+  { "1/2 step", TIC_STEP_MODE_MICROSTEP2 },
+  { "1/4 step", TIC_STEP_MODE_MICROSTEP4 },
+  { "1/8 step", TIC_STEP_MODE_MICROSTEP8 },
+  { "1/16 step", TIC_STEP_MODE_MICROSTEP16 },
+  { "1/32 step", TIC_STEP_MODE_MICROSTEP32 },
+  { NULL, 0 },
+};
+
+const tic_name tic_pin_state_names_ui[] =
+{
+  { "High impedance", TIC_PIN_STATE_HIGH_IMPEDANCE },
+  { "Pulled up", TIC_PIN_STATE_PULLED_UP },
+  { "Output low", TIC_PIN_STATE_OUTPUT_LOW },
+  { "Output high", TIC_PIN_STATE_OUTPUT_HIGH },
   { NULL, 0},
 };
 
-const tic_name tic_planning_mode_names[] =
+const tic_name tic_planning_mode_names_ui[] =
 {
-  { "off", TIC_PLANNING_MODE_OFF },
-  { "target_position", TIC_PLANNING_MODE_TARGET_POSITION },
-  { "target_velocity", TIC_PLANNING_MODE_TARGET_VELOCITY },
+  { "Off", TIC_PLANNING_MODE_OFF },
+  { "Target position", TIC_PLANNING_MODE_TARGET_POSITION },
+  { "Target velocity", TIC_PLANNING_MODE_TARGET_VELOCITY },
   { NULL, 0 },
 };
 
@@ -146,59 +165,59 @@ const tic_name tic_pin_func_names[] =
   { NULL, 0 },
 };
 
-const char * tic_look_up_nice_error_string(uint32_t error)
+const char * tic_look_up_error_name_ui(uint32_t error)
 {
-  const char * str;
-  tic_code_to_name(tic_nice_error_names, error, &str);
+  const char * str = "(Unknown)";
+  tic_code_to_name(tic_error_names_ui, error, &str);
   return str;
 }
 
-const char * tic_look_up_decay_mode_string(uint8_t decay_mode)
+const char * tic_look_up_decay_mode_name_ui(uint8_t decay_mode)
 {
-  const char * str;
-  tic_code_to_name(tic_decay_mode_names, decay_mode, &str);
+  const char * str = "(Unknown)";
+  tic_code_to_name(tic_decay_mode_names_ui, decay_mode, &str);
   return str;
 }
 
-const char * tic_look_up_input_state_string(uint8_t input_state)
+const char * tic_look_up_input_state_name_ui(uint8_t input_state)
 {
-  const char * str;
-  tic_code_to_name(tic_input_state_names, input_state, &str);
+  const char * str = "(Unknown)";
+  tic_code_to_name(tic_input_state_names_ui, input_state, &str);
   return str;
 }
 
-const char * tic_look_up_device_reset_string(uint8_t device_reset)
+const char * tic_look_up_device_reset_name_ui(uint8_t device_reset)
 {
-  const char * str;
-  tic_code_to_name(tic_device_reset_names, device_reset, &str);
+  const char * str = "(Unknown)";
+  tic_code_to_name(tic_device_reset_names_ui, device_reset, &str);
   return str;
 }
 
-const char * tic_look_up_operation_state_string(uint8_t operation_state)
+const char * tic_look_up_operation_state_name_ui(uint8_t operation_state)
 {
-  const char * str;
-  tic_code_to_name(tic_operation_state_names, operation_state, &str);
+  const char * str = "(Unknown)";
+  tic_code_to_name(tic_operation_state_names_ui, operation_state, &str);
   return str;
 }
 
-const char * tic_look_up_step_mode_string(uint8_t step_mode)
+const char * tic_look_up_step_mode_name_ui(uint8_t step_mode)
 {
-  const char * str;
-  tic_code_to_name(tic_step_mode_names, step_mode, &str);
+  const char * str = "(Unknown)";
+  tic_code_to_name(tic_step_mode_names_ui, step_mode, &str);
   return str;
 }
 
-const char * tic_look_up_pin_state_string(uint8_t pin_state)
+const char * tic_look_up_pin_state_name_ui(uint8_t pin_state)
 {
-  const char * str;
-  tic_code_to_name(tic_pin_state_names, pin_state, &str);
+  const char * str = "(Unknown)";
+  tic_code_to_name(tic_pin_state_names_ui, pin_state, &str);
   return str;
 }
 
-const char * tic_look_up_planning_mode_string(uint8_t planning_mode)
+const char * tic_look_up_planning_mode_name_ui(uint8_t planning_mode)
 {
-  const char * str;
-  tic_code_to_name(tic_planning_mode_names, planning_mode, &str);
+  const char * str = "(Unknown)";
+  tic_code_to_name(tic_planning_mode_names_ui, planning_mode, &str);
   return str;
 }
 
@@ -224,10 +243,8 @@ bool tic_name_to_code(const tic_name * table, const char * name, uint32_t * code
 
 bool tic_code_to_name(const tic_name * table, uint32_t code, const char ** name)
 {
-  assert(table != NULL);
   assert(name != NULL);
-
-  *name = "";
+  assert(table != NULL);
 
   for (const tic_name * p = table; p->name; p++)
   {

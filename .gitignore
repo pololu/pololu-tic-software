@@ -3,3 +3,4 @@ build*
 /docs
 /yaml
 /yaml*.tar.gz
+/result*

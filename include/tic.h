@@ -99,64 +99,63 @@ void tic_string_free(char *);
 /// Looks up a user-friendly string corresponding to the specified error bit,
 /// e.g. "Safe start violation".  The error argument should be of the form (1 <<
 /// x) where x is one of the TIC_ERROR_* macros, but if it is not, this function
-/// returns an empty string.  The returned string will be valid indefinitely and
+/// returns "(Unknown)".  The returned string will be valid indefinitely and
 /// should not be freed.
 TIC_API
-const char * tic_look_up_nice_error_string(uint32_t error);
+const char * tic_look_up_error_name_ui(uint32_t error);
 
-/// Looks up the string corresponding to the specified decay mode, e.g. "mixed".
+/// Looks up a user-friendly string corresponding to the specified decay mode, e.g. "Mixed".
 /// The decay_mode argument should be one of the TIC_DECAY_MODE_* macros, but if
-/// it is not, this function returns an empty string.  The returned string will
+/// it is not, this function returns "(Unknown)".  The returned string will
 /// be valid indefinitely and should not be freed.
 TIC_API
-const char * tic_look_up_decay_mode_string(uint8_t decay_mode);
+const char * tic_look_up_decay_mode_name_ui(uint8_t decay_mode);
 
-/// Loops up the string corresponding to the specified input state,
-/// e.g. "not_ready".  The input_state argument should be one of the
-/// TIC_INPUT_STATE_* macros, but if it is not, this function returns an empty
-/// string.  The returned string will be valid indefinitely and should not be
-/// freed.  See tic_variables_get_input_state().
+/// Loops up a user-friendly string corresponding to the specified input state,
+/// e.g. "Not ready".  The input_state argument should be one of the
+/// TIC_INPUT_STATE_* macros, but if it is not, this function returns
+/// "(Unknown)".  The returned string will be valid indefinitely and should not
+/// be freed.  See tic_variables_get_input_state().
 TIC_API
-const char * tic_look_up_input_state_string(uint8_t input_state);
+const char * tic_look_up_input_state_name_ui(uint8_t input_state);
 
-/// Looks up the string corresponding to the specified device reset,
-/// e.g. "stack_underflow".  The device_reset argument should be one of the
-/// TIC_RESET_* macros, but if it is not, this function returns an empty string.
-/// The returned string will be valid indefinitely and should not be freed.
+/// Looks up a user-friendly string corresponding to the specified device reset, e.g. "Stack
+/// underflow".  The device_reset argument should be one of the TIC_RESET_*
+/// macros, but if it is not, this function returns "(Unknown)".  The returned
+/// string will be valid indefinitely and should not be freed.
 TIC_API
-const char * tic_look_up_device_reset_string(uint8_t device_reset);
+const char * tic_look_up_device_reset_name_ui(uint8_t device_reset);
 
-/// Looks up the string corresponding to the specified operation state,
-/// e.g. "holding".  The operation_state argument should be one of the
-/// TIC_OPERATION_STATE_* macros, but if it is not, this function returns an
-/// empty string.  The returned string will be valid indefinitely and should not
+/// Looks up a user-friendly string corresponding to the specified operation
+/// state, e.g. "holding".  The operation_state argument should be one of the
+/// TIC_OPERATION_STATE_* macros, but if it is not, this function returns
+/// "(Unknown)".  The returned string will be valid indefinitely and should not
 /// be freed.
 TIC_API
-const char * tic_look_up_operation_state_string(uint8_t operation_state);
+const char * tic_look_up_operation_state_name_ui(uint8_t operation_state);
 
-/// Looks up the string corresponding to the specified step mode,
-/// e.g. "microstep32".  The step_mode argument should be one of the
-/// TIC_STEP_MODE_* macros, but if it is not, this functions returns an empty
-/// string.  The returned string will be valid indefinitely and should not be
-/// freed.
+/// Looks up a user-friendly string corresponding to the specified step mode,
+/// e.g. "Full step" or "1/2 step".  The step_mode argument should be one of the
+/// TIC_STEP_MODE_* macros, but if it is not, this functions returns
+/// "(Unknown)".  The returned string will be valid indefinitely and should not
+/// be freed.
 TIC_API
-const char * tic_look_up_step_mode_string(uint8_t step_mode);
+const char * tic_look_up_step_mode_name_ui(uint8_t step_mode);
 
-/// Looks up the string corresponding to the specified pin state,
-/// e.g. "output_low".  The pin_state argument should be one of the
-/// TIC_PIN_STATE_* macros, but if it is not, this functions returns an empty
-/// string.  The returned string will be valid indefinitely and should not be
-/// freed.
+/// Looks up the string corresponding to the specified pin state, e.g. "Output
+/// low".  The pin_state argument should be one of the TIC_PIN_STATE_* macros,
+/// but if it is not, this functions returns "(Unknown)".  The returned string
+/// will be valid indefinitely and should not be freed.
 TIC_API
-const char * tic_look_up_pin_state_string(uint8_t pin_state);
+const char * tic_look_up_pin_state_name_ui(uint8_t pin_state);
 
 /// Looks up the string corresponding to the specified planning mode,
-/// e.g. "target_position".  The pin_state argument should be one of the
-/// TIC_PLANNING_MODE_* macros, but if it is not, this functions returns an empty
-/// string.  The returned string will be valid indefinitely and should not be
-/// freed.
+/// e.g. "Target position".  The planning_mode argument should be one of the
+/// TIC_PLANNING_MODE_* macros, but if it is not, this functions returns
+/// "(Unknown)".  The returned string will be valid indefinitely and should not
+/// be freed.
 TIC_API
-const char * tic_look_up_planning_mode_string(uint8_t planning_mode);
+const char * tic_look_up_planning_mode_name_ui(uint8_t planning_mode);
 
 
 // tic_error ////////////////////////////////////////////////////////////////////
@@ -1351,10 +1350,6 @@ TIC_API TIC_WARN_UNUSED
 tic_error * tic_set_settings(tic_handle *, const tic_settings *);
 
 /// Resets the Tic's settings to their factory default values.
-///
-/// Since many bytes of EEPROM might need to change, the Tic might be unable to
-/// respond to USB requests for a while.  We recommend sleeping for 1500
-/// milliseconds after calling this function.
 TIC_API TIC_WARN_UNUSED
 tic_error * tic_restore_defaults(tic_handle * handle);
 

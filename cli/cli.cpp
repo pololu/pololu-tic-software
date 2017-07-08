@@ -8,26 +8,34 @@ static const char help[] =
   "\n"
   "General options:\n"
   "  -s, --status                 Show device settings and info.\n"
+  "  --full                       When used with --status, shows more.\n"
   "  -d SERIALNUMBER              Specifies the serial number of the device.\n"
   "  --list                       List devices connected to computer.\n"
+  "\n"
+  "Control commands:\n"
   "  -p, --position NUM           Set target position in microsteps.\n"
   "  -y, --velocity NUM           Set target velocity in microsteps / 10000 s.\n"
   "  --halt-and-set-position NUM  Set where the controller thinks it currently is.\n"
   "  --halt-and-hold              Abruptly stop the motor.\n"
-  "  --reset-command-timeout      Prevents the \"Command timeout\" error for a while.\n"
+  "  --reset-command-timeout      Clears the \"Command timeout\" error.\n"
   "  --deenergize                 Disable the motor driver.\n"
   "  --energize                   Stop disabling the driver.\n"
   "  --exit-safe-start            Send the Exit Safe Start command.\n"
+  "  --resume                     Equivalent to --energize with --exit-safe-start.\n"
   "  --enter-safe-start           Send the Enter Safe Start command.\n"
   "  --reset                      Make the controller forget its current state.\n"
   "  --clear-driver-error         Attempt to clear a motor driver error.\n"
+  "\n"
+  "Temporary settings:\n"
   "  --speed-max NUM              Set the speed maximum.\n"
   "  --starting-speed NUM         Set the starting speed.\n"
   "  --accel-max NUM              Set the acceleration maximum.\n"
   "  --decel-max NUM              Set the deceleration maximum.\n"
-  "  --step-mode NUM              Set step mode: full, half, 1, 2, 4, 8, 16, 32.\n"
+  "  --step-mode MODE             Set step mode: full, half, 1, 2, 4, 8, 16, 32.\n"
   "  --current NUM                Set the current limit in mA.\n"
   "  --decay MODE                 Set decay mode: mixed, slow, or fast.\n"
+  "\n"
+  "Permanent settings:\n"
   "  --restore-defaults           Restore device's factory settings\n"
   "  --settings FILE              Load settings file into device.\n"
   "  --get-settings FILE          Read device settings and write to file.\n"
@@ -42,6 +50,8 @@ static const char help[] =
 struct arguments
 {
   bool show_status = false;
+
+  bool full_output = false;
 
   bool serial_number_specified = false;
   std::string serial_number;
@@ -199,27 +209,28 @@ static std::string parse_arg_string(arg_reader & arg_reader)
 static uint8_t parse_arg_step_mode(arg_reader & arg_reader)
 {
   std::string mode_str = parse_arg_string(arg_reader);
-  if (mode_str == "1" || mode_str == "full")
+  if (mode_str == "1" || mode_str == "full"
+    || mode_str == "Full step" || mode_str == "full step")
   {
     return TIC_STEP_MODE_MICROSTEP1;
   }
-  else if (mode_str == "2" || mode_str == "half")
+  else if (mode_str == "2" || mode_str == "half" || mode_str == "1/2 step")
   {
     return TIC_STEP_MODE_MICROSTEP2;
   }
-  else if (mode_str == "4")
+  else if (mode_str == "4" || mode_str == "1/4 step")
   {
     return TIC_STEP_MODE_MICROSTEP4;
   }
-  else if (mode_str == "8")
+  else if (mode_str == "8" || mode_str == "1/8 step")
   {
     return TIC_STEP_MODE_MICROSTEP8;
   }
-  else if (mode_str == "16")
+  else if (mode_str == "16" || mode_str == "1/16 step")
   {
     return TIC_STEP_MODE_MICROSTEP16;
   }
-  else if (mode_str == "32")
+  else if (mode_str == "32" || mode_str == "1/32 step")
   {
     return TIC_STEP_MODE_MICROSTEP32;
   }
@@ -233,15 +244,15 @@ static uint8_t parse_arg_step_mode(arg_reader & arg_reader)
 static uint8_t parse_arg_decay_mode(arg_reader & arg_reader)
 {
   std::string decay_str = parse_arg_string(arg_reader);
-  if (decay_str == "mixed")
+  if (decay_str == "mixed" || decay_str == "Mixed")
   {
     return TIC_DECAY_MODE_MIXED;
   }
-  else if (decay_str == "slow")
+  else if (decay_str == "slow" || decay_str == "Slow")
   {
     return TIC_DECAY_MODE_SLOW;
   }
-  else if (decay_str == "fast")
+  else if (decay_str == "fast" || decay_str == "Fast")
   {
     return TIC_DECAY_MODE_FAST;
   }
@@ -270,6 +281,10 @@ static arguments parse_args(int argc, char ** argv)
     if (arg == "-s" || arg == "--status")
     {
       args.show_status = true;
+    }
+    else if (arg == "--full")
+    {
+      args.full_output = true;
     }
     else if (arg == "-d" || arg == "--serial")
     {
@@ -314,6 +329,10 @@ static arguments parse_args(int argc, char ** argv)
     else if (arg == "--exit-safe-start")
     {
       args.exit_safe_start = true;
+    }
+    else if (arg == "--resume")
+    {
+      args.energize = args.exit_safe_start = true;
     }
     else if (arg == "--enter-safe-start")
     {
@@ -437,7 +456,7 @@ static void set_current_limit_after_warning(device_selector & selector, uint32_t
   handle(selector).set_current_limit(current_limit);
 }
 
-static void get_status(device_selector & selector)
+static void get_status(device_selector & selector, bool full_output)
 {
   tic::device device = selector.select_device();
   tic::handle handle(device);
@@ -445,7 +464,7 @@ static void get_status(device_selector & selector)
   std::string name = device.get_name();
   std::string serial_number = device.get_serial_number();
   std::string firmware_version = handle.get_firmware_version_string();
-  print_status(vars, name, serial_number, firmware_version);
+  print_status(vars, name, serial_number, firmware_version, full_output);
 }
 
 static void restore_defaults(device_selector & selector)
@@ -530,7 +549,7 @@ static void test_procedure(device_selector & selector, uint32_t procedure)
     uint8_t fake_data[4096];
     memset(fake_data, 0xFF, sizeof(fake_data));
     tic::variables fake_vars((tic_variables *)fake_data);
-    print_status(fake_vars, "Fake name", "123", "9.99");
+    print_status(fake_vars, "Fake name", "123", "9.99", true);
     fake_vars.pointer_release();
   }
   else if (procedure == 2)
@@ -642,6 +661,8 @@ static void run(int argc, char ** argv)
     handle(selector).energize();
   }
 
+  // This should be after energize so that --resume does things in the same
+  // order as the GUI.
   if (args.exit_safe_start)
   {
     handle(selector).exit_safe_start();
@@ -704,7 +725,7 @@ static void run(int argc, char ** argv)
 
   if (args.show_status)
   {
-    get_status(selector);
+    get_status(selector, args.full_output);
   }
 }
 

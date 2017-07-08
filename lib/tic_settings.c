@@ -192,8 +192,6 @@ uint32_t tic_settings_achievable_current_limit(const tic_settings * settings,
 static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings)
 {
   // TODO: fix enum values to be valid
-  // TODO: enforce 0-4095 range of input scaling settings
-  // TODO: enforce -500 to 500 range for vin_calibration
 
   uint8_t control_mode = tic_settings_get_control_mode(settings);
 
@@ -210,25 +208,12 @@ static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings
 
   {
     uint8_t response = tic_settings_get_soft_error_response(settings);
-    switch (response)
+    if (response == TIC_RESPONSE_GO_TO_POSITION && speed_control_mode)
     {
-    case TIC_RESPONSE_DEENERGIZE:
-    case TIC_RESPONSE_HALT_AND_HOLD:
-    case TIC_RESPONSE_DECEL_TO_HOLD:
-      break;
-
-    case TIC_RESPONSE_GO_TO_POSITION:
-      if (speed_control_mode)
-      {
-        response = TIC_RESPONSE_DEENERGIZE;
-        tic_sprintf(warnings,
-          "Warning: The soft error response cannot be \"Go to position\" in a "
-          "speed control mode, so it will be changed to \"De-energize\".\n");
-      }
-      break;
-
-    default:
-      break;
+      response = TIC_RESPONSE_DEENERGIZE;
+      tic_sprintf(warnings,
+        "Warning: The soft error response cannot be \"Go to position\" in a "
+        "speed control mode, so it will be changed to \"De-energize\".\n");
     }
     tic_settings_set_soft_error_response(settings, response);
   }
@@ -315,34 +300,78 @@ static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings
   }
 
   {
-    uint16_t error_min = tic_settings_get_input_error_min(settings);
+    int16_t calibration = tic_settings_get_vin_calibration(settings);
+
+    if (calibration < -500)
+    {
+      calibration = -500;
+      tic_sprintf(warnings,
+        "Warning: The VIN calibration was too low "
+        "so it will be raised to -500.\n");
+    }
+
+    if (calibration > 500)
+    {
+      calibration = 500;
+      tic_sprintf(warnings,
+        "Warning: The VIN calibration was too high "
+        "so it will be lowered to 500.\n");
+    }
+
+    tic_settings_set_vin_calibration(settings, calibration);
+  }
+
+  {
     uint16_t min = tic_settings_get_input_min(settings);
     uint16_t neutral_min = tic_settings_get_input_neutral_min(settings);
     uint16_t neutral_max = tic_settings_get_input_neutral_max(settings);
     uint16_t max = tic_settings_get_input_max(settings);
-    uint16_t error_max = tic_settings_get_input_error_max(settings);
 
-    if (error_min > min || min > neutral_min || neutral_min > neutral_max ||
-      neutral_max > max || max > error_max)
+    if (min > neutral_min || neutral_min > neutral_max || neutral_max > max)
     {
-      error_min = 0;
       min = 0;
       neutral_min = 2015;
       neutral_max = 2080;
       max = 4095;
-      error_max = 0xFFFF;
 
       tic_sprintf(warnings,
         "Warning: The input scaling values are out of order "
         "so they will be reset to their default values.\n");
     }
 
-    tic_settings_set_input_error_min(settings, error_min);
+    if (min > 4095)
+    {
+      tic_sprintf(warnings,
+        "Warning: The input minimum is too high "
+        "so it will be lowered to 4095.\n");
+      min = 4095;
+    }
+    if (neutral_min > 4095)
+    {
+      tic_sprintf(warnings,
+        "Warning: The input neutral min is too high "
+        "so it will be lowered to 4095.\n");
+      neutral_min = 4095;
+    }
+    if (neutral_max > 4095)
+    {
+      tic_sprintf(warnings,
+        "Warning: The input neutral max is too high "
+        "so it will be lowered to 4095.\n");
+      neutral_max = 4095;
+    }
+    if (max > 4095)
+    {
+      tic_sprintf(warnings,
+        "Warning: The input maximum is too high "
+        "so it will be lowered to 4095.\n");
+      max = 4095;
+    }
+
     tic_settings_set_input_min(settings, min);
     tic_settings_set_input_neutral_min(settings, neutral_min);
     tic_settings_set_input_neutral_max(settings, neutral_max);
     tic_settings_set_input_max(settings, max);
-    tic_settings_set_input_error_max(settings, error_max);
   }
 
   {

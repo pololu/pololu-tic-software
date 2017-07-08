@@ -121,6 +121,14 @@ def test_cases_for_settings_fix(product)
       { 'command_timeout' => 60000 },
       "Warning: The command timeout is too high so it will be changed to 60000 ms.\n"
     ],
+    [ { 'vin_calibration' => -501 },
+      { 'vin_calibration' => -500 },
+      "Warning: The VIN calibration was too low so it will be raised to -500.\n"
+    ],
+    [ { 'vin_calibration' => 501 },
+      { 'vin_calibration' => 500 },
+      "Warning: The VIN calibration was too high so it will be lowered to 500.\n"
+    ],
     #[ { 'low_vin_shutoff_voltage' => 9001, 'low_vin_startup_voltage' => 9000,
     #    'high_vin_shutoff_voltage' => 8999 },
     #  { 'low_vin_shutoff_voltage' => 9001, 'low_vin_startup_voltage' => 9501,
@@ -134,6 +142,15 @@ def test_cases_for_settings_fix(product)
         'input_neutral_max' => 2080, 'input_max' => 4095, },
       "Warning: The input scaling values are out of order " \
       "so they will be reset to their default values.\n"
+    ],
+    [ { 'input_min' => 4096, 'input_neutral_min' => 4097,
+        'input_neutral_max' => 4098, 'input_max' => 4099, },
+      { 'input_min' => 4095, 'input_neutral_min' => 4095,
+        'input_neutral_max' => 4095, 'input_max' => 4095, },
+      "Warning: The input minimum is too high so it will be lowered to 4095.\n" \
+      "Warning: The input neutral min is too high so it will be lowered to 4095.\n" \
+      "Warning: The input neutral max is too high so it will be lowered to 4095.\n" \
+      "Warning: The input maximum is too high so it will be lowered to 4095.\n"
     ],
     [ { 'output_min' => 1 },
       { 'output_min' => 0 },

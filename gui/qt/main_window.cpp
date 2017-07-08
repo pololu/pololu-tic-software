@@ -29,6 +29,13 @@
 #include <cmath>
 #include <sstream>
 
+#ifdef QT_STATIC
+#include <QtPlugin>
+#ifdef _WIN32
+Q_IMPORT_PLUGIN (QWindowsIntegrationPlugin);
+#endif
+#endif
+
 main_window::main_window(QWidget *parent)
   : QMainWindow(parent)
 {
