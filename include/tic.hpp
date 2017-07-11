@@ -245,6 +245,64 @@ namespace tic
   }
   /*! \endcond */
 
+  /// Represets the settings for a Tic.  This object just stores plain old data;
+  /// it does not have any pointers or handles for other resources.
+  ///
+  /// This class does not currently have functions for reading and writing most
+  /// settings.  You will have to use the tic_settings_* functions from the C
+  /// API defined in tic.h to read and write the settings in the object.  Search
+  /// for "tic_settings_" in the GUI code for examples of how to do this.
+  class settings : public unique_pointer_wrapper_with_copy<tic_settings>
+  {
+  public:
+    /// Constructor that takes a pointer from the C API.
+    explicit settings(tic_settings * p = NULL) noexcept :
+      unique_pointer_wrapper_with_copy(p)
+    {
+    }
+
+    /// Wrapper for tic_settings_fix().
+    ///
+    /// If a non-NULL warnings pointer is provided, and this function does not
+    /// throw an exception, the string it points to will be overridden with an
+    /// empty string or a string with English warnings.
+    void fix(std::string * warnings = NULL)
+    {
+      char * cstr = NULL;
+      char ** cstr_pointer = warnings ? &cstr : NULL;
+      throw_if_needed(tic_settings_fix(pointer, cstr_pointer));
+      if (warnings) { *warnings = std::string(cstr); }
+    }
+
+    /// Wrapper for tic_settings_to_string().
+    std::string to_string() const
+    {
+      char * str;
+      throw_if_needed(tic_settings_to_string(pointer, &str));
+      return std::string(str);
+    }
+
+    /// Wrapper for tic_settings_read_from_string.
+    ///
+    /// If a non-NULL warnings pointer is provided, and this function does not
+    /// throw an exception, the string it points to will be overridden with an
+    /// empty string or a string with English warnings.
+    static settings read_from_string(
+      const std::string & settings_string, std::string * warnings = NULL)
+    {
+      char * cstr = NULL;
+      char ** cstr_pointer = warnings ? &cstr : NULL;
+
+      settings r;
+      throw_if_needed(tic_settings_read_from_string(
+          settings_string.c_str(), r.get_pointer_to_pointer(), cstr_pointer));
+
+      if (warnings) { *warnings = std::string(cstr); }
+
+      return r;
+    }
+  };
+
   /// Represents the variables read from a Tic.  This object just stores plain
   /// old data; it does not have any pointer or handles for other resources.
   class variables : public unique_pointer_wrapper_with_copy<tic_variables>
@@ -418,6 +476,12 @@ namespace tic
       return tic_variables_get_input_after_hysteresis(pointer);
     }
 
+    /// Wrapper for tic_variables_get_input_before_scaling().
+    uint16_t get_input_before_scaling(const settings & settings) const noexcept
+    {
+      return tic_variables_get_input_before_scaling(pointer, settings.get_pointer());
+    }
+
     /// Wrapper for tic_variables_get_input_after_scaling().
     int32_t get_input_after_scaling() const noexcept
     {
@@ -441,61 +505,6 @@ namespace tic
     {
       return tic_variables_get_pin_state(pointer, pin);
     }
-  };
-
-  /// Represets the settings for a Tic.  This object just stores plain old data;
-  /// it does not have any pointers or handles for other resources.
-  class settings : public unique_pointer_wrapper_with_copy<tic_settings>
-  {
-  public:
-    /// Constructor that takes a pointer from the C API.
-    explicit settings(tic_settings * p = NULL) noexcept :
-      unique_pointer_wrapper_with_copy(p)
-    {
-    }
-
-    /// Wrapper for tic_settings_fix().
-    ///
-    /// If a non-NULL warnings pointer is provided, and this function does not
-    /// throw an exception, the string it points to will be overridden with an
-    /// empty string or a string with English warnings.
-    void fix(std::string * warnings = NULL)
-    {
-      char * cstr = NULL;
-      char ** cstr_pointer = warnings ? &cstr : NULL;
-      throw_if_needed(tic_settings_fix(pointer, cstr_pointer));
-      if (warnings) { *warnings = std::string(cstr); }
-    }
-
-    /// Wrapper for tic_settings_to_string().
-    std::string to_string() const
-    {
-      char * str;
-      throw_if_needed(tic_settings_to_string(pointer, &str));
-      return std::string(str);
-    }
-
-    /// Wrapper for tic_settings_read_from_string.
-    ///
-    /// If a non-NULL warnings pointer is provided, and this function does not
-    /// throw an exception, the string it points to will be overridden with an
-    /// empty string or a string with English warnings.
-    static settings read_from_string(
-      const std::string & settings_string, std::string * warnings = NULL)
-    {
-      char * cstr = NULL;
-      char ** cstr_pointer = warnings ? &cstr : NULL;
-
-      settings r;
-      throw_if_needed(tic_settings_read_from_string(
-          settings_string.c_str(), r.get_pointer_to_pointer(), cstr_pointer));
-
-      if (warnings) { *warnings = std::string(cstr); }
-
-      return r;
-    }
-
-    // TODO: wrappers for all the other accessors
   };
 
   /// Represents a Tic that is or was connected to the computer.  Can also be in

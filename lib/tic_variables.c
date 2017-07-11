@@ -399,6 +399,64 @@ uint16_t tic_variables_get_input_after_hysteresis(const tic_variables * variable
   return variables->input_after_hysteresis;
 }
 
+static uint8_t tic_input_shift_before_scaling(
+  uint8_t control_mode, bool input_averaging_enabled)
+{
+  switch (control_mode)
+  {
+  case TIC_CONTROL_MODE_RC_POSITION:
+  case TIC_CONTROL_MODE_RC_SPEED:
+    // In RC modes, inputAfterHysteresis always has units of 1/12 us, (typical
+    // values from 12000 to 24000) and the firmware divides it by 8 before
+    // scaling so that it can be between 0 and 4095.
+    return 3;
+
+  case TIC_CONTROL_MODE_ANALOG_POSITION:
+  case TIC_CONTROL_MODE_ANALOG_SPEED:
+    if (input_averaging_enabled)
+    {
+      // In an analog mode with input averaging enabled, we take 8 10-bit ADC
+      // readings for each sample, and then we add 4 samples together, so
+      // inputAfterHysteresis is a 15-bit number.  The firmware shifts it by 3
+      // to make it a 12-bit number between 0 and 4095.
+      return 3;
+    }
+    else
+    {
+      // In an analog mode with input averaging disabled, we take 8 10-bit ADC
+      // readings for each sample, so inputAfterHysteresis is a 13-bit number.
+      // The firmware shifts it by 1 to make it a 12-bit number.
+      return 1;
+    }
+
+  default:
+    return 0;
+  }
+}
+
+uint16_t tic_variables_get_input_before_scaling(const tic_variables * variables,
+  const tic_settings * settings)
+{
+  if (variables == NULL || settings == NULL)
+  {
+    return 0;
+  }
+
+  uint16_t input = tic_variables_get_input_after_hysteresis(variables);
+
+  if (input == TIC_INPUT_NULL)
+  {
+    return TIC_INPUT_NULL;
+  }
+
+  uint8_t shift = tic_input_shift_before_scaling(
+    tic_settings_get_control_mode(settings),
+    tic_settings_get_input_averaging_enabled(settings));
+
+  return input >> shift;
+}
+
+
 int32_t tic_variables_get_input_after_scaling(const tic_variables * variables)
 {
   if (variables == NULL) { return 0xFFFF; }

@@ -125,12 +125,17 @@ describe '--status' do
     # These keys are not always in the output
     unreliable_keys = [
       "Target", "Target velocity", "Target position",
+      "Input before scaling",
     ]
 
-    actual_keys = status.keys.sort - unreliable_keys
-    expected_keys = YAML.load(FakeStatus).keys.sort - unreliable_keys
+    actual_keys = status.keys.sort
+    expected_keys = YAML.load(FakeStatus).keys.sort
 
-    expect(actual_keys).to eq expected_keys
+    unexpected_keys = actual_keys - expected_keys - unreliable_keys
+    expect(unexpected_keys).to eq []
+
+    missing_keys = expected_keys - actual_keys - unreliable_keys
+    expect(missing_keys).to eq []
   end
 end
 

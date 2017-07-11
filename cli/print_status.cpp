@@ -71,6 +71,7 @@ static void print_pin_info(const tic::variables & vars,
 }
 
 void print_status(const tic::variables & vars,
+  const tic::settings & settings,
   const std::string & name,
   const std::string & serial_number,
   const std::string & firmware_version,
@@ -100,25 +101,38 @@ void print_status(const tic::variables & vars,
 
   std::cout << std::endl;
 
-  std::cout << left_column << "Encoder position: "
-    << vars.get_encoder_position()
-    << std::endl;
+  if (full_output)
+  {
+    std::cout << left_column << "Encoder position: "
+      << vars.get_encoder_position()
+      << std::endl;
 
-  std::cout << left_column << "RC pulse width: "
-    << input_format(vars.get_rc_pulse_width())
-    << std::endl;
+    std::cout << left_column << "RC pulse width: "
+      << input_format(vars.get_rc_pulse_width())
+      << std::endl;
+  }
 
   std::cout << left_column << "Input state: "
     << tic_look_up_input_state_name_ui(vars.get_input_state())
     << std::endl;
 
-  std::cout << left_column << "Input after averaging: "
-    << input_format(vars.get_input_after_averaging())
-    << std::endl;
+  if (full_output)
+  {
+    std::cout << left_column << "Input after averaging: "
+      << input_format(vars.get_input_after_averaging())
+      << std::endl;
 
-  std::cout << left_column << "Input after hysteresis: "
-    << input_format(vars.get_input_after_hysteresis())
-    << std::endl;
+    std::cout << left_column << "Input after hysteresis: "
+      << input_format(vars.get_input_after_hysteresis())
+      << std::endl;
+  }
+
+  if (settings)
+  {
+    std::cout << left_column << "Input before scaling: "
+      << input_format(vars.get_input_before_scaling(settings))
+      << std::endl;
+  }
 
   std::cout << left_column << "Input after scaling: "
     << vars.get_input_after_scaling()

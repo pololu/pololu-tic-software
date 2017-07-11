@@ -460,11 +460,12 @@ static void get_status(device_selector & selector, bool full_output)
 {
   tic::device device = selector.select_device();
   tic::handle handle(device);
+  tic::settings settings = handle.get_settings();
   tic::variables vars = handle.get_variables(true);
   std::string name = device.get_name();
   std::string serial_number = device.get_serial_number();
   std::string firmware_version = handle.get_firmware_version_string();
-  print_status(vars, name, serial_number, firmware_version, full_output);
+  print_status(vars, settings, name, serial_number, firmware_version, full_output);
 }
 
 static void restore_defaults(device_selector & selector)
@@ -549,7 +550,8 @@ static void test_procedure(device_selector & selector, uint32_t procedure)
     uint8_t fake_data[4096];
     memset(fake_data, 0xFF, sizeof(fake_data));
     tic::variables fake_vars((tic_variables *)fake_data);
-    print_status(fake_vars, "Fake name", "123", "9.99", true);
+    tic::settings settings;
+    print_status(fake_vars, settings, "Fake name", "123", "9.99", true);
     fake_vars.pointer_release();
   }
   else if (procedure == 2)

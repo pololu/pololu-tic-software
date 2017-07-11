@@ -217,238 +217,6 @@ TIC_API TIC_WARN_UNUSED
 const char * tic_error_get_message(const tic_error *);
 
 
-// tic_variables ///////////////////////////////////////////////////////////////
-
-typedef struct tic_variables tic_variables;
-
-/// Copies a tic_variables object.  If this function is successful, the caller must
-/// free the settings later by calling tic_settings_free().
-TIC_API TIC_WARN_UNUSED
-tic_error * tic_variables_copy(
-  const tic_variables * source,
-  tic_variables ** dest);
-
-/// Frees a tic_variables object.  It is OK to pass a NULL pointer to this
-/// function.  Do not free the same non-NULL settings object twice.
-TIC_API
-void tic_variables_free(tic_variables *);
-
-/// Returns the current operation state of the Tic, which will be one of the
-/// TIC_OPERATION_STATE_* macros.
-TIC_API
-uint8_t tic_variables_get_operation_state(const tic_variables *);
-
-/// Returns true if the motor driver is energized (trying to send current to its
-/// outputs).
-TIC_API
-bool tic_variables_get_energized(const tic_variables *);
-
-/// Gets a flag that indicates whether there has been external confirmation that
-/// the value of the Tic's Current position variable is correct.
-///
-/// See the documentation for the Position uncertain flag in the Tic user's
-/// guide.
-TIC_API
-bool tic_variables_get_position_uncertain(const tic_variables *);
-
-/// Gets the errors that are currently stopping the motor.
-///
-/// This is a bitmask, and the bits are defined by the TIC_ERROR_* macros.
-TIC_API
-uint16_t tic_variables_get_error_status(const tic_variables *);
-
-/// Gets the errors that have occurred since the last time these error occurred
-/// bits were cleared.
-///
-/// This is a bitmask, and the bits are defined by the TIC_ERROR_* macros.  To
-/// learn more about what the different errors mean, see the Tic user's guide.
-TIC_API
-uint32_t tic_variables_get_errors_occurred(const tic_variables *);
-
-/// Gets the current planning mode.
-///
-/// This will be either TIC_PLANNING_MODE_OFF,
-/// TIC_PLANNING_MODE_TARGET_POSITION, or TIC_PLANNING_MODE_TARGET_VELOCITY.
-TIC_API
-uint8_t tic_variables_get_planning_mode(const tic_variables *);
-
-/// Gets the target position, in microsteps.
-///
-/// This is only relevant if the planning mode from
-/// tic_variables_get_planning_mode() is TIC_PLANNING_MODE_TARGET_POSITION.
-TIC_API
-int32_t tic_variables_get_target_position(const tic_variables *);
-
-/// Gets the target velocity, in microsteps per 10000 seconds.
-///
-/// This is only relevant if the planning mode from
-/// tic_variables_get_planning_mode() is TIC_PLANNING_MODE_TARGET_VELOCITY.
-TIC_API
-int32_t tic_variables_get_target_velocity(const tic_variables *);
-
-/// Gets the starting speed in microsteps per 10000 seconds.
-///
-/// This is the current value.  To get the default value at startup, see
-/// tic_settings_get_starting_speed().
-TIC_API
-uint32_t tic_variables_get_starting_speed(const tic_variables *);
-
-/// Gets the current speed maximum, in microsteps per 10000 seconds.
-///
-/// This is the current value.  To get the default value at startup, see
-/// tic_settings_get_speed_max().
-TIC_API
-uint32_t tic_variables_get_speed_max(const tic_variables *);
-
-/// Gets the current maximum deceleration, in microsteps per 100 square seconds.
-///
-/// This is the current value.  To get the default value at startup, see
-/// tic_settings_get_decel_max().
-TIC_API
-uint32_t tic_variables_get_decel_max(const tic_variables *);
-
-/// Gets the current maximum acceleration, in microsteps per 100 square seconds.
-///
-/// This is the current value.  To get the default value at startup, see
-/// tic_settings_get_accel_max().
-TIC_API
-uint32_t tic_variables_get_accel_max(const tic_variables *);
-
-/// Gets the current position of the stepper motor, in microsteps.
-///
-/// Note that this just tracks steps that the Tic has commanded the stepper
-/// driver to take, it could be different from the actual position of the motor
-/// for various reasons.
-TIC_API
-int32_t tic_variables_get_current_position(const tic_variables *);
-
-/// Gets the current velocity of the stepper motor, in microsteps for 10000
-/// seconds.
-///
-/// Note that this is just the velocity used in the Tic's step planning
-/// algorithms, and it might not correspond to the actual velocity of the motor
-/// for various reasons.
-TIC_API
-int32_t tic_variables_get_current_velocity(const tic_variables *);
-
-/// Gets the acting target position, in microsteps.
-///
-/// This is a variable used in the Tic's target position step planning
-/// algorithm.
-TIC_API
-int32_t tic_variables_get_acting_target_position(const tic_variables *);
-
-/// Gets the time since the last step, in timer ticks.
-///
-/// Each timer tick represents one third of a microsecond.  The Tic only updates
-/// this variable every 5 milliseconds or so.
-TIC_API
-uint32_t tic_variables_get_time_since_last_step(const tic_variables *);
-
-/// Gets the cause of the controller's last reset.
-///
-/// This will be one the TIC_RESET_* macros.
-TIC_API
-uint8_t tic_variables_get_device_reset(const tic_variables *);
-
-/// Gets the current measurement of the VIN voltage, in millivolts.
-TIC_API
-uint32_t tic_variables_get_vin_voltage(const tic_variables *);
-
-/// Gets the time since the controller was last reset, in milliseconds.
-TIC_API
-uint32_t tic_variables_get_up_time(const tic_variables *);
-
-/// Gets the reading from the quadrature encoder input, in ticks.
-TIC_API
-int32_t tic_variables_get_encoder_position(const tic_variables *);
-
-/// Gets the reading from the RC pulse input, in units of twelfth microseconds.
-///
-/// The value returned will be TIC_INPUT_NULL if the RC signal is bad or has not
-/// been measured.
-TIC_API
-uint16_t tic_variables_get_rc_pulse_width(const tic_variables *);
-
-/// Gets the current step mode of the Tic.
-///
-/// Note that this is the current mode.  To get the default mode at startup,
-/// see tic_settings_get_step_mode().
-///
-/// The return value is one of the TIC_STEP_MODE_* macros.
-TIC_API
-uint8_t tic_variables_get_step_mode(const tic_variables *);
-
-/// Gets the stepper motor coil current limit in milliamps.
-///
-/// Note that this is the current limit being used at the moment.  To get the
-/// default current limit at startup, see tic_settings_get_current_limit().
-TIC_API
-uint32_t tic_variables_get_current_limit(const tic_variables *);
-
-/// Gets the current decay mode of the Tic.
-///
-/// Note that this is the current decay mode.  To get the default decay mode at
-/// startup, see tic_settings_get_decay_mode().
-///
-/// The return value is one of the TIC_DECAY_MODE_* macros.
-TIC_API
-uint8_t tic_variables_get_decay_mode(const tic_variables *);
-
-/// Gets the current state of the control input to Tic.
-///
-/// This will be one of the TIC_INPUT_STATE_* macros.
-TIC_API
-uint8_t tic_variables_get_input_state(const tic_variables *);
-
-/// Gets a variable used in the process that converts raw RC and analog values
-/// into a motor position or speed.
-///
-/// A value of TIC_INPUT_NULL means the input value is not available.
-TIC_API
-uint16_t tic_variables_get_input_after_averaging(const tic_variables *);
-
-/// Gets a variable used in the process that converts raw RC and analog values
-/// into a motor position or speed.
-///
-/// A value of TIC_INPUT_NULL means the input value is not available.
-TIC_API
-uint16_t tic_variables_get_input_after_hysteresis(const tic_variables *);
-
-/// Gets a variable used in the process that converts raw RC and analog values
-/// into a motor position or speed.
-///
-/// A value of TIC_INPUT_NULL means the input value is not available.
-TIC_API
-int32_t tic_variables_get_input_after_scaling(const tic_variables *);
-
-/// Gets the analog reading from the specified pin, if analog readings are
-/// enabled for that pin.
-///
-/// The pin argument should be one of the TIC_PIN_NUM_* macros.
-///
-/// The return value will be a left-justified analog reading; a value of 0
-/// represents 0 V and a value near 0xFFFE represents the voltage on the
-/// controller's 5V pin.  A value of TIC_INPUT_NULL means the reading is not
-/// available.
-TIC_API
-uint16_t tic_variables_get_analog_reading(const tic_variables *, uint8_t pin);
-
-/// Gets the digital reading for the specified pin.
-///
-/// The pin argument should be one of the TIC_PIN_NUM_* macros.
-TIC_API
-bool tic_variables_get_digital_reading(const tic_variables *, uint8_t pin);
-
-/// Gets the pin state for the specified pin.
-///
-/// This pin argument should be one of the TIC_PIN_NUM_* macros.
-///
-/// The return value is one of the TIC_PIN_STATE_* macros.
-TIC_API
-uint8_t tic_variables_get_pin_state(const tic_variables *, uint8_t pin);
-
-
 // tic_settings ////////////////////////////////////////////////////////////////
 
 /// Represents the settings for a Tic.  This object is just plain old data; it
@@ -1019,6 +787,248 @@ TIC_API
 bool tic_settings_get_invert_motor_direction(const tic_settings *);
 
 
+// tic_variables ///////////////////////////////////////////////////////////////
+
+/// Represents run-time variables that have been read from the Tic using the Get
+/// Variables command.
+typedef struct tic_variables tic_variables;
+
+/// Copies a tic_variables object.  If this function is successful, the caller must
+/// free the settings later by calling tic_settings_free().
+TIC_API TIC_WARN_UNUSED
+tic_error * tic_variables_copy(
+  const tic_variables * source,
+  tic_variables ** dest);
+
+/// Frees a tic_variables object.  It is OK to pass a NULL pointer to this
+/// function.  Do not free the same non-NULL settings object twice.
+TIC_API
+void tic_variables_free(tic_variables *);
+
+/// Returns the current operation state of the Tic, which will be one of the
+/// TIC_OPERATION_STATE_* macros.
+TIC_API
+uint8_t tic_variables_get_operation_state(const tic_variables *);
+
+/// Returns true if the motor driver is energized (trying to send current to its
+/// outputs).
+TIC_API
+bool tic_variables_get_energized(const tic_variables *);
+
+/// Gets a flag that indicates whether there has been external confirmation that
+/// the value of the Tic's Current position variable is correct.
+///
+/// See the documentation for the Position uncertain flag in the Tic user's
+/// guide.
+TIC_API
+bool tic_variables_get_position_uncertain(const tic_variables *);
+
+/// Gets the errors that are currently stopping the motor.
+///
+/// This is a bitmask, and the bits are defined by the TIC_ERROR_* macros.
+TIC_API
+uint16_t tic_variables_get_error_status(const tic_variables *);
+
+/// Gets the errors that have occurred since the last time these error occurred
+/// bits were cleared.
+///
+/// This is a bitmask, and the bits are defined by the TIC_ERROR_* macros.  To
+/// learn more about what the different errors mean, see the Tic user's guide.
+TIC_API
+uint32_t tic_variables_get_errors_occurred(const tic_variables *);
+
+/// Gets the current planning mode.
+///
+/// This will be either TIC_PLANNING_MODE_OFF,
+/// TIC_PLANNING_MODE_TARGET_POSITION, or TIC_PLANNING_MODE_TARGET_VELOCITY.
+TIC_API
+uint8_t tic_variables_get_planning_mode(const tic_variables *);
+
+/// Gets the target position, in microsteps.
+///
+/// This is only relevant if the planning mode from
+/// tic_variables_get_planning_mode() is TIC_PLANNING_MODE_TARGET_POSITION.
+TIC_API
+int32_t tic_variables_get_target_position(const tic_variables *);
+
+/// Gets the target velocity, in microsteps per 10000 seconds.
+///
+/// This is only relevant if the planning mode from
+/// tic_variables_get_planning_mode() is TIC_PLANNING_MODE_TARGET_VELOCITY.
+TIC_API
+int32_t tic_variables_get_target_velocity(const tic_variables *);
+
+/// Gets the starting speed in microsteps per 10000 seconds.
+///
+/// This is the current value.  To get the default value at startup, see
+/// tic_settings_get_starting_speed().
+TIC_API
+uint32_t tic_variables_get_starting_speed(const tic_variables *);
+
+/// Gets the current speed maximum, in microsteps per 10000 seconds.
+///
+/// This is the current value.  To get the default value at startup, see
+/// tic_settings_get_speed_max().
+TIC_API
+uint32_t tic_variables_get_speed_max(const tic_variables *);
+
+/// Gets the current maximum deceleration, in microsteps per 100 square seconds.
+///
+/// This is the current value.  To get the default value at startup, see
+/// tic_settings_get_decel_max().
+TIC_API
+uint32_t tic_variables_get_decel_max(const tic_variables *);
+
+/// Gets the current maximum acceleration, in microsteps per 100 square seconds.
+///
+/// This is the current value.  To get the default value at startup, see
+/// tic_settings_get_accel_max().
+TIC_API
+uint32_t tic_variables_get_accel_max(const tic_variables *);
+
+/// Gets the current position of the stepper motor, in microsteps.
+///
+/// Note that this just tracks steps that the Tic has commanded the stepper
+/// driver to take, it could be different from the actual position of the motor
+/// for various reasons.
+TIC_API
+int32_t tic_variables_get_current_position(const tic_variables *);
+
+/// Gets the current velocity of the stepper motor, in microsteps for 10000
+/// seconds.
+///
+/// Note that this is just the velocity used in the Tic's step planning
+/// algorithms, and it might not correspond to the actual velocity of the motor
+/// for various reasons.
+TIC_API
+int32_t tic_variables_get_current_velocity(const tic_variables *);
+
+/// Gets the acting target position, in microsteps.
+///
+/// This is a variable used in the Tic's target position step planning
+/// algorithm.
+TIC_API
+int32_t tic_variables_get_acting_target_position(const tic_variables *);
+
+/// Gets the time since the last step, in timer ticks.
+///
+/// Each timer tick represents one third of a microsecond.  The Tic only updates
+/// this variable every 5 milliseconds or so.
+TIC_API
+uint32_t tic_variables_get_time_since_last_step(const tic_variables *);
+
+/// Gets the cause of the controller's last reset.
+///
+/// This will be one the TIC_RESET_* macros.
+TIC_API
+uint8_t tic_variables_get_device_reset(const tic_variables *);
+
+/// Gets the current measurement of the VIN voltage, in millivolts.
+TIC_API
+uint32_t tic_variables_get_vin_voltage(const tic_variables *);
+
+/// Gets the time since the controller was last reset, in milliseconds.
+TIC_API
+uint32_t tic_variables_get_up_time(const tic_variables *);
+
+/// Gets the reading from the quadrature encoder input, in ticks.
+TIC_API
+int32_t tic_variables_get_encoder_position(const tic_variables *);
+
+/// Gets the reading from the RC pulse input, in units of twelfth microseconds.
+///
+/// The value returned will be TIC_INPUT_NULL if the RC signal is bad or has not
+/// been measured.
+TIC_API
+uint16_t tic_variables_get_rc_pulse_width(const tic_variables *);
+
+/// Gets the current step mode of the Tic.
+///
+/// Note that this is the current mode.  To get the default mode at startup,
+/// see tic_settings_get_step_mode().
+///
+/// The return value is one of the TIC_STEP_MODE_* macros.
+TIC_API
+uint8_t tic_variables_get_step_mode(const tic_variables *);
+
+/// Gets the stepper motor coil current limit in milliamps.
+///
+/// Note that this is the current limit being used at the moment.  To get the
+/// default current limit at startup, see tic_settings_get_current_limit().
+TIC_API
+uint32_t tic_variables_get_current_limit(const tic_variables *);
+
+/// Gets the current decay mode of the Tic.
+///
+/// Note that this is the current decay mode.  To get the default decay mode at
+/// startup, see tic_settings_get_decay_mode().
+///
+/// The return value is one of the TIC_DECAY_MODE_* macros.
+TIC_API
+uint8_t tic_variables_get_decay_mode(const tic_variables *);
+
+/// Gets the current state of the control input to Tic.
+///
+/// This will be one of the TIC_INPUT_STATE_* macros.
+TIC_API
+uint8_t tic_variables_get_input_state(const tic_variables *);
+
+/// Gets a variable used in the process that converts raw RC and analog values
+/// into a motor position or speed.
+///
+/// A value of TIC_INPUT_NULL means the input value is not available.
+TIC_API
+uint16_t tic_variables_get_input_after_averaging(const tic_variables *);
+
+/// Gets a variable used in the process that converts raw RC and analog values
+/// into a motor position or speed.
+///
+/// A value of TIC_INPUT_NULL means the input value is not available.
+TIC_API
+uint16_t tic_variables_get_input_after_hysteresis(const tic_variables *);
+
+/// Gets the number that is fed into the input scaling routine.  This is just
+/// the input_after_hysteresis variable divided by a power of two.  The power of
+/// two depends on the control mode and whether input averaging is enabled, so
+/// this function needs the Tic's settings as an argument.
+TIC_API
+uint16_t tic_variables_get_input_before_scaling(const tic_variables *,
+  const tic_settings *);
+
+/// Gets a variable used in the process that converts raw RC and analog values
+/// into a motor position or speed.
+///
+/// A value of TIC_INPUT_NULL means the input value is not available.
+TIC_API
+int32_t tic_variables_get_input_after_scaling(const tic_variables *);
+
+/// Gets the analog reading from the specified pin, if analog readings are
+/// enabled for that pin.
+///
+/// The pin argument should be one of the TIC_PIN_NUM_* macros.
+///
+/// The return value will be a left-justified analog reading; a value of 0
+/// represents 0 V and a value near 0xFFFE represents the voltage on the
+/// controller's 5V pin.  A value of TIC_INPUT_NULL means the reading is not
+/// available.
+TIC_API
+uint16_t tic_variables_get_analog_reading(const tic_variables *, uint8_t pin);
+
+/// Gets the digital reading for the specified pin.
+///
+/// The pin argument should be one of the TIC_PIN_NUM_* macros.
+TIC_API
+bool tic_variables_get_digital_reading(const tic_variables *, uint8_t pin);
+
+/// Gets the pin state for the specified pin.
+///
+/// This pin argument should be one of the TIC_PIN_NUM_* macros.
+///
+/// The return value is one of the TIC_PIN_STATE_* macros.
+TIC_API
+uint8_t tic_variables_get_pin_state(const tic_variables *, uint8_t pin);
+
+
 // tic_device ///////////////////////////////////////////////////////////////////
 
 /// Represents a Tic that is or was connected to the computer.
@@ -1311,6 +1321,9 @@ TIC_API TIC_WARN_UNUSED
 tic_error * tic_set_decay_mode(tic_handle *, uint8_t decay_mode);
 
 /// Reads all of the Tic's status variables and returns them as an object.
+///
+/// This function sends a Get Variables command or a Get Variables and Clear
+/// Errors Occurred command to the Tic.
 ///
 /// The variables parameter should be a non-null pointer to a tic_variables
 /// pointer, which will receive a pointer to a new variables object if and only

@@ -20,6 +20,7 @@
 #include <thread>
 
 void print_status(const tic::variables & vars,
+  const tic::settings & settings,
   const std::string & name,
   const std::string & serial_number,
   const std::string & firmware_version,
