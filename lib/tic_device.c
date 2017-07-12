@@ -217,7 +217,7 @@ void tic_device_free(tic_device * device)
 const char * tic_device_get_name(const tic_device * device)
 {
   if (device == NULL) { return ""; }
-  return "Tic USB Stepper Motor Controller T825";
+  return "Tic T825 Stepper Motor Controller";
 }
 
 const char * tic_device_get_short_name(const tic_device * device)
