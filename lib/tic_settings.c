@@ -669,6 +669,8 @@ static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings
         "so that feature will be disabled.\n");
     }
 
+    // TODO: also enforce that the RC pin cannot have a pull-up
+
     if (sda_func == TIC_PIN_FUNC_RC)
     {
       sda_func = TIC_PIN_FUNC_DEFAULT;
@@ -740,13 +742,13 @@ static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings
       if (sda_is_i2c)
       {
         tic_sprintf(warnings,
-          "Warning: The SCL pin must be used for I2C if the SDA pin is "
+          "Warning: The SCL pin must be used for I2C if the SDA pin is, "
           "so the SCL and SDA pin functions will be changed to the default.\n");
       }
       else
       {
         tic_sprintf(warnings,
-          "Warning: The SDA pin must be used for I2C if the SCL pin is "
+          "Warning: The SDA pin must be used for I2C if the SCL pin is, "
           "so the SCL and SDA pin functions will be changed to the default.\n");
       }
     }
