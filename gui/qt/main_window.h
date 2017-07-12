@@ -126,10 +126,10 @@ public:
   void set_up_time(std::string const & up_time);
 
   void set_encoder_position(int32_t encoder_position);
-  void set_rc_pulse_width(uint16_t rc_pulse_width);
   void set_input_state(std::string const & input_state);
   void set_input_after_averaging(uint16_t input_after_averaging);
   void set_input_after_hysteresis(uint16_t input_after_hysteresis);
+  void set_input_before_scaling(uint16_t input_before_scaling, uint8_t control_mode);
   void set_input_after_scaling(int32_t input_after_scaling);
 
   void set_vin_voltage(std::string const & vin_voltage);
@@ -215,7 +215,8 @@ private:
   void set_check_box(QCheckBox * check, bool value);
 
   QString input_format(uint16_t input);
-  QString convert_rc_pulse_width_to_us_string(uint16_t rc_pulse_width);
+  QString convert_input_to_us_string(uint16_t input);
+  QString convert_input_to_mv_string(uint16_t input);
 
   void update_set_target_button();
 
@@ -398,15 +399,15 @@ private:
   QGridLayout * input_status_box_layout;
   QLabel * encoder_position_label;
   QLabel * encoder_position_value;
-  QLabel * rc_pulse_width_label;
-  QLabel * rc_pulse_width_value;
-  QLabel * rc_pulse_width_pretty;
   QLabel * input_state_label;
   QLabel * input_state_value;
   QLabel * input_after_averaging_label;
   QLabel * input_after_averaging_value;
   QLabel * input_after_hysteresis_label;
   QLabel * input_after_hysteresis_value;
+  QLabel * input_before_scaling_label;
+  QLabel * input_before_scaling_value;
+  QLabel * input_before_scaling_pretty;
   QLabel * input_after_scaling_label;
   QLabel * input_after_scaling_value;
 

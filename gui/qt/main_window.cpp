@@ -202,18 +202,28 @@ void main_window::set_encoder_position(int32_t encoder_position)
   encoder_position_value->setText(QString::number(encoder_position));
 }
 
-void main_window::set_rc_pulse_width(uint16_t rc_pulse_width)
+void main_window::set_input_before_scaling(uint16_t input_before_scaling, uint8_t control_mode)
 {
-  rc_pulse_width_value->setText(input_format(rc_pulse_width));
-  if (rc_pulse_width != TIC_INPUT_NULL)
+  input_before_scaling_value->setText(input_format(input_before_scaling));
+
+  if (input_before_scaling != TIC_INPUT_NULL)
   {
-    rc_pulse_width_pretty->setText("(" +
-      convert_rc_pulse_width_to_us_string(rc_pulse_width) + ")");
+    if (control_mode == TIC_CONTROL_MODE_RC_POSITION ||
+      control_mode == TIC_CONTROL_MODE_RC_SPEED)
+    {
+      input_before_scaling_pretty->setText("(" +
+        convert_input_to_us_string(input_before_scaling) + ")");
+      return;
+    }
+    else if (control_mode == TIC_CONTROL_MODE_ANALOG_POSITION ||
+      control_mode == TIC_CONTROL_MODE_ANALOG_SPEED)
+    {
+      input_before_scaling_pretty->setText("(" +
+        convert_input_to_mv_string(input_before_scaling) + ")");
+      return;
+    }
   }
-  else
-  {
-    rc_pulse_width_pretty->setText("");
-  }
+  input_before_scaling_pretty->setText("");
 }
 
 void main_window::set_input_state(std::string const & input_state)
@@ -714,12 +724,21 @@ QString main_window::input_format(uint16_t input)
   return QString::number(input);
 }
 
-QString main_window::convert_rc_pulse_width_to_us_string(uint16_t rc_pulse_width)
+QString main_window::convert_input_to_us_string(uint16_t input)
 {
   std::ostringstream ss;
-  uint16_t tenth_us = (((uint32_t)rc_pulse_width * 10) + 6) / 12;
+  uint16_t tenth_us = (((uint32_t)input * 10) + 6) / 12;
 
   ss << (tenth_us / 10) << "." << (tenth_us % 10) << u8" \u03BCs";
+  return QString::fromStdString(ss.str());
+}
+
+QString main_window::convert_input_to_mv_string(uint16_t input)
+{
+  std::ostringstream ss;
+  uint16_t mv = ((uint32_t)input * 4800 + 2048) / 4096;
+
+  ss << mv << " mV";
   return QString::fromStdString(ss.str());
 }
 
@@ -1560,15 +1579,15 @@ QWidget * main_window::setup_input_status_box()
   int row = 0;
 
   setup_read_only_text_field(layout, row++, 0, 2, &encoder_position_label, &encoder_position_value);
-  {
-    setup_read_only_text_field(layout, row, &rc_pulse_width_label, &rc_pulse_width_value);
-    rc_pulse_width_pretty = new QLabel();
-    layout->addWidget(rc_pulse_width_pretty, row, 2, Qt::AlignLeft);
-    row++;
-  }
   setup_read_only_text_field(layout, row++, 0, 2, &input_state_label, &input_state_value);
   setup_read_only_text_field(layout, row++, 0, 2, &input_after_averaging_label, &input_after_averaging_value);
   setup_read_only_text_field(layout, row++, 0, 2, &input_after_hysteresis_label, &input_after_hysteresis_value);
+  {
+    setup_read_only_text_field(layout, row, &input_before_scaling_label, &input_before_scaling_value);
+    input_before_scaling_pretty = new QLabel();
+    layout->addWidget(input_before_scaling_pretty, row, 2, Qt::AlignLeft);
+    row++;
+  }
   setup_read_only_text_field(layout, row++, 0, 2, &input_after_scaling_label, &input_after_scaling_value);
 
   // Set fixed sizes for performance.
@@ -1581,11 +1600,11 @@ QWidget * main_window::setup_input_status_box()
     input_after_hysteresis_value->setFixedSize(input_after_scaling_value->sizeHint());
     input_after_scaling_value->setFixedSize(input_after_scaling_value->sizeHint());
 
-    rc_pulse_width_value->setText(QString::number(4500 * 12));
-    rc_pulse_width_value->setFixedSize(rc_pulse_width_value->sizeHint());
+    input_before_scaling_value->setText(QString::number(4500 * 12));
+    input_before_scaling_value->setFixedSize(input_before_scaling_value->sizeHint());
 
-    rc_pulse_width_pretty->setText("(" + convert_rc_pulse_width_to_us_string(4500 * 12) + ")");
-    rc_pulse_width_pretty->setFixedSize(rc_pulse_width_pretty->sizeHint());
+    input_before_scaling_pretty->setText("(" + convert_input_to_us_string(4500 * 12) + ")");
+    input_before_scaling_pretty->setFixedSize(input_before_scaling_pretty->sizeHint());
   }
 
   layout->setRowStretch(row, 1);
@@ -2484,7 +2503,7 @@ QLayout * main_window::setup_footer()
 
 void main_window::retranslate()
 {
-  setWindowTitle(tr("Pololu Tic Configuration Utility"));
+  setWindowTitle(tr("Pololu Tic Control Center"));
 
   file_menu->setTitle(tr("&File"));
   exit_action->setText(tr("E&xit"));
@@ -2510,10 +2529,10 @@ void main_window::retranslate()
 
   input_status_box->setTitle(tr("Inputs"));
   encoder_position_label->setText(tr("Encoder position:"));
-  rc_pulse_width_label->setText(tr("RC pulse width:"));
   input_state_label->setText(tr("Input state:"));
   input_after_averaging_label->setText(tr("Input after averaging:"));
   input_after_hysteresis_label->setText(tr("Input after hysteresis:"));
+  input_before_scaling_label->setText(tr("Input before scaling:"));
   input_after_scaling_label->setText(tr("Input after scaling:"));
 
 

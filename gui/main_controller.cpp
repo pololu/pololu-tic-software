@@ -495,11 +495,16 @@ void main_controller::handle_variables_changed()
   window->set_up_time(pretty_up_time(variables.get_up_time()));
 
   window->set_encoder_position(variables.get_encoder_position());
-  window->set_rc_pulse_width(variables.get_rc_pulse_width());
   window->set_input_state(
     tic_look_up_input_state_name_ui(variables.get_input_state()));
   window->set_input_after_averaging(variables.get_input_after_averaging());
   window->set_input_after_hysteresis(variables.get_input_after_hysteresis());
+  if (cached_settings)
+  {
+    window->set_input_before_scaling(
+      variables.get_input_before_scaling(cached_settings),
+      tic_settings_get_control_mode(settings.get_pointer()));
+  }
   window->set_input_after_scaling(variables.get_input_after_scaling());
 
   window->set_vin_voltage(convert_mv_to_v_string(variables.get_vin_voltage()));
