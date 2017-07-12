@@ -101,12 +101,12 @@ void print_status(const tic::variables & vars,
 
   std::cout << std::endl;
 
-  if (full_output)
-  {
-    std::cout << left_column << "Encoder position: "
+  std::cout << left_column << "Encoder position: "
       << vars.get_encoder_position()
       << std::endl;
 
+  if (full_output)
+  {
     std::cout << left_column << "RC pulse width: "
       << input_format(vars.get_rc_pulse_width())
       << std::endl;
@@ -116,16 +116,13 @@ void print_status(const tic::variables & vars,
     << tic_look_up_input_state_name_ui(vars.get_input_state())
     << std::endl;
 
-  if (full_output)
-  {
-    std::cout << left_column << "Input after averaging: "
-      << input_format(vars.get_input_after_averaging())
-      << std::endl;
+  std::cout << left_column << "Input after averaging: "
+    << input_format(vars.get_input_after_averaging())
+    << std::endl;
 
-    std::cout << left_column << "Input after hysteresis: "
-      << input_format(vars.get_input_after_hysteresis())
-      << std::endl;
-  }
+  std::cout << left_column << "Input after hysteresis: "
+    << input_format(vars.get_input_after_hysteresis())
+    << std::endl;
 
   if (settings)
   {
