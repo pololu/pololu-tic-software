@@ -1245,14 +1245,15 @@ tic_error * tic_enter_safe_start(tic_handle *);
 /// This is similar to the tic_reinitialize() command that is used to apply new
 /// settings.  Both commands cause the Tic to reload its settings, so it will go
 /// back to using its default step mode, current limit, decay mode, speed max,
-/// starting speed, accel max, and decel max settings.  Both commands clear the
-/// Serial Error flag.  Neither command modifies the Intentionally Disabled or
-/// Command Timeout flag.
+/// starting speed, accel max, and decel max settings.
 ///
 /// Unlike tic_reinitialize(), which applies new settings seamlessly if
 /// possible, the tic_reset() command always abruptly stops the motor, resets
-/// the motor driver, sets the Tic's Operation state to "Reset", clears the
-/// last movement command, and clears the encoder position.
+/// the motor driver, sets the Tic's Operation state to "Reset", clears the last
+/// movement command, clears the encoder position, clears the Serial Error bit,
+/// clears the Command Timeout error bit, and clears the Errors Occurred bits.
+///
+/// Neither command modifies the Intentionally Disabled error bit.
 ///
 /// The Tic's serial and I2C interfaces will be unreliable for a brief period
 /// after the Tic receives the Reset command, so we recommend waiting at least
