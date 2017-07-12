@@ -234,6 +234,7 @@ describe 'Set Current Limit command' do
   end
 
   it 'it works', usb: true do
+    # Note: This test can fail if the "current limit during error" setting is used.
     [32, 64]. each do |limit|
       stdout, stderr, result = run_ticcmd("--current #{limit}")
       expect(stderr).to eq ''

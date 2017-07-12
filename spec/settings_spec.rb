@@ -331,12 +331,12 @@ def test_cases_for_settings_fix(product)
     ],
     [ { 'scl_config' => 'user_io analog' },
       { 'scl_config' => 'default analog' },
-      "Warning: The SCL pin must be used for I2C if the SDA pin is " \
+      "Warning: The SCL pin must be used for I2C if the SDA pin is, " \
       "so the SCL and SDA pin functions will be changed to the default.\n"
     ],
     [ { 'sda_config' => 'user_io pullup' },
       { 'sda_config' => 'default pullup' },
-      "Warning: The SDA pin must be used for I2C if the SCL pin is " \
+      "Warning: The SDA pin must be used for I2C if the SCL pin is, " \
       "so the SCL and SDA pin functions will be changed to the default.\n"
     ],
     [ { 'control_mode' => 'analog_speed', 'scl_config' => 'user_io' },
