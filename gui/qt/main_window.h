@@ -214,9 +214,8 @@ private:
   void set_double_spin_box(QDoubleSpinBox * spin, double value);
   void set_check_box(QCheckBox * check, bool value);
 
-  QString input_format(uint16_t input);
   QString convert_input_to_us_string(uint16_t input);
-  QString convert_input_to_mv_string(uint16_t input);
+  QString convert_input_to_v_string(uint16_t input);
 
   void update_set_target_button();
 

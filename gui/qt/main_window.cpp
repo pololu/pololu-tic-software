@@ -27,6 +27,7 @@
 
 #include <cassert>
 #include <cmath>
+#include <iomanip>
 #include <sstream>
 
 #ifdef QT_STATIC
@@ -204,26 +205,33 @@ void main_window::set_encoder_position(int32_t encoder_position)
 
 void main_window::set_input_before_scaling(uint16_t input_before_scaling, uint8_t control_mode)
 {
-  input_before_scaling_value->setText(input_format(input_before_scaling));
+  bool input_not_null = (input_before_scaling != TIC_INPUT_NULL);
 
-  if (input_before_scaling != TIC_INPUT_NULL)
+  input_before_scaling_value->setText(input_not_null ?
+    QString::number(input_before_scaling) : tr("N/A"));
+
+  if (input_not_null && (
+    control_mode == TIC_CONTROL_MODE_RC_POSITION ||
+    control_mode == TIC_CONTROL_MODE_RC_SPEED))
   {
-    if (control_mode == TIC_CONTROL_MODE_RC_POSITION ||
-      control_mode == TIC_CONTROL_MODE_RC_SPEED)
-    {
-      input_before_scaling_pretty->setText("(" +
-        convert_input_to_us_string(input_before_scaling) + ")");
-      return;
-    }
-    else if (control_mode == TIC_CONTROL_MODE_ANALOG_POSITION ||
-      control_mode == TIC_CONTROL_MODE_ANALOG_SPEED)
-    {
-      input_before_scaling_pretty->setText("(" +
-        convert_input_to_mv_string(input_before_scaling) + ")");
-      return;
-    }
+    input_before_scaling_pretty->setText("(" +
+      convert_input_to_us_string(input_before_scaling) + ")");
   }
-  input_before_scaling_pretty->setText("");
+  else if (input_not_null && (
+    control_mode == TIC_CONTROL_MODE_ANALOG_POSITION ||
+    control_mode == TIC_CONTROL_MODE_ANALOG_SPEED))
+  {
+    input_before_scaling_pretty->setText("(" +
+      convert_input_to_v_string(input_before_scaling) + ")");
+  }
+  else
+  {
+    input_before_scaling_pretty->setText("");
+  }
+
+  input_before_scaling_label->setEnabled(input_not_null);
+  input_before_scaling_value->setEnabled(input_not_null);
+  input_before_scaling_pretty->setEnabled(input_not_null);
 }
 
 void main_window::set_input_state(std::string const & input_state)
@@ -233,12 +241,24 @@ void main_window::set_input_state(std::string const & input_state)
 
 void main_window::set_input_after_averaging(uint16_t input_after_averaging)
 {
-  input_after_averaging_value->setText(input_format(input_after_averaging));
+  bool input_not_null = (input_after_averaging != TIC_INPUT_NULL);
+
+  input_after_averaging_value->setText(input_not_null ?
+    QString::number(input_after_averaging) : tr("N/A"));
+
+  input_after_averaging_label->setEnabled(input_not_null);
+  input_after_averaging_value->setEnabled(input_not_null);
 }
 
 void main_window::set_input_after_hysteresis(uint16_t input_after_hysteresis)
 {
-  input_after_hysteresis_value->setText(input_format(input_after_hysteresis));
+  bool input_not_null = (input_after_hysteresis != TIC_INPUT_NULL);
+
+  input_after_hysteresis_value->setText(input_not_null ?
+    QString::number(input_after_hysteresis) : tr("N/A"));
+
+  input_after_hysteresis_label->setEnabled(input_not_null);
+  input_after_hysteresis_value->setEnabled(input_not_null);
 }
 
 void main_window::set_input_after_scaling(int32_t input_after_scaling)
@@ -714,16 +734,6 @@ void main_window::set_check_box(QCheckBox * check, bool value)
   suppress_events = false;
 }
 
-QString main_window::input_format(uint16_t input)
-{
-  if (input == TIC_INPUT_NULL)
-  {
-    return tr("N/A");
-  }
-
-  return QString::number(input);
-}
-
 QString main_window::convert_input_to_us_string(uint16_t input)
 {
   std::ostringstream ss;
@@ -733,12 +743,13 @@ QString main_window::convert_input_to_us_string(uint16_t input)
   return QString::fromStdString(ss.str());
 }
 
-QString main_window::convert_input_to_mv_string(uint16_t input)
+QString main_window::convert_input_to_v_string(uint16_t input)
 {
   std::ostringstream ss;
   uint16_t mv = ((uint32_t)input * 4800 + 2048) / 4096;
 
-  ss << mv << " mV";
+  ss << (mv / 1000) << "." <<
+    std::setfill('0') << std::setw(3) << (mv % 1000) << " V";
   return QString::fromStdString(ss.str());
 }
 
