@@ -1163,6 +1163,25 @@ void main_controller::energize()
   }
 }
 
+void main_controller::start_input_setup()
+{
+  if (!connected()) { return; }
+
+  if (settings_modified)
+  {
+    window->show_info_message("This wizard cannot be used right now because "
+      "the settings you changed have not been applied to the device.\n"
+      "\n"
+      "Please click \"Apply settings\" to apply your changes to the device or "
+      "select \"Reload settings from device\" in the Device menu to discard "
+      "your changes, then try again.");
+    return;
+  }
+  
+  deenergize();
+  window->show_input_wizard();
+}
+
 void main_controller::apply_settings()
 {
   if (!connected()) { return; }

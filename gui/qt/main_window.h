@@ -2,6 +2,8 @@
 
 #include "tic.hpp"
 
+#include "InputWizard.h"
+
 #include <QMainWindow>
 
 class BallScrollBar;
@@ -177,6 +179,8 @@ public:
   void set_output_min(int32_t output_min);
   void set_output_max(int32_t output_max);
   void set_input_scaling_degree(uint8_t input_scaling_degree);
+  
+  void show_input_wizard();
 
   void set_invert_motor_direction(bool invert_motor_direction);
   void set_speed_max(uint32_t speed_max);
@@ -274,6 +278,7 @@ private slots:
   void on_input_hysteresis_value_valueChanged(int value);
   void on_input_averaging_enabled_check_stateChanged(int state);
 
+  void on_input_learn_button_clicked();
   void on_input_invert_check_stateChanged(int state);
   void on_input_min_value_valueChanged(int value);
   void on_input_neutral_min_value_valueChanged(int value);
@@ -495,6 +500,7 @@ private:
 
   QGroupBox * scaling_settings_box;
   QGridLayout * scaling_settings_box_layout;
+  QPushButton * input_learn_button;
   QCheckBox * input_invert_check;
   QLabel * scaling_input_label;
   QLabel * scaling_target_label;
@@ -510,6 +516,8 @@ private:
   QSpinBox * output_max_value;
   QLabel * input_scaling_degree_label;
   QComboBox * input_scaling_degree_value;
+  
+  InputWizard * input_wizard; 
 
   QGroupBox * motor_settings_box;
   QGridLayout * motor_settings_box_layout;

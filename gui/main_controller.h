@@ -62,6 +62,7 @@ public:
   void halt_and_hold();
   void deenergize();
   void energize();
+  void start_input_setup();
 
   /** This is called when the user wants to apply the settings. */
   void apply_settings();

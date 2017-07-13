@@ -533,6 +533,11 @@ void main_window::set_input_scaling_degree(uint8_t input_scaling_degree)
   set_u8_combo_box(input_scaling_degree_value, input_scaling_degree);
 }
 
+void main_window::show_input_wizard()
+{
+  input_wizard->show();
+}
+
 void main_window::set_invert_motor_direction(bool invert_motor_direction)
 {
   set_check_box(invert_motor_direction_check, invert_motor_direction);
@@ -1044,6 +1049,11 @@ void main_window::on_input_hysteresis_value_valueChanged(int value)
   controller->handle_input_hysteresis_input(value);
 }
 
+void main_window::on_input_learn_button_clicked()
+{
+  controller->start_input_setup();
+}
+
 void main_window::on_input_invert_check_stateChanged(int state)
 {
   if (suppress_events) { return; }
@@ -1442,12 +1452,14 @@ void main_window::setup_window()
   // Make the window non-resizable.
   //setFixedSize(sizeHint());
 
+  input_wizard = new InputWizard(this);
+  
   program_icon = QIcon(":app_icon");
   setWindowIcon(program_icon);
 
   update_timer = new QTimer(this);
   update_timer->setObjectName("update_timer");
-
+  
   QMetaObject::connectSlotsByName(this);
 }
 
@@ -2073,7 +2085,10 @@ QWidget * main_window::setup_scaling_settings_box()
   {
     input_invert_check = new QCheckBox();
     input_invert_check->setObjectName("input_invert_check");
+    input_learn_button = new QPushButton();
+    input_learn_button->setObjectName("input_learn_button");
     layout->addWidget(input_invert_check, row, 0, 1, 2, Qt::AlignLeft);
+    layout->addWidget(input_learn_button, row, 2, Qt::AlignRight);
     row++;
   }
 
@@ -2609,6 +2624,7 @@ void main_window::retranslate()
   input_hysteresis_label->setText(tr("Input hysteresis:"));
 
   scaling_settings_box->setTitle(tr("Scaling"));
+  input_learn_button->setText(tr("&Learn..."));
   input_invert_check->setText(tr("Invert input direction"));
   scaling_input_label->setText(tr("Input"));
   scaling_target_label->setText(tr("Target"));
