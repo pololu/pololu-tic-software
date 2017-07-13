@@ -57,28 +57,28 @@ void main_window::start_update_timer(uint32_t interval_ms)
 void main_window::show_error_message(std::string const & message)
 {
   QMessageBox mbox(QMessageBox::Critical, windowTitle(),
-    QString(message.c_str()), QMessageBox::NoButton, this);
+    QString::fromStdString(message), QMessageBox::NoButton, this);
   mbox.exec();
 }
 
 void main_window::show_warning_message(std::string const & message)
 {
   QMessageBox mbox(QMessageBox::Warning, windowTitle(),
-    QString(message.c_str()), QMessageBox::NoButton, this);
+    QString::fromStdString(message), QMessageBox::NoButton, this);
   mbox.exec();
 }
 
 void main_window::show_info_message(std::string const & message)
 {
   QMessageBox mbox(QMessageBox::Information, windowTitle(),
-    QString(message.c_str()), QMessageBox::NoButton, this);
+    QString::fromStdString(message), QMessageBox::NoButton, this);
   mbox.exec();
 }
 
 bool main_window::confirm(std::string const & question)
 {
   QMessageBox mbox(QMessageBox::Question, windowTitle(),
-    QString(question.c_str()), QMessageBox::Ok | QMessageBox::Cancel, this);
+    QString::fromStdString(question), QMessageBox::Ok | QMessageBox::Cancel, this);
   int button = mbox.exec();
   return button == QMessageBox::Ok;
 }
@@ -91,8 +91,9 @@ void main_window::set_device_list_contents(std::vector<tic::device> const & devi
   for (tic::device const & device : device_list)
   {
     device_list_value->addItem(
-      QString((device.get_short_name() + " #" +device.get_serial_number()).c_str()),
-      QString(device.get_os_id().c_str()));
+      QString::fromStdString(device.get_short_name() + 
+        " #" + device.get_serial_number()),
+      QString::fromStdString(device.get_os_id()));
   }
   suppress_events = false;
 }
@@ -105,7 +106,7 @@ void main_window::set_device_list_selected(tic::device const & device)
   int index = 0;
   if (device)
   {
-    index = device_list_value->findData(QString(device.get_os_id().c_str()));
+    index = device_list_value->findData(QString::fromStdString(device.get_os_id()));
   }
   device_list_value->setCurrentIndex(index);
   suppress_events = false;
@@ -121,7 +122,7 @@ void main_window::set_connection_status(std::string const & status, bool error)
   {
     connection_status_value->setStyleSheet("");
   }
-  connection_status_value->setText(QString(status.c_str()));
+  connection_status_value->setText(QString::fromStdString(status));
 }
 
 void main_window::set_tab_pages_enabled(bool enabled)
@@ -170,7 +171,7 @@ void main_window::set_restore_defaults_enabled(bool enabled)
 
 void main_window::set_device_name(std::string const & name, bool link_enabled)
 {
-  QString text = QString(name.c_str());
+  QString text = QString::fromStdString(name);
   if (link_enabled)
   {
     text = "<a href=\"#doc\">" + text + "</a>";
@@ -180,22 +181,22 @@ void main_window::set_device_name(std::string const & name, bool link_enabled)
 
 void main_window::set_serial_number(std::string const & serial_number)
 {
-  serial_number_value->setText(QString(serial_number.c_str()));
+  serial_number_value->setText(QString::fromStdString(serial_number));
 }
 
 void main_window::set_firmware_version(std::string const & firmware_version)
 {
-  firmware_version_value->setText(QString(firmware_version.c_str()));
+  firmware_version_value->setText(QString::fromStdString(firmware_version));
 }
 
 void main_window::set_device_reset(std::string const & device_reset)
 {
-  device_reset_value->setText(tr(device_reset.c_str()));
+  device_reset_value->setText(QString::fromStdString(device_reset));
 }
 
 void main_window::set_up_time(std::string const & up_time)
 {
-  up_time_value->setText(QString(up_time.c_str()));
+  up_time_value->setText(QString::fromStdString(up_time));
 }
 
 void main_window::set_encoder_position(int32_t encoder_position)
@@ -236,7 +237,7 @@ void main_window::set_input_before_scaling(uint16_t input_before_scaling, uint8_
 
 void main_window::set_input_state(std::string const & input_state)
 {
-  input_state_value->setText(tr(input_state.c_str()));
+  input_state_value->setText(QString::fromStdString(input_state));
 }
 
 void main_window::set_input_after_averaging(uint16_t input_after_averaging)
@@ -268,12 +269,12 @@ void main_window::set_input_after_scaling(int32_t input_after_scaling)
 
 void main_window::set_vin_voltage(std::string const & vin_voltage)
 {
-  vin_voltage_value->setText(QString(vin_voltage.c_str()));
+  vin_voltage_value->setText(QString::fromStdString(vin_voltage));
 }
 
 void main_window::set_operation_state(std::string const & operation_state)
 {
-  operation_state_value->setText(tr(operation_state.c_str()));
+  operation_state_value->setText(QString::fromStdString(operation_state));
 }
 
 void main_window::set_energized(bool energized)
@@ -292,8 +293,8 @@ void main_window::set_target_velocity(int32_t target_velocity)
 {
   target_label->setText(tr("Target velocity:"));
   target_value->setText(QString::number(target_velocity));
-  target_velocity_pretty->setText(
-    "(" + QString(convert_speed_to_pps_string(target_velocity).c_str()) + ")");
+  target_velocity_pretty->setText("(" + 
+    QString::fromStdString(convert_speed_to_pps_string(target_velocity)) + ")");
 }
 
 void main_window::set_target_none()
@@ -316,8 +317,8 @@ void main_window::set_position_uncertain(bool position_uncertain)
 void main_window::set_current_velocity(int32_t current_velocity)
 {
   current_velocity_value->setText(QString::number(current_velocity));
-  current_velocity_pretty->setText(
-    "(" + QString(convert_speed_to_pps_string(current_velocity).c_str()) + ")");
+  current_velocity_pretty->setText("(" + 
+    QString::fromStdString(convert_speed_to_pps_string(current_velocity)) + ")");
 }
 
 void main_window::set_error_status(uint16_t error_status)
@@ -540,19 +541,22 @@ void main_window::set_invert_motor_direction(bool invert_motor_direction)
 void main_window::set_speed_max(uint32_t speed_max)
 {
   set_spin_box(speed_max_value, speed_max);
-  speed_max_value_pretty->setText(QString(convert_speed_to_pps_string(speed_max).c_str()));
+  speed_max_value_pretty->setText(
+    QString::fromStdString(convert_speed_to_pps_string(speed_max)));
 }
 
 void main_window::set_starting_speed(uint32_t starting_speed)
 {
   set_spin_box(starting_speed_value, starting_speed);
-  starting_speed_value_pretty->setText(QString(convert_speed_to_pps_string(starting_speed).c_str()));
+  starting_speed_value_pretty->setText(
+    QString::fromStdString(convert_speed_to_pps_string(starting_speed)));
 }
 
 void main_window::set_accel_max(uint32_t accel_max)
 {
   set_spin_box(accel_max_value, accel_max);
-  accel_max_value_pretty->setText(QString(convert_accel_to_pps2_string(accel_max).c_str()));
+  accel_max_value_pretty->setText(
+    QString::fromStdString(convert_accel_to_pps2_string(accel_max)));
 }
 
 void main_window::set_decel_max(uint32_t decel_max)
@@ -569,7 +573,8 @@ void main_window::set_decel_max(uint32_t decel_max)
     decel_max_value->setEnabled(true);
   }
   set_spin_box(decel_max_value, decel_max);
-  decel_max_value_pretty->setText(QString(convert_accel_to_pps2_string(decel_max).c_str()));
+  decel_max_value_pretty->setText(
+    QString::fromStdString(convert_accel_to_pps2_string(decel_max)));
 }
 
 void main_window::set_step_mode(uint8_t step_mode)
@@ -691,7 +696,7 @@ void main_window::set_motor_status_message(std::string const & message, bool sto
   {
     motor_status_value->setStyleSheet("");
   }
-  motor_status_value->setText(message.c_str());
+  motor_status_value->setText(QString::fromStdString(message));
 }
 
 void main_window::set_u8_combo_box(QComboBox * combo, uint8_t value)
@@ -1257,10 +1262,10 @@ void pin_config_row::on_analog_check_stateChanged(int state)
 // On Mac OS X, field labels are usually right-aligned.
 #ifdef __APPLE__
 #define FIELD_LABEL_ALIGNMENT Qt::AlignRight
-#define INDENT(s) (((s) + std::string("    ")).c_str())
+#define INDENT(s) ((s) + QString("    "))
 #else
 #define FIELD_LABEL_ALIGNMENT Qt::AlignLeft
-#define INDENT(s) ((std::string("    ") + (s)).c_str())
+#define INDENT(s) (QString("    ") + (s))
 #endif
 
 static void setup_read_only_text_field(QGridLayout * layout, int row, int from_col, int value_col_span,
@@ -1664,8 +1669,8 @@ QWidget * main_window::setup_operation_status_box()
     current_position_value->setFixedSize(target_value->sizeHint());
     current_velocity_value->setFixedSize(target_value->sizeHint());
 
-    target_velocity_pretty->setText("(" + QString(
-      convert_speed_to_pps_string(-TIC_MAX_ALLOWED_SPEED).c_str()) + ")");
+    target_velocity_pretty->setText("(" + QString::fromStdString(
+      convert_speed_to_pps_string(-TIC_MAX_ALLOWED_SPEED)) + ")");
 
     target_velocity_pretty->setFixedSize(target_velocity_pretty->sizeHint());
     current_velocity_pretty->setFixedSize(target_velocity_pretty->sizeHint());
@@ -1767,7 +1772,6 @@ QWidget * main_window::setup_manual_target_entry_widget()
     // Don't emit valueChanged while user is typing (e.g. if the user enters 500,
     // we don't want to set speeds of 5, 50, and 500).
     manual_target_entry_value->setKeyboardTracking(false);
-
 
     // Make the spin box wide enough to display the largest possible target value.
     {
@@ -2208,7 +2212,7 @@ QWidget * main_window::setup_motor_settings_box()
     // Make the right column wide enough to display the largest possible pretty
     // values.
     {
-      accel_max_value_pretty->setText(QString(convert_accel_to_pps2_string(TIC_MAX_ALLOWED_ACCEL).c_str()));
+      accel_max_value_pretty->setText(QString::fromStdString(convert_accel_to_pps2_string(TIC_MAX_ALLOWED_ACCEL)));
       layout->setColumnMinimumWidth(2, accel_max_value_pretty->sizeHint().width());
     }
 
@@ -2568,10 +2572,10 @@ void main_window::retranslate()
   error_rows[TIC_ERROR_SAFE_START_VIOLATION]     .name_label->setText(tr("Safe start violation"));
   error_rows[TIC_ERROR_ERR_LINE_HIGH]            .name_label->setText(tr("ERR line high"));
   error_rows[TIC_ERROR_SERIAL_ERROR]             .name_label->setText(tr("Serial errors:"));
-  error_rows[TIC_ERROR_SERIAL_FRAMING]           .name_label->setText(tr(INDENT("Frame")));
-  error_rows[TIC_ERROR_SERIAL_RX_OVERRUN]        .name_label->setText(tr(INDENT("RX overrun")));
-  error_rows[TIC_ERROR_SERIAL_FORMAT]            .name_label->setText(tr(INDENT("Format")));
-  error_rows[TIC_ERROR_SERIAL_CRC]               .name_label->setText(tr(INDENT("CRC")));
+  error_rows[TIC_ERROR_SERIAL_FRAMING]           .name_label->setText(INDENT(tr("Frame")));
+  error_rows[TIC_ERROR_SERIAL_RX_OVERRUN]        .name_label->setText(INDENT(tr("RX overrun")));
+  error_rows[TIC_ERROR_SERIAL_FORMAT]            .name_label->setText(INDENT(tr("Format")));
+  error_rows[TIC_ERROR_SERIAL_CRC]               .name_label->setText(INDENT(tr("CRC")));
   error_rows[TIC_ERROR_ENCODER_SKIP]             .name_label->setText(tr("Encoder skip"));
   errors_reset_counts_button->setText(tr("Reset counts"));
 

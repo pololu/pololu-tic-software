@@ -39,8 +39,8 @@ class pin_config_row : QObject
 public:
   explicit pin_config_row(QObject * parent = Q_NULLPTR) : QObject(parent)
     {}
-  explicit pin_config_row(uint8_t pin, QObject * parent = Q_NULLPTR) :
-    pin(pin), QObject(parent)
+  explicit pin_config_row(uint8_t pin, QObject * parent = Q_NULLPTR)
+    : pin(pin), QObject(parent)
     {}
 
   void setup(QGridLayout * layout, int row);
