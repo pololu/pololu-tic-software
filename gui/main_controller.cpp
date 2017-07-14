@@ -3,8 +3,6 @@
 
 #include <cassert>
 #include <cmath>
-#include <iomanip>
-#include <sstream>
 
 /** This is how often we fetch the variables from the device. */
 static uint32_t const UPDATE_INTERVAL_MS = 50;
@@ -447,60 +445,9 @@ void main_controller::initialize_manual_target()
   }
 }
 
-static std::string pretty_up_time(uint32_t up_time)
-{
-  std::ostringstream ss;
-  uint32_t seconds = up_time / 1000;
-  uint32_t minutes = seconds / 60;
-  uint16_t hours = minutes / 60;
-
-  ss << hours <<
-    ":" << std::setfill('0') << std::setw(2) << minutes % 60 <<
-    ":" << std::setfill('0') << std::setw(2) << seconds % 60;
-  return ss.str();
-}
-
-// TODO: move to separate file along with following 2 functions?
-static std::string convert_mv_to_v_string(uint32_t mv)
-{
-  std::ostringstream ss;
-  uint32_t dv = (mv + 50) / 100;
-
-  ss << (dv / 10) << "." << (dv % 10) << " V";
-  return ss.str();
-}
-
-// TODO: move to separate file (used in both window and controller)
-std::string convert_speed_to_pps_string(int32_t speed)
-{
-  static uint8_t const decimal_digits = std::log10(TIC_SPEED_UNITS_PER_HZ);
-
-  std::ostringstream ss;
-  std::string sign = (speed < 0) ? "-" : "";
-
-  ss << sign << std::abs(speed / TIC_SPEED_UNITS_PER_HZ) << "." <<
-    std::setfill('0') << std::setw(decimal_digits) <<
-    std::abs(speed % TIC_SPEED_UNITS_PER_HZ) << " pulses/s";
-  return ss.str();
-}
-
-// TODO: move to separate file (used in both window and controller)
-std::string convert_accel_to_pps2_string(int32_t accel)
-{
-  static uint8_t const decimal_digits = std::log10(TIC_ACCEL_UNITS_PER_HZ2);
-
-  std::ostringstream ss;
-  std::string sign = (accel < 0) ? "-" : "";
-
-  ss << sign << std::abs(accel / TIC_ACCEL_UNITS_PER_HZ2) << "." <<
-    std::setfill('0') << std::setw(decimal_digits) <<
-    std::abs(accel % TIC_ACCEL_UNITS_PER_HZ2) << u8" pulses/s\u00B2";
-  return ss.str();
-}
-
 void main_controller::handle_variables_changed()
 {
-  window->set_up_time(pretty_up_time(variables.get_up_time()));
+  window->set_up_time(variables.get_up_time());
 
   window->set_encoder_position(variables.get_encoder_position());
   window->set_input_state(
@@ -515,7 +462,7 @@ void main_controller::handle_variables_changed()
   }
   window->set_input_after_scaling(variables.get_input_after_scaling());
 
-  window->set_vin_voltage(convert_mv_to_v_string(variables.get_vin_voltage()));
+  window->set_vin_voltage(variables.get_vin_voltage());
   window->set_energized(variables.get_energized());
   window->set_operation_state(
     tic_look_up_operation_state_name_ui(variables.get_operation_state()));

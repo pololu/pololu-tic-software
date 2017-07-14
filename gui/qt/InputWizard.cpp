@@ -1,7 +1,8 @@
 #include "InputWizard.h"
-
+#include "main_window.h"
+#include "main_controller.h"
 #include "tic.hpp"
-#include "main_window.h" // fixme remove
+#include "to_string.h"
 
 #include <QChar>
 #include <QIcon>
@@ -18,82 +19,11 @@
 #define FINISH_BUTTON_TEXT tr("Finish")
 #endif
 
-LearnPage::LearnPage(QWidget * parent)
-  : QWizardPage(parent)
+InputWizard::InputWizard(main_window * window)
+  : QWizard(window)
 {
-  QVBoxLayout * layout = new QVBoxLayout();
+  this->window = window;
 
-  instruction_label = new QLabel();
-  instruction_label->setWordWrap(true);
-  instruction_label->setAlignment(Qt::AlignTop);
-  instruction_label->setMinimumHeight(fontMetrics().lineSpacing() * 2);
-  layout->addWidget(instruction_label);
-  layout->addSpacing(fontMetrics().height());
-
-  layout->addLayout(setup_input_status_layout());
-  layout->addSpacing(fontMetrics().height());
-
-  QLabel * next_label = new QLabel(
-    tr("When you click ") + NEXT_BUTTON_TEXT +
-    tr(", this wizard will sample the input values for one second.  "
-    "Please do not change the input while it is being sampled."));
-  next_label->setWordWrap(true);
-  layout->addWidget(next_label);
-  layout->addSpacing(fontMetrics().height());
-
-  sampling_label = new QLabel(tr("Sampling..."));
-  layout->addWidget(sampling_label);
-
-  sampling_progress = new QProgressBar();
-  layout->addWidget(sampling_progress);
-
-  setLayout(layout);
-}
-
-void LearnPage::set_text_from_step()
-{
-  switch (step)
-  {
-  case NEUTRAL:
-    setTitle(tr("Step 1 of 3: Neutral"));
-    instruction_label->setText(
-      tr("Verify that you have connected your input to the ") + input_pin_name +
-      tr(" pin.  Next, move the input to its neutral position."));
-    break;
-
-  case MAX:
-    setTitle(tr("Step 2 of 3: Maximum"));
-    instruction_label->setText(
-      tr("Move the input to its maximum (full forward) position."));
-    break;
-
-  case MIN:
-    setTitle(tr("Step 3 of 3: Minimum"));
-    instruction_label->setText(
-      tr("Move the input to its minimum (full reverse) position."));
-    break;
-  }
-}
-
-QLayout * LearnPage::setup_input_status_layout()
-{
-  QHBoxLayout * layout = new QHBoxLayout();
-
-  input_status_label = new QLabel();
-  layout->addWidget(input_status_label);
-
-  input_status_value = new QLabel();
-  layout->addWidget(input_status_value);
-
-  input_status_pretty = new QLabel();
-  layout->addWidget(input_status_pretty);
-
-  return layout;
-}
-
-InputWizard::InputWizard(QWidget * parent)
-  : QWizard(parent)
-{
   setPage(INTRO, setup_intro_page());
   setPage(LEARN, setup_learn_page());
   setPage(CONCLUSION, setup_conclusion_page());
@@ -108,10 +38,56 @@ InputWizard::InputWizard(QWidget * parent)
   connect(this, SIGNAL(currentIdChanged(int)), this, SLOT(on_currentIdChanged(int)));
 }
 
+void InputWizard::set_controller(main_controller * controller)
+{
+  this->controller = controller;
+}
+
 void InputWizard::set_control_mode(uint8_t control_mode)
 {
   this->control_mode = control_mode;
   set_text_from_control_mode();
+}
+
+void InputWizard::set_input(uint16_t input)
+{
+  bool input_not_null = (input != TIC_INPUT_NULL);
+
+  if (input_not_null)
+  {
+    learn_page->input_value->setText(QString::number(input));
+
+    switch (control_mode)
+    {
+    case TIC_CONTROL_MODE_RC_POSITION:
+    case TIC_CONTROL_MODE_RC_SPEED:
+      learn_page->input_pretty->setText("(" + QString::fromStdString(
+        convert_input_to_us_string(input)) + ")");
+      break;
+
+    case TIC_CONTROL_MODE_ANALOG_POSITION:
+    case TIC_CONTROL_MODE_ANALOG_SPEED:
+      learn_page->input_pretty->setText("(" + QString::fromStdString(
+        convert_input_to_v_string(input)) + ")");
+      break;
+
+    default:
+      learn_page->input_pretty->setText("");
+    }
+  }
+  else
+  {
+    learn_page->input_value->setText(tr("N/A"));
+    learn_page->input_pretty->setText("");
+  }
+}
+
+void InputWizard::showEvent(QShowEvent *)
+{
+}
+
+void InputWizard::hideEvent(QHideEvent *)
+{
 }
 
 void InputWizard::on_currentIdChanged(int id)
@@ -120,8 +96,8 @@ void InputWizard::on_currentIdChanged(int id)
 
   if ((id == INTRO) && (learn_page->step > NEUTRAL))
   {
-    // User clicked Back from learn page, but was on a step > 1. Return to the
-    // learn page and decrement the step.
+    // User clicked Back from learn page, but was on a step after the first.
+    // Return to the learn page and decrement the step.
     suppress_events = true;
     next();
     suppress_events = false;
@@ -130,8 +106,8 @@ void InputWizard::on_currentIdChanged(int id)
   }
   else if ((id == CONCLUSION) && (learn_page->step < MIN))
   {
-    // User clicked Next from learn page, but was on a step < 3. Return to the
-    // learn page and increment the step.
+    // User clicked Next from learn page, but was on a step before the last.
+    // Return to the learn page and increment the step.
     suppress_events = true;
     back();
     suppress_events = false;
@@ -187,7 +163,7 @@ void InputWizard::set_text_from_control_mode()
     tr("This wizard will help you quickly set the scaling parameters for the Tic's ") +
     control_mode_name() + tr(" input."));
 
-  learn_page->input_status_label->setText(capitalize(control_mode_name()) + tr(" input:"));
+  learn_page->input_label->setText(capitalize(control_mode_name()) + tr(" input:"));
 
   learn_page->input_pin_name = input_pin_name();
   learn_page->set_text_from_step();
@@ -237,6 +213,96 @@ QWizardPage * InputWizard::setup_conclusion_page()
   completed_label->setWordWrap(true);
   layout->addWidget(completed_label);
 
+  layout->addStretch(1);
+
   page->setLayout(layout);
   return page;
+}
+
+
+LearnPage::LearnPage(QWidget * parent)
+  : QWizardPage(parent)
+{
+  QVBoxLayout * layout = new QVBoxLayout();
+
+  instruction_label = new QLabel();
+  instruction_label->setWordWrap(true);
+  instruction_label->setAlignment(Qt::AlignTop);
+  instruction_label->setMinimumHeight(fontMetrics().lineSpacing() * 2);
+  layout->addWidget(instruction_label);
+  layout->addSpacing(fontMetrics().height());
+
+  layout->addLayout(setup_input_layout());
+  layout->addSpacing(fontMetrics().height());
+
+  QLabel * next_label = new QLabel(
+    tr("When you click ") + NEXT_BUTTON_TEXT +
+    tr(", this wizard will sample the input values for one second.  "
+    "Please do not change the input while it is being sampled."));
+  next_label->setWordWrap(true);
+  layout->addWidget(next_label);
+  layout->addSpacing(fontMetrics().height());
+
+  sampling_label = new QLabel(tr("Sampling..."));
+  layout->addWidget(sampling_label);
+
+  sampling_progress = new QProgressBar();
+  layout->addWidget(sampling_progress);
+
+  layout->addStretch(1);
+
+  setLayout(layout);
+}
+
+QLayout * LearnPage::setup_input_layout()
+{
+  QHBoxLayout * layout = new QHBoxLayout();
+
+  input_label = new QLabel();
+  layout->addWidget(input_label);
+
+  input_value = new QLabel();
+  layout->addWidget(input_value);
+
+  input_pretty = new QLabel();
+  layout->addWidget(input_pretty);
+
+  layout->addStretch(1);
+
+  // Set fixed sizes for performance.
+  {
+    input_value->setText(QString::number(4500 * 12));
+    input_value->setFixedSize(input_value->sizeHint());
+
+    input_pretty->setText("(" + QString::fromStdString(
+      convert_input_to_us_string(4500 * 12)) + ")");
+    input_pretty->setFixedSize(input_pretty->sizeHint());
+  }
+
+  return layout;
+}
+
+void LearnPage::set_text_from_step()
+{
+  switch (step)
+  {
+  case NEUTRAL:
+    setTitle(tr("Step 1 of 3: Neutral"));
+    instruction_label->setText(
+      tr("Verify that you have connected your input to the ") + input_pin_name +
+      tr(" pin.  Next, move the input to its neutral position."));
+    break;
+
+  case MAX:
+    setTitle(tr("Step 2 of 3: Maximum"));
+    instruction_label->setText(
+      tr("Move the input to its maximum (full forward) position."));
+    break;
+
+  case MIN:
+    setTitle(tr("Step 3 of 3: Minimum"));
+    instruction_label->setText(
+      tr("Move the input to its minimum (full reverse) position."));
+    break;
+  }
 }

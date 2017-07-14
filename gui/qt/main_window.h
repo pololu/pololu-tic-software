@@ -125,7 +125,7 @@ public:
   void set_serial_number(std::string const & serial_number);
   void set_firmware_version(std::string const & firmware_version);
   void set_device_reset(std::string const & device_reset);
-  void set_up_time(std::string const & up_time);
+  void set_up_time(uint32_t up_time);
 
   void set_encoder_position(int32_t encoder_position);
   void set_input_state(std::string const & input_state);
@@ -134,7 +134,7 @@ public:
   void set_input_before_scaling(uint16_t input_before_scaling, uint8_t control_mode);
   void set_input_after_scaling(int32_t input_after_scaling);
 
-  void set_vin_voltage(std::string const & vin_voltage);
+  void set_vin_voltage(uint32_t vin_voltage);
   void set_operation_state(std::string const & operation_state);
   void set_energized(bool energized);
   void set_target_position(int32_t target_position);
@@ -217,9 +217,6 @@ private:
   void set_spin_box(QSpinBox * box, int value);
   void set_double_spin_box(QDoubleSpinBox * spin, double value);
   void set_check_box(QCheckBox * check, bool value);
-
-  QString convert_input_to_us_string(uint16_t input);
-  QString convert_input_to_v_string(uint16_t input);
 
   void update_set_target_button();
 

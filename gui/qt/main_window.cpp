@@ -1,6 +1,7 @@
 #include "main_window.h"
 #include "main_controller.h"
 #include "config.h"
+#include "to_string.h"
 
 #include "BallScrollBar.h"
 
@@ -27,8 +28,6 @@
 
 #include <cassert>
 #include <cmath>
-#include <iomanip>
-#include <sstream>
 
 #ifdef QT_STATIC
 #include <QtPlugin>
@@ -194,9 +193,10 @@ void main_window::set_device_reset(std::string const & device_reset)
   device_reset_value->setText(QString::fromStdString(device_reset));
 }
 
-void main_window::set_up_time(std::string const & up_time)
+void main_window::set_up_time(uint32_t up_time)
 {
-  up_time_value->setText(QString::fromStdString(up_time));
+  up_time_value->setText(QString::fromStdString(
+    convert_up_time_to_hms_string(up_time)));
 }
 
 void main_window::set_encoder_position(int32_t encoder_position)
@@ -216,14 +216,14 @@ void main_window::set_input_before_scaling(uint16_t input_before_scaling, uint8_
     {
     case TIC_CONTROL_MODE_RC_POSITION:
     case TIC_CONTROL_MODE_RC_SPEED:
-      input_before_scaling_pretty->setText("(" +
-        convert_input_to_us_string(input_before_scaling) + ")");
+      input_before_scaling_pretty->setText("(" + QString::fromStdString(
+        convert_input_to_us_string(input_before_scaling)) + ")");
       break;
 
     case TIC_CONTROL_MODE_ANALOG_POSITION:
     case TIC_CONTROL_MODE_ANALOG_SPEED:
-      input_before_scaling_pretty->setText("(" +
-        convert_input_to_v_string(input_before_scaling) + ")");
+      input_before_scaling_pretty->setText("(" + QString::fromStdString(
+        convert_input_to_v_string(input_before_scaling)) + ")");
       break;
 
     default:
@@ -239,6 +239,8 @@ void main_window::set_input_before_scaling(uint16_t input_before_scaling, uint8_
   input_before_scaling_label->setEnabled(input_not_null);
   input_before_scaling_value->setEnabled(input_not_null);
   input_before_scaling_pretty->setEnabled(input_not_null);
+
+  if (input_wizard->isVisible()) { input_wizard->set_input(input_before_scaling); }
 }
 
 void main_window::set_input_state(std::string const & input_state)
@@ -273,9 +275,10 @@ void main_window::set_input_after_scaling(int32_t input_after_scaling)
   input_after_scaling_value->setText(QString::number(input_after_scaling));
 }
 
-void main_window::set_vin_voltage(std::string const & vin_voltage)
+void main_window::set_vin_voltage(uint32_t vin_voltage)
 {
-  vin_voltage_value->setText(QString::fromStdString(vin_voltage));
+  vin_voltage_value->setText(QString::fromStdString(
+    convert_mv_to_v_string(vin_voltage)));
 }
 
 void main_window::set_operation_state(std::string const & operation_state)
@@ -299,8 +302,8 @@ void main_window::set_target_velocity(int32_t target_velocity)
 {
   target_label->setText(tr("Target velocity:"));
   target_value->setText(QString::number(target_velocity));
-  target_velocity_pretty->setText("(" +
-    QString::fromStdString(convert_speed_to_pps_string(target_velocity)) + ")");
+  target_velocity_pretty->setText("(" + QString::fromStdString(
+    convert_speed_to_pps_string(target_velocity)) + ")");
 }
 
 void main_window::set_target_none()
@@ -323,8 +326,8 @@ void main_window::set_position_uncertain(bool position_uncertain)
 void main_window::set_current_velocity(int32_t current_velocity)
 {
   current_velocity_value->setText(QString::number(current_velocity));
-  current_velocity_pretty->setText("(" +
-    QString::fromStdString(convert_speed_to_pps_string(current_velocity)) + ")");
+  current_velocity_pretty->setText("(" + QString::fromStdString(
+    convert_speed_to_pps_string(current_velocity)) + ")");
 }
 
 void main_window::set_error_status(uint16_t error_status)
@@ -553,22 +556,22 @@ void main_window::set_invert_motor_direction(bool invert_motor_direction)
 void main_window::set_speed_max(uint32_t speed_max)
 {
   set_spin_box(speed_max_value, speed_max);
-  speed_max_value_pretty->setText(
-    QString::fromStdString(convert_speed_to_pps_string(speed_max)));
+  speed_max_value_pretty->setText(QString::fromStdString(
+    convert_speed_to_pps_string(speed_max)));
 }
 
 void main_window::set_starting_speed(uint32_t starting_speed)
 {
   set_spin_box(starting_speed_value, starting_speed);
-  starting_speed_value_pretty->setText(
-    QString::fromStdString(convert_speed_to_pps_string(starting_speed)));
+  starting_speed_value_pretty->setText(QString::fromStdString(
+    convert_speed_to_pps_string(starting_speed)));
 }
 
 void main_window::set_accel_max(uint32_t accel_max)
 {
   set_spin_box(accel_max_value, accel_max);
-  accel_max_value_pretty->setText(
-    QString::fromStdString(convert_accel_to_pps2_string(accel_max)));
+  accel_max_value_pretty->setText(QString::fromStdString(
+    convert_accel_to_pps2_string(accel_max)));
 }
 
 void main_window::set_decel_max(uint32_t decel_max)
@@ -585,8 +588,8 @@ void main_window::set_decel_max(uint32_t decel_max)
     decel_max_value->setEnabled(true);
   }
   set_spin_box(decel_max_value, decel_max);
-  decel_max_value_pretty->setText(
-    QString::fromStdString(convert_accel_to_pps2_string(decel_max)));
+  decel_max_value_pretty->setText(QString::fromStdString(
+    convert_accel_to_pps2_string(decel_max)));
 }
 
 void main_window::set_step_mode(uint8_t step_mode)
@@ -749,25 +752,6 @@ void main_window::set_check_box(QCheckBox * check, bool value)
   suppress_events = true;
   check->setChecked(value);
   suppress_events = false;
-}
-
-QString main_window::convert_input_to_us_string(uint16_t input)
-{
-  std::ostringstream ss;
-  uint16_t tenth_us = (((uint32_t)input * 10) + 6) / 12;
-
-  ss << (tenth_us / 10) << "." << (tenth_us % 10) << u8" \u03BCs";
-  return QString::fromStdString(ss.str());
-}
-
-QString main_window::convert_input_to_v_string(uint16_t input)
-{
-  std::ostringstream ss;
-  uint16_t mv = ((uint32_t)input * 4800 + 2048) / 4096;
-
-  ss << (mv / 1000) << "." <<
-    std::setfill('0') << std::setw(3) << (mv % 1000) << " V";
-  return QString::fromStdString(ss.str());
 }
 
 void main_window::update_set_target_button()
@@ -1638,7 +1622,8 @@ QWidget * main_window::setup_input_status_box()
     input_before_scaling_value->setText(QString::number(4500 * 12));
     input_before_scaling_value->setFixedSize(input_before_scaling_value->sizeHint());
 
-    input_before_scaling_pretty->setText("(" + convert_input_to_us_string(4500 * 12) + ")");
+    input_before_scaling_pretty->setText("(" + QString::fromStdString(
+      convert_input_to_us_string(4500 * 12)) + ")");
     input_before_scaling_pretty->setFixedSize(input_before_scaling_pretty->sizeHint());
   }
 
@@ -2234,7 +2219,8 @@ QWidget * main_window::setup_motor_settings_box()
     // Make the right column wide enough to display the largest possible pretty
     // values.
     {
-      accel_max_value_pretty->setText(QString::fromStdString(convert_accel_to_pps2_string(TIC_MAX_ALLOWED_ACCEL)));
+      accel_max_value_pretty->setText(QString::fromStdString(
+        convert_accel_to_pps2_string(TIC_MAX_ALLOWED_ACCEL)));
       layout->setColumnMinimumWidth(2, accel_max_value_pretty->sizeHint().width());
     }
 
