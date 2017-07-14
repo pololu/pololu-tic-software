@@ -23,7 +23,7 @@ public:
 
   /** This is called when the user issues a command to reload settings from
    * the device. */
-  void reload_settings();
+  void reload_settings(bool ask = true);
 
   /** This is called when the user wants to restore the device to its default
    * settings. */

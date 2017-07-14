@@ -179,8 +179,8 @@ public:
   void set_output_min(int32_t output_min);
   void set_output_max(int32_t output_max);
   void set_input_scaling_degree(uint8_t input_scaling_degree);
-  
-  void show_input_wizard();
+
+  void run_input_wizard(uint8_t control_mode);
 
   void set_invert_motor_direction(bool invert_motor_direction);
   void set_speed_max(uint32_t speed_max);
@@ -516,8 +516,8 @@ private:
   QSpinBox * output_max_value;
   QLabel * input_scaling_degree_label;
   QComboBox * input_scaling_degree_value;
-  
-  InputWizard * input_wizard; 
+
+  InputWizard * input_wizard;
 
   QGroupBox * motor_settings_box;
   QGridLayout * motor_settings_box_layout;

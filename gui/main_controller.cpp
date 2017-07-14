@@ -150,9 +150,17 @@ void main_controller::set_connection_error(std::string const & error_message)
   connection_error_message = error_message;
 }
 
-void main_controller::reload_settings()
+void main_controller::reload_settings(bool ask)
 {
   if (!connected()) { return; }
+
+  std::string question = "Are you sure you want to reload settings from the "
+    "device and discard your recent changes?";
+  if (ask && !window->confirm(question))
+  {
+    return;
+  }
+
   try
   {
     settings = device_handle.get_settings();
@@ -192,7 +200,7 @@ void main_controller::restore_default_settings()
   }
 
   // This takes care of reloading the settings and telling the view to update.
-  reload_settings();
+  reload_settings(false);
 
   if (restore_success)
   {
@@ -1177,9 +1185,27 @@ void main_controller::start_input_setup()
       "your changes, then try again.");
     return;
   }
-  
+
+  uint8_t control_mode = tic_settings_get_control_mode(cached_settings.get_pointer());
+  switch (control_mode)
+  {
+  case TIC_CONTROL_MODE_RC_POSITION:
+  case TIC_CONTROL_MODE_RC_SPEED:
+  case TIC_CONTROL_MODE_ANALOG_POSITION:
+  case TIC_CONTROL_MODE_ANALOG_SPEED:
+    // The Tic is using a valid control mode; do nothing and continue.
+    break;
+
+  default:
+    window->show_info_message("This wizard helps you set the scaling "
+      "parameters for the Tic's RC or analog input.\n"
+      "\n"
+      "Please change the control mode to RC or analog, then try again.");
+    return;
+  }
+
   deenergize();
-  window->show_input_wizard();
+  window->run_input_wizard(control_mode);
 }
 
 void main_controller::apply_settings()

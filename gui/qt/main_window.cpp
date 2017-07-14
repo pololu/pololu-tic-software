@@ -91,7 +91,7 @@ void main_window::set_device_list_contents(std::vector<tic::device> const & devi
   for (tic::device const & device : device_list)
   {
     device_list_value->addItem(
-      QString::fromStdString(device.get_short_name() + 
+      QString::fromStdString(device.get_short_name() +
         " #" + device.get_serial_number()),
       QString::fromStdString(device.get_os_id()));
   }
@@ -208,25 +208,31 @@ void main_window::set_input_before_scaling(uint16_t input_before_scaling, uint8_
 {
   bool input_not_null = (input_before_scaling != TIC_INPUT_NULL);
 
-  input_before_scaling_value->setText(input_not_null ?
-    QString::number(input_before_scaling) : tr("N/A"));
+  if (input_not_null)
+  {
+    input_before_scaling_value->setText(QString::number(input_before_scaling));
 
-  if (input_not_null && (
-    control_mode == TIC_CONTROL_MODE_RC_POSITION ||
-    control_mode == TIC_CONTROL_MODE_RC_SPEED))
-  {
-    input_before_scaling_pretty->setText("(" +
-      convert_input_to_us_string(input_before_scaling) + ")");
-  }
-  else if (input_not_null && (
-    control_mode == TIC_CONTROL_MODE_ANALOG_POSITION ||
-    control_mode == TIC_CONTROL_MODE_ANALOG_SPEED))
-  {
-    input_before_scaling_pretty->setText("(" +
-      convert_input_to_v_string(input_before_scaling) + ")");
+    switch (control_mode)
+    {
+    case TIC_CONTROL_MODE_RC_POSITION:
+    case TIC_CONTROL_MODE_RC_SPEED:
+      input_before_scaling_pretty->setText("(" +
+        convert_input_to_us_string(input_before_scaling) + ")");
+      break;
+
+    case TIC_CONTROL_MODE_ANALOG_POSITION:
+    case TIC_CONTROL_MODE_ANALOG_SPEED:
+      input_before_scaling_pretty->setText("(" +
+        convert_input_to_v_string(input_before_scaling) + ")");
+      break;
+
+    default:
+      input_before_scaling_pretty->setText("");
+    }
   }
   else
   {
+    input_before_scaling_value->setText(tr("N/A"));
     input_before_scaling_pretty->setText("");
   }
 
@@ -293,7 +299,7 @@ void main_window::set_target_velocity(int32_t target_velocity)
 {
   target_label->setText(tr("Target velocity:"));
   target_value->setText(QString::number(target_velocity));
-  target_velocity_pretty->setText("(" + 
+  target_velocity_pretty->setText("(" +
     QString::fromStdString(convert_speed_to_pps_string(target_velocity)) + ")");
 }
 
@@ -317,7 +323,7 @@ void main_window::set_position_uncertain(bool position_uncertain)
 void main_window::set_current_velocity(int32_t current_velocity)
 {
   current_velocity_value->setText(QString::number(current_velocity));
-  current_velocity_pretty->setText("(" + 
+  current_velocity_pretty->setText("(" +
     QString::fromStdString(convert_speed_to_pps_string(current_velocity)) + ")");
 }
 
@@ -533,9 +539,10 @@ void main_window::set_input_scaling_degree(uint8_t input_scaling_degree)
   set_u8_combo_box(input_scaling_degree_value, input_scaling_degree);
 }
 
-void main_window::show_input_wizard()
+void main_window::run_input_wizard(uint8_t control_mode)
 {
-  input_wizard->show();
+  input_wizard->set_control_mode(control_mode);
+  input_wizard->exec();
 }
 
 void main_window::set_invert_motor_direction(bool invert_motor_direction)
@@ -1453,13 +1460,13 @@ void main_window::setup_window()
   //setFixedSize(sizeHint());
 
   input_wizard = new InputWizard(this);
-  
+
   program_icon = QIcon(":app_icon");
   setWindowIcon(program_icon);
 
   update_timer = new QTimer(this);
   update_timer->setObjectName("update_timer");
-  
+
   QMetaObject::connectSlotsByName(this);
 }
 
@@ -1850,7 +1857,7 @@ QWidget * main_window::setup_errors_box()
   layout->addLayout(setup_error_table_layout());
 
   {
-    errors_reset_counts_button = new QPushButton;
+    errors_reset_counts_button = new QPushButton();
     errors_reset_counts_button->setObjectName("errors_reset_counts_button");
     layout->addWidget(errors_reset_counts_button, 0, Qt::AlignRight);
   }
@@ -1870,8 +1877,8 @@ QLayout * main_window::setup_error_table_layout()
   int row = 0;
 
    {
-     errors_stopping_header_label = new QLabel;
-     errors_count_header_label = new QLabel;
+     errors_stopping_header_label = new QLabel();
+     errors_count_header_label = new QLabel();
      layout->addWidget(errors_stopping_header_label, row, 1, Qt::AlignCenter);
      layout->addWidget(errors_count_header_label, row, 2, Qt::AlignLeft);
      row++;
