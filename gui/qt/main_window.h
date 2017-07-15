@@ -2,6 +2,8 @@
 
 #include "tic.hpp"
 
+#include "InputWizard.h"
+
 #include <QMainWindow>
 
 class BallScrollBar;
@@ -39,8 +41,8 @@ class pin_config_row : QObject
 public:
   explicit pin_config_row(QObject * parent = Q_NULLPTR) : QObject(parent)
     {}
-  explicit pin_config_row(uint8_t pin, QObject * parent = Q_NULLPTR) :
-    pin(pin), QObject(parent)
+  explicit pin_config_row(uint8_t pin, QObject * parent = Q_NULLPTR)
+    : pin(pin), QObject(parent)
     {}
 
   void setup(QGridLayout * layout, int row);
@@ -84,6 +86,7 @@ public:
    * interval_ms is the amount of time between updates, in milliseconds.
    */
   void start_update_timer(uint32_t interval_ms);
+  void set_update_timer_interval(uint32_t interval_ms);
 
   void show_error_message(std::string const & message);
   void show_warning_message(std::string const & message);
@@ -123,16 +126,16 @@ public:
   void set_serial_number(std::string const & serial_number);
   void set_firmware_version(std::string const & firmware_version);
   void set_device_reset(std::string const & device_reset);
-  void set_up_time(std::string const & up_time);
+  void set_up_time(uint32_t up_time);
 
   void set_encoder_position(int32_t encoder_position);
-  void set_rc_pulse_width(uint16_t rc_pulse_width);
   void set_input_state(std::string const & input_state);
   void set_input_after_averaging(uint16_t input_after_averaging);
   void set_input_after_hysteresis(uint16_t input_after_hysteresis);
+  void set_input_before_scaling(uint16_t input_before_scaling, uint8_t control_mode);
   void set_input_after_scaling(int32_t input_after_scaling);
 
-  void set_vin_voltage(std::string const & vin_voltage);
+  void set_vin_voltage(uint32_t vin_voltage);
   void set_operation_state(std::string const & operation_state);
   void set_energized(bool energized);
   void set_target_position(int32_t target_position);
@@ -178,6 +181,8 @@ public:
   void set_output_max(int32_t output_max);
   void set_input_scaling_degree(uint8_t input_scaling_degree);
 
+  void run_input_wizard(uint8_t control_mode);
+
   void set_invert_motor_direction(bool invert_motor_direction);
   void set_speed_max(uint32_t speed_max);
   void set_starting_speed(uint32_t starting_speed);
@@ -213,9 +218,6 @@ private:
   void set_spin_box(QSpinBox * box, int value);
   void set_double_spin_box(QDoubleSpinBox * spin, double value);
   void set_check_box(QCheckBox * check, bool value);
-
-  QString input_format(uint16_t input);
-  QString convert_rc_pulse_width_to_us_string(uint16_t rc_pulse_width);
 
   void update_set_target_button();
 
@@ -274,6 +276,7 @@ private slots:
   void on_input_hysteresis_value_valueChanged(int value);
   void on_input_averaging_enabled_check_stateChanged(int state);
 
+  void on_input_learn_button_clicked();
   void on_input_invert_check_stateChanged(int state);
   void on_input_min_value_valueChanged(int value);
   void on_input_neutral_min_value_valueChanged(int value);
@@ -398,15 +401,15 @@ private:
   QGridLayout * input_status_box_layout;
   QLabel * encoder_position_label;
   QLabel * encoder_position_value;
-  QLabel * rc_pulse_width_label;
-  QLabel * rc_pulse_width_value;
-  QLabel * rc_pulse_width_pretty;
   QLabel * input_state_label;
   QLabel * input_state_value;
   QLabel * input_after_averaging_label;
   QLabel * input_after_averaging_value;
   QLabel * input_after_hysteresis_label;
   QLabel * input_after_hysteresis_value;
+  QLabel * input_before_scaling_label;
+  QLabel * input_before_scaling_value;
+  QLabel * input_before_scaling_pretty;
   QLabel * input_after_scaling_label;
   QLabel * input_after_scaling_value;
 
@@ -495,6 +498,7 @@ private:
 
   QGroupBox * scaling_settings_box;
   QGridLayout * scaling_settings_box_layout;
+  QPushButton * input_learn_button;
   QCheckBox * input_invert_check;
   QLabel * scaling_input_label;
   QLabel * scaling_target_label;
@@ -510,6 +514,8 @@ private:
   QSpinBox * output_max_value;
   QLabel * input_scaling_degree_label;
   QComboBox * input_scaling_degree_value;
+
+  InputWizard * input_wizard;
 
   QGroupBox * motor_settings_box;
   QGridLayout * motor_settings_box_layout;

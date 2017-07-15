@@ -23,7 +23,7 @@ public:
 
   /** This is called when the user issues a command to reload settings from
    * the device. */
-  void reload_settings();
+  void reload_settings(bool ask = true);
 
   /** This is called when the user wants to restore the device to its default
    * settings. */
@@ -45,6 +45,7 @@ public:
 private:
   void connect_device(tic::device const & device);
   void disconnect_device_by_error(std::string const & error_message);
+  void really_disconnect();
   void set_connection_error(std::string const & error_message);
 
   /** Returns true for success, false for failure. */
@@ -62,6 +63,7 @@ public:
   void halt_and_hold();
   void deenergize();
   void energize();
+  void start_input_setup();
 
   /** This is called when the user wants to apply the settings. */
   void apply_settings();
@@ -175,6 +177,3 @@ private:
 
   main_window * window;
 };
-
-std::string convert_speed_to_pps_string(int32_t speed);
-std::string convert_accel_to_pps2_string(int32_t accel);

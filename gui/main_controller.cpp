@@ -3,11 +3,10 @@
 
 #include <cassert>
 #include <cmath>
-#include <iomanip>
-#include <sstream>
 
 /** This is how often we fetch the variables from the device. */
-static uint32_t const UPDATE_INTERVAL_MS = 50;
+static uint32_t const UPDATE_INTERVAL_MS_DISCONNECTED = 500;
+static uint32_t const UPDATE_INTERVAL_MS_CONNECTED = 50;
 
 void main_controller::set_window(main_window * window)
 {
@@ -19,8 +18,7 @@ void main_controller::start()
   assert(!connected());
 
   // Start the update timer so that update() will be called regularly.
-  // todo: use longer update period when disconnected
-  window->start_update_timer(UPDATE_INTERVAL_MS);
+  window->start_update_timer(UPDATE_INTERVAL_MS_DISCONNECTED);
 
   // The program has just started, so try to connect to a device.
 
@@ -78,8 +76,7 @@ bool main_controller::disconnect_device()
     }
   }
 
-  device_handle.close();
-  settings_modified = false;
+  really_disconnect();
   disconnected_by_user = true;
   connection_error = false;
   handle_model_changed();
@@ -133,15 +130,22 @@ void main_controller::connect_device(tic::device const & device)
     show_exception(e, "There was an error getting the status of the device.");
   }
 
+  window->set_update_timer_interval(UPDATE_INTERVAL_MS_CONNECTED);
   handle_model_changed();
 }
 
 void main_controller::disconnect_device_by_error(std::string const & error_message)
 {
-  device_handle.close();
-  settings_modified = false;
+  really_disconnect();
   disconnected_by_user = false;
   set_connection_error(error_message);
+}
+
+void main_controller::really_disconnect()
+{
+  device_handle.close();
+  settings_modified = false;
+  window->set_update_timer_interval(UPDATE_INTERVAL_MS_DISCONNECTED);
 }
 
 void main_controller::set_connection_error(std::string const & error_message)
@@ -150,9 +154,17 @@ void main_controller::set_connection_error(std::string const & error_message)
   connection_error_message = error_message;
 }
 
-void main_controller::reload_settings()
+void main_controller::reload_settings(bool ask)
 {
   if (!connected()) { return; }
+
+  std::string question = "Are you sure you want to reload settings from the "
+    "device and discard your recent changes?";
+  if (ask && !window->confirm(question))
+  {
+    return;
+  }
+
   try
   {
     settings = device_handle.get_settings();
@@ -183,8 +195,8 @@ void main_controller::restore_default_settings()
   bool restore_success = false;
   try
   {
-      device_handle.restore_defaults();
-      restore_success = true;
+    device_handle.restore_defaults();
+    restore_success = true;
   }
   catch (std::exception const & e)
   {
@@ -192,7 +204,7 @@ void main_controller::restore_default_settings()
   }
 
   // This takes care of reloading the settings and telling the view to update.
-  reload_settings();
+  reload_settings(false);
 
   if (restore_success)
   {
@@ -439,70 +451,24 @@ void main_controller::initialize_manual_target()
   }
 }
 
-static std::string pretty_up_time(uint32_t up_time)
-{
-  std::ostringstream ss;
-  uint32_t seconds = up_time / 1000;
-  uint32_t minutes = seconds / 60;
-  uint16_t hours = minutes / 60;
-
-  ss << hours <<
-    ":" << std::setfill('0') << std::setw(2) << minutes % 60 <<
-    ":" << std::setfill('0') << std::setw(2) << seconds % 60;
-  return ss.str();
-}
-
-// TODO: move to separate file along with following 2 functions?
-static std::string convert_mv_to_v_string(uint32_t mv)
-{
-  std::ostringstream ss;
-  uint32_t dv = (mv + 50) / 100;
-
-  ss << (dv / 10) << "." << (dv % 10) << " V";
-  return ss.str();
-}
-
-// TODO: move to separate file (used in both window and controller)
-std::string convert_speed_to_pps_string(int32_t speed)
-{
-  static uint8_t const decimal_digits = std::log10(TIC_SPEED_UNITS_PER_HZ);
-
-  std::ostringstream ss;
-  std::string sign = (speed < 0) ? "-" : "";
-
-  ss << sign << std::abs(speed / TIC_SPEED_UNITS_PER_HZ) << "." <<
-    std::setfill('0') << std::setw(decimal_digits) <<
-    std::abs(speed % TIC_SPEED_UNITS_PER_HZ) << " pulses/s";
-  return ss.str();
-}
-
-// TODO: move to separate file (used in both window and controller)
-std::string convert_accel_to_pps2_string(int32_t accel)
-{
-  static uint8_t const decimal_digits = std::log10(TIC_ACCEL_UNITS_PER_HZ2);
-
-  std::ostringstream ss;
-  std::string sign = (accel < 0) ? "-" : "";
-
-  ss << sign << std::abs(accel / TIC_ACCEL_UNITS_PER_HZ2) << "." <<
-    std::setfill('0') << std::setw(decimal_digits) <<
-    std::abs(accel % TIC_ACCEL_UNITS_PER_HZ2) << u8" pulses/s\u00B2";
-  return ss.str();
-}
-
 void main_controller::handle_variables_changed()
 {
-  window->set_up_time(pretty_up_time(variables.get_up_time()));
+  window->set_up_time(variables.get_up_time());
 
   window->set_encoder_position(variables.get_encoder_position());
-  window->set_rc_pulse_width(variables.get_rc_pulse_width());
   window->set_input_state(
     tic_look_up_input_state_name_ui(variables.get_input_state()));
   window->set_input_after_averaging(variables.get_input_after_averaging());
   window->set_input_after_hysteresis(variables.get_input_after_hysteresis());
+  if (cached_settings)
+  {
+    window->set_input_before_scaling(
+      variables.get_input_before_scaling(cached_settings),
+      tic_settings_get_control_mode(settings.get_pointer()));
+  }
   window->set_input_after_scaling(variables.get_input_after_scaling());
 
-  window->set_vin_voltage(convert_mv_to_v_string(variables.get_vin_voltage()));
+  window->set_vin_voltage(variables.get_vin_voltage());
   window->set_energized(variables.get_energized());
   window->set_operation_state(
     tic_look_up_operation_state_name_ui(variables.get_operation_state()));
@@ -1156,6 +1122,43 @@ void main_controller::energize()
   {
     show_exception(e);
   }
+}
+
+void main_controller::start_input_setup()
+{
+  if (!connected()) { return; }
+
+  if (settings_modified)
+  {
+    window->show_info_message("This wizard cannot be used right now because "
+      "the settings you changed have not been applied to the device.\n"
+      "\n"
+      "Please click \"Apply settings\" to apply your changes to the device or "
+      "select \"Reload settings from device\" in the Device menu to discard "
+      "your changes, then try again.");
+    return;
+  }
+
+  uint8_t control_mode = tic_settings_get_control_mode(cached_settings.get_pointer());
+  switch (control_mode)
+  {
+  case TIC_CONTROL_MODE_RC_POSITION:
+  case TIC_CONTROL_MODE_RC_SPEED:
+  case TIC_CONTROL_MODE_ANALOG_POSITION:
+  case TIC_CONTROL_MODE_ANALOG_SPEED:
+    // The Tic is using a valid control mode; do nothing and continue.
+    break;
+
+  default:
+    window->show_info_message("This wizard helps you set the scaling "
+      "parameters for the Tic's RC or analog input.\n"
+      "\n"
+      "Please change the control mode to RC or analog, then try again.");
+    return;
+  }
+
+  deenergize();
+  window->run_input_wizard(control_mode);
 }
 
 void main_controller::apply_settings()
