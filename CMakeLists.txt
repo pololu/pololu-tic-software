@@ -1,17 +1,6 @@
 cmake_minimum_required (VERSION 2.8.11)
 project (tic)
 
-option (BUILD_SHARED_LIBS "Build a shared library" TRUE)
-if (NOT BUILD_SHARED_LIBS)
-  add_definitions (-DTIC_STATIC)
-endif ()
-
-set(POLOLU_BUILD FALSE CACHE BOOL
-  "True if this software is being built by Pololu, and should use the Pololu logo.")
-
-set(ENABLE_GUI TRUE CACHE BOOL
-  "True if you want to build the GUI, which depends on Qt 5.")
-
 set (CLI_NAME "ticcmd")
 set (GUI_NAME "ticgui")
 set (DOCUMENTATION_URL "https://www.pololu.com/docs/0J71")
@@ -19,11 +8,14 @@ set (DOCUMENTATION_URL "https://www.pololu.com/docs/0J71")
 set (SOFTWARE_VERSION_MAJOR 1)
 set (SOFTWARE_VERSION_MINOR 0)
 set (SOFTWARE_VERSION_PATCH 0)
-set (SOFTWARE_VERSION ${SOFTWARE_VERSION_MAJOR}.${SOFTWARE_VERSION_MINOR}.${SOFTWARE_VERSION_PATCH})
 
-string(TIMESTAMP YEAR "%Y")
+option (BUILD_SHARED_LIBS "Build a shared library" TRUE)
+if (NOT BUILD_SHARED_LIBS)
+  add_definitions (-DTIC_STATIC)
+endif ()
 
-find_package(PkgConfig)
+set(ENABLE_GUI TRUE CACHE BOOL
+  "True if you want to build the GUI, which depends on Qt 5.")
 
 if (NOT CMAKE_BUILD_TYPE)
   set (CMAKE_BUILD_TYPE "Release" CACHE STRING
@@ -32,6 +24,20 @@ endif ()
 
 set(USE_SYSTEM_LIBYAML FALSE CACHE BOOL
   "True if you want to use libyaml from the system instead of the bundled one.")
+
+if (EXISTS "${CMAKE_SOURCE_DIR}/images/app.icns")
+  set (POLOLU_BUILD TRUE)
+endif ()
+if (EXISTS "${CMAKE_SOURCE_DIR}/images/app.ico")
+  set (POLOLU_BUILD TRUE)
+endif ()
+
+
+set (SOFTWARE_VERSION ${SOFTWARE_VERSION_MAJOR}.${SOFTWARE_VERSION_MINOR}.${SOFTWARE_VERSION_PATCH})
+
+string(TIMESTAMP YEAR "%Y")
+
+find_package(PkgConfig)
 
 # Our C code uses features from the C99 standard.
 macro(use_c99)
@@ -71,7 +77,7 @@ endif ()
 
 # Detect Linux.
 if (CMAKE_SYSTEM_NAME STREQUAL "Linux")
-  set (LINUX 1)
+  set (LINUX TRUE)
 endif ()
 
 # Fix a warning on Mac OS X.
