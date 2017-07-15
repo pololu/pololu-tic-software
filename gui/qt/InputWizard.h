@@ -25,10 +25,6 @@ public:
 
   void set_input(uint16_t input);
 
-protected:
-  void showEvent(QShowEvent *) override;
-  void hideEvent(QHideEvent *) override;
-
 private slots:
   void on_currentIdChanged(int id);
 
@@ -58,7 +54,22 @@ class LearnPage : public QWizardPage
 public:
   LearnPage(QWidget * parent = 0);
 
+protected:
+  bool isComplete() const override;
+
 private:
+  void set_next_button_enabled(bool enabled);
+  void set_progress_visible(bool visible);
+  void set_text_from_step();
+
+  bool handle_back();
+  bool handle_next();
+
+  bool sampling = false;
+  bool enable_next_button = true;
+  QString input_pin_name = tr("Invalid");
+  int step = NEUTRAL;
+
   QLayout * setup_input_layout();
 
   QLabel * instruction_label;
@@ -67,11 +78,6 @@ private:
   QLabel * input_pretty;
   QLabel * sampling_label;
   QProgressBar * sampling_progress;
-
-  QString input_pin_name = tr("Invalid");
-
-  int step = NEUTRAL;
-  void set_text_from_step();
 
   friend class InputWizard;
 };

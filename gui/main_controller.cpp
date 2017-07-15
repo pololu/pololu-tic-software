@@ -5,7 +5,8 @@
 #include <cmath>
 
 /** This is how often we fetch the variables from the device. */
-static uint32_t const UPDATE_INTERVAL_MS = 50;
+static uint32_t const UPDATE_INTERVAL_MS_DISCONNECTED = 500;
+static uint32_t const UPDATE_INTERVAL_MS_CONNECTED = 50;
 
 void main_controller::set_window(main_window * window)
 {
@@ -17,8 +18,7 @@ void main_controller::start()
   assert(!connected());
 
   // Start the update timer so that update() will be called regularly.
-  // todo: use longer update period when disconnected
-  window->start_update_timer(UPDATE_INTERVAL_MS);
+  window->start_update_timer(UPDATE_INTERVAL_MS_DISCONNECTED);
 
   // The program has just started, so try to connect to a device.
 
@@ -76,8 +76,7 @@ bool main_controller::disconnect_device()
     }
   }
 
-  device_handle.close();
-  settings_modified = false;
+  really_disconnect();
   disconnected_by_user = true;
   connection_error = false;
   handle_model_changed();
@@ -131,15 +130,22 @@ void main_controller::connect_device(tic::device const & device)
     show_exception(e, "There was an error getting the status of the device.");
   }
 
+  window->set_update_timer_interval(UPDATE_INTERVAL_MS_CONNECTED);
   handle_model_changed();
 }
 
 void main_controller::disconnect_device_by_error(std::string const & error_message)
 {
-  device_handle.close();
-  settings_modified = false;
+  really_disconnect();
   disconnected_by_user = false;
   set_connection_error(error_message);
+}
+
+void main_controller::really_disconnect()
+{
+  device_handle.close();
+  settings_modified = false;
+  window->set_update_timer_interval(UPDATE_INTERVAL_MS_DISCONNECTED);
 }
 
 void main_controller::set_connection_error(std::string const & error_message)

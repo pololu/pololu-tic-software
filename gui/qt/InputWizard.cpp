@@ -19,6 +19,9 @@
 #define FINISH_BUTTON_TEXT tr("Finish")
 #endif
 
+/** Take 20 samples, one sample every 50 ms. Total time is 1 s. */
+static uint32_t const SAMPLE_COUNT = 20;
+
 InputWizard::InputWizard(main_window * window)
   : QWizard(window)
 {
@@ -82,37 +85,29 @@ void InputWizard::set_input(uint16_t input)
   }
 }
 
-void InputWizard::showEvent(QShowEvent *)
-{
-}
-
-void InputWizard::hideEvent(QHideEvent *)
-{
-}
-
 void InputWizard::on_currentIdChanged(int id)
 {
   if (suppress_events) { return; }
 
-  if ((id == INTRO) && (learn_page->step > NEUTRAL))
+  if (id == INTRO)
   {
-    // User clicked Back from learn page, but was on a step after the first.
-    // Return to the learn page and decrement the step.
-    suppress_events = true;
-    next();
-    suppress_events = false;
-    learn_page->step--;
-    learn_page->set_text_from_step();
+    // User clicked Back from the learn page.
+    if (!learn_page->handle_back())
+    {
+      suppress_events = true;
+      next();
+      suppress_events = false;
+    }
   }
-  else if ((id == CONCLUSION) && (learn_page->step < MIN))
+  else if (id == CONCLUSION)
   {
-    // User clicked Next from learn page, but was on a step before the last.
-    // Return to the learn page and increment the step.
-    suppress_events = true;
-    back();
-    suppress_events = false;
-    learn_page->step++;
-    learn_page->set_text_from_step();
+    // User clicked Next from the learn page.
+    if (!learn_page->handle_next())
+    {
+      suppress_events = true;
+      back();
+      suppress_events = false;
+    }
   }
 }
 
@@ -219,7 +214,6 @@ QWizardPage * InputWizard::setup_conclusion_page()
   return page;
 }
 
-
 LearnPage::LearnPage(QWidget * parent)
   : QWizardPage(parent)
 {
@@ -247,7 +241,11 @@ LearnPage::LearnPage(QWidget * parent)
   layout->addWidget(sampling_label);
 
   sampling_progress = new QProgressBar();
+  sampling_progress->setMaximum(SAMPLE_COUNT);
+  sampling_progress->setTextVisible(false);
   layout->addWidget(sampling_progress);
+
+  set_progress_visible(false);
 
   layout->addStretch(1);
 
@@ -282,6 +280,23 @@ QLayout * LearnPage::setup_input_layout()
   return layout;
 }
 
+bool LearnPage::isComplete() const
+{
+  return enable_next_button;
+}
+
+void LearnPage::set_next_button_enabled(bool enabled)
+{
+  enable_next_button = enabled;
+  emit completeChanged();
+}
+
+void LearnPage::set_progress_visible(bool visible)
+{
+  sampling_label->setVisible(visible);
+  sampling_progress->setVisible(visible);
+}
+
 void LearnPage::set_text_from_step()
 {
   switch (step)
@@ -305,4 +320,43 @@ void LearnPage::set_text_from_step()
       tr("Move the input to its minimum (full reverse) position."));
     break;
   }
+}
+
+bool LearnPage::handle_back()
+{
+  if (sampling)
+  {
+    // We were in the middle of sampling, so just cancel that.
+    sampling = false;
+    set_progress_visible(false);
+    set_next_button_enabled(true);
+  }
+  else
+  {
+    // We were not sampling, so go back to the previous step/page.
+    if (step == NEUTRAL)
+    {
+      return true;
+    }
+    else
+    {
+      step--;
+      set_text_from_step();
+      return false;
+    }
+  }
+}
+
+bool LearnPage::handle_next()
+{
+  if (!sampling)
+  {
+    sampling = true;
+    sampling_progress->setValue(0);
+    set_progress_visible(true);
+    set_next_button_enabled(false);
+  }
+  // The next button should not actually advance the page immediately; it will
+  // advance once sampling is finished.
+  return false;
 }

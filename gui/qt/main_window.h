@@ -86,6 +86,7 @@ public:
    * interval_ms is the amount of time between updates, in milliseconds.
    */
   void start_update_timer(uint32_t interval_ms);
+  void set_update_timer_interval(uint32_t interval_ms);
 
   void show_error_message(std::string const & message);
   void show_warning_message(std::string const & message);

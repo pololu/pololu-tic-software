@@ -45,6 +45,7 @@ public:
 private:
   void connect_device(tic::device const & device);
   void disconnect_device_by_error(std::string const & error_message);
+  void really_disconnect();
   void set_connection_error(std::string const & error_message);
 
   /** Returns true for success, false for failure. */
