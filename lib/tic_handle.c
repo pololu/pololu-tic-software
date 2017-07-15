@@ -656,11 +656,10 @@ tic_error * tic_restore_defaults(tic_handle * handle)
   // Wait until the device succeeds in reinitializing its settings.
   if (error == NULL)
   {
-    uint32_t time_ms = 0;
+    time_t start = time(0);
     while (true)
     {
       usleep(10000);
-      time_ms += 10;
 
       uint8_t not_initialized;
       error = tic_get_setting_segment(handle, TIC_SETTING_NOT_INITIALIZED,
@@ -677,9 +676,9 @@ tic_error * tic_restore_defaults(tic_handle * handle)
         break;
       }
 
-      if (time_ms > 3000)
+      if (difftime(time(0), start) >= 3)
       {
-        // Timeout
+        // Time out after 2 to 3 seconds.
         error = tic_error_create("The device took too long to finish.");
         break;
       }
