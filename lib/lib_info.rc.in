@@ -14,9 +14,9 @@ BEGIN
         BLOCK "040904E4"
         BEGIN
             VALUE "CompanyName", "Pololu Corporation"
-            VALUE "FileDescription", "Pololu Tic Command-line Utility"
+            VALUE "FileDescription", "Pololu Tic Library"
             VALUE "FileVersion", VERSION_STR
-            VALUE "ProductName", "Pololu Tic Command-line Utility (${CMAKE_BUILD_TYPE})"
+            VALUE "ProductName", "Pololu Tic Library (${CMAKE_BUILD_TYPE})"
             VALUE "ProductVersion", VERSION_STR
             VALUE "LegalCopyright", "Copyright (C) ${YEAR} Pololu Corporation"
         END
@@ -26,4 +26,3 @@ BEGIN
         VALUE "Translation", 0x409, 1252
     END
 END
-

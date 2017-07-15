@@ -26,6 +26,10 @@ if (CMAKE_C_COMPILER_ID STREQUAL "GNU")
   set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fvisibility=hidden")
 endif ()
 
+# If we are building a DLL, put version and name information in it.
+# Might need conditions in the future: if (WIN32 AND BUILD_SHARED_LIBS)
+set (os_src ${CMAKE_CURRENT_BINARY_DIR}/lib_info.rc)
+
 add_library (lib
   tic_baud_rate.c
   tic_current_limit.c
@@ -40,11 +44,17 @@ add_library (lib
   tic_settings_to_string.c
   tic_string.c
   tic_variables.c
+  ${os_src}
   ${LIBYAML_SRC}
 )
 
+configure_file (
+  "lib_info.rc.in"
+  "lib_info.rc"
+)
+
 set_target_properties(lib PROPERTIES
-  OUTPUT_NAME pololu-tic
+  OUTPUT_NAME pololu-tic-${SOFTWARE_VERSION_MAJOR}
   SOVERSION ${SOFTWARE_VERSION}
   VERSION ${SOFTWARE_VERSION}
   DEFINE_SYMBOL TIC_EXPORTS

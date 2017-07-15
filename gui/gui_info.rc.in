@@ -20,9 +20,9 @@ BEGIN
         BLOCK "040904E4"
         BEGIN
             VALUE "CompanyName", "Pololu Corporation"
-            VALUE "FileDescription", "Pololu Tic Configuration Utility"
+            VALUE "FileDescription", "Pololu Tic Control Center"
             VALUE "FileVersion", VERSION_STR
-            VALUE "ProductName", "Pololu Tic Configuration Utility (${CMAKE_BUILD_TYPE})"
+            VALUE "ProductName", "Pololu Tic Control Center (${CMAKE_BUILD_TYPE})"
             VALUE "ProductVersion", VERSION_STR
             VALUE "LegalCopyright", "Copyright (C) ${YEAR} Pololu Corporation"
         END
