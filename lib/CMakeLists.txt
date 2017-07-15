@@ -2,9 +2,6 @@ use_c99()
 
 set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra")
 
-# TODO: what about putting the major version in the shared library name?
-# TODO: what about the RC file so people can easily see the version on Windows?
-
 # Find libusbp using pkg-config and use it.
 pkg_check_modules(LIBUSBP REQUIRED libusbp-1)
 string (REPLACE ";" " " LIBUSBP_CFLAGS "${LIBUSBP_CFLAGS}")

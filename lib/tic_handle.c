@@ -62,9 +62,11 @@ tic_error * tic_handle_open(const tic_device * device, tic_handle ** handle)
   if (error == NULL)
   {
     // Set a timeout for all control transfers to prevent the program from
-    // hanging indefinitely.
+    // hanging indefinitely.  Want it to be at least 1500 ms because that is how
+    // long the Tic might take to respond after restoring its settings to their
+    // defaults.
     error = tic_usb_error(libusbp_generic_handle_set_timeout(
-        new_handle->usb_handle, 0, 300));
+        new_handle->usb_handle, 0, 1600));
   }
 
   if (error == NULL)
@@ -639,15 +641,56 @@ tic_error * tic_restore_defaults(tic_handle * handle)
   }
 
   tic_error * error = NULL;
-  error = tic_set_setting_byte(handle, TIC_SETTING_NOT_INITIALIZED, 1);
+
+  if (error == NULL)
+  {
+    error = tic_set_setting_byte(handle, TIC_SETTING_NOT_INITIALIZED, 1);
+  }
 
   if (error == NULL)
   {
     error = tic_reinitialize(handle);
   }
 
-  // TODO: just like pgm04a, loop here and wait for the settings to be reinitialized
-  // https://github.com/pololu/pololu-usb-avr-programmer-v2/blob/master/lib/programmer.cpp#L703
+  // The request returns before the settings are actually initialized.
+  // Wait until the device succeeds in reinitializing its settings.
+  if (error == NULL)
+  {
+    uint32_t time_ms = 0;
+    while (true)
+    {
+      usleep(10000);
+      time_ms += 10;
+
+      uint8_t not_initialized;
+      error = tic_get_setting_segment(handle, TIC_SETTING_NOT_INITIALIZED,
+        1, &not_initialized);
+      if (error != NULL)
+      {
+        // Communication error
+        break;
+      }
+
+      if (!not_initialized)
+      {
+        // Success
+        break;
+      }
+
+      if (time_ms > 3000)
+      {
+        // Timeout
+        error = tic_error_create("The device took too long to finish.");
+        break;
+      }
+    }
+  }
+
+  if (error != NULL)
+  {
+    error = tic_error_add(error,
+      "There was an error restoring the default settings.");
+  }
 
   return error;
 }
@@ -701,34 +744,3 @@ tic_error * tic_get_debug_data(tic_handle * handle, uint8_t * data, size_t * siz
 
   return NULL;
 }
-
-/** TODO: std::string Tic::convertDeviceResetToString(uint8_t deviceReset)
-    {
-    switch(deviceReset)
-    {
-    case TIC_RESET_POWER_UP:
-    return "Power-on reset";
-
-    case TIC_RESET_BROWNOUT:
-    return "Brown-out reset";
-
-    case TIC_RESET_RESET_LINE:
-    return "Reset pin driven low";
-
-    case TIC_RESET_WATCHDOG:
-    return "Watchdog reset";
-
-    case TIC_RESET_SOFTWARE:
-    return "Software reset (bootloader)";
-
-    case TIC_RESET_STACK_OVERFLOW:
-    return "Stack overflow";
-
-    case TIC_RESET_STACK_UNDERFLOW:
-    return "Stack underflow";
-
-    default:
-    return std::string("Unknown code ") + std::to_string(deviceReset) + ".";
-    }
-    }
-**/
