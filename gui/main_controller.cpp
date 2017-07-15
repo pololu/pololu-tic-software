@@ -195,8 +195,8 @@ void main_controller::restore_default_settings()
   bool restore_success = false;
   try
   {
-      device_handle.restore_defaults();
-      restore_success = true;
+    device_handle.restore_defaults();
+    restore_success = true;
   }
   catch (std::exception const & e)
   {

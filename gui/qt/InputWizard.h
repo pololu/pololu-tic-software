@@ -12,18 +12,44 @@ class main_controller;
 enum wizard_page { INTRO, LEARN, CONCLUSION };
 enum wizard_learn_step { NEUTRAL, MAX, MIN };
 
+
+class input_range
+{
+public:
+  input_range() {}
+
+  void compute_from_samples(std::vector<uint16_t> const & samples);
+
+  /** Widens the range around the average, then shifts min and max in unison to
+    be equidistant from average (or as close to equidistant as possible if
+    limits don't allow). */
+  void widen_and_center_on_average(uint16_t range);
+
+  uint16_t max = 0;
+  uint16_t min = 0;
+  uint16_t average = 0;
+
+  uint16_t range() const { return max - min; }
+  uint16_t distance_to(input_range const & other) const;
+  bool intersects(input_range const & other) const { return distance_to(other) == 0; }
+  bool entirely_above(input_range const & other) const { return min > other.max; }
+
+  std::string to_string() const;
+};
+
+
 class InputWizard : public QWizard
 {
   Q_OBJECT
 
 public:
-  InputWizard(main_window * window);
-
-  void set_controller(main_controller * controller);
+  InputWizard(main_window * parent);
 
   void set_control_mode(uint8_t control_mode);
-
-  void set_input(uint16_t input);
+  uint8_t control_mode() const { return cmode; }
+  QString control_mode_name() const;
+  QString input_pin_name() const;
+  void handle_input(uint16_t input);
 
 private slots:
   void on_currentIdChanged(int id);
@@ -38,24 +64,23 @@ private:
   QLabel * intro_label;
   LearnPage * learn_page;
 
-  uint8_t control_mode;
-  QString control_mode_name();
-  QString input_pin_name();
+  uint8_t cmode;
   void set_text_from_control_mode();
-
-  main_window * window;
-  main_controller * controller;
 };
+
 
 class LearnPage : public QWizardPage
 {
   Q_OBJECT
 
 public:
-  LearnPage(QWidget * parent = 0);
+  LearnPage(InputWizard * parent);
+
+  bool isComplete() const override;
 
 protected:
-  bool isComplete() const override;
+  InputWizard * wizard() const { return (InputWizard *)(QWizardPage::wizard()); }
+  main_window * window() const { return (main_window *)(QWizardPage::window()); }
 
 private:
   void set_next_button_enabled(bool enabled);
@@ -65,10 +90,19 @@ private:
   bool handle_back();
   bool handle_next();
 
-  bool sampling = false;
-  bool enable_next_button = true;
-  QString input_pin_name = tr("Invalid");
+  void sample(uint16_t input);
+  void learn_parameter();
+
+  uint16_t full_range() const;
+
+  void warn_if_close_to_neutral() const;
+
   int step = NEUTRAL;
+  bool enable_next_button = true;
+
+  bool sampling = false;
+  std::vector<uint16_t> samples;
+  std::array<input_range, 3> learned_ranges;
 
   QLayout * setup_input_layout();
 

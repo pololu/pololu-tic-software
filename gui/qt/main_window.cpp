@@ -245,7 +245,7 @@ void main_window::set_input_before_scaling(uint16_t input_before_scaling, uint8_
   input_before_scaling_value->setEnabled(input_not_null);
   input_before_scaling_pretty->setEnabled(input_not_null);
 
-  if (input_wizard->isVisible()) { input_wizard->set_input(input_before_scaling); }
+  if (input_wizard->isVisible()) { input_wizard->handle_input(input_before_scaling); }
 }
 
 void main_window::set_input_state(std::string const & input_state)

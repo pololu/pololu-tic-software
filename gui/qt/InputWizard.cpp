@@ -1,6 +1,5 @@
 #include "InputWizard.h"
 #include "main_window.h"
-#include "main_controller.h"
 #include "tic.hpp"
 #include "to_string.h"
 
@@ -22,11 +21,9 @@
 /** Take 20 samples, one sample every 50 ms. Total time is 1 s. */
 static uint32_t const SAMPLE_COUNT = 20;
 
-InputWizard::InputWizard(main_window * window)
-  : QWizard(window)
+InputWizard::InputWizard(main_window * parent)
+  : QWizard(parent)
 {
-  this->window = window;
-
   setPage(INTRO, setup_intro_page());
   setPage(LEARN, setup_learn_page());
   setPage(CONCLUSION, setup_conclusion_page());
@@ -41,18 +38,47 @@ InputWizard::InputWizard(main_window * window)
   connect(this, SIGNAL(currentIdChanged(int)), this, SLOT(on_currentIdChanged(int)));
 }
 
-void InputWizard::set_controller(main_controller * controller)
-{
-  this->controller = controller;
-}
-
 void InputWizard::set_control_mode(uint8_t control_mode)
 {
-  this->control_mode = control_mode;
+  cmode = control_mode;
   set_text_from_control_mode();
 }
 
-void InputWizard::set_input(uint16_t input)
+QString InputWizard::control_mode_name() const
+{
+  switch (cmode)
+  {
+  case TIC_CONTROL_MODE_RC_POSITION:
+  case TIC_CONTROL_MODE_RC_SPEED:
+    return tr("RC");
+
+  case TIC_CONTROL_MODE_ANALOG_POSITION:
+  case TIC_CONTROL_MODE_ANALOG_SPEED:
+    return tr("analog");
+
+  default:
+    return tr("(Invalid)");
+  }
+}
+
+QString InputWizard::input_pin_name() const
+{
+  switch (cmode)
+  {
+  case TIC_CONTROL_MODE_RC_POSITION:
+  case TIC_CONTROL_MODE_RC_SPEED:
+    return "RC";
+
+  case TIC_CONTROL_MODE_ANALOG_POSITION:
+  case TIC_CONTROL_MODE_ANALOG_SPEED:
+    return u8"SDA\u200A/\u200AAN";
+
+  default:
+    return tr("(Invalid)");
+  }
+}
+
+void InputWizard::handle_input(uint16_t input)
 {
   bool input_not_null = (input != TIC_INPUT_NULL);
 
@@ -60,7 +86,7 @@ void InputWizard::set_input(uint16_t input)
   {
     learn_page->input_value->setText(QString::number(input));
 
-    switch (control_mode)
+    switch (cmode)
     {
     case TIC_CONTROL_MODE_RC_POSITION:
     case TIC_CONTROL_MODE_RC_SPEED:
@@ -82,6 +108,11 @@ void InputWizard::set_input(uint16_t input)
   {
     learn_page->input_value->setText(tr("N/A"));
     learn_page->input_pretty->setText("");
+  }
+
+  if (learn_page->sampling)
+  {
+    learn_page->sample(input);
   }
 }
 
@@ -111,40 +142,6 @@ void InputWizard::on_currentIdChanged(int id)
   }
 }
 
-QString InputWizard::control_mode_name()
-{
-  switch (control_mode)
-  {
-  case TIC_CONTROL_MODE_RC_POSITION:
-  case TIC_CONTROL_MODE_RC_SPEED:
-    return tr("RC");
-
-  case TIC_CONTROL_MODE_ANALOG_POSITION:
-  case TIC_CONTROL_MODE_ANALOG_SPEED:
-    return tr("analog");
-
-  default:
-    return tr("(Invalid)");
-  }
-}
-
-QString InputWizard::input_pin_name()
-{
-  switch (control_mode)
-  {
-  case TIC_CONTROL_MODE_RC_POSITION:
-  case TIC_CONTROL_MODE_RC_SPEED:
-    return "RC";
-
-  case TIC_CONTROL_MODE_ANALOG_POSITION:
-  case TIC_CONTROL_MODE_ANALOG_SPEED:
-    return u8"SDA\u200A/\u200AAN";
-
-  default:
-    return tr("(Invalid)");
-  }
-}
-
 static QString capitalize(QString const & str)
 {
   QString new_str = str;
@@ -160,7 +157,6 @@ void InputWizard::set_text_from_control_mode()
 
   learn_page->input_label->setText(capitalize(control_mode_name()) + tr(" input:"));
 
-  learn_page->input_pin_name = input_pin_name();
   learn_page->set_text_from_step();
 }
 
@@ -189,7 +185,7 @@ QWizardPage * InputWizard::setup_intro_page()
 
 QWizardPage * InputWizard::setup_learn_page()
 {
-  learn_page = new LearnPage();
+  learn_page = new LearnPage(this);
   return learn_page;
 }
 
@@ -214,7 +210,8 @@ QWizardPage * InputWizard::setup_conclusion_page()
   return page;
 }
 
-LearnPage::LearnPage(QWidget * parent)
+
+LearnPage::LearnPage(InputWizard * parent)
   : QWizardPage(parent)
 {
   QVBoxLayout * layout = new QVBoxLayout();
@@ -304,7 +301,8 @@ void LearnPage::set_text_from_step()
   case NEUTRAL:
     setTitle(tr("Step 1 of 3: Neutral"));
     instruction_label->setText(
-      tr("Verify that you have connected your input to the ") + input_pin_name +
+      tr("Verify that you have connected your input to the ") +
+      wizard()->input_pin_name() +
       tr(" pin.  Next, move the input to its neutral position."));
     break;
 
@@ -352,6 +350,7 @@ bool LearnPage::handle_next()
   if (!sampling)
   {
     sampling = true;
+    samples.clear();
     sampling_progress->setValue(0);
     set_progress_visible(true);
     set_next_button_enabled(false);
@@ -359,4 +358,168 @@ bool LearnPage::handle_next()
   // The next button should not actually advance the page immediately; it will
   // advance once sampling is finished.
   return false;
+}
+
+void LearnPage::sample(uint16_t input)
+{
+  if (input == TIC_INPUT_NULL)
+  {
+    sampling = false;
+    set_progress_visible(false);
+    set_next_button_enabled(true);
+    window()->show_error_message(
+      "Sampling was aborted because the input was invalid.  Please try again.");
+    return;
+  }
+
+  samples.push_back(input);
+  sampling_progress->setValue(sampling_progress->value() + 1);
+
+  if (sampling_progress->value() == SAMPLE_COUNT)
+  {
+    sampling = false;
+    set_progress_visible(false);
+    set_next_button_enabled(true);
+
+    learn_parameter();
+  }
+}
+
+void LearnPage::learn_parameter()
+{
+  learned_ranges[step].compute_from_samples(samples);
+
+  // Check range. Complain to the user if the range is bigger than about 7.5% of
+  // the standard full range.
+  if (learned_ranges[step].range() > (full_range() * 3 + 20) / 40)
+  {
+    window()->show_error_message("The input value varied too widely (" +
+      learned_ranges[step].to_string() + ") during the sampling time.\n"
+      "Please hold the input still and try again so an accurate reading can be "
+      "obtained.");
+    return;
+  }
+
+  switch(step)
+  {
+  case NEUTRAL:
+    // Widen the deadband to 5% of the standard full range or 3 times the
+    // sampled range, whichever is greater.
+    learned_ranges[NEUTRAL].widen_and_center_on_average(
+      std::max((full_range() + 10) / 20, 3 * learned_ranges[NEUTRAL].range()));
+    step++;
+    break;
+
+  case MAX:
+    warn_if_close_to_neutral();
+    step++;
+    break;
+
+  case MIN:
+    window()->show_error_message("learn min not implemented");
+    return;
+    //warn_if_close_to_neutral();
+
+  }
+  set_text_from_step();
+
+}
+
+uint16_t LearnPage::full_range() const
+{
+  switch (wizard()->control_mode())
+  {
+  case TIC_CONTROL_MODE_RC_POSITION:
+  case TIC_CONTROL_MODE_RC_SPEED:
+    // Standard RC full range is 1500 to 3000 (units of 2/3 us).
+    return 1500;
+
+  case TIC_CONTROL_MODE_ANALOG_POSITION:
+  case TIC_CONTROL_MODE_ANALOG_SPEED:
+    // Standard analog full range is 0 to 4095.
+    return 4095;
+
+  default:
+    return 0;
+  }
+}
+
+void LearnPage::warn_if_close_to_neutral() const
+{
+  if (learned_ranges[step].intersects(learned_ranges[NEUTRAL]))
+  {
+    // The input was indistinguishable from the neutral inputs, so warn the user!
+    window()->show_warning_message(
+      "The values sampled (" + learned_ranges[step].to_string() +
+      ") intersect with the calculated neutral deadband (" +
+      learned_ranges[NEUTRAL].to_string() + ").  "
+      "If you continue, you will only be able to use the " +
+      wizard()->control_mode_name().toStdString() + " input in one direction.  "
+      "You can press the Back button to try again if this is not the desired "
+      "behavior.");
+  }
+}
+
+void input_range::compute_from_samples(std::vector<uint16_t> const & samples)
+{
+  uint32_t sum = 0;
+  min = UINT16_MAX;
+  max = 0;
+
+  for (uint16_t s : samples)
+  {
+    sum += s;
+    if (s < min) { min = s; }
+    if (s > max) { max = s; }
+  }
+  average = (sum + samples.size() / 2) / samples.size();
+}
+
+void input_range::widen_and_center_on_average(uint16_t desired_range)
+{
+  // Use an upper limit of 4095 for both analog and RC. For RC, this corresponds
+  // to a pulse width of 2730 us, which should be more than enough.
+  static uint16_t const upper_limit = 4095;
+
+  if (average > upper_limit) { average = upper_limit; }
+  if (desired_range > upper_limit) { desired_range = upper_limit; }
+
+  uint16_t half_range = desired_range / 2;
+
+  // Adjust the center so that it is within the inclusive range
+  //   [halfRange, upperLimit-halfRange].
+  if (average < half_range) { average = half_range; }
+  if (average > (upper_limit - half_range)) { average = upper_limit - half_range; }
+
+  min = average - half_range;
+  max = average + half_range;
+
+  if ((desired_range % 2) == 1)
+  {
+    // Widen the range by one to correct the rounding error we introduced
+    // when we computed half_range above.
+    if (min > 0) { min--; }
+    else if (max < upper_limit) { max++; }
+  }
+}
+
+uint16_t input_range::distance_to(input_range const & other) const
+{
+  if (other.min > max)
+  {
+    return other.min - max;
+  }
+  else if (min > other.max)
+  {
+    return min - other.max;
+  }
+  else
+  {
+    return 0;
+  }
+}
+
+std::string input_range::to_string() const
+{
+  return std::to_string(min) + u8"\u2013" + std::to_string(max);
 }
