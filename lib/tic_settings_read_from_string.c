@@ -1,8 +1,5 @@
 #include "tic_internal.h"
 
-// TODO: add RSpec examples for every error in this file
-// TODO: add RSpec examples ot make sure tic_string_to_i64 is handling errors properly
-
 static bool tic_parse_pin_config(const char * input,
   tic_settings * settings, uint8_t pin)
 {

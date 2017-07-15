@@ -421,4 +421,44 @@ describe 'settings' do
       expect(result).to eq 0
     end
   end
+
+  describe 'integer processor' do
+    let (:head) { "product: T825\n" }
+
+    it "rejects numbers that are too big" do
+      stdout, stderr, result = run_ticcmd('--fix-settings - -',
+        input: "#{head}serial_baud_rate: 1111111111111111111")
+      expect(stderr).to eq \
+        "Error: There was an error reading the settings file.  " \
+        "The serial_baud_rate value is out of range.\n"
+      expect(result).to eq 2
+    end
+
+    it "rejects numbers that are too small" do
+      stdout, stderr, result = run_ticcmd('--fix-settings - -',
+        input: "#{head}serial_baud_rate: -1111111111111111111")
+      expect(stderr).to eq \
+        "Error: There was an error reading the settings file.  " \
+        "The serial_baud_rate value is out of range.\n"
+      expect(result).to eq 2
+    end
+
+    it "rejects numbers that are too small" do
+      stdout, stderr, result = run_ticcmd('--fix-settings - -',
+        input: "#{head}serial_baud_rate: -1111111111111111111")
+      expect(stderr).to eq \
+        "Error: There was an error reading the settings file.  " \
+        "The serial_baud_rate value is out of range.\n"
+      expect(result).to eq 2
+    end
+
+    it "rejects numbers with junk at the end" do
+      stdout, stderr, result = run_ticcmd('--fix-settings - -',
+        input: "#{head}serial_baud_rate: -11a")
+      expect(stderr).to eq \
+        "Error: There was an error reading the settings file.  " \
+        "Invalid serial_baud_rate value.\n"
+      expect(result).to eq 2
+    end
+  end
 end
