@@ -288,22 +288,11 @@ namespace tic
     }
 
     /// Wrapper for tic_settings_read_from_string.
-    ///
-    /// If a non-NULL warnings pointer is provided, and this function does not
-    /// throw an exception, the string it points to will be overridden with an
-    /// empty string or a string with English warnings.
-    static settings read_from_string(
-      const std::string & settings_string, std::string * warnings = NULL)
+    static settings read_from_string(const std::string & settings_string)
     {
-      char * cstr = NULL;
-      char ** cstr_pointer = warnings ? &cstr : NULL;
-
       settings r;
       throw_if_needed(tic_settings_read_from_string(
-          settings_string.c_str(), r.get_pointer_to_pointer(), cstr_pointer));
-
-      if (warnings) { *warnings = std::string(cstr); }
-
+          settings_string.c_str(), r.get_pointer_to_pointer()));
       return r;
     }
   };

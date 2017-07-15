@@ -97,11 +97,3 @@ add_subdirectory (cli)
 if (ENABLE_GUI)
   add_subdirectory (gui)
 endif ()
-
-if (WIN32)
-  # TODO: add_subdirectory (windows-installer)
-endif ()
-
-if (APPLE)
-  # TODO: add_subdirectory (mac-installer)
-endif ()

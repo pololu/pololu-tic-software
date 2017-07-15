@@ -493,12 +493,9 @@ static void set_settings(device_selector & selector,
   const std::string & filename)
 {
   std::string settings_string = read_string_from_file(filename);
+  tic::settings settings = tic::settings::read_from_string(settings_string);
 
   std::string warnings;
-  tic::settings settings = tic::settings::read_from_string(
-    settings_string, &warnings);
-  std::cerr << warnings;
-
   settings.fix(&warnings);
   std::cerr << warnings;
 
@@ -512,11 +509,9 @@ static void fix_settings(const std::string & input_filename,
   const std::string & output_filename)
 {
   std::string in_str = read_string_from_file(input_filename);
+  tic::settings settings = tic::settings::read_from_string(in_str);
 
   std::string warnings;
-  tic::settings settings = tic::settings::read_from_string(in_str, &warnings);
-  std::cerr << warnings;
-
   settings.fix(&warnings);
   std::cerr << warnings;
 

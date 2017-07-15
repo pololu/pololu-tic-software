@@ -716,8 +716,6 @@ static tic_error * apply_yaml_pair(tic_settings * settings,
 
 // Validates the YAML doc and populates the settings object with the settings
 // from the document.
-//
-// If there are any warnings they will be added to wstr.
 static tic_error * read_from_yaml_doc(
   yaml_document_t * doc, tic_settings * settings)
 {
@@ -767,15 +765,9 @@ static tic_error * read_from_yaml_doc(
   return NULL;
 }
 
-// TODO: we don't actually have any warnings yet, right?  Maybe remove the param?
 tic_error * tic_settings_read_from_string(const char * string,
-  tic_settings ** settings, char ** warnings)
+  tic_settings ** settings)
 {
-  if (warnings != NULL)
-  {
-    *warnings = NULL;
-  }
-
   if (string == NULL)
   {
     return tic_error_create("Settings input string is null.");
@@ -793,17 +785,6 @@ tic_error * tic_settings_read_from_string(const char * string,
   if (error == NULL)
   {
     error = tic_settings_create(&new_settings);
-  }
-
-  // If needed, allocate a string for holding warnings.
-  tic_string wstr;
-  if (warnings)
-  {
-    tic_string_setup(&wstr);
-  }
-  else
-  {
-    tic_string_setup_dummy(&wstr);
   }
 
   // Make a YAML parser.
@@ -846,22 +827,11 @@ tic_error * tic_settings_read_from_string(const char * string,
     error = read_from_yaml_doc(&doc, new_settings);
   }
 
-  // Detect memory allocation errors from the warnings string.
-  if (error == NULL && warnings && wstr.data == NULL)
-  {
-    error = &tic_error_no_memory;
-  }
-
-  // Success!  Pass the settings and warnings to the caller.
+  // Success!  Pass the settings to the caller.
   if (error == NULL)
   {
     *settings = new_settings;
     new_settings = NULL;
-    if (warnings)
-    {
-      *warnings = wstr.data;
-      wstr.data = NULL;
-    }
   }
 
   if (document_initialized)
@@ -873,8 +843,6 @@ tic_error * tic_settings_read_from_string(const char * string,
   {
     yaml_parser_delete(&parser);
   }
-
-  tic_string_free(wstr.data);
 
   tic_settings_free(new_settings);
 

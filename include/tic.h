@@ -286,17 +286,9 @@ tic_error * tic_settings_to_string(const tic_settings *, char ** string);
 /// pointer, which will receive a pointer to a new settings object if and only
 /// if this function is successful.  The caller must free the settings later by
 /// calling tic_settings_free().
-///
-/// The warnings parameters is an optional pointer to pointer to a string.  If
-/// you supply the warnings parameter, and this function is successful, this
-/// function will allocate and return a string using the parameter.  The string
-/// will describe what was fixed in the settings or be empty if nothing was
-/// fixed.  Each distinct warning in the string will be a series of complete
-/// English sentences that ends with a newline character.  The string must be
-/// freed by the caller using tic_string_free().
 TIC_API TIC_WARN_UNUSED
 tic_error * tic_settings_read_from_string(const char * string,
-  tic_settings ** settings, char ** warnings);
+  tic_settings ** settings);
 
 /// Sets the product, which specifies what Tic product these settings are for.
 /// The value should be one of the TIC_PRODUCT_* macros.
