@@ -206,6 +206,16 @@ static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings
     break;
   }
 
+  bool analog_control_mode = false;
+
+  switch (control_mode)
+  {
+  case TIC_CONTROL_MODE_ANALOG_POSITION:
+  case TIC_CONTROL_MODE_ANALOG_SPEED:
+    analog_control_mode = true;
+    break;
+  }
+
   {
     uint8_t response = tic_settings_get_soft_error_response(settings);
     if (response == TIC_RESPONSE_GO_TO_POSITION && speed_control_mode)
@@ -593,15 +603,12 @@ static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings
     bool rc_analog = tic_settings_get_pin_analog(settings, TIC_PIN_NUM_RC);
 
     // First, we make sure the pins are configured to provide the primary
-    // input that will be used to control the motor.  Also figure out
-    // if this is an analog control mode.
-    bool analog_control = false;
+    // input that will be used to control the motor.
 
     switch (control_mode)
     {
     case TIC_CONTROL_MODE_ANALOG_POSITION:
     case TIC_CONTROL_MODE_ANALOG_SPEED:
-      analog_control = true;
       if (sda_func != TIC_PIN_FUNC_DEFAULT &&
         sda_func != TIC_PIN_FUNC_USER_INPUT)
       {
@@ -766,9 +773,9 @@ static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings
     // Finally, if one of the SCL/SDA pins is configured for I2C, make sure the other one
     // is configured that way too.  This should be last because other checks in this
     // code might chnage SCL or SDA to be used for I2C.
-    bool scl_is_i2c = (scl_func == TIC_PIN_FUNC_DEFAULT && !analog_control) ||
+    bool scl_is_i2c = (scl_func == TIC_PIN_FUNC_DEFAULT && !analog_control_mode) ||
       (scl_func == TIC_PIN_FUNC_SERIAL);
-    bool sda_is_i2c = (sda_func == TIC_PIN_FUNC_DEFAULT && !analog_control) ||
+    bool sda_is_i2c = (sda_func == TIC_PIN_FUNC_DEFAULT && !analog_control_mode) ||
       (sda_func == TIC_PIN_FUNC_SERIAL);
     if (sda_is_i2c != scl_is_i2c)
     {
