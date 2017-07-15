@@ -62,7 +62,6 @@ namespace
     *stream << contents;
     if (stream->fail())
     {
-      // TODO: can we get more details about what failed?
       throw std::runtime_error("Failed to write to file or pipe.");
     }
   }

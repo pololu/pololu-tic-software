@@ -191,7 +191,7 @@ uint32_t tic_settings_achievable_current_limit(const tic_settings * settings,
 
 static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings)
 {
-  // TODO: fix enum values to be valid
+  // TODO: fix enumeration values to be valid (e.g. control_mode)
 
   uint8_t control_mode = tic_settings_get_control_mode(settings);
 
@@ -593,12 +593,15 @@ static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings
     bool rc_analog = tic_settings_get_pin_analog(settings, TIC_PIN_NUM_RC);
 
     // First, we make sure the pins are configured to provide the primary
-    // input that will be used to control the motor.
+    // input that will be used to control the motor.  Also figure out
+    // if this is an analog control mode.
+    bool analog_control = false;
 
     switch (control_mode)
     {
     case TIC_CONTROL_MODE_ANALOG_POSITION:
     case TIC_CONTROL_MODE_ANALOG_SPEED:
+      analog_control = true;
       if (sda_func != TIC_PIN_FUNC_DEFAULT &&
         sda_func != TIC_PIN_FUNC_USER_INPUT)
       {
@@ -640,16 +643,46 @@ static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings
       break;
     }
 
-    // In this section, we make sure no pin is configured to do something that
-    // it cannot do.
-
-    // TODO: enforce that only SCL can be a potentiometer power pin
+    // Next, we make sure no pin is configured to do something that it cannot
+    // do.  These checks are in order by pin.
 
     if (rc_func == TIC_PIN_FUNC_USER_IO)
     {
       rc_func = TIC_PIN_FUNC_DEFAULT;
       tic_sprintf(warnings,
         "Warning: The RC pin cannot be a user I/O pin "
+        "so its function will be changed to the default.\n");
+    }
+
+    if (sda_func == TIC_PIN_FUNC_POT_POWER)
+    {
+      sda_func = TIC_PIN_FUNC_DEFAULT;
+      tic_sprintf(warnings,
+        "Warning: The SDA pin cannot be used as a potentiometer power pin "
+        "so its function will be changed to the default.\n");
+    }
+
+    if (tx_func == TIC_PIN_FUNC_POT_POWER)
+    {
+      tx_func = TIC_PIN_FUNC_DEFAULT;
+      tic_sprintf(warnings,
+        "Warning: The TX pin cannot be used as a potentiometer power pin "
+        "so its function will be changed to the default.\n");
+    }
+
+    if (rx_func == TIC_PIN_FUNC_POT_POWER)
+    {
+      rx_func = TIC_PIN_FUNC_DEFAULT;
+      tic_sprintf(warnings,
+        "Warning: The RX pin cannot be used as a potentiometer power pin "
+        "so its function will be changed to the default.\n");
+    }
+
+    if (rc_func == TIC_PIN_FUNC_POT_POWER)
+    {
+      rc_func = TIC_PIN_FUNC_DEFAULT;
+      tic_sprintf(warnings,
+        "Warning: The RC pin cannot be used as a potentiometer power pin "
         "so its function will be changed to the default.\n");
     }
 
@@ -660,16 +693,6 @@ static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings
         "Warning: The RC pin cannot be a serial pin "
         "so its function will be changed to the default.\n");
     }
-
-    if (rc_analog)
-    {
-      rc_analog = false;
-      tic_sprintf(warnings,
-        "Warning: The RC pin cannot be an analog input "
-        "so that feature will be disabled.\n");
-    }
-
-    // TODO: also enforce that the RC pin cannot have a pull-up
 
     if (sda_func == TIC_PIN_FUNC_RC)
     {
@@ -727,10 +750,22 @@ static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings
         "so its function will be changed to the default.\n");
     }
 
-    // If one of the SCL/SDA pins is configured for I2C, make sure the other one
-    // is configured that way too.
-    bool analog_control = control_mode == TIC_CONTROL_MODE_ANALOG_POSITION ||
-      control_mode == TIC_CONTROL_MODE_ANALOG_SPEED;
+    // Next, enforce proper values for pin booleans.
+    if (rc_analog)
+    {
+      rc_analog = false;
+      tic_sprintf(warnings,
+        "Warning: The RC pin cannot be an analog input "
+        "so that feature will be disabled.\n");
+    }
+
+    // Note: aren't enforcing proper values for the "pullup" boolean yet.  That
+    // setting is more of a suggestion from the firmware; the RC line cannot
+    // have a pull-up and the TX and RX lines always do if they are inputs.
+
+    // Finally, if one of the SCL/SDA pins is configured for I2C, make sure the other one
+    // is configured that way too.  This should be last because other checks in this
+    // code might chnage SCL or SDA to be used for I2C.
     bool scl_is_i2c = (scl_func == TIC_PIN_FUNC_DEFAULT && !analog_control) ||
       (scl_func == TIC_PIN_FUNC_SERIAL);
     bool sda_is_i2c = (sda_func == TIC_PIN_FUNC_DEFAULT && !analog_control) ||
@@ -752,11 +787,6 @@ static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings
           "so the SCL and SDA pin functions will be changed to the default.\n");
       }
     }
-
-    // TODO: only SCL can be POT_POWER and it can't be any other non-default function
-    // if the control mode is analog.
-
-    // TODO: if the control mode is analog, SDA must be *input* (general is not allowed)
 
     tic_settings_set_pin_func(settings, TIC_PIN_NUM_SCL, scl_func);
     tic_settings_set_pin_func(settings, TIC_PIN_NUM_SDA, sda_func);

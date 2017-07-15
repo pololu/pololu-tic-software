@@ -284,15 +284,30 @@ def test_cases_for_settings_fix(product)
       "Warning: The RC pin cannot be a user I/O pin " \
       "so its function will be changed to the default.\n"
     ],
+    [ { 'sda_config' => 'pot_power' },
+      { 'sda_config' => 'default' },
+      "Warning: The SDA pin cannot be used as a potentiometer power pin " \
+      "so its function will be changed to the default.\n"
+    ],
+    [ { 'tx_config' => 'pot_power active_high' },
+      { 'tx_config' => 'default active_high' },
+      "Warning: The TX pin cannot be used as a potentiometer power pin " \
+      "so its function will be changed to the default.\n"
+    ],
+    [ { 'rx_config' => 'pot_power active_high' },
+      { 'rx_config' => 'default active_high' },
+      "Warning: The RX pin cannot be used as a potentiometer power pin " \
+      "so its function will be changed to the default.\n"
+    ],
+    [ { 'rc_config' => 'pot_power' },
+      { 'rc_config' => 'default' },
+      "Warning: The RC pin cannot be used as a potentiometer power pin " \
+      "so its function will be changed to the default.\n"
+    ],
     [ { 'rc_config' => 'serial pullup active_high' },
       { 'rc_config' => 'default pullup active_high' },
       "Warning: The RC pin cannot be a serial pin " \
       "so its function will be changed to the default.\n"
-    ],
-    [ { 'rc_config' => 'user_input analog' },
-      { 'rc_config' => 'user_input' },
-      "Warning: The RC pin cannot be an analog input " \
-      "so that feature will be disabled.\n"
     ],
     [ { 'sda_config' => 'rc analog' },
       { 'sda_config' => 'default analog' },
@@ -328,6 +343,11 @@ def test_cases_for_settings_fix(product)
       { 'rc_config' => 'default pullup' },
       "Warning: The RC pin cannot be used as an encoder input " \
       "so its function will be changed to the default.\n"
+    ],
+    [ { 'rc_config' => 'user_input analog' },
+      { 'rc_config' => 'user_input' },
+      "Warning: The RC pin cannot be an analog input " \
+      "so that feature will be disabled.\n"
     ],
     [ { 'scl_config' => 'user_io analog' },
       { 'scl_config' => 'default analog' },

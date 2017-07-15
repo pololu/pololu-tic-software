@@ -588,8 +588,6 @@ static void run(int argc, char ** argv)
     return;
   }
 
-  // TODO: friendly error if they try to set target position and velocity
-
   device_selector selector;
   if (args.serial_number_specified)
   {

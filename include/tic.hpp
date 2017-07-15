@@ -250,8 +250,13 @@ namespace tic
   ///
   /// This class does not currently have functions for reading and writing most
   /// settings.  You will have to use the tic_settings_* functions from the C
-  /// API defined in tic.h to read and write the settings in the object.  Search
-  /// for "tic_settings_" in the GUI code for examples of how to do this.
+  /// API defined in tic.h to read and write the settings in the object.  For
+  /// example:
+  ///
+  ///     tic::settings settings;
+  ///     tic_settings_set_serial_device_number(settings.get_pointer(), 11);
+  ///
+  /// The GUI code has more examples of how to do this.
   class settings : public unique_pointer_wrapper_with_copy<tic_settings>
   {
   public:
