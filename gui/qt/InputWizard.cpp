@@ -4,11 +4,11 @@
 #include "to_string.h"
 
 #include <QChar>
+#include <QHBoxLayout>
 #include <QIcon>
-#include <QHboxLayout>
 #include <QLabel>
 #include <QProgressBar>
-#include <QVboxLayout>
+#include <QVBoxLayout>
 
 #ifdef __APPLE__
 #define NEXT_BUTTON_TEXT tr("Continue")
