@@ -9,7 +9,7 @@ There are two programs: the Pololu Tic Command-line Utility
 
 ## Installation
 
-Installers for will be available for download from the
+Installers will be available for download from the
 [Tic Stepper Motor Controller User's Guide](http://www.pololu.com/docs/0J67).
 
 See [BUILDING.md](BUILDING.md) for information about how to compile the code
