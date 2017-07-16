@@ -156,6 +156,10 @@ File.open(OutDir + 'app.wxs', 'w') do |f|
               </Component>
               <Component Id="GuiExe">
                 <File Id="GuiExe" Name="ticgui.exe" KeyPath="yes">
+                  <Shortcut Id="GuiShortcut" Directory="PololuMenuFolder"
+                            Name="Pololu Tic Control Center"
+                            Advertise="yes"
+                            WorkingDirectory="BinDir" />
                 </File>
               </Component>
             </Directory>
@@ -199,6 +203,7 @@ File.open(OutDir + 'app.wxs', 'w') do |f|
                            Key="Software\\[Manufacturer]\\[ProductName]"
                            Name="PololuMenuFolder" Type="integer" Value="1" />
           </Component>
+          <!-- shortcut doesn't seem to get installed:
           <Component Id="GuiShortcut">
             <Shortcut Id="GuiShortcut"
                       Name="Tic Control Center"
@@ -210,6 +215,7 @@ File.open(OutDir + 'app.wxs', 'w') do |f|
                            Key="Software\\[Manufacturer]\\[ProductName]"
                            Name="GuiShortcut" Type="integer" Value="1" />
           </Component>
+          -->
           <!--
           <Component Id="DocumentationUrlInMenu">
             <util:InternetShortcut Id="DocumentationUrlInMenu" Type="url"
@@ -236,7 +242,7 @@ File.open(OutDir + 'app.wxs', 'w') do |f|
       <ComponentRef Id="ModifyPath" />
       <ComponentRef Id="PololuMenuFolder" />
       <!-- <ComponentRef Id="DocumentationUrl" /> -->
-      <ComponentRef Id="GuiShortcut" />
+      <!-- <ComponentRef Id="GuiShortcut" /> -->
       <!-- <ComponentRef Id="DocumentationUrlInMenu" /> -->
       <ComponentRef Id="LicenseHtml" />
     </Feature>
