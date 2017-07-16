@@ -116,6 +116,20 @@ void InputWizard::handle_input(uint16_t input)
   }
 }
 
+void InputWizard::force_next()
+{
+  suppress_events = true;
+  next();
+  suppress_events = false;
+}
+
+void InputWizard::force_back()
+{
+  suppress_events = true;
+  back();
+  suppress_events = false;
+}
+
 void InputWizard::on_currentIdChanged(int id)
 {
   if (suppress_events) { return; }
@@ -125,9 +139,7 @@ void InputWizard::on_currentIdChanged(int id)
     // User clicked Back from the learn page.
     if (!learn_page->handle_back())
     {
-      suppress_events = true;
-      next();
-      suppress_events = false;
+      force_next();
     }
   }
   else if (id == CONCLUSION)
@@ -135,9 +147,7 @@ void InputWizard::on_currentIdChanged(int id)
     // User clicked Next from the learn page.
     if (!learn_page->handle_next())
     {
-      suppress_events = true;
-      back();
-      suppress_events = false;
+      force_back();
     }
   }
 }
@@ -208,6 +218,8 @@ QWizardPage * InputWizard::setup_conclusion_page()
 
   page->setLayout(layout);
   return page;
+  
+  // todo: checkbox to automatically apply and resume? 2 separate checkboxes?
 }
 
 
@@ -387,6 +399,12 @@ void LearnPage::sample(uint16_t input)
 
 void LearnPage::learn_parameter()
 {
+   std::string const try_again = "\n"
+   "\n"
+   "Please verify that your input is connected properly to the " +
+   wizard()->input_pin_name().toStdString() +
+   " pin by moving it while looking at the input value and try again.";
+
   learned_ranges[step].compute_from_samples(samples);
 
   // Check range. Complain to the user if the range is bigger than about 7.5% of
@@ -408,21 +426,139 @@ void LearnPage::learn_parameter()
     learned_ranges[NEUTRAL].widen_and_center_on_average(
       std::max((full_range() + 10) / 20, 3 * learned_ranges[NEUTRAL].range()));
     step++;
-    break;
+    set_text_from_step();
+    return;
 
   case MAX:
     warn_if_close_to_neutral();
     step++;
-    break;
+    set_text_from_step();
+    return;
 
   case MIN:
-    window()->show_error_message("learn min not implemented");
-    return;
-    //warn_if_close_to_neutral();
+    // Check that max does not intersect min.
+    if (learned_ranges[MIN].intersects(learned_ranges[MAX]))
+    {
+      window()->show_error_message(
+        "The values sampled for the minimum input (" +
+        learned_ranges[MIN].to_string() + ") intersect the values sampled for "
+        "the maximum input (" + learned_ranges[MAX].to_string() + ")." +
+        try_again);
+      return;
+    }
 
+    // Check that at least one of max or min does not intersect with neutral.
+    if (learned_ranges[MIN].intersects(learned_ranges[NEUTRAL]) &&
+      learned_ranges[MAX].intersects(learned_ranges[NEUTRAL]))
+    {
+      window()->show_error_message(
+        "The values sampled for the minimum input (" +
+        learned_ranges[MIN].to_string() + ") and the values sampled for the "
+        "maximum input (" + learned_ranges[MAX].to_string() +
+        ") both intersect the calculated neutral deadband (" +
+        learned_ranges[NEUTRAL].to_string() + ")." + try_again);
+      return;
+    }
+
+    // Invert the channel if necessary.
+    // This ensures that real_max is entirely above real_min.
+    input_range * real_max_range = &learned_ranges[MAX];
+    input_range * real_min_range = &learned_ranges[MIN];
+    if (learned_ranges[MIN].is_entirely_above(learned_ranges[MAX]))
+    {
+      input_invert = true;
+      real_max_range = &learned_ranges[MIN];
+      real_min_range = &learned_ranges[MAX];
+    }
+    else
+    {
+      input_invert = false;
+    }
+
+    // Check that real_max_range and real_min_range are not both on the same
+    // side of the deadband.
+    {
+      if (real_min_range->is_entirely_above(learned_ranges[NEUTRAL]))
+      {
+        window()->show_error_message(
+          "The maximum and minimum values measured for the input (" +
+          learned_ranges[MAX].to_string() + " and " +
+          learned_ranges[MIN].to_string() +
+          ") were both above the neutral deadband (" +
+          learned_ranges[NEUTRAL].to_string() + ")." + try_again);
+        return;
+      }
+      if (learned_ranges[NEUTRAL].is_entirely_above(*real_max_range))
+      {
+        window()->show_error_message(
+          "The maximum and minimum values measured for the input (" +
+          learned_ranges[MAX].to_string() + " and " +
+          learned_ranges[MIN].to_string() +
+          ") were both below the neutral deadband (" +
+          learned_ranges[NEUTRAL].to_string() + ")." + try_again);
+        return;
+      }
+    }
+
+    warn_if_close_to_neutral();
+
+    // All the checks are done, so figure out the new settings.
+
+    input_neutral_min = learned_ranges[NEUTRAL].min;
+    input_neutral_max = learned_ranges[NEUTRAL].max;
+
+    // Set input_max.
+    if (real_max_range->intersects(learned_ranges[NEUTRAL]))
+    {
+      // real_max_range intersects the deadband.
+      // Set input_max equal to input_neutral_max so that the scaled value will
+      // never go in this direction.
+      // If input_invert is false, this means that the scaled value for this
+      // channel will never be positive.
+      // If input_invert is true, this means that the scaled value for this
+      // channel will never be negative.
+      input_max = input_neutral_max;
+    }
+    else
+    {
+      // real_max_range does NOT intersect the deadband.
+      // Try to set input_max to a value that is a little bit below
+      // real_max_range->min (by ~3% of the distance to input_neutral_max or 1%
+      // of the total range, whichever is lesser) so that when the user pushes
+      // his stick to the max, he is guaranteed to get full speed.
+      int margin = std::min(
+        (real_max_range->min - input_neutral_max + 15) / 30,
+        (full_range() + 50) / 100);
+      input_max = real_max_range->min - margin;
+    }
+
+    // Set input_min.
+    if (real_min_range->intersects(learned_ranges[NEUTRAL]))
+    {
+      // real_min_range intersects the deadband.
+      // Set input_min equal to input_neutral_min so that the scaled value will
+      // never go in this direction.
+      // If input_invert is false, this means that the scaled value for this
+      // channel will never be negative.
+      // If input_invert is true, this means that the scaled value for this
+      // channel will never be positive.
+      input_min = input_neutral_min;
+    }
+    else
+    {
+      // real_min_range does NOT intersect the deadband.
+      // Try to set input_min to a value that is a little bit above
+      // real_min_range->max (by ~3% of the distance to input_neutral_min or 1%
+      // of the total range, whichever is lesser) so that when the user pushes
+      // his stick to the min, he is guaranteed to get full speed.
+      int margin = std::min(
+        (input_neutral_min - real_min_range->max + 15) / 30,
+        (full_range() + 50) / 100);
+      input_min = real_min_range->max + margin;
+    }
+
+    wizard()->force_next();
   }
-  set_text_from_step();
-
 }
 
 uint16_t LearnPage::full_range() const
@@ -452,9 +588,11 @@ void LearnPage::warn_if_close_to_neutral() const
     window()->show_warning_message(
       "The values sampled (" + learned_ranges[step].to_string() +
       ") intersect with the calculated neutral deadband (" +
-      learned_ranges[NEUTRAL].to_string() + ").  "
+      learned_ranges[NEUTRAL].to_string() + ").\n"
+      "\n"
       "If you continue, you will only be able to use the " +
-      wizard()->control_mode_name().toStdString() + " input in one direction.  "
+      wizard()->control_mode_name().toStdString() + " input in one direction.\n"
+      "\n"
       "You can press the Back button to try again if this is not the desired "
       "behavior.");
   }
