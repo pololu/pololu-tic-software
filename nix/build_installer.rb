@@ -26,14 +26,11 @@ def get_git_commit(path)
   if File.exists?(path + '.git')
     return %x(git -C #{path} rev-parse HEAD)
   end
-
   dest = path.readlink
-
   if md = dest.to_s.match(/\bnixpkgs-[.0-9a-z]+\.([0-9a-f]+)\b/)
     return md[1]
   end
-
-  raise "unable to get git commit for #{path} (#{dest})"
+  raise "unable to get git commit for #{path}"
 end
 
 env = {}
