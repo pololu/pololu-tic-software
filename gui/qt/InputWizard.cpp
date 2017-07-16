@@ -116,6 +116,13 @@ void InputWizard::handle_input(uint16_t input)
   }
 }
 
+void InputWizard::force_back()
+{
+  suppress_events = true;
+  back();
+  suppress_events = false;
+}
+
 void InputWizard::force_next()
 {
   suppress_events = true;
@@ -123,11 +130,10 @@ void InputWizard::force_next()
   suppress_events = false;
 }
 
-void InputWizard::force_back()
+void InputWizard::hideEvent(QHideEvent * event)
 {
-  suppress_events = true;
-  back();
-  suppress_events = false;
+  learn_page->step = NEUTRAL;
+  learn_page->set_text_from_step();
 }
 
 void InputWizard::on_currentIdChanged(int id)
@@ -218,7 +224,7 @@ QWizardPage * InputWizard::setup_conclusion_page()
 
   page->setLayout(layout);
   return page;
-  
+
   // todo: checkbox to automatically apply and resume? 2 separate checkboxes?
 }
 
