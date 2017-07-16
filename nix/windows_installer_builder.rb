@@ -20,7 +20,7 @@ SrcDir = Pathname(ENV.fetch('src'))
 Version = File.read(PayloadDir + 'version.txt')
 
 mkdir ENV.fetch('out')
-cp_r PayloadDir + 'bin', OutDir
+cp_r PayloadDir + 'bin', OutDir + 'payload'
 cp_r SrcDir + 'drivers', OutDir
 cp_r SrcDir + 'images', OutDir
 cp LibusbpDir + 'bin' + 'libusbp-install-helper-1.dll', OutDir
@@ -87,7 +87,6 @@ File.open(OutDir + 'app.wixproj', 'w') do |f|
     <SchemaVersion>2.0</SchemaVersion>
     <OutputType>Package</OutputType>
     <DefineSolutionProperties>false</DefineSolutionProperties>
-    <!-- TODO? <IncludeSearchPaths>.</IncludeSearchPaths> -->
     <WixTargetsPath Condition=" '$(WixTargetsPath)' == '' ">$(MSBuildExtensionsPath)\\Microsoft\\WiX\\v3.x\\Wix.targets</WixTargetsPath>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
@@ -149,7 +148,7 @@ File.open(OutDir + 'app.wxs', 'w') do |f|
       <Directory Id="ProgramFilesFolder" Name="PFiles">
         <Directory Id="Pololu" Name="Pololu">
           <Directory Id="INSTALLDIR" Name="Tic">
-            <Directory Id="BinDir" Name="bin" FileSource="bin/">
+            <Directory Id="BinDir" Name="bin" FileSource="payload/">
               <Component Id="CliExe">
                 <File Id="CliExe" Name="ticcmd.exe" />
               </Component>
