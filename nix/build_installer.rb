@@ -9,6 +9,7 @@ require 'pathname'
 
 if ARGV.empty?
   $stderr.puts "usage: build_installer.rb <windows|linux|macos>"
+  exit 1
 end
 
 os = ARGV.shift
@@ -24,7 +25,7 @@ end
 def get_git_commit(path)
   path = Pathname(path)
   if File.exists?(path + '.git')
-    return %x(git -C #{path} rev-parse HEAD)
+    return %x(git -C #{path} rev-parse HEAD).strip
   end
   dest = path.readlink
   if md = dest.to_s.match(/\bnixpkgs-[.0-9a-z]+\.([0-9a-f]+)\b/)
