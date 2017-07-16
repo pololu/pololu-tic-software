@@ -2,10 +2,6 @@ require 'fileutils'
 require 'pathname'
 include FileUtils
 
-# Note: The shortcuts to the user's guide created with util:InternetShortcut are
-# not being uninstalled properly so I have commented them out.  Probably a Wix
-# bug.
-
 # Make sure the user did not forget to run nix/build_installer.rb.
 ['commit', 'nixcrpkgs_commit', 'nixpkgs_commit'].each do |var|
   if ENV.fetch(var).empty?
@@ -155,7 +151,7 @@ File.open(OutDir + 'app.wxs', 'w') do |f|
               <Component Id="GuiExe">
                 <File Id="GuiExe" Name="ticgui.exe" KeyPath="yes">
                   <Shortcut Id="GuiShortcut" Directory="PololuMenuFolder"
-                            Name="Pololu Tic Control Center"
+                            Name="Tic Control Center"
                             Icon="app.ico" Advertise="yes"
                             WorkingDirectory="BinDir" />
                 </File>
@@ -180,13 +176,11 @@ File.open(OutDir + 'app.wxs', 'w') do |f|
                 <File Id="PololuCat" Name="pololu.cat" />
               </Component>
             </Directory>
-            <!--
-            <Component Id="DocumentationUrl" Guid="bd17cc0f-032b-4ba5-a70e-c3c47d47059b">
+            <Component Id="DocumentationUrl" Guid="8dbfa4f9-a0e7-4c97-b4c3-baaaf3da337c">
               <util:InternetShortcut Id="DocumentationUrl" Type="url"
-                                     Name="Pololu Tic online documentation"
+                                     Name="Tic online documentation"
                                      Target="$(var.DocumentationUrl)" />
             </Component>
-            -->
             <Component Id="LicenseHtml">
               <File Id="LicenseHtml" Source="LICENSE.html" />
             </Component>
@@ -201,20 +195,6 @@ File.open(OutDir + 'app.wxs', 'w') do |f|
                            Key="Software\\[Manufacturer]\\[ProductName]"
                            Name="PololuMenuFolder" Type="integer" Value="1" />
           </Component>
-          <!-- shortcut doesn't seem to get installed:
-          <Component Id="GuiShortcut">
-            <Shortcut Id="GuiShortcut"
-                      Name="Tic Control Center"
-                      Description="My Application Description"
-                      Target="ticgui.exe"
-                      WorkingDirectory="BinDir" />
-            <RemoveFolder Id="GuiShortcutRemove" Directory="PololuMenuFolder" On="uninstall"/>
-            <RegistryValue KeyPath="yes" Root="HKCU"
-                           Key="Software\\[Manufacturer]\\[ProductName]"
-                           Name="GuiShortcut" Type="integer" Value="1" />
-          </Component>
-          -->
-          <!--
           <Component Id="DocumentationUrlInMenu">
             <util:InternetShortcut Id="DocumentationUrlInMenu" Type="url"
                                    Name="Tic online documentation"
@@ -223,7 +203,6 @@ File.open(OutDir + 'app.wxs', 'w') do |f|
                            Key="Software\\[Manufacturer]\\[ProductName]"
                            Name="DocumentationUrlInMenu" Type="integer" Value="1" />
           </Component>
-          -->
         </Directory>
       </Directory>
     </Directory>
@@ -239,9 +218,8 @@ File.open(OutDir + 'app.wxs', 'w') do |f|
       <ComponentRef Id="GuiExe" />
       <ComponentRef Id="ModifyPath" />
       <ComponentRef Id="PololuMenuFolder" />
-      <!-- <ComponentRef Id="DocumentationUrl" /> -->
-      <!-- <ComponentRef Id="GuiShortcut" /> -->
-      <!-- <ComponentRef Id="DocumentationUrlInMenu" /> -->
+      <ComponentRef Id="DocumentationUrl" />
+      <ComponentRef Id="DocumentationUrlInMenu" />
       <ComponentRef Id="LicenseHtml" />
     </Feature>
     <Feature Id="Drivers">
