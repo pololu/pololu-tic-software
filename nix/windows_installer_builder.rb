@@ -143,7 +143,6 @@ File.open(OutDir + 'app.wxs', 'w') do |f|
     <Property Id="ARPHELPTELEPHONE">702-262-6648</Property>
 
     <Icon Id="app.ico" SourceFile="images/app.ico" />
-    <!-- <Icon Id="ticgui.exe" SourceFile="bin/ticgui.exe" /> -->
     <Property Id="ARPPRODUCTICON" Value="app.ico" />
 
     <Directory Id="TARGETDIR" Name="SourceDir">
@@ -158,7 +157,7 @@ File.open(OutDir + 'app.wxs', 'w') do |f|
                 <File Id="GuiExe" Name="ticgui.exe" KeyPath="yes">
                   <Shortcut Id="GuiShortcut" Directory="PololuMenuFolder"
                             Name="Pololu Tic Control Center"
-                            Advertise="yes"
+                            Icon="app.ico" Advertise="yes"
                             WorkingDirectory="BinDir" />
                 </File>
               </Component>
