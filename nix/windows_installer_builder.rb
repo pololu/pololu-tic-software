@@ -16,7 +16,7 @@ SrcDir = Pathname(ENV.fetch('src'))
 Version = File.read(PayloadDir + 'version.txt')
 
 mkdir ENV.fetch('out')
-cp_r PayloadDir + 'bin', OutDir + 'payload'
+cp_r PayloadDir, OutDir + 'payload'
 cp_r SrcDir + 'drivers', OutDir
 cp_r SrcDir + 'images', OutDir
 cp LibusbpDir + 'bin' + 'libusbp-install-helper-1.dll', OutDir
@@ -144,7 +144,7 @@ File.open(OutDir + 'app.wxs', 'w') do |f|
       <Directory Id="ProgramFilesFolder" Name="PFiles">
         <Directory Id="Pololu" Name="Pololu">
           <Directory Id="INSTALLDIR" Name="Tic">
-            <Directory Id="BinDir" Name="bin" FileSource="payload/">
+            <Directory Id="BinDir" Name="bin" FileSource="payload/bin/">
               <Component Id="CliExe">
                 <File Id="CliExe" Name="ticcmd.exe" />
               </Component>
@@ -369,7 +369,7 @@ MSBUILD="/c/Program Files (x86)/MSBuild/14.0/Bin/MSBuild.exe"
 SIGNTOOL="/c/Program Files (x86)/Windows Kits/10/bin/x64/signtool.exe"
 SIGNFLAGS="-fd sha256 -tr http://timestamp.globalsign.com/?signature=sha2 -td sha256"
 
-"$MSBUILD" -t:rebuild -p:Configuration=Release -p:TreatWarningsAsErrors=True \
+"$MSBUILD" -t:rebuild -p:Configuration=Release -p:TreatWarningsAsErrors=True \\
   app.wixproj
 
 cp bin/Release/en-us/*.msi .
