@@ -512,22 +512,22 @@ void main_window::set_input_invert(bool input_invert)
   set_check_box(input_invert_check, input_invert);
 }
 
-void main_window::set_input_min(uint32_t input_min)
+void main_window::set_input_min(uint16_t input_min)
 {
   set_spin_box(input_min_value, input_min);
 }
 
-void main_window::set_input_neutral_min(uint32_t input_neutral_min)
+void main_window::set_input_neutral_min(uint16_t input_neutral_min)
 {
   set_spin_box(input_neutral_min_value, input_neutral_min);
 }
 
-void main_window::set_input_neutral_max(uint32_t input_neutral_max)
+void main_window::set_input_neutral_max(uint16_t input_neutral_max)
 {
   set_spin_box(input_neutral_max_value, input_neutral_max);
 }
 
-void main_window::set_input_max(uint32_t input_max)
+void main_window::set_input_max(uint16_t input_max)
 {
   set_spin_box(input_max_value, input_max);
 }
@@ -550,7 +550,15 @@ void main_window::set_input_scaling_degree(uint8_t input_scaling_degree)
 void main_window::run_input_wizard(uint8_t control_mode)
 {
   input_wizard->set_control_mode(control_mode);
-  input_wizard->exec();
+  int result = input_wizard->exec();
+  if (result == QDialog::Accepted)
+  {
+    controller->handle_input_invert_input(input_wizard->learned_input_invert());
+    controller->handle_input_min_input(input_wizard->learned_input_min());
+    controller->handle_input_neutral_min_input(input_wizard->learned_input_neutral_min());
+    controller->handle_input_neutral_max_input(input_wizard->learned_input_neutral_max());
+    controller->handle_input_max_input(input_wizard->learned_input_max());
+  }
 }
 
 void main_window::set_invert_motor_direction(bool invert_motor_direction)

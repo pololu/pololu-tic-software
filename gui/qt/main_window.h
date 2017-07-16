@@ -173,10 +173,10 @@ public:
   void set_input_hysteresis(uint16_t input_hysteresis);
 
   void set_input_invert(bool input_invert);
-  void set_input_min(uint32_t input_min);
-  void set_input_neutral_min(uint32_t input_neutral_min);
-  void set_input_neutral_max(uint32_t input_neutral_max);
-  void set_input_max(uint32_t input_max);
+  void set_input_min(uint16_t input_min);
+  void set_input_neutral_min(uint16_t input_neutral_min);
+  void set_input_neutral_max(uint16_t input_neutral_max);
+  void set_input_max(uint16_t input_max);
   void set_output_min(int32_t output_min);
   void set_output_max(int32_t output_max);
   void set_input_scaling_degree(uint8_t input_scaling_degree);

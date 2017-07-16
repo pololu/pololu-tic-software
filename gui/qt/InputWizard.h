@@ -2,7 +2,7 @@
 
 #include <QWizard>
 
-class LearnPage;
+class InputWizard;
 class QLabel;
 class QProgressBar;
 
@@ -32,40 +32,9 @@ public:
   uint16_t range() const { return max - min; }
   uint16_t distance_to(input_range const & other) const;
   bool intersects(input_range const & other) const { return distance_to(other) == 0; }
-  bool entirely_above(input_range const & other) const { return min > other.max; }
+  bool is_entirely_above(input_range const & other) const { return min > other.max; }
 
   std::string to_string() const;
-};
-
-
-class InputWizard : public QWizard
-{
-  Q_OBJECT
-
-public:
-  InputWizard(main_window * parent);
-
-  void set_control_mode(uint8_t control_mode);
-  uint8_t control_mode() const { return cmode; }
-  QString control_mode_name() const;
-  QString input_pin_name() const;
-  void handle_input(uint16_t input);
-
-private slots:
-  void on_currentIdChanged(int id);
-
-private:
-  bool suppress_events = false;
-
-  QWizardPage * setup_intro_page();
-  QWizardPage * setup_learn_page();
-  QWizardPage * setup_conclusion_page();
-
-  QLabel * intro_label;
-  LearnPage * learn_page;
-
-  uint8_t cmode;
-  void set_text_from_control_mode();
 };
 
 
@@ -104,6 +73,12 @@ private:
   std::vector<uint16_t> samples;
   std::array<input_range, 3> learned_ranges;
 
+  bool input_invert;
+  uint16_t input_min;
+  uint16_t input_neutral_min;
+  uint16_t input_neutral_max;
+  uint16_t input_max;
+
   QLayout * setup_input_layout();
 
   QLabel * instruction_label;
@@ -114,4 +89,49 @@ private:
   QProgressBar * sampling_progress;
 
   friend class InputWizard;
+};
+
+
+class InputWizard : public QWizard
+{
+  Q_OBJECT
+
+public:
+  InputWizard(main_window * parent);
+
+  void set_control_mode(uint8_t control_mode);
+  uint8_t control_mode() const { return cmode; }
+  QString control_mode_name() const;
+  QString input_pin_name() const;
+
+  void handle_input(uint16_t input);
+
+  bool learned_input_invert() const           { return learn_page->input_invert; }
+  uint16_t learned_input_min() const          { return learn_page->input_min; }
+  uint16_t learned_input_neutral_min() const  { return learn_page->input_neutral_min; }
+  uint16_t learned_input_neutral_max() const  { return learn_page->input_neutral_max; }
+  uint16_t learned_input_max() const          { return learn_page->input_max; }
+
+  void force_back();
+  void force_next();
+
+protected:
+  void hideEvent(QHideEvent * event) override;
+
+private slots:
+  void on_currentIdChanged(int id);
+
+private:
+  bool suppress_events = false;
+
+
+  QWizardPage * setup_intro_page();
+  QWizardPage * setup_learn_page();
+  QWizardPage * setup_conclusion_page();
+
+  QLabel * intro_label;
+  LearnPage * learn_page;
+
+  uint8_t cmode;
+  void set_text_from_control_mode();
 };
