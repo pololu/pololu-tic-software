@@ -16,7 +16,7 @@ SrcDir = Pathname(ENV.fetch('src'))
 Version = File.read(PayloadDir + 'version.txt')
 
 mkdir ENV.fetch('out')
-cp_r PayloadDir + 'bin', OutDir
+cp_r PayloadDir + 'bin', OutDir + 'payload'
 cp_r SrcDir + 'drivers', OutDir
 cp_r SrcDir + 'images', OutDir
 cp LibusbpDir + 'bin' + 'libusbp-install-helper-1.dll', OutDir
@@ -83,7 +83,6 @@ File.open(OutDir + 'app.wixproj', 'w') do |f|
     <SchemaVersion>2.0</SchemaVersion>
     <OutputType>Package</OutputType>
     <DefineSolutionProperties>false</DefineSolutionProperties>
-    <!-- TODO? <IncludeSearchPaths>.</IncludeSearchPaths> -->
     <WixTargetsPath Condition=" '$(WixTargetsPath)' == '' ">$(MSBuildExtensionsPath)\\Microsoft\\WiX\\v3.x\\Wix.targets</WixTargetsPath>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
@@ -139,14 +138,13 @@ File.open(OutDir + 'app.wxs', 'w') do |f|
     <Property Id="ARPHELPTELEPHONE">702-262-6648</Property>
 
     <Icon Id="app.ico" SourceFile="images/app.ico" />
-    <Icon Id="ticgui.exe" SourceFile="bin/ticgui.exe" />
     <Property Id="ARPPRODUCTICON" Value="app.ico" />
 
     <Directory Id="TARGETDIR" Name="SourceDir">
       <Directory Id="ProgramFilesFolder" Name="PFiles">
         <Directory Id="Pololu" Name="Pololu">
           <Directory Id="INSTALLDIR" Name="Tic">
-            <Directory Id="BinDir" Name="bin" FileSource="bin/">
+            <Directory Id="BinDir" Name="bin" FileSource="payload/">
               <Component Id="CliExe">
                 <File Id="CliExe" Name="ticcmd.exe" />
               </Component>
@@ -154,7 +152,7 @@ File.open(OutDir + 'app.wxs', 'w') do |f|
                 <File Id="GuiExe" Name="ticgui.exe" KeyPath="yes">
                   <Shortcut Id="GuiShortcut" Directory="PololuMenuFolder"
                             Name="Tic Control Center"
-                            Icon="ticgui.exe" Advertise="yes"
+                            Icon="app.ico" Advertise="yes"
                             WorkingDirectory="BinDir" />
                 </File>
               </Component>
@@ -178,9 +176,9 @@ File.open(OutDir + 'app.wxs', 'w') do |f|
                 <File Id="PololuCat" Name="pololu.cat" />
               </Component>
             </Directory>
-            <Component Id="DocumentationUrl" Guid="bd17cc0f-032b-4ba5-a70e-c3c47d47059b">
+            <Component Id="DocumentationUrl" Guid="8dbfa4f9-a0e7-4c97-b4c3-baaaf3da337c">
               <util:InternetShortcut Id="DocumentationUrl" Type="url"
-                                     Name="Pololu Tic online documentation"
+                                     Name="Tic online documentation"
                                      Target="$(var.DocumentationUrl)" />
             </Component>
             <Component Id="LicenseHtml">
