@@ -130,10 +130,11 @@ void InputWizard::force_next()
   suppress_events = false;
 }
 
-void InputWizard::hideEvent(QHideEvent * event)
+void InputWizard::showEvent(QShowEvent * event)
 {
   learn_page->step = NEUTRAL;
   learn_page->set_text_from_step();
+  restart();
 }
 
 void InputWizard::on_currentIdChanged(int id)

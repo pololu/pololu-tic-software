@@ -116,7 +116,7 @@ public:
   void force_next();
 
 protected:
-  void hideEvent(QHideEvent * event) override;
+  void showEvent(QShowEvent * event) override;
 
 private slots:
   void on_currentIdChanged(int id);
