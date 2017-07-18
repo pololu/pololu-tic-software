@@ -1460,7 +1460,7 @@ static void setup_error_row(QGridLayout * layout, int row, error_row & er)
   // make up for the vertical spacing being removed.
   {
     er.stopping_value->setText("Yes");
-    er.stopping_value->setMinimumWidth(er.stopping_value->sizeHint().width() +
+    er.stopping_value->setFixedWidth(er.stopping_value->sizeHint().width() +
       2 * er.stopping_value->fontMetrics().height());
     layout->setRowMinimumHeight(row, er.stopping_value->sizeHint().height() +
       er.background->style()->pixelMetric(QStyle::PM_LayoutVerticalSpacing));
@@ -1797,7 +1797,7 @@ QWidget * main_window::setup_operation_status_box()
 
   // Set fixed sizes for performance.
   {
-    target_value->setText(QString::number(-TIC_MAX_ALLOWED_SPEED));
+    target_value->setText(QString::number(INT32_MIN));
 
     vin_voltage_value->setFixedSize(target_value->sizeHint());
     target_value->setFixedSize(target_value->sizeHint());
@@ -1885,11 +1885,12 @@ QWidget * main_window::setup_manual_target_box()
     manual_target_max_pretty = new QLabel();
     manual_target_entry_pretty = new QLabel();
 
+    // Set fixed size for performance.
     {
       manual_target_entry_pretty->setText(
         "(" + QString::fromStdString(convert_speed_to_pps_string(-TIC_MAX_ALLOWED_SPEED)) + ")");
-      manual_target_entry_pretty->setFixedWidth(
-        manual_target_entry_pretty->sizeHint().width());
+      manual_target_entry_pretty->setFixedSize(
+        manual_target_entry_pretty->sizeHint());
     }
 
     layout->addWidget(manual_target_min_pretty, row, 1, Qt::AlignLeft);
@@ -1947,13 +1948,13 @@ QWidget * main_window::setup_manual_target_box()
   {
     manual_target_entry_value->setMinimum(INT32_MIN);
 
-    manual_target_min_value->setFixedWidth(
+    manual_target_min_value->setMinimumWidth(
       manual_target_entry_value->sizeHint().width());
-    manual_target_max_value->setFixedWidth(
+    manual_target_max_value->setMinimumWidth(
       manual_target_entry_value->sizeHint().width());
-    manual_target_entry_value->setFixedWidth(
+    manual_target_entry_value->setMinimumWidth(
       manual_target_entry_value->sizeHint().width());
-    current_position_entry_value->setFixedWidth(
+    current_position_entry_value->setMinimumWidth(
       manual_target_entry_value->sizeHint().width());
   }
 
