@@ -297,7 +297,7 @@ void main_controller::update()
       // The user explicitly disconnected the last connection, so don't
       // automatically reconnect.
     }
-    else if (successfully_updated_list && device_list.size() == 1)
+    else if (successfully_updated_list && (device_list.size() == 1))
     {
       // Automatically connect if there is only one device and we were not
       // recently disconnected from a device.
@@ -431,23 +431,22 @@ void main_controller::handle_device_changed()
 
 void main_controller::initialize_manual_target()
 {
-
   if (control_mode_is_serial(cached_settings) &&
-    variables.get_input_state() == TIC_INPUT_STATE_POSITION)
+    (variables.get_input_state() == TIC_INPUT_STATE_POSITION))
   {
     window->set_manual_target_position_mode();
-    window->set_manual_target(variables.get_input_after_scaling());
+    window->set_displayed_manual_target(variables.get_input_after_scaling());
   }
   else if (control_mode_is_serial(cached_settings) &&
-    variables.get_input_state() == TIC_INPUT_STATE_VELOCITY)
+    (variables.get_input_state() == TIC_INPUT_STATE_VELOCITY))
   {
-    window->set_manual_target_speed_mode();
-    window->set_manual_target(variables.get_input_after_scaling());
+    window->set_manual_target_velocity_mode();
+    window->set_displayed_manual_target(variables.get_input_after_scaling());
   }
   else
   {
     window->set_manual_target_position_mode();
-    window->set_manual_target(0);
+    window->set_displayed_manual_target(0);
   }
 }
 
@@ -457,7 +456,8 @@ void main_controller::handle_variables_changed()
 
   window->set_encoder_position(variables.get_encoder_position());
   window->set_input_state(
-    tic_look_up_input_state_name_ui(variables.get_input_state()));
+    tic_look_up_input_state_name_ui(variables.get_input_state()),
+    variables.get_input_state());
   window->set_input_after_averaging(variables.get_input_after_averaging());
   window->set_input_after_hysteresis(variables.get_input_after_hysteresis());
   if (cached_settings)
@@ -478,6 +478,7 @@ void main_controller::handle_variables_changed()
   int32_t current_position = variables.get_current_position();
   int32_t current_velocity = variables.get_current_velocity();
 
+  bool target_valid = true;
   if (variables.get_planning_mode() == TIC_PLANNING_MODE_TARGET_POSITION)
   {
     window->set_target_position(target_position);
@@ -489,12 +490,13 @@ void main_controller::handle_variables_changed()
   else
   {
     window->set_target_none();
+    target_valid = false;
   }
 
   window->set_manual_target_ball_position(current_position,
-    current_position == target_position);
+    target_valid && (current_position == target_position));
   window->set_manual_target_ball_velocity(current_velocity,
-    current_velocity == target_velocity);
+    target_valid && (current_velocity == target_velocity));
 
   window->set_current_position(current_position);
   window->set_position_uncertain(variables.get_position_uncertain());
@@ -681,10 +683,6 @@ void main_controller::handle_settings_changed()
 
 void main_controller::handle_settings_applied()
 {
-  window->set_manual_target_range(
-    tic_settings_get_output_min(settings.get_pointer()),
-    tic_settings_get_output_max(settings.get_pointer()));
-
   window->set_manual_target_box_enabled(control_mode_is_serial(settings));
 
   // this must be last so the preceding code can compare old and new settings

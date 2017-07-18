@@ -129,7 +129,7 @@ public:
   void set_up_time(uint32_t up_time);
 
   void set_encoder_position(int32_t encoder_position);
-  void set_input_state(std::string const & input_state);
+  void set_input_state(std::string const & input_state, uint8_t input_state_raw);
   void set_input_after_averaging(uint16_t input_after_averaging);
   void set_input_after_hysteresis(uint16_t input_after_hysteresis);
   void set_input_before_scaling(uint16_t input_before_scaling, uint8_t control_mode);
@@ -150,9 +150,9 @@ public:
   void reset_error_counts();
 
   void set_manual_target_position_mode();
-  void set_manual_target_speed_mode();
+  void set_manual_target_velocity_mode();
   void set_manual_target_range(int32_t target_min, int32_t target_max);
-  void set_manual_target(int32_t target);
+  void set_displayed_manual_target(int32_t target);
   void set_manual_target_ball_position(int32_t current_position, bool on_target);
   void set_manual_target_ball_velocity(int32_t current_velocity, bool on_target);
 
@@ -219,7 +219,7 @@ private:
   void set_double_spin_box(QDoubleSpinBox * spin, double value);
   void set_check_box(QCheckBox * check, bool value);
 
-  void update_set_target_button();
+  void update_manual_target_controls();
 
 protected:
   /** This is called by Qt just before the window is shown for the first time,
@@ -247,11 +247,14 @@ private slots:
   void on_manual_target_position_mode_radio_toggled(bool checked);
   void on_manual_target_scroll_bar_valueChanged(int value);
   void on_manual_target_scroll_bar_scrollingFinished();
+  void on_manual_target_min_value_valueChanged(int value);
+  void on_manual_target_max_value_valueChanged(int value);
   void on_manual_target_entry_value_valueChanged(int value);
   void on_manual_target_return_key_shortcut_activated();
   void on_set_target_button_clicked();
   void on_auto_set_target_check_stateChanged(int state);
   void on_auto_zero_target_check_stateChanged(int state);
+  void on_set_current_position_button_clicked();
   void on_halt_button_clicked();
   void on_decelerate_button_clicked();
 
@@ -333,9 +336,6 @@ private:
   QWidget * setup_input_status_box();
   QWidget * setup_operation_status_box();
   QWidget * setup_manual_target_box();
-  QLayout * setup_manual_target_input_layout();
-  QWidget * setup_manual_target_entry_widget();
-  QLayout * setup_manual_target_buttons_layout();
   QWidget * setup_errors_box();
   QLayout * setup_error_table_layout();
 
@@ -353,7 +353,9 @@ private:
   QWidget * setup_misc_settings_box();
 
   QLayout * setup_footer();
+
   void retranslate();
+  void adjust_sizes();
 
   QIcon program_icon;
 
@@ -432,23 +434,38 @@ private:
   QLabel * current_velocity_value;
   QLabel * current_velocity_pretty;
 
+  int32_t manual_target_position_min = -200;
+  int32_t manual_target_position_max = 200;
+  int32_t manual_target_velocity_min = -2000000; // -200 pps
+  int32_t manual_target_velocity_max = 2000000;  //  200 pps
+  uint8_t cached_input_state = 0;
+  int32_t cached_input_after_scaling;
+
   QGroupBox * manual_target_box;
   QGridLayout * manual_target_box_layout;
-  QVBoxLayout * manual_target_input_layout;
-  QGridLayout * manual_target_buttons_layout;
-  QWidget * manual_target_entry_widget;
-  QGridLayout * manual_target_entry_widget_layout;
+  QVBoxLayout * manual_target_mode_layout;
+  QVBoxLayout * manual_target_checks_layout;
+
   QRadioButton * manual_target_position_mode_radio;
-  QRadioButton * manual_target_speed_mode_radio;
+  QRadioButton * manual_target_velocity_mode_radio;
+
   BallScrollBar * manual_target_scroll_bar;
-  QLabel * manual_target_min_label;
-  QLabel * manual_target_max_label;
+  QSpinBox * manual_target_min_value;
+  QLabel * manual_target_min_pretty;
+  QSpinBox * manual_target_max_value;
+  QLabel * manual_target_max_pretty;
   QSpinBox * manual_target_entry_value;
+  QLabel * manual_target_entry_pretty;
+  QPushButton * set_target_button;
   QShortcut * manual_target_return_key_shortcut;
   QShortcut * manual_target_enter_key_shortcut;
-  QPushButton * set_target_button;
+
   QCheckBox * auto_set_target_check;
   QCheckBox * auto_zero_target_check;
+
+  QSpinBox * current_position_entry_value;
+  QPushButton * set_current_position_button;
+
   QPushButton * halt_button;
   QPushButton * decelerate_button;
 
