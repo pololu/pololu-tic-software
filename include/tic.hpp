@@ -356,28 +356,28 @@ namespace tic
       return tic_variables_get_target_velocity(pointer);
     }
 
+    /// Wrapper for tic_variables_get_max_speed().
+    uint32_t get_max_speed() const noexcept
+    {
+      return tic_variables_get_max_speed(pointer);
+    }
+
     /// Wrapper for tic_variables_get_starting_speed().
     uint32_t get_starting_speed() const noexcept
     {
       return tic_variables_get_starting_speed(pointer);
     }
 
-    /// Wrapper for tic_variables_get_speed_max().
-    uint32_t get_speed_max() const noexcept
+    /// Wrapper for tic_variables_get_max_accel().
+    uint32_t get_max_accel() const noexcept
     {
-      return tic_variables_get_speed_max(pointer);
+      return tic_variables_get_max_accel(pointer);
     }
 
-    /// Wrapper for tic_variables_get_decel_max().
-    uint32_t get_decel_max() const noexcept
+    /// Wrapper for tic_variables_get_max_decel().
+    uint32_t get_max_decel() const noexcept
     {
-      return tic_variables_get_decel_max(pointer);
-    }
-
-    /// Wrapper for tic_variables_get_accel_max().
-    uint32_t get_accel_max() const noexcept
-    {
-      return tic_variables_get_accel_max(pointer);
+      return tic_variables_get_max_decel(pointer);
     }
 
     /// Wrapper for tic_variables_get_current_position().

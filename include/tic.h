@@ -712,8 +712,8 @@ uint8_t tic_settings_get_decay_mode(const tic_settings *);
 ///
 /// This sets the default value.  To set or get the current value, see:
 ///
-/// - tic_set_speed_max()
-/// - tic_variables_get_speed_max()
+/// - tic_set_max_speed()
+/// - tic_variables_get_max_speed()
 TIC_API
 void tic_settings_set_max_speed(tic_settings *, uint32_t);
 
@@ -862,21 +862,21 @@ uint32_t tic_variables_get_starting_speed(const tic_variables *);
 /// This is the current value.  To get the default value at startup, see
 /// tic_settings_get_max_speed().
 TIC_API
-uint32_t tic_variables_get_speed_max(const tic_variables *);
+uint32_t tic_variables_get_max_speed(const tic_variables *);
 
 /// Gets the current maximum deceleration, in microsteps per 100 square seconds.
 ///
 /// This is the current value.  To get the default value at startup, see
-/// tic_settings_get_decel_max().
+/// tic_settings_get_max_decel().
 TIC_API
-uint32_t tic_variables_get_decel_max(const tic_variables *);
+uint32_t tic_variables_get_max_decel(const tic_variables *);
 
 /// Gets the current maximum acceleration, in microsteps per 100 square seconds.
 ///
 /// This is the current value.  To get the default value at startup, see
-/// tic_settings_get_accel_max().
+/// tic_settings_get_max_accel().
 TIC_API
-uint32_t tic_variables_get_accel_max(const tic_variables *);
+uint32_t tic_variables_get_max_accel(const tic_variables *);
 
 /// Gets the current position of the stepper motor, in microsteps.
 ///

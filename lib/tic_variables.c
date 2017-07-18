@@ -13,9 +13,9 @@ struct tic_variables
   int32_t target_position;
   int32_t target_velocity;
   uint32_t starting_speed;
-  uint32_t speed_max;
-  uint32_t decel_max;
-  uint32_t accel_max;
+  uint32_t max_speed;
+  uint32_t max_decel;
+  uint32_t max_accel;
   int32_t current_position;
   int32_t current_velocity;
   int32_t acting_target_position;
@@ -128,9 +128,9 @@ static void write_buffer_to_variables(const uint8_t * buf, tic_variables * vars)
   vars->target_position = read_i32(buf + TIC_VAR_TARGET_POSITION);
   vars->target_velocity = read_i32(buf + TIC_VAR_TARGET_VELOCITY);
   vars->starting_speed = read_u32(buf + TIC_VAR_STARTING_SPEED);
-  vars->speed_max = read_u32(buf + TIC_VAR_SPEED_MAX);
-  vars->decel_max = read_u32(buf + TIC_VAR_DECEL_MAX);
-  vars->accel_max = read_u32(buf + TIC_VAR_ACCEL_MAX);
+  vars->max_speed = read_u32(buf + TIC_VAR_MAX_SPEED);
+  vars->max_decel = read_u32(buf + TIC_VAR_MAX_DECEL);
+  vars->max_accel = read_u32(buf + TIC_VAR_MAX_ACCEL);
   vars->current_position = read_i32(buf + TIC_VAR_CURRENT_POSITION);
   vars->current_velocity = read_i32(buf + TIC_VAR_CURRENT_VELOCITY);
   vars->acting_target_position = read_i32(buf + TIC_VAR_ACTING_TARGET_POSITION);
@@ -291,22 +291,22 @@ uint32_t tic_variables_get_starting_speed(const tic_variables * variables)
   return variables->starting_speed;
 }
 
-uint32_t tic_variables_get_speed_max(const tic_variables * variables)
+uint32_t tic_variables_get_max_speed(const tic_variables * variables)
 {
   if (variables == NULL) { return 0; }
-  return variables->speed_max;
+  return variables->max_speed;
 }
 
-uint32_t tic_variables_get_decel_max(const tic_variables * variables)
+uint32_t tic_variables_get_max_decel(const tic_variables * variables)
 {
   if (variables == NULL) { return 0; }
-  return variables->decel_max;
+  return variables->max_decel;
 }
 
-uint32_t tic_variables_get_accel_max(const tic_variables * variables)
+uint32_t tic_variables_get_max_accel(const tic_variables * variables)
 {
   if (variables == NULL) { return 0; }
-  return variables->accel_max;
+  return variables->max_accel;
 }
 
 int32_t tic_variables_get_current_position(const tic_variables * variables)
