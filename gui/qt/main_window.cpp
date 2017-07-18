@@ -38,6 +38,28 @@ Q_IMPORT_PLUGIN (QWindowsIntegrationPlugin);
 
 #define UINT12_MAX 0xFFF // 4095
 
+// Keyboard shortcuts:
+// Alt+A: Apply Settings
+// Alt+C: Set current position
+// Alt+D: Device menu
+// Alt+E: Decelerate motor
+// Alt+F: File menu
+// Alt+G: De-energize
+// Alt+H: Help menu
+// Alt+L: Halt motor
+// Alt+N: Learn...
+// Alt+O: Reset counts
+// Alt+P: Set position mode
+// Alt+R: Resume
+// Alt+T: Set target
+// Alt+V: Set velocity mode
+// Alt+W: Set target when slider or entry box are changed
+// Alt+Z: Return slider to zero when it is released
+// Ctrl+D: Disconnect
+// Ctrl+O: Open settings file...
+// Ctrl+P: Apply settings
+// Ctrl+S: Save settings file...
+
 main_window::main_window(QWidget *parent)
   : QMainWindow(parent)
 {
@@ -797,7 +819,7 @@ void main_window::update_manual_target_controls()
 {
   if (manual_target_position_mode_radio->isChecked())
   {
-    set_target_button->setText(tr("Set target position"));
+    set_target_button->setText(tr("Se&t target position"));
 
     manual_target_min_value->setMinimum(INT32_MIN);
     manual_target_min_value->setValue(manual_target_position_min);
@@ -815,7 +837,7 @@ void main_window::update_manual_target_controls()
   }
   else
   {
-    set_target_button->setText(tr("Set target velocity"));
+    set_target_button->setText(tr("Se&t target velocity"));
 
     manual_target_min_value->setMinimum(-TIC_MAX_ALLOWED_SPEED);
     manual_target_min_value->setValue(manual_target_velocity_min);
@@ -1591,6 +1613,18 @@ void main_window::setup_menu_bar()
 
   file_menu = menu_bar->addMenu("");
 
+  open_settings_action = new QAction(this);
+  open_settings_action->setObjectName("open_settings_action");
+  open_settings_action->setShortcut(Qt::CTRL + Qt::Key_O);
+  file_menu->addAction(open_settings_action);
+  
+  save_settings_action = new QAction(this);
+  save_settings_action->setObjectName("save_settings_action");
+  save_settings_action->setShortcut(Qt::CTRL + Qt::Key_S);
+  file_menu->addAction(save_settings_action);
+  
+  file_menu->addSeparator();
+  
   exit_action = new QAction(this);
   exit_action->setObjectName("exit_action");
   exit_action->setShortcut(QKeySequence::Quit);
@@ -2685,6 +2719,8 @@ void main_window::retranslate()
   setWindowTitle(tr("Pololu Tic Control Center"));
 
   file_menu->setTitle(tr("&File"));
+  open_settings_action->setText(tr("&Open settings file..."));
+  save_settings_action->setText(tr("&Save settings file..."));
   exit_action->setText(tr("E&xit"));
   device_menu->setTitle(tr("&Device"));
   disconnect_action->setText(tr("&Disconnect"));
@@ -2741,18 +2777,18 @@ void main_window::retranslate()
   error_rows[TIC_ERROR_SERIAL_FORMAT]            .name_label->setText(INDENT(tr("Format")));
   error_rows[TIC_ERROR_SERIAL_CRC]               .name_label->setText(INDENT(tr("CRC")));
   error_rows[TIC_ERROR_ENCODER_SKIP]             .name_label->setText(tr("Encoder skip"));
-  errors_reset_counts_button->setText(tr("Reset counts"));
+  errors_reset_counts_button->setText(tr("Reset c&ounts"));
 
   manual_target_box->setTitle(tr(u8"Set target (Serial\u2009/\u2009I\u00B2C\u2009/\u2009USB mode only)"));
-  manual_target_position_mode_radio->setText(tr("Set position"));
-  manual_target_velocity_mode_radio->setText(tr("Set velocity"));
+  manual_target_position_mode_radio->setText(tr("Set &position"));
+  manual_target_velocity_mode_radio->setText(tr("Set &velocity"));
   update_manual_target_controls();
-  set_current_position_button->setText(tr("Set current position"));
+  set_current_position_button->setText(tr("Set &current position"));
   current_position_halts_label->setText(tr("(will halt motor)"));
-  auto_set_target_check->setText(tr("Set target when slider or entry box are changed"));
-  auto_zero_target_check->setText(tr("Return slider to zero when it is released"));
-  halt_button->setText(tr("Halt motor"));
-  decelerate_button->setText(tr("Decelerate motor"));
+  auto_set_target_check->setText(tr("Set target &when slider or entry box are changed"));
+  auto_zero_target_check->setText(tr("Return slider to &zero when it is released"));
+  halt_button->setText(tr("Ha&lt motor"));
+  decelerate_button->setText(tr("D&ecelerate motor"));
 
   //// settings page
   // [all-settings]
@@ -2775,7 +2811,7 @@ void main_window::retranslate()
   input_hysteresis_label->setText(tr("Input hysteresis:"));
 
   scaling_settings_box->setTitle(tr("Scaling"));
-  input_learn_button->setText(tr("&Learn..."));
+  input_learn_button->setText(tr("Lear&n..."));
   input_invert_check->setText(tr("Invert input direction"));
   scaling_input_label->setText(tr("Input"));
   scaling_target_label->setText(tr("Target"));
@@ -2828,8 +2864,8 @@ void main_window::retranslate()
 
   //// end pages
 
-  deenergize_button->setText(tr("De-energize"));
-  resume_button->setText(tr("Resume"));
+  deenergize_button->setText(tr("De-ener&gize"));
+  resume_button->setText(tr("&Resume"));
   apply_settings_button->setText(apply_settings_action->text());
 }
 

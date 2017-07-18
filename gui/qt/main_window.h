@@ -361,6 +361,8 @@ private:
 
   QMenuBar * menu_bar;
   QMenu * file_menu;
+  QAction * open_settings_action;
+  QAction * save_settings_action;
   QAction * exit_action;
   QMenu * device_menu;
   QAction * disconnect_action;
