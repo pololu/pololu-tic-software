@@ -276,8 +276,8 @@ tic_error * tic_settings_to_string(const tic_settings * settings, char ** string
   }
 
   {
-    uint32_t speed_max = tic_settings_get_speed_max(settings);
-    tic_sprintf(&str, "speed_max: %u\n", speed_max);
+    uint32_t max_speed = tic_settings_get_max_speed(settings);
+    tic_sprintf(&str, "max_speed: %u\n", max_speed);
   }
 
   {
@@ -286,13 +286,13 @@ tic_error * tic_settings_to_string(const tic_settings * settings, char ** string
   }
 
   {
-    uint32_t accel = tic_settings_get_accel_max(settings);
-    tic_sprintf(&str, "accel_max: %u\n", accel);
+    uint32_t accel = tic_settings_get_max_accel(settings);
+    tic_sprintf(&str, "max_accel: %u\n", accel);
   }
 
   {
-    uint32_t decel = tic_settings_get_decel_max(settings);
-    tic_sprintf(&str, "decel_max: %u\n", decel);
+    uint32_t decel = tic_settings_get_max_decel(settings);
+    tic_sprintf(&str, "max_decel: %u\n", decel);
   }
 
   {

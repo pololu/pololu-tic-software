@@ -37,10 +37,10 @@ current_limit: 192
 current_limit_during_error: -1
 step_mode: 1
 decay_mode: mixed
-speed_max: 2000000
+max_speed: 2000000
 starting_speed: 0
-accel_max: 40000
-decel_max: 0
+max_accel: 40000
+max_decel: 0
 invert_motor_direction: false
 END
 }
@@ -82,10 +82,10 @@ current_limit: 384
 current_limit_during_error: 96
 step_mode: 32
 decay_mode: fast
-speed_max: 234567890
+max_speed: 234567890
 starting_speed: 10000
-accel_max: 934567820
-decel_max: 734567890
+max_accel: 934567820
+max_decel: 734567890
 invert_motor_direction: true
 END
 }
@@ -204,8 +204,8 @@ def test_cases_for_settings_fix(product)
       "Warning: The current limit during error is an invalid negative number " \
       "so it will be changed to be the same as the default current limit.\n"
     ],
-    [ { 'speed_max' => 70000_0000 },
-      { 'speed_max' => 50000_0000 },
+    [ { 'max_speed' => 70000_0000 },
+      { 'max_speed' => 50000_0000 },
       "Warning: The maximum speed is too high " \
       "so it will be lowered to 500000000 (50 kHz).\n"
     ],
@@ -214,31 +214,31 @@ def test_cases_for_settings_fix(product)
       "Warning: The starting speed is greater than the maximum speed " \
       "so it will be lowered to 2000000.\n"
     ],
-    [ { 'decel_max' => 0x80000000 },
-      { 'decel_max' => 0x7FFFFFFF },
+    [ { 'max_decel' => 0x80000000 },
+      { 'max_decel' => 0x7FFFFFFF },
       "Warning: The maximum deceleration is too high " \
       "so it will be lowered to 2147483647.\n"
     ],
-    [ { 'decel_max' => 99 },
-      { 'decel_max' => 100 },
+    [ { 'max_decel' => 99 },
+      { 'max_decel' => 100 },
       "Warning: The maximum deceleration is too low " \
       "so it will be raised to 100.\n"
     ],
-    [ { 'decel_max' => 0 },  # 0 means same as accel_max
+    [ { 'max_decel' => 0 },  # 0 means same as max_accel
       { }
     ],
-    [ { 'accel_max' => 0x80000000 },
-      { 'accel_max' => 0x7FFFFFFF },
+    [ { 'max_accel' => 0x80000000 },
+      { 'max_accel' => 0x7FFFFFFF },
       "Warning: The maximum acceleration is too high " \
       "so it will be lowered to 2147483647.\n"
     ],
-    [ { 'accel_max' => 99 },
-      { 'accel_max' => 100 },
+    [ { 'max_accel' => 99 },
+      { 'max_accel' => 100 },
       "Warning: The maximum acceleration is too low " \
       "so it will be raised to 100.\n"
     ],
-    [ { 'accel_max' => 0 },
-      { 'accel_max' => 100 },
+    [ { 'max_accel' => 0 },
+      { 'max_accel' => 100 },
       "Warning: The maximum acceleration is too low " \
       "so it will be raised to 100.\n"
     ],

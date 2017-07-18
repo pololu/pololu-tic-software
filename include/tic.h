@@ -706,7 +706,7 @@ void tic_settings_set_decay_mode(tic_settings *, uint8_t);
 TIC_API
 uint8_t tic_settings_get_decay_mode(const tic_settings *);
 
-/// Sets the speed maximum, or speed limit, in steps per 10000 seconds.  Valid
+/// Sets the maximum speed, or speed limit, in steps per 10000 seconds.  Valid
 /// values are from 0 to 500000000 (50 kHz).  Values between 0 and 6 behave the
 /// same as 0.
 ///
@@ -715,11 +715,11 @@ uint8_t tic_settings_get_decay_mode(const tic_settings *);
 /// - tic_set_speed_max()
 /// - tic_variables_get_speed_max()
 TIC_API
-void tic_settings_set_speed_max(tic_settings *, uint32_t);
+void tic_settings_set_max_speed(tic_settings *, uint32_t);
 
-/// Gets the speed maximum described in tic_settings_set_speed_max().
+/// Gets the speed maximum described in tic_settings_set_max_speed().
 TIC_API
-uint32_t tic_settings_get_speed_max(const tic_settings *);
+uint32_t tic_settings_get_max_speed(const tic_settings *);
 
 /// Sets the starting speed in microsteps per 10000 seconds.
 ///
@@ -736,35 +736,35 @@ void tic_settings_set_starting_speed(tic_settings *, uint32_t);
 TIC_API
 uint32_t tic_settings_get_starting_speed(const tic_settings *);
 
-/// Sets the acceleration maximum, or acceleration limit, in steps per 100
+/// Sets the maximum acceleration, or acceleration limit, in steps per 100
 /// square seconds.  Valid values are 59 to 2147483647.
 ///
 /// This sets the default value.  To set or get the current value, see:
 ///
-/// - tic_set_accel_max()
-/// - tic_variables_get_accel_max()
+/// - tic_set_max_accel()
+/// - tic_variables_get_max_accel()
 TIC_API
-void tic_settings_set_accel_max(tic_settings *, uint32_t);
+void tic_settings_set_max_accel(tic_settings *, uint32_t);
 
-/// Gets the acceleration maximum described in tic_settings_set_accel_max().
+/// Gets the acceleration maximum described in tic_settings_set_max_accel().
 TIC_API
-uint32_t tic_settings_get_accel_max(const tic_settings *);
+uint32_t tic_settings_get_max_accel(const tic_settings *);
 
-/// Sets the deceleration maximum, or deceleration limit, in steps per 100
+/// Sets the maximum deceleration, or deceleration limit, in steps per 100
 /// square seconds.  Valid values are 0 and 59 to 2147483647.  A value of 0
 /// causes the controller's deceleration limit to be equal to the acceleration
 /// limit.
 ///
 /// This sets the default value.  To set or get the current value, see:
 ///
-/// - tic_set_decel_max()
-/// - tic_variables_get_decel_max()
+/// - tic_set_max_decel()
+/// - tic_variables_get_max_decel()
 TIC_API
-void tic_settings_set_decel_max(tic_settings *, uint32_t);
+void tic_settings_set_max_decel(tic_settings *, uint32_t);
 
-/// Gets the deceleration maximum described in tic_settings_set_decel_max().
+/// Gets the maximum deceleration described in tic_settings_set_max_decel().
 TIC_API
-uint32_t tic_settings_get_decel_max(const tic_settings *);
+uint32_t tic_settings_get_max_decel(const tic_settings *);
 
 /// Sets the Invert motor direction setting.
 ///
@@ -860,7 +860,7 @@ uint32_t tic_variables_get_starting_speed(const tic_variables *);
 /// Gets the current speed maximum, in microsteps per 10000 seconds.
 ///
 /// This is the current value.  To get the default value at startup, see
-/// tic_settings_get_speed_max().
+/// tic_settings_get_max_speed().
 TIC_API
 uint32_t tic_variables_get_speed_max(const tic_variables *);
 

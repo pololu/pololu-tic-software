@@ -49,9 +49,9 @@ struct tic_settings
   uint8_t step_mode;
   uint8_t decay_mode;
   uint32_t starting_speed;
-  uint32_t speed_max;
-  uint32_t decel_max;
-  uint32_t accel_max;
+  uint32_t max_speed;
+  uint32_t max_decel;
+  uint32_t max_accel;
   bool invert_motor_direction;
 };
 
@@ -96,8 +96,8 @@ void tic_settings_fill_with_defaults(tic_settings * settings)
   tic_settings_set_encoder_postscaler(settings, 1);
   tic_settings_set_current_limit(settings, 192);
   tic_settings_set_current_limit_during_error(settings, -1);
-  tic_settings_set_speed_max(settings, 2000000);
-  tic_settings_set_accel_max(settings, 40000);
+  tic_settings_set_max_speed(settings, 2000000);
+  tic_settings_set_max_accel(settings, 40000);
 }
 
 tic_error * tic_settings_create(tic_settings ** settings)
@@ -525,73 +525,73 @@ static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings
   }
 
   {
-    uint32_t speed_max = tic_settings_get_speed_max(settings);
+    uint32_t max_speed = tic_settings_get_max_speed(settings);
     uint32_t starting_speed = tic_settings_get_starting_speed(settings);
 
-    if (speed_max > TIC_MAX_ALLOWED_SPEED)
+    if (max_speed > TIC_MAX_ALLOWED_SPEED)
     {
-      speed_max = TIC_MAX_ALLOWED_SPEED;
-      uint32_t speed_max_khz = speed_max / TIC_SPEED_UNITS_PER_HZ / 1000;
+      max_speed = TIC_MAX_ALLOWED_SPEED;
+      uint32_t max_speed_khz = max_speed / TIC_SPEED_UNITS_PER_HZ / 1000;
       tic_sprintf(warnings,
         "Warning: The maximum speed is too high "
         "so it will be lowered to %u (%u kHz).\n",
-        speed_max, speed_max_khz);
+        max_speed, max_speed_khz);
     }
 
-    if (starting_speed > speed_max)
+    if (starting_speed > max_speed)
     {
-      starting_speed = speed_max;
+      starting_speed = max_speed;
       tic_sprintf(warnings,
         "Warning: The starting speed is greater than the maximum speed "
         "so it will be lowered to %u.\n", starting_speed);
     }
 
-    tic_settings_set_speed_max(settings, speed_max);
+    tic_settings_set_max_speed(settings, max_speed);
     tic_settings_set_starting_speed(settings, starting_speed);
   }
 
   {
-    uint32_t decel_max = tic_settings_get_decel_max(settings);
+    uint32_t max_decel = tic_settings_get_max_decel(settings);
 
-    if (decel_max > TIC_MAX_ALLOWED_ACCEL)
+    if (max_decel > TIC_MAX_ALLOWED_ACCEL)
     {
-      decel_max = TIC_MAX_ALLOWED_ACCEL;
+      max_decel = TIC_MAX_ALLOWED_ACCEL;
       tic_sprintf(warnings,
         "Warning: The maximum deceleration is too high "
-        "so it will be lowered to %u.\n", decel_max);
+        "so it will be lowered to %u.\n", max_decel);
     }
 
-    if (decel_max != 0 && decel_max < TIC_MIN_ALLOWED_ACCEL)
+    if (max_decel != 0 && max_decel < TIC_MIN_ALLOWED_ACCEL)
     {
-      decel_max = TIC_MIN_ALLOWED_ACCEL;
+      max_decel = TIC_MIN_ALLOWED_ACCEL;
       tic_sprintf(warnings,
         "Warning: The maximum deceleration is too low "
-        "so it will be raised to %u.\n", decel_max);
+        "so it will be raised to %u.\n", max_decel);
     }
 
-    tic_settings_set_decel_max(settings, decel_max);
+    tic_settings_set_max_decel(settings, max_decel);
   }
 
   {
-    uint32_t accel_max = tic_settings_get_accel_max(settings);
+    uint32_t max_accel = tic_settings_get_max_accel(settings);
 
-    if (accel_max > TIC_MAX_ALLOWED_ACCEL)
+    if (max_accel > TIC_MAX_ALLOWED_ACCEL)
     {
-      accel_max = TIC_MAX_ALLOWED_ACCEL;
+      max_accel = TIC_MAX_ALLOWED_ACCEL;
       tic_sprintf(warnings,
         "Warning: The maximum acceleration is too high "
-        "so it will be lowered to %u.\n", accel_max);
+        "so it will be lowered to %u.\n", max_accel);
     }
 
-    if (accel_max < TIC_MIN_ALLOWED_ACCEL)
+    if (max_accel < TIC_MIN_ALLOWED_ACCEL)
     {
-      accel_max = TIC_MIN_ALLOWED_ACCEL;
+      max_accel = TIC_MIN_ALLOWED_ACCEL;
       tic_sprintf(warnings,
         "Warning: The maximum acceleration is too low "
-        "so it will be raised to %u.\n", accel_max);
+        "so it will be raised to %u.\n", max_accel);
     }
 
-    tic_settings_set_accel_max(settings, accel_max);
+    tic_settings_set_max_accel(settings, max_accel);
   }
 
   {
@@ -1412,40 +1412,40 @@ uint32_t tic_settings_get_starting_speed(const tic_settings * settings)
   return settings->starting_speed;
 }
 
-void tic_settings_set_speed_max(tic_settings * settings, uint32_t speed_max)
+void tic_settings_set_max_speed(tic_settings * settings, uint32_t max_speed)
 {
   if (!settings) { return; }
-  settings->speed_max = speed_max;
+  settings->max_speed = max_speed;
 }
 
-uint32_t tic_settings_get_speed_max(const tic_settings * settings)
+uint32_t tic_settings_get_max_speed(const tic_settings * settings)
 {
   if (!settings) { return 0; }
-  return settings->speed_max;
+  return settings->max_speed;
 }
 
-void tic_settings_set_decel_max(tic_settings * settings, uint32_t decel_max)
+void tic_settings_set_max_decel(tic_settings * settings, uint32_t max_decel)
 {
   if (!settings) { return; }
-  settings->decel_max = decel_max;
+  settings->max_decel = max_decel;
 }
 
-uint32_t tic_settings_get_decel_max(const tic_settings * settings)
+uint32_t tic_settings_get_max_decel(const tic_settings * settings)
 {
   if (!settings) { return 0; }
-  return settings->decel_max;
+  return settings->max_decel;
 }
 
-void tic_settings_set_accel_max(tic_settings * settings, uint32_t accel_max)
+void tic_settings_set_max_accel(tic_settings * settings, uint32_t max_accel)
 {
   if (!settings) { return; }
-  settings->accel_max = accel_max;
+  settings->max_accel = max_accel;
 }
 
-uint32_t tic_settings_get_accel_max(const tic_settings * settings)
+uint32_t tic_settings_get_max_accel(const tic_settings * settings)
 {
   if (!settings) { return 0; }
-  return settings->accel_max;
+  return settings->max_accel;
 }
 
 void tic_settings_set_invert_motor_direction(tic_settings * settings, bool invert)

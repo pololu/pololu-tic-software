@@ -273,21 +273,21 @@ static void write_buffer_to_settings(const uint8_t * buf, tic_settings * setting
   }
 
   {
-    const uint8_t * p = buf + TIC_SETTING_SPEED_MAX;
-    uint32_t speed_max = p[0] + (p[1] << 8) + (p[2] << 16) + (p[3] << 24);
-    tic_settings_set_speed_max(settings, speed_max);
+    const uint8_t * p = buf + TIC_SETTING_MAX_SPEED;
+    uint32_t max_speed = p[0] + (p[1] << 8) + (p[2] << 16) + (p[3] << 24);
+    tic_settings_set_max_speed(settings, max_speed);
   }
 
   {
-    const uint8_t * p = buf + TIC_SETTING_DECEL_MAX;
-    uint32_t decel_max = p[0] + (p[1] << 8) + (p[2] << 16) + (p[3] << 24);
-    tic_settings_set_decel_max(settings, decel_max);
+    const uint8_t * p = buf + TIC_SETTING_MAX_DECEL;
+    uint32_t max_decel = p[0] + (p[1] << 8) + (p[2] << 16) + (p[3] << 24);
+    tic_settings_set_max_decel(settings, max_decel);
   }
 
   {
-    const uint8_t * p = buf + TIC_SETTING_ACCEL_MAX;
-    uint32_t accel_max = p[0] + (p[1] << 8) + (p[2] << 16) + (p[3] << 24);
-    tic_settings_set_accel_max(settings, accel_max);
+    const uint8_t * p = buf + TIC_SETTING_MAX_ACCEL;
+    uint32_t max_accel = p[0] + (p[1] << 8) + (p[2] << 16) + (p[3] << 24);
+    tic_settings_set_max_accel(settings, max_accel);
   }
 
   {
