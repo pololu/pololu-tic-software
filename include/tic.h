@@ -1262,9 +1262,9 @@ tic_error * tic_clear_driver_error(tic_handle *);
 /// Temporarily sets the maximum speed.
 ///
 /// This function sends a Set Speed Max command to the Tic.  For more
-/// information, see tic_settings_set_speed_max().
+/// information, see tic_settings_set_max_speed().
 TIC_API TIC_WARN_UNUSED
-tic_error * tic_set_speed_max(tic_handle *, uint32_t speed_max);
+tic_error * tic_set_max_speed(tic_handle *, uint32_t max_speed);
 
 /// Temporarily sets the starting speed.
 ///
@@ -1276,16 +1276,16 @@ tic_error * tic_set_starting_speed(tic_handle *, uint32_t starting_speed);
 /// Temporarily sets the maximum acceleration.
 ///
 /// This function sends a Set Acceleration Max command to the Tic.  For more
-/// information, see tic_settings_set_accel_max().
+/// information, see tic_settings_set_max_accel().
 TIC_API TIC_WARN_UNUSED
-tic_error * tic_set_accel_max(tic_handle *, uint32_t accel_max);
+tic_error * tic_set_max_accel(tic_handle *, uint32_t max_accel);
 
 /// Temporarily sets the maximum deceleration.
 ///
 /// This function sends a Set Deceleration Max command to the Tic.  For more
-/// information, see tic_settings_set_decel_max().
+/// information, see tic_settings_set_max_decel().
 TIC_API TIC_WARN_UNUSED
-tic_error * tic_set_decel_max(tic_handle *, uint32_t decel_max);
+tic_error * tic_set_max_decel(tic_handle *, uint32_t max_decel);
 
 /// Temporarily sets the step mode.
 ///

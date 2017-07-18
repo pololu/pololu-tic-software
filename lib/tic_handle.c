@@ -402,7 +402,7 @@ tic_error * tic_clear_driver_error(tic_handle * handle)
   return error;
 }
 
-tic_error * tic_set_speed_max(tic_handle * handle, uint32_t speed_max)
+tic_error * tic_set_max_speed(tic_handle * handle, uint32_t max_speed)
 {
   if (handle == NULL)
   {
@@ -411,10 +411,10 @@ tic_error * tic_set_speed_max(tic_handle * handle, uint32_t speed_max)
 
   tic_error * error = NULL;
 
-  uint16_t wValue = (uint32_t)speed_max & 0xFFFF;
-  uint16_t wIndex = (uint32_t)speed_max >> 16 & 0xFFFF;
+  uint16_t wValue = (uint32_t)max_speed & 0xFFFF;
+  uint16_t wIndex = (uint32_t)max_speed >> 16 & 0xFFFF;
   error = tic_usb_error(libusbp_control_transfer(handle->usb_handle,
-    0x40, TIC_CMD_SET_SPEED_MAX, wValue, wIndex, NULL, 0, NULL));
+    0x40, TIC_CMD_SET_MAX_SPEED, wValue, wIndex, NULL, 0, NULL));
 
   if (error != NULL)
   {
@@ -448,7 +448,7 @@ tic_error * tic_set_starting_speed(tic_handle * handle, uint32_t starting_speed)
   return error;
 }
 
-tic_error * tic_set_accel_max(tic_handle * handle, uint32_t accel_max)
+tic_error * tic_set_max_accel(tic_handle * handle, uint32_t max_accel)
 {
   if (handle == NULL)
   {
@@ -457,10 +457,10 @@ tic_error * tic_set_accel_max(tic_handle * handle, uint32_t accel_max)
 
   tic_error * error = NULL;
 
-  uint16_t wValue = (uint32_t)accel_max & 0xFFFF;
-  uint16_t wIndex = (uint32_t)accel_max >> 16 & 0xFFFF;
+  uint16_t wValue = (uint32_t)max_accel & 0xFFFF;
+  uint16_t wIndex = (uint32_t)max_accel >> 16 & 0xFFFF;
   error = tic_usb_error(libusbp_control_transfer(handle->usb_handle,
-    0x40, TIC_CMD_SET_ACCEL_MAX, wValue, wIndex, NULL, 0, NULL));
+    0x40, TIC_CMD_SET_MAX_ACCEL, wValue, wIndex, NULL, 0, NULL));
 
   if (error != NULL)
   {
@@ -471,7 +471,7 @@ tic_error * tic_set_accel_max(tic_handle * handle, uint32_t accel_max)
   return error;
 }
 
-tic_error * tic_set_decel_max(tic_handle * handle, uint32_t decel_max)
+tic_error * tic_set_max_decel(tic_handle * handle, uint32_t max_decel)
 {
   if (handle == NULL)
   {
@@ -480,10 +480,10 @@ tic_error * tic_set_decel_max(tic_handle * handle, uint32_t decel_max)
 
   tic_error * error = NULL;
 
-  uint16_t wValue = (uint32_t)decel_max & 0xFFFF;
-  uint16_t wIndex = (uint32_t)decel_max >> 16 & 0xFFFF;
+  uint16_t wValue = (uint32_t)max_decel & 0xFFFF;
+  uint16_t wIndex = (uint32_t)max_decel >> 16 & 0xFFFF;
   error = tic_usb_error(libusbp_control_transfer(handle->usb_handle,
-    0x40, TIC_CMD_SET_DECEL_MAX, wValue, wIndex, NULL, 0, NULL));
+    0x40, TIC_CMD_SET_MAX_DECEL, wValue, wIndex, NULL, 0, NULL));
 
   if (error != NULL)
   {

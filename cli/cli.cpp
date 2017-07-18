@@ -27,10 +27,10 @@ static const char help[] =
   "  --clear-driver-error         Attempt to clear a motor driver error.\n"
   "\n"
   "Temporary settings:\n"
-  "  --speed-max NUM              Set the speed maximum.\n"
+  "  --max-speed NUM              Set the speed limit.\n"
   "  --starting-speed NUM         Set the starting speed.\n"
-  "  --accel-max NUM              Set the acceleration maximum.\n"
-  "  --decel-max NUM              Set the deceleration maximum.\n"
+  "  --max-accel NUM              Set the acceleration limit.\n"
+  "  --max-decel NUM              Set the deceleration limit.\n"
   "  --step-mode MODE             Set step mode: full, half, 1, 2, 4, 8, 16, 32.\n"
   "  --current NUM                Set the current limit in mA.\n"
   "  --decay MODE                 Set decay mode: mixed, slow, or fast.\n"
@@ -83,17 +83,17 @@ struct arguments
 
   bool clear_driver_error = false;
 
-  bool set_speed_max = false;
-  uint32_t speed_max;
+  bool set_max_speed = false;
+  uint32_t max_speed;
 
   bool set_starting_speed = false;
   uint32_t starting_speed;
 
-  bool set_accel_max = false;
-  uint32_t accel_max;
+  bool set_max_accel = false;
+  uint32_t max_accel;
 
-  bool set_decel_max = false;
-  uint32_t decel_max;
+  bool set_max_decel = false;
+  uint32_t max_decel;
 
   bool set_step_mode = false;
   uint8_t step_mode;
@@ -137,10 +137,10 @@ struct arguments
       enter_safe_start ||
       reset ||
       clear_driver_error ||
-      set_speed_max ||
+      set_max_speed ||
       set_starting_speed ||
-      set_accel_max ||
-      set_decel_max ||
+      set_max_accel ||
+      set_max_decel ||
       set_step_mode ||
       set_current_limit ||
       set_decay_mode ||
@@ -346,25 +346,25 @@ static arguments parse_args(int argc, char ** argv)
     {
       args.clear_driver_error = true;
     }
-    else if (arg == "--speed-max")
+    else if (arg == "--max-speed")
     {
-      args.set_speed_max = true;
-      args.speed_max = parse_arg_int<uint32_t>(arg_reader);
+      args.set_max_speed = true;
+      args.max_speed = parse_arg_int<uint32_t>(arg_reader);
     }
     else if (arg == "--starting-speed")
     {
       args.set_starting_speed = true;
       args.starting_speed = parse_arg_int<uint32_t>(arg_reader);
     }
-    else if (arg == "--accel-max")
+    else if (arg == "--max-accel")
     {
-      args.set_accel_max = true;
-      args.accel_max = parse_arg_int<uint32_t>(arg_reader);
+      args.set_max_accel = true;
+      args.max_accel = parse_arg_int<uint32_t>(arg_reader);
     }
-    else if (arg == "--decel-max")
+    else if (arg == "--max-decel")
     {
-      args.set_decel_max = true;
-      args.decel_max = parse_arg_int<uint32_t>(arg_reader);
+      args.set_max_decel = true;
+      args.max_decel = parse_arg_int<uint32_t>(arg_reader);
     }
     else if (arg == "--step-mode")
     {
@@ -621,9 +621,9 @@ static void run(int argc, char ** argv)
     handle(selector).reset();
   }
 
-  if (args.set_speed_max)
+  if (args.set_max_speed)
   {
-    handle(selector).set_speed_max(args.speed_max);
+    handle(selector).set_max_speed(args.max_speed);
   }
 
   if (args.set_starting_speed)
@@ -631,14 +631,14 @@ static void run(int argc, char ** argv)
     handle(selector).set_starting_speed(args.starting_speed);
   }
 
-  if (args.set_accel_max)
+  if (args.set_max_accel)
   {
-    handle(selector).set_accel_max(args.accel_max);
+    handle(selector).set_max_accel(args.max_accel);
   }
 
-  if (args.set_decel_max)
+  if (args.set_max_decel)
   {
-    handle(selector).set_decel_max(args.decel_max);
+    handle(selector).set_max_decel(args.max_decel);
   }
 
   if (args.halt_and_hold)

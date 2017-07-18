@@ -155,10 +155,10 @@ describe 'commands for controlling the motor', usb: true do
   end
 end
 
-describe 'Set Speed Max' do
+describe 'Set Max Speed' do
   it 'works', usb: true do
     ['10000', '2000000']. each do |mode|
-      stdout, stderr, result = run_ticcmd("--speed-max #{mode}")
+      stdout, stderr, result = run_ticcmd("--max-speed #{mode}")
       expect(stderr).to eq ''
       expect(stdout).to eq ''
       expect(result).to eq 0
@@ -179,10 +179,10 @@ describe 'Set Starting Speed' do
   end
 end
 
-describe 'Set Accel Max' do
+describe 'Set Max Accel' do
   it 'works', usb: true do
     ['10000', '2000000']. each do |mode|
-      stdout, stderr, result = run_ticcmd("--accel-max #{mode}")
+      stdout, stderr, result = run_ticcmd("--max-accel #{mode}")
       expect(stderr).to eq ''
       expect(stdout).to eq ''
       expect(result).to eq 0
@@ -191,10 +191,10 @@ describe 'Set Accel Max' do
   end
 end
 
-describe 'Set Decel Max' do
+describe 'Set Max Decel' do
   it 'works', usb: true do
     ['10000', '2000000']. each do |mode|
-      stdout, stderr, result = run_ticcmd("--decel-max #{mode}")
+      stdout, stderr, result = run_ticcmd("--max-decel #{mode}")
       expect(stderr).to eq ''
       expect(stdout).to eq ''
       expect(result).to eq 0
