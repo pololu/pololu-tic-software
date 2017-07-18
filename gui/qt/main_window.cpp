@@ -36,6 +36,8 @@ Q_IMPORT_PLUGIN (QWindowsIntegrationPlugin);
 #endif
 #endif
 
+#define UINT12_MAX 0xFFF // 4095
+
 main_window::main_window(QWidget *parent)
   : QMainWindow(parent)
 {
@@ -797,9 +799,9 @@ void main_window::update_manual_target_controls()
   {
     set_target_button->setText(tr("Set target position"));
 
-    manual_target_min_value->setMinimum(-0x7FFFFFFF);
+    manual_target_min_value->setMinimum(INT32_MIN);
     manual_target_min_value->setValue(manual_target_position_min);
-    manual_target_max_value->setMaximum(0x7FFFFFFF);
+    manual_target_max_value->setMaximum(INT32_MAX);
     manual_target_max_value->setValue(manual_target_position_max);
 
     if (cached_input_state == TIC_INPUT_STATE_POSITION)
@@ -1917,12 +1919,16 @@ QWidget * main_window::setup_manual_target_box()
   {
     current_position_entry_value = new QSpinBox();
     current_position_entry_value->setObjectName("manual_target_entry_value");
+    current_position_entry_value->setRange(INT32_MIN, INT32_MAX);
 
     set_current_position_button = new QPushButton();
     set_current_position_button->setObjectName("set_current_position_button");
 
+    current_position_halts_label = new QLabel();
+
     layout->addWidget(current_position_entry_value, row + 1, 3);
     layout->addWidget(set_current_position_button, row + 1, 4, Qt::AlignLeft);
+    layout->addWidget(current_position_halts_label, row + 1, 5, Qt::AlignLeft);
   }
 
 
@@ -1939,7 +1945,7 @@ QWidget * main_window::setup_manual_target_box()
 
   // Make spin boxes wide enough to display the largest possible values.
   {
-    manual_target_entry_value->setMinimum(-0x7FFFFFFF);
+    manual_target_entry_value->setMinimum(INT32_MIN);
 
     manual_target_min_value->setFixedWidth(
       manual_target_entry_value->sizeHint().width());
@@ -2105,7 +2111,7 @@ QWidget * main_window::setup_serial_settings_box()
   {
     serial_device_number_value = new QSpinBox();
     serial_device_number_value->setObjectName("serial_device_number_value");
-    serial_device_number_value->setRange(0, 0x7F);
+    serial_device_number_value->setRange(0, INT8_MAX);
     serial_device_number_label = new QLabel();
     serial_device_number_label->setBuddy(serial_device_number_value);
     layout->addWidget(serial_device_number_label, 1, 0, FIELD_LABEL_ALIGNMENT);
@@ -2148,7 +2154,7 @@ QWidget * main_window::setup_encoder_settings_box()
   {
     encoder_prescaler_value = new QSpinBox();
     encoder_prescaler_value->setObjectName("encoder_prescaler_value");
-    encoder_prescaler_value->setRange(0, 0x7FFFFFFF);
+    encoder_prescaler_value->setRange(0, INT32_MAX);
     encoder_prescaler_label = new QLabel();
     encoder_prescaler_label->setBuddy(encoder_prescaler_value);
     layout->addWidget(encoder_prescaler_label, row, 0, FIELD_LABEL_ALIGNMENT);
@@ -2159,7 +2165,7 @@ QWidget * main_window::setup_encoder_settings_box()
   {
     encoder_postscaler_value = new QSpinBox();
     encoder_postscaler_value->setObjectName("encoder_postscaler_value");
-    encoder_postscaler_value->setRange(0, 0x7FFFFFFF);
+    encoder_postscaler_value->setRange(0, INT32_MAX);
     encoder_postscaler_label = new QLabel();
     encoder_postscaler_label->setBuddy(encoder_postscaler_value);
     layout->addWidget(encoder_postscaler_label, row, 0, FIELD_LABEL_ALIGNMENT);
@@ -2197,7 +2203,7 @@ QWidget * main_window::setup_conditioning_settings_box()
   {
     input_hysteresis_value = new QSpinBox();
     input_hysteresis_value->setObjectName("input_hysteresis_value");
-    input_hysteresis_value->setRange(0, 0xFFFF);
+    input_hysteresis_value->setRange(0, UINT16_MAX);
     input_hysteresis_label = new QLabel();
     input_hysteresis_label->setBuddy(input_hysteresis_value);
     layout->addWidget(input_hysteresis_label, row, 0, FIELD_LABEL_ALIGNMENT);
@@ -2242,10 +2248,10 @@ QWidget * main_window::setup_scaling_settings_box()
     scaling_max_label = new QLabel();
     input_max_value = new QSpinBox();
     input_max_value->setObjectName("input_max_value");
-    input_max_value->setRange(0, 0xFFFF);
+    input_max_value->setRange(0, UINT12_MAX);
     output_max_value = new QSpinBox();
     output_max_value->setObjectName("output_max_value");
-    output_max_value->setRange(0, 0x7FFFFFFF);
+    output_max_value->setRange(0, INT32_MAX);
     layout->addWidget(scaling_max_label, row, 0, FIELD_LABEL_ALIGNMENT);
     layout->addWidget(input_max_value, row, 1, Qt::AlignLeft);
     layout->addWidget(output_max_value, row, 2, Qt::AlignLeft);
@@ -2256,7 +2262,7 @@ QWidget * main_window::setup_scaling_settings_box()
     scaling_neutral_max_label = new QLabel();
     input_neutral_max_value = new QSpinBox();
     input_neutral_max_value->setObjectName("input_neutral_max_value");
-    input_neutral_max_value->setRange(0, 0xFFFF);
+    input_neutral_max_value->setRange(0, UINT12_MAX);
     layout->addWidget(scaling_neutral_max_label, row, 0, FIELD_LABEL_ALIGNMENT);
     layout->addWidget(input_neutral_max_value, row, 1, Qt::AlignLeft);
     row++;
@@ -2266,7 +2272,7 @@ QWidget * main_window::setup_scaling_settings_box()
     scaling_neutral_min_label = new QLabel();
     input_neutral_min_value = new QSpinBox();
     input_neutral_min_value->setObjectName("input_neutral_min_value");
-    input_neutral_min_value->setRange(0, 0xFFFF);
+    input_neutral_min_value->setRange(0, UINT12_MAX);
     layout->addWidget(scaling_neutral_min_label, row, 0, FIELD_LABEL_ALIGNMENT);
     layout->addWidget(input_neutral_min_value, row, 1, Qt::AlignLeft);
     row++;
@@ -2276,10 +2282,10 @@ QWidget * main_window::setup_scaling_settings_box()
     scaling_min_label = new QLabel();
     input_min_value = new QSpinBox();
     input_min_value->setObjectName("input_min_value");
-    input_min_value->setRange(0, 0xFFFF);
+    input_min_value->setRange(0, UINT12_MAX);
     output_min_value = new QSpinBox();
     output_min_value->setObjectName("output_min_value");
-    output_min_value->setRange(-0x7FFFFFFF, 0);
+    output_min_value->setRange(-INT32_MAX, 0);
     layout->addWidget(scaling_min_label, row, 0, FIELD_LABEL_ALIGNMENT);
     layout->addWidget(input_min_value, row, 1, Qt::AlignLeft);
     layout->addWidget(output_min_value, row, 2, Qt::AlignLeft);
@@ -2550,7 +2556,7 @@ QWidget * main_window::setup_error_settings_box()
     soft_error_response_radio_group->addButton(new QRadioButton(), TIC_RESPONSE_GO_TO_POSITION);
     soft_error_position_value = new QSpinBox();
     soft_error_position_value->setObjectName("soft_error_position_value");
-    soft_error_position_value->setRange(-0x7FFFFFFF, 0x7FFFFFFF);
+    soft_error_position_value->setRange(INT32_MIN, INT32_MAX);
     layout->addWidget(soft_error_response_radio_group->button(TIC_RESPONSE_GO_TO_POSITION),
       row, 0, Qt::AlignLeft);
     layout->addWidget(soft_error_position_value, row, 1, Qt::AlignLeft);
@@ -2741,6 +2747,7 @@ void main_window::retranslate()
   manual_target_velocity_mode_radio->setText(tr("Set velocity"));
   update_manual_target_controls();
   set_current_position_button->setText(tr("Set current position"));
+  current_position_halts_label->setText(tr("(will halt motor)"));
   auto_set_target_check->setText(tr("Set target when slider or entry box are changed"));
   auto_zero_target_check->setText(tr("Return slider to zero when it is released"));
   halt_button->setText(tr("Halt motor"));

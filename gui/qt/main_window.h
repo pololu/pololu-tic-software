@@ -465,6 +465,7 @@ private:
 
   QSpinBox * current_position_entry_value;
   QPushButton * set_current_position_button;
+  QLabel * current_position_halts_label;
 
   QPushButton * halt_button;
   QPushButton * decelerate_button;
