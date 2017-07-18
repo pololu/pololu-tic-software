@@ -356,28 +356,28 @@ namespace tic
       return tic_variables_get_target_velocity(pointer);
     }
 
+    /// Wrapper for tic_variables_get_max_speed().
+    uint32_t get_max_speed() const noexcept
+    {
+      return tic_variables_get_max_speed(pointer);
+    }
+
     /// Wrapper for tic_variables_get_starting_speed().
     uint32_t get_starting_speed() const noexcept
     {
       return tic_variables_get_starting_speed(pointer);
     }
 
-    /// Wrapper for tic_variables_get_speed_max().
-    uint32_t get_speed_max() const noexcept
+    /// Wrapper for tic_variables_get_max_accel().
+    uint32_t get_max_accel() const noexcept
     {
-      return tic_variables_get_speed_max(pointer);
+      return tic_variables_get_max_accel(pointer);
     }
 
-    /// Wrapper for tic_variables_get_decel_max().
-    uint32_t get_decel_max() const noexcept
+    /// Wrapper for tic_variables_get_max_decel().
+    uint32_t get_max_decel() const noexcept
     {
-      return tic_variables_get_decel_max(pointer);
-    }
-
-    /// Wrapper for tic_variables_get_accel_max().
-    uint32_t get_accel_max() const noexcept
-    {
-      return tic_variables_get_accel_max(pointer);
+      return tic_variables_get_max_decel(pointer);
     }
 
     /// Wrapper for tic_variables_get_current_position().
@@ -671,10 +671,10 @@ namespace tic
       throw_if_needed(tic_clear_driver_error(pointer));
     }
 
-    /// Wrapper for tic_set_speed_max().
-    void set_speed_max(uint32_t speed_max)
+    /// Wrapper for tic_set_max_speed().
+    void set_max_speed(uint32_t max_speed)
     {
-      throw_if_needed(tic_set_speed_max(pointer, speed_max));
+      throw_if_needed(tic_set_max_speed(pointer, max_speed));
     }
 
     /// Wrapper for tic_set_starting_speed().
@@ -684,15 +684,15 @@ namespace tic
     }
 
     /// Wrapper for tic_set_starting_speed().
-    void set_accel_max(uint32_t accel_max)
+    void set_max_accel(uint32_t max_accel)
     {
-      throw_if_needed(tic_set_accel_max(pointer, accel_max));
+      throw_if_needed(tic_set_max_accel(pointer, max_accel));
     }
 
     /// Wrapper for tic_set_starting_speed().
-    void set_decel_max(uint32_t decel_max)
+    void set_max_decel(uint32_t max_decel)
     {
-      throw_if_needed(tic_set_decel_max(pointer, decel_max));
+      throw_if_needed(tic_set_max_decel(pointer, max_decel));
     }
 
     /// Wrapper for tic_set_step_mode().

@@ -652,10 +652,10 @@ void main_controller::handle_settings_changed()
   window->set_input_scaling_degree(tic_settings_get_input_scaling_degree(settings.get_pointer()));
 
   window->set_invert_motor_direction(tic_settings_get_invert_motor_direction(settings.get_pointer()));
-  window->set_speed_max(tic_settings_get_speed_max(settings.get_pointer()));
+  window->set_speed_max(tic_settings_get_max_speed(settings.get_pointer()));
   window->set_starting_speed(tic_settings_get_starting_speed(settings.get_pointer()));
-  window->set_accel_max(tic_settings_get_accel_max(settings.get_pointer()));
-  window->set_decel_max(tic_settings_get_decel_max(settings.get_pointer()));
+  window->set_accel_max(tic_settings_get_max_accel(settings.get_pointer()));
+  window->set_decel_max(tic_settings_get_max_decel(settings.get_pointer()));
   window->set_step_mode(tic_settings_get_step_mode(settings.get_pointer()));
   window->set_current_limit(tic_settings_get_current_limit(settings.get_pointer()));
   window->set_decay_mode(tic_settings_get_decay_mode(settings.get_pointer()));
@@ -854,7 +854,7 @@ void main_controller::handle_invert_motor_direction_input(bool invert_motor_dire
 void main_controller::handle_speed_max_input(uint32_t speed_max)
 {
   if (!connected()) { return; }
-  tic_settings_set_speed_max(settings.get_pointer(), speed_max);
+  tic_settings_set_max_speed(settings.get_pointer(), speed_max);
   settings_modified = true;
   handle_settings_changed();
 }
@@ -870,7 +870,7 @@ void main_controller::handle_starting_speed_input(uint32_t starting_speed)
 void main_controller::handle_accel_max_input(uint32_t accel_max)
 {
   if (!connected()) { return; }
-  tic_settings_set_accel_max(settings.get_pointer(), accel_max);
+  tic_settings_set_max_accel(settings.get_pointer(), accel_max);
   settings_modified = true;
   handle_settings_changed();
 }
@@ -878,7 +878,7 @@ void main_controller::handle_accel_max_input(uint32_t accel_max)
 void main_controller::handle_decel_max_input(uint32_t decel_max)
 {
   if (!connected()) { return; }
-  tic_settings_set_decel_max(settings.get_pointer(), decel_max);
+  tic_settings_set_max_decel(settings.get_pointer(), decel_max);
   settings_modified = true;
   handle_settings_changed();
 }
