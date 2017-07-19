@@ -612,8 +612,14 @@ void main_controller::update_motor_status_message(bool prompt_to_resume)
     else if (error_status & (1 << TIC_ERROR_SAFE_START_VIOLATION))
     {
       msg += "because of safe start violation.";
-      if (!control_mode_is_serial(cached_settings))
+
+      uint8_t control_mode = tic_settings_get_control_mode(
+        cached_settings.get_pointer());
+      switch (control_mode)
       {
+      case TIC_CONTROL_MODE_RC_SPEED:
+      case TIC_CONTROL_MODE_ANALOG_SPEED:
+      case TIC_CONTROL_MODE_ENCODER_SPEED:
         msg += "  Center the input.";
       }
     }
