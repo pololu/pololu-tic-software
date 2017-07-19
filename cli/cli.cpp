@@ -480,11 +480,12 @@ static void get_settings(device_selector & selector,
   const std::string & filename)
 {
   tic::settings settings = handle(selector).get_settings();
-  std::string settings_string = settings.to_string();
 
   std::string warnings;
   settings.fix(&warnings);
   std::cerr << warnings;
+
+  std::string settings_string = settings.to_string();
 
   write_string_to_file(filename, settings_string);
 }
