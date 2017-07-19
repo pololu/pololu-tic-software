@@ -612,6 +612,10 @@ void main_controller::update_motor_status_message(bool prompt_to_resume)
     else if (error_status & (1 << TIC_ERROR_SAFE_START_VIOLATION))
     {
       msg += "because of safe start violation.";
+      if (!control_mode_is_serial(cached_settings))
+      {
+        msg += "  Center the input.";
+      }
     }
     else if (error_status & (1 << TIC_ERROR_ERR_LINE_HIGH))
     {
@@ -621,7 +625,7 @@ void main_controller::update_motor_status_message(bool prompt_to_resume)
 
   if (prompt_to_resume)
   {
-    msg += " Press Resume to start.";
+    msg += "  Press Resume to start.";
   }
 
   window->set_motor_status_message(msg, stopped);

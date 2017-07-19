@@ -2845,7 +2845,7 @@ void main_window::retranslate()
   input_averaging_enabled_check->setText(tr("Enable input averaging"));
   input_hysteresis_label->setText(tr("Input hysteresis:"));
 
-  scaling_settings_box->setTitle(tr("Scaling"));
+  scaling_settings_box->setTitle(tr("RC and analog scaling"));
   input_learn_button->setText(tr("Lear&n..."));
   input_invert_check->setText(tr("Invert input direction"));
   scaling_input_label->setText(tr("Input"));
