@@ -1,5 +1,7 @@
 # Tic Stepper Motor Controller software
 
+Version: 1.0.0
+Release date: 2017-07-18
 [www.pololu.com](https://www.pololu.com/)
 
 This repository contains the source code of the configuration and control software for
@@ -14,3 +16,7 @@ Installers will be available for download from the
 
 See [BUILDING.md](BUILDING.md) for information about how to compile the code
 from source.
+
+## Version history
+
+* 1.0.0 (2017-07-18): Original release.
