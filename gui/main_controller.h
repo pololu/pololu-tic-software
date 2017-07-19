@@ -68,6 +68,9 @@ public:
   /** This is called when the user wants to apply the settings. */
   void apply_settings();
 
+  void open_settings_from_file(std::string filename);
+  void save_settings_to_file(std::string filename);
+
   // These are called when the user changes a setting.
   // [all-settings]
 

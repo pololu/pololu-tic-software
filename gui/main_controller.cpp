@@ -1,5 +1,6 @@
 #include "main_controller.h"
 #include "main_window.h"
+#include "../cli/file_utils.h"
 
 #include <cassert>
 #include <cmath>
@@ -424,6 +425,7 @@ void main_controller::handle_device_changed()
   }
 
   window->set_disconnect_enabled(connected());
+  window->set_open_save_settings_enabled(connected());
   window->set_reload_settings_enabled(connected());
   window->set_restore_defaults_enabled(connected());
   window->set_tab_pages_enabled(connected());
@@ -1179,6 +1181,67 @@ void main_controller::apply_settings()
       handle_settings_applied();
       settings_modified = false;  // this must be last in case exceptions are thrown
     }
+  }
+  catch (std::exception const & e)
+  {
+    show_exception(e);
+  }
+
+  handle_settings_changed();
+}
+
+void main_controller::open_settings_from_file(std::string filename)
+{
+  if (!connected()) { return; }
+
+  try
+  {
+    assert(connected());
+
+    std::string settings_string = read_string_from_file(filename);
+    tic::settings fixed_settings = tic::settings::read_from_string(settings_string);
+    std::string warnings;
+    fixed_settings.fix(&warnings);
+    if (warnings.empty() ||
+      window->confirm(warnings.append("\nAccept these changes and load settings?")))
+    {
+      settings = fixed_settings;
+      settings_modified = true;
+    }
+  }
+  catch (std::exception const & e)
+  {
+    show_exception(e);
+  }
+
+  handle_settings_changed();
+}
+
+void main_controller::save_settings_to_file(std::string filename)
+{
+  if (!connected()) { return; }
+
+  try
+  {
+    assert(connected());
+
+    tic::settings fixed_settings = settings;
+    std::string warnings;
+    fixed_settings.fix(&warnings);
+    if (!warnings.empty())
+    {
+      if (window->confirm(warnings.append("\nAccept these changes and save settings?")))
+      {
+        settings = fixed_settings;
+        settings_modified = true;
+      }
+      else
+      {
+        return;
+      }
+    }
+    std::string settings_string = settings.to_string();
+    write_string_to_file(filename, settings_string);
   }
   catch (std::exception const & e)
   {

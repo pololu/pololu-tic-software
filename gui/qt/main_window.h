@@ -113,6 +113,9 @@ public:
    * disabled. */
   void set_apply_settings_enabled(bool enabled);
 
+  /** Controls whether the open and save settings file actions are enabled or disabled. */
+  void set_open_save_settings_enabled(bool enabled);
+
   /** Controls whether the disconnect action is enabled or disabled. */
   void set_disconnect_enabled(bool enabled);
 
@@ -231,6 +234,8 @@ protected:
   void closeEvent(QCloseEvent *) override;
 
 private slots:
+  void on_open_settings_action_triggered();
+  void on_save_settings_action_triggered();
   void on_disconnect_action_triggered();
   void on_reload_settings_action_triggered();
   void on_restore_defaults_action_triggered();
@@ -358,6 +363,8 @@ private:
   void adjust_sizes();
 
   QIcon program_icon;
+
+  QString directory_hint;
 
   QMenuBar * menu_bar;
   QMenu * file_menu;

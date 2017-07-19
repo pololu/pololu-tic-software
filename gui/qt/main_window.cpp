@@ -11,6 +11,7 @@
 #include <QComboBox>
 #include <QDesktopServices>
 #include <QDoubleSpinBox>
+#include <QFileDialog>
 #include <QGridLayout>
 #include <QGroupBox>
 #include <QHBoxLayout>
@@ -180,6 +181,12 @@ void main_window::set_apply_settings_enabled(bool enabled)
 {
   apply_settings_button->setEnabled(enabled);
   apply_settings_action->setEnabled(enabled);
+}
+
+void main_window::set_open_save_settings_enabled(bool enabled)
+{
+  open_settings_action->setEnabled(enabled);
+  save_settings_action->setEnabled(enabled);
 }
 
 void main_window::set_disconnect_enabled(bool enabled)
@@ -871,6 +878,32 @@ void main_window::closeEvent(QCloseEvent * event)
   {
     // User canceled exit when prompted about settings that have not been applied.
     event->ignore();
+  }
+}
+
+void main_window::on_open_settings_action_triggered()
+{
+  QString filename = QFileDialog::getOpenFileName(this,
+    tr("Open Settings File"), directory_hint + "/tic_settings.txt",
+    tr("Text files (*.txt)"));
+
+  if (!filename.isNull())
+  {
+    directory_hint = QFileInfo(filename).canonicalPath();
+    controller->open_settings_from_file(filename.toStdString());
+  }
+}
+
+void main_window::on_save_settings_action_triggered()
+{
+  QString filename = QFileDialog::getSaveFileName(this,
+    tr("Save Settings File"), directory_hint + "/tic_settings.txt",
+    tr("Text files (*.txt)"));
+
+  if (!filename.isNull())
+  {
+    directory_hint = QFileInfo(filename).canonicalPath();
+    controller->save_settings_to_file(filename.toStdString());
   }
 }
 
@@ -1598,6 +1631,8 @@ void main_window::setup_window()
 
   input_wizard = new InputWizard(this);
 
+  directory_hint = QDir::homePath(); // user's home directory
+
   program_icon = QIcon(":app_icon");
   setWindowIcon(program_icon);
 
@@ -1617,14 +1652,14 @@ void main_window::setup_menu_bar()
   open_settings_action->setObjectName("open_settings_action");
   open_settings_action->setShortcut(Qt::CTRL + Qt::Key_O);
   file_menu->addAction(open_settings_action);
-  
+
   save_settings_action = new QAction(this);
   save_settings_action->setObjectName("save_settings_action");
   save_settings_action->setShortcut(Qt::CTRL + Qt::Key_S);
   file_menu->addAction(save_settings_action);
-  
+
   file_menu->addSeparator();
-  
+
   exit_action = new QAction(this);
   exit_action->setObjectName("exit_action");
   exit_action->setShortcut(QKeySequence::Quit);
