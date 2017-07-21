@@ -471,9 +471,6 @@ static void get_status(device_selector & selector, bool full_output)
 static void restore_defaults(device_selector & selector)
 {
   handle(selector).restore_defaults();
-
-  // Give the Tic time to modify its settings.
-  std::this_thread::sleep_for(std::chrono::milliseconds(1500));
 }
 
 static void get_settings(device_selector & selector,
