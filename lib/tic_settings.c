@@ -193,6 +193,11 @@ static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings
 {
   // TODO: fix enumeration values to be valid (e.g. control_mode)
 
+  // Note: We don't enforce the fact the the RC pin cannot have a pull-up and
+  // the TX and RX pins always have pull-ups.  The firmware's default settings
+  // for TX and RX don't set the pull-up bit, so it would be bad to complain to
+  // the user about that.
+
   uint8_t control_mode = tic_settings_get_control_mode(settings);
 
   bool speed_control_mode = false;
