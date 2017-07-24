@@ -32,8 +32,10 @@ if (EXISTS "${CMAKE_SOURCE_DIR}/images/app.ico")
   set (POLOLU_BUILD TRUE)
 endif ()
 
-
 set (SOFTWARE_VERSION ${SOFTWARE_VERSION_MAJOR}.${SOFTWARE_VERSION_MINOR}.${SOFTWARE_VERSION_PATCH})
+
+# Don't use -rdynamic since it causes musl static linking to not work.
+cmake_policy(SET CMP0065 NEW)
 
 string(TIMESTAMP YEAR "%Y")
 
