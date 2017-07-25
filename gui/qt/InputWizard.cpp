@@ -347,6 +347,7 @@ bool LearnPage::handle_back()
     sampling = false;
     set_progress_visible(false);
     set_next_button_enabled(true);
+    return false;
   }
   else
   {
