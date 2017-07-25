@@ -2807,7 +2807,7 @@ void main_window::retranslate()
   error_rows[TIC_ERROR_SAFE_START_VIOLATION]     .name_label->setText(tr("Safe start violation"));
   error_rows[TIC_ERROR_ERR_LINE_HIGH]            .name_label->setText(tr("ERR line high"));
   error_rows[TIC_ERROR_SERIAL_ERROR]             .name_label->setText(tr("Serial errors:"));
-  error_rows[TIC_ERROR_SERIAL_FRAMING]           .name_label->setText(INDENT(tr("Frame")));
+  error_rows[TIC_ERROR_SERIAL_FRAMING]           .name_label->setText(INDENT(tr("Framing")));
   error_rows[TIC_ERROR_SERIAL_RX_OVERRUN]        .name_label->setText(INDENT(tr("RX overrun")));
   error_rows[TIC_ERROR_SERIAL_FORMAT]            .name_label->setText(INDENT(tr("Format")));
   error_rows[TIC_ERROR_SERIAL_CRC]               .name_label->setText(INDENT(tr("CRC")));
