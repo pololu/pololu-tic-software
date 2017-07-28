@@ -116,6 +116,11 @@ tic_error * tic_settings_to_string(const tic_settings * settings, char ** string
       serial_crc_enabled ? "true" : "false");
   }
 
+  {
+    uint8_t delay = tic_settings_get_serial_response_delay(settings);
+    tic_sprintf(&str, "serial_response_delay: %u\n", delay);
+  }
+
   if (0) // not implemented in firmware
   {
     uint16_t low_vin_timeout = tic_settings_get_low_vin_timeout(settings);

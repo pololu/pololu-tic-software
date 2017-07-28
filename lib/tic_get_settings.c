@@ -62,6 +62,11 @@ static void write_buffer_to_settings(const uint8_t * buf, tic_settings * setting
   }
 
   {
+    uint8_t delay = buf[TIC_SETTING_SERIAL_RESPONSE_DELAY];
+    tic_settings_set_serial_response_delay(settings, delay);
+  }
+
+  {
     const uint8_t * p = buf + TIC_SETTING_LOW_VIN_TIMEOUT;
     uint16_t low_vin_timeout = p[0] + (p[1] << 8);
     tic_settings_set_low_vin_timeout(settings, low_vin_timeout);

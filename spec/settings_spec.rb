@@ -14,6 +14,7 @@ serial_baud_rate: 9600
 serial_device_number: 14
 command_timeout: 1000
 serial_crc_enabled: false
+serial_response_delay: 0
 vin_calibration: 0
 input_averaging_enabled: true
 input_hysteresis: 0
@@ -59,6 +60,7 @@ serial_baud_rate: 115385
 serial_device_number: 40
 command_timeout: 2020
 serial_crc_enabled: true
+serial_response_delay: 123
 vin_calibration: -345
 input_averaging_enabled: false
 input_hysteresis: 4455

@@ -15,6 +15,7 @@ struct tic_settings
   uint8_t serial_device_number;
   uint16_t command_timeout;
   bool serial_crc_enabled;
+  uint8_t serial_response_delay;
   uint16_t low_vin_timeout;
   uint16_t low_vin_shutoff_voltage;
   uint16_t low_vin_startup_voltage;
@@ -1008,6 +1009,19 @@ bool tic_settings_get_serial_crc_enabled(const tic_settings * settings)
 {
   if (!settings) { return 0; }
   return settings->serial_crc_enabled;
+}
+
+void tic_settings_set_serial_response_delay(tic_settings * settings,
+  uint8_t serial_response_delay)
+{
+  if (!settings) { return; }
+  settings->serial_response_delay = serial_response_delay;
+}
+
+uint8_t tic_settings_get_serial_response_delay(const tic_settings * settings)
+{
+  if (!settings) { return 0; }
+  return settings->serial_response_delay;
 }
 
 void tic_settings_set_low_vin_timeout(tic_settings * settings,

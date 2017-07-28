@@ -50,6 +50,9 @@ static void tic_write_settings_to_buffer(const tic_settings * settings, uint8_t 
   buf[TIC_SETTING_SERIAL_CRC_ENABLED] =
     tic_settings_get_serial_crc_enabled(settings);
 
+  buf[TIC_SETTING_SERIAL_RESPONSE_DELAY] =
+    tic_settings_get_serial_response_delay(settings);
+
   {
     uint16_t low_vin_timeout = tic_settings_get_low_vin_timeout(settings);
     buf[TIC_SETTING_LOW_VIN_TIMEOUT + 0] = low_vin_timeout >> 0 & 0xFF;

@@ -186,6 +186,19 @@ static tic_error * apply_string_pair(tic_settings * settings,
     }
     tic_settings_set_serial_crc_enabled(settings, serial_crc_enabled);
   }
+  else if (!strcmp(key, "serial_response_delay"))
+  {
+    int64_t delay;
+    if (!tic_string_to_i64(value, &delay))
+    {
+      return tic_error_create("Invalid serial_response_delay value.");
+    }
+    if (delay < 0 || delay > 0xFF)
+    {
+      return tic_error_create("The serial_response_delay value is out of range.");
+    }
+    tic_settings_set_serial_response_delay(settings, delay);
+  }
   else if (!strcmp(key, "low_vin_timeout"))
   {
     int64_t low_vin_timeout;

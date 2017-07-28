@@ -425,6 +425,16 @@ void tic_settings_set_serial_crc_enabled(tic_settings *, bool);
 TIC_API
 bool tic_settings_get_serial_crc_enabled(const tic_settings *);
 
+/// Sets the serial response delay setting.  This specifies how long, in
+/// microseconds, to delay before processing an I2C byte or sending a serial
+/// response.  This delay is in addition to the time taken by normal processing.
+TIC_API
+void tic_settings_set_serial_response_delay(tic_settings *, uint8_t);
+
+/// Gets the serial response delay setting described in
+/// tic_settings_set_serial_response_delay().
+TIC_API
+uint8_t tic_settings_get_serial_response_delay(const tic_settings *);
 
 /// Sets the VIN measurement calibration setting.
 ///
