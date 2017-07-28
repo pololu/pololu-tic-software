@@ -663,7 +663,7 @@ bool tic_settings_get_pin_polarity(const tic_settings *, uint8_t pin);
 TIC_API
 void tic_settings_set_current_limit(tic_settings *, uint32_t);
 
-/// Gets the current limit settings as described in
+/// Gets the current limit setting as described in
 /// tic_settings_set_current_limit().
 TIC_API
 uint32_t tic_settings_get_current_limit(const tic_settings *);
@@ -675,7 +675,7 @@ uint32_t tic_settings_get_current_limit(const tic_settings *);
 TIC_API
 void tic_settings_set_current_limit_during_error(tic_settings *, int32_t);
 
-/// Gets the current limit settings as described in
+/// Gets the current limit during error setting as described in
 /// tic_settings_set_current_limit_during_error().
 TIC_API
 int32_t tic_settings_get_current_limit_during_error(const tic_settings *);
@@ -808,9 +808,9 @@ TIC_API
 bool tic_variables_get_energized(const tic_variables *);
 
 /// Gets a flag that indicates whether there has been external confirmation that
-/// the value of the Tic's Current position variable is correct.
+/// the value of the Tic's "Current position" variable is correct.
 ///
-/// See the documentation for the Position uncertain flag in the Tic user's
+/// For more information, see the "Error handling" section of the Tic user's
 /// guide.
 TIC_API
 bool tic_variables_get_position_uncertain(const tic_variables *);
@@ -850,43 +850,55 @@ int32_t tic_variables_get_target_position(const tic_variables *);
 TIC_API
 int32_t tic_variables_get_target_velocity(const tic_variables *);
 
-/// Gets the starting speed in microsteps per 10000 seconds.
+/// Gets the current maximum speed, in microsteps per 10000 seconds.
 ///
-/// This is the current value.  To get the default value at startup, see
-/// tic_settings_get_starting_speed().
-TIC_API
-uint32_t tic_variables_get_starting_speed(const tic_variables *);
-
-/// Gets the current speed maximum, in microsteps per 10000 seconds.
+/// This is the current value, which could differ from the value in the Tic's
+/// settings.
 ///
-/// This is the current value.  To get the default value at startup, see
-/// tic_settings_get_max_speed().
+/// See also tic_settings_set_max_speed() and tic_set_max_speed().
 TIC_API
 uint32_t tic_variables_get_max_speed(const tic_variables *);
 
-/// Gets the current maximum deceleration, in microsteps per 100 square seconds.
+/// Gets the starting speed in microsteps per 10000 seconds.
 ///
-/// This is the current value.  To get the default value at startup, see
-/// tic_settings_get_max_decel().
+/// This is the current value, which could differ from the value in the
+/// Tic's settings.
+///
+/// See also tic_settings_set_starting_speed() and tic_set_starting_speed().
 TIC_API
-uint32_t tic_variables_get_max_decel(const tic_variables *);
+uint32_t tic_variables_get_starting_speed(const tic_variables *);
 
-/// Gets the current maximum acceleration, in microsteps per 100 square seconds.
+/// Gets the current maximum acceleration, in microsteps per second per 100
+/// seconds.
 ///
-/// This is the current value.  To get the default value at startup, see
-/// tic_settings_get_max_accel().
+/// This is the current value, which could differ from the value in the Tic's
+/// settings.
+///
+/// See also tic_settings_set_max_accel() and tic_set_max_accel().
 TIC_API
 uint32_t tic_variables_get_max_accel(const tic_variables *);
+
+/// Gets the current maximum deceleration, in microsteps per second per 100
+/// seconds.
+///
+/// This is the current value, which could differ from the value in the Tic's
+/// settings.
+///
+/// See also tic_settings_set_max_decel() and tic_set_max_decel().
+TIC_API
+uint32_t tic_variables_get_max_decel(const tic_variables *);
 
 /// Gets the current position of the stepper motor, in microsteps.
 ///
 /// Note that this just tracks steps that the Tic has commanded the stepper
-/// driver to take, it could be different from the actual position of the motor
+/// driver to take; it could be different from the actual position of the motor
 /// for various reasons.
+///
+/// See also tic_halt_and_set_position().
 TIC_API
 int32_t tic_variables_get_current_position(const tic_variables *);
 
-/// Gets the current velocity of the stepper motor, in microsteps for 10000
+/// Gets the current velocity of the stepper motor, in microsteps per 10000
 /// seconds.
 ///
 /// Note that this is just the velocity used in the Tic's step planning
@@ -898,7 +910,7 @@ int32_t tic_variables_get_current_velocity(const tic_variables *);
 /// Gets the acting target position, in microsteps.
 ///
 /// This is a variable used in the Tic's target position step planning
-/// algorithm.
+/// algorithm, and it could be invalid while the motor is stopped.
 TIC_API
 int32_t tic_variables_get_acting_target_position(const tic_variables *);
 
@@ -919,7 +931,10 @@ uint8_t tic_variables_get_device_reset(const tic_variables *);
 TIC_API
 uint32_t tic_variables_get_vin_voltage(const tic_variables *);
 
-/// Gets the time since the controller was last reset, in milliseconds.
+/// Gets the time since the last full reset of the Tic's microcontroller, in
+/// milliseconds.
+///
+/// A Reset command does not count.
 TIC_API
 uint32_t tic_variables_get_up_time(const tic_variables *);
 
@@ -945,8 +960,10 @@ uint8_t tic_variables_get_step_mode(const tic_variables *);
 
 /// Gets the stepper motor coil current limit in milliamps.
 ///
-/// Note that this is the current limit being used at the moment.  To get the
-/// default current limit at startup, see tic_settings_get_current_limit().
+/// This is the value being used now, which could differ from the value in the
+/// Tic's settings.
+///
+/// See also tic_settings_set_current_limit(), tic_set_current_limit().
 TIC_API
 uint32_t tic_variables_get_current_limit(const tic_variables *);
 
@@ -966,14 +983,16 @@ TIC_API
 uint8_t tic_variables_get_input_state(const tic_variables *);
 
 /// Gets a variable used in the process that converts raw RC and analog values
-/// into a motor position or speed.
+/// into a motor position or speed.  This is mainly for debugging input scaling
+/// settings in an RC or analog mode.
 ///
 /// A value of TIC_INPUT_NULL means the input value is not available.
 TIC_API
 uint16_t tic_variables_get_input_after_averaging(const tic_variables *);
 
 /// Gets a variable used in the process that converts raw RC and analog values
-/// into a motor position or speed.
+/// into a motor position or speed.  This is mainly for debugging input scaling
+/// settings in an RC or analog mode.
 ///
 /// A value of TIC_INPUT_NULL means the input value is not available.
 TIC_API
@@ -1012,7 +1031,11 @@ uint16_t tic_variables_get_analog_reading(const tic_variables *, uint8_t pin);
 TIC_API
 bool tic_variables_get_digital_reading(const tic_variables *, uint8_t pin);
 
-/// Gets the pin state for the specified pin.
+/// Gets the pin state for the specified pin, i.e. what kind of input or output
+/// it is.
+///
+/// Note that the state might be misleading if the pin is being used as a serial
+/// or I2C pin.
 ///
 /// This pin argument should be one of the TIC_PIN_NUM_* macros.
 ///
@@ -1128,18 +1151,22 @@ const char * tic_get_firmware_version_string(tic_handle *);
 /// Sets the target position of the Tic, in microsteps.
 ///
 /// This function sends a Set Target Position to the Tic.  If the Control mode
-/// is set to Serial, the Tic will start moving the motor to reach the target
-/// position.  If the control mode is something other than Serial, this command
-/// will be silently ignored.
+/// is set to Serial/I2C/USB, the Tic will start moving the motor to reach the
+/// target position.
+///
+/// If the control mode is something other than Serial, this command will be
+/// silently ignored.
 TIC_API TIC_WARN_UNUSED
 tic_error * tic_set_target_position(tic_handle *, int32_t position);
 
 /// Sets the target velocity of the Tic, in microsteps per 10000 seconds.
 ///
 /// This function sends a Set Target Velocity command to the Tic.  If the
-/// Control mode is set to Serial, the Tic will start accelerating or
-/// decelerating to reach the target velocity.  If the control mode is something
-/// other than Serial, this command will be silently ignored.
+/// Control mode is set to Serial/I2C/USB, the Tic will start accelerating or
+/// decelerating to reach the target velocity.
+///
+/// If the control mode is something other than Serial, this command will be
+/// silently ignored.
 TIC_API TIC_WARN_UNUSED
 tic_error * tic_set_target_velocity(tic_handle *, int32_t velocity);
 
@@ -1152,10 +1179,8 @@ tic_error * tic_set_target_velocity(tic_handle *, int32_t velocity);
 /// clears the "Learn position later" flag, sets the "Input state" to "halt",
 /// and clears the "Input after scaling" variable.
 ///
-/// NOTE: If the control mode is something other than Serial, ths command will be
-/// silently ignored.
-///
-/// This functions sends a Halt and Set Position command to the Tic.
+/// If the control mode is something other than Serial/I2C/USB, ths
+/// command will be silently ignored.
 TIC_API TIC_WARN_UNUSED
 tic_error * tic_halt_and_set_position(tic_handle *, int32_t position);
 
@@ -1165,8 +1190,8 @@ tic_error * tic_halt_and_set_position(tic_handle *, int32_t position);
 /// the motor, this command also sets the "Input state" to "halt", and clears
 /// the "Input after scaling" variable.
 ///
-/// NOTE: If the control mode is something other than Serial, ths command will be
-/// silently ignored.
+/// If the control mode is something other than Serial/I2C/USB, ths command will
+/// be silently ignored.
 ///
 /// See also tic_deenergize().
 TIC_API TIC_WARN_UNUSED
@@ -1182,8 +1207,8 @@ tic_error * tic_reset_command_timeout(tic_handle *);
 ///
 /// This function sends a Deenergize command to the Tic, causing it to disable
 /// its stepper motor driver.  The motor will stop moving and consuming power.
-/// The Tic will also set the "Intentionally deenergized" error bit, turn on its
-/// red LED, and drive its ERR line high.
+/// The Tic will also set the "Intentionally de-energized" error bit, turn on
+/// its red LED, and drive its ERR line high.
 ///
 /// Note that the Energize command, which can be sent over USB with
 /// tic_energize() or sent over serial or I2C, will undo the effect of this
@@ -1195,7 +1220,7 @@ tic_error * tic_deenergize(tic_handle *);
 
 /// Sends the Energize command.
 ///
-/// This function sends an Enable Driver command to the Tic, clearing the
+/// This function sends an Energize command to the Tic, clearing the
 /// "Intentionally deenergized" error bit.  If there are no other errors, this
 /// allows the system to start up.
 TIC_API TIC_WARN_UNUSED
@@ -1253,29 +1278,30 @@ tic_error * tic_enter_safe_start(tic_handle *);
 TIC_API TIC_WARN_UNUSED
 tic_error * tic_reset(tic_handle *);
 
-/// Attempts to clear a motor driver errors.
+/// Attempts to clear a motor driver error.
 ///
 /// This function sends a Clear Driver Error command to the Tic.
 TIC_API TIC_WARN_UNUSED
 tic_error * tic_clear_driver_error(tic_handle *);
 
-/// Temporarily sets the maximum speed.
+/// Temporarily sets the maximum speed, in units of steps per 10000 seconds.
 ///
-/// This function sends a Set Speed Max command to the Tic.  For more
+/// This function sends a Set Max Speed command to the Tic.  For more
 /// information, see tic_settings_set_max_speed().
 TIC_API TIC_WARN_UNUSED
 tic_error * tic_set_max_speed(tic_handle *, uint32_t max_speed);
 
-/// Temporarily sets the starting speed.
+/// Temporarily sets the starting speed, in units of steps per 10000 seconds.
 ///
 /// This function sends a Set Starting Speed command to the Tic.  For more
 /// information, see tic_settings_set_starting_speed().
 TIC_API TIC_WARN_UNUSED
 tic_error * tic_set_starting_speed(tic_handle *, uint32_t starting_speed);
 
-/// Temporarily sets the maximum acceleration.
+/// Temporarily sets the maximum acceleration, in units of steps per second per
+/// 100 seconds.
 ///
-/// This function sends a Set Acceleration Max command to the Tic.  For more
+/// This function sends a Set Max Acceleration command to the Tic.  For more
 /// information, see tic_settings_set_max_accel().
 TIC_API TIC_WARN_UNUSED
 tic_error * tic_set_max_accel(tic_handle *, uint32_t max_accel);
@@ -1287,23 +1313,24 @@ tic_error * tic_set_max_accel(tic_handle *, uint32_t max_accel);
 TIC_API TIC_WARN_UNUSED
 tic_error * tic_set_max_decel(tic_handle *, uint32_t max_decel);
 
-/// Temporarily sets the step mode.
+/// Temporarily sets the stepper motor's step mode, which defines how many
+/// microsteps correspond to one full step.
 ///
 /// The step_mode argument should be one of the TIC_STEP_MODE_* macros.
 ///
-/// This function sends a Set Step Mode commands to the Tic.  The step mode will
-/// stay in effect until the Tic is powered off, reset, or reinitialized, or
-/// another Set Step Mode command is issued.  To set the step mode permanently,
-/// see tic_settings_set_step_mode().
+/// This function sends a Set Step Mode command to the Tic.  For more
+/// information, see the Tic user's guide.
+///
+/// See also tic_settings_set_step_mode() and tic_variables_get_step_mode().
 TIC_API TIC_WARN_UNUSED
 tic_error * tic_set_step_mode(tic_handle *, uint8_t step_mode);
 
 /// Temporarily sets the stepper motor coil current limit in milliamps.
 ///
-/// This function sends a Set Current Limit command to the Tic.  This current
-/// limit will stay in effect until the Tic is powered off, reset, or
-/// reinitialized, or another Set Current Limit command is issued.  To set the
-/// current limit permanently, see tic_settings_set_current_limit().
+/// This function sends a Set Current Limit command to the Tic.  For more
+/// information, see the Tic user's guide.
+///
+/// To set the current limit permanently, see tic_settings_set_current_limit().
 TIC_API TIC_WARN_UNUSED
 tic_error * tic_set_current_limit(tic_handle *, uint32_t current_limit);
 
