@@ -290,6 +290,13 @@ static arguments parse_args(int argc, char ** argv)
     {
       args.serial_number_specified = true;
       args.serial_number = parse_arg_string(arg_reader);
+
+      // Remove a pound sign at the beginning of the string because people might
+      // copy that from the GUI.
+      if (args.serial_number[0] == '#')
+      {
+        args.serial_number.erase(0, 1);
+      }
     }
     else if (arg == "--list")
     {
