@@ -61,7 +61,7 @@ Q_IMPORT_PLUGIN (QWindowsIntegrationPlugin);
 // Ctrl+P: Apply settings
 // Ctrl+S: Save settings file...
 
-main_window::main_window(QWidget *parent)
+main_window::main_window(QWidget * parent)
   : QMainWindow(parent)
 {
   setup_window();
@@ -70,6 +70,14 @@ main_window::main_window(QWidget *parent)
 void main_window::set_controller(main_controller * controller)
 {
   this->controller = controller;
+}
+
+bootloader_window * main_window::open_bootloader_window()
+{
+  bootloader_window * window = new bootloader_window(this);
+  window->setWindowModality(Qt::WindowModal);
+  window->show();
+  return window;
 }
 
 void main_window::start_update_timer(uint32_t interval_ms)

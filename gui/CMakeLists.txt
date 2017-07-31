@@ -27,6 +27,7 @@ endif ()
 add_executable (gui
   main.cpp
   main_controller.cpp
+  qt/bootloader_window.cpp
   qt/main_window.cpp
   qt/BallScrollBar.cpp
   qt/InputWizard.cpp

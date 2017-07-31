@@ -2,6 +2,7 @@
 
 #include "tic.hpp"
 
+#include "bootloader_window.h"
 #include "InputWizard.h"
 
 #include <QMainWindow>
@@ -75,10 +76,12 @@ class main_window : public QMainWindow
   Q_OBJECT
 
 public:
-  main_window(QWidget *parent = 0);
+  main_window(QWidget * parent = 0);
 
   /** Stores a pointer to the main_controller object so that we can report events. **/
   void set_controller(main_controller * controller);
+
+  bootloader_window * open_bootloader_window();
 
   /** This causes the window to call the controller's update() function
    * periodically, on the same thread as everything else.

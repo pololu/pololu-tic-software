@@ -243,7 +243,7 @@ void main_controller::upgrade_firmware()
     handle_model_changed();
   }
 
-  // TODO: Launch the firmware upgrade window.
+  window->open_bootloader_window();
 }
 
 /** Returns true if the device list includes the specified device. */
