@@ -114,7 +114,7 @@ run:
 
 ## Building from source on Windows with MSYS2
 
-Another way to build this software for Windows it to use
+Another way to build this software for Windows is to use
 [MSYS2](http://msys2.github.io/).  Note that if you use this method, the
 executables you build will depend on a plethora of DLLs from the MSYS2
 environment.
@@ -142,7 +142,7 @@ library into your MSYS2 environment.
     wget https://github.com/pololu/libusbp/archive/v1-latest.tar.gz
     tar -xzf v1-latest.tar.gz
     cd libusbp-v1-latest
-    MSYS2_ARG_CONV_EXCL=- cmake . -G"MSYS Makefiles" -DCMAKE_INSTALL_PREFIX=/mingw32
+    MSYS2_ARG_CONV_EXCL=- cmake . -G"MSYS Makefiles" -DCMAKE_INSTALL_PREFIX=$MINGW_PREFIX
     make install DESTDIR=/
 
 You can test to see if libusbp-1 was installed correctly by running
@@ -157,7 +157,7 @@ Run these commands to build this software and install it:
     wget https://github.com/pololu/pololu-tic-software/archive/master.tar.gz
     tar -xzf master.tar.gz
     cd pololu-tic-software-master
-    MSYS2_ARG_CONV_EXCL= cmake . -G"MSYS Makefiles" -DCMAKE_INSTALL_PREFIX=/mingw32
+    MSYS2_ARG_CONV_EXCL= cmake . -G"MSYS Makefiles" -DCMAKE_INSTALL_PREFIX=$MINGW_PREFIX
     make install DESTDIR=/
 
 You should now be able to run the command-line utility by running `ticcmd` in
