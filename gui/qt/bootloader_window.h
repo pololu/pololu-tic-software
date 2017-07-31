@@ -11,5 +11,4 @@ public:
 
 private:
   void setup_window();
-  void retranslate();
 };
