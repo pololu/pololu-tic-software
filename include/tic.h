@@ -1407,6 +1407,11 @@ tic_error * tic_restore_defaults(tic_handle * handle);
 TIC_API TIC_WARN_UNUSED
 tic_error * tic_reinitialize(tic_handle * handle);
 
+/// Makes the Tic start its bootloader, disconnecting from the computer and
+/// reappearing as a different device.
+TIC_API TIC_WARN_UNUSED
+tic_error * tic_start_bootloader(tic_handle * handle);
+
 /// \cond
 TIC_API TIC_WARN_UNUSED
 tic_error * tic_get_debug_data(tic_handle *, uint8_t * data, size_t * size);

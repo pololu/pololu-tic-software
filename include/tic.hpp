@@ -747,6 +747,12 @@ namespace tic
       throw_if_needed(tic_reinitialize(pointer));
     }
 
+    /// Wrapper for tic_start_bootloader().
+    void start_bootloader()
+    {
+      throw_if_needed(tic_start_bootloader(pointer));
+    }
+
     /// \cond
     void get_debug_data(std::vector<uint8_t> & data)
     {
