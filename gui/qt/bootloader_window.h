@@ -8,4 +8,8 @@ class bootloader_window : public QMainWindow
 
 public:
   bootloader_window(QWidget * parent = 0);
+
+private:
+  void setup_window();
+  void retranslate();
 };
