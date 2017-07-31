@@ -16,7 +16,7 @@ describe 'commands for controlling the motor', usb: true do
     expect(result).to eq 0
   end
 
-  describe 'Set Target Position' do
+  describe 'Set target position' do
     it 'lets you set the position' do
       stdout, stderr, result = run_ticcmd('-p 230000')
       expect(stderr).to eq ''
@@ -34,7 +34,7 @@ describe 'commands for controlling the motor', usb: true do
     end
   end
 
-  describe 'Set Target Velocity' do
+  describe 'Set target velocity' do
     it 'lets you set the velocity' do
       stdout, stderr, result = run_ticcmd('-y 100000')
       expect(stderr).to eq ''
@@ -52,7 +52,7 @@ describe 'commands for controlling the motor', usb: true do
     end
   end
 
-  describe 'Halt and Set Position' do
+  describe 'Halt and set position' do
     it 'lets you set the current position' do
       stdout, stderr, result = run_ticcmd('--halt-and-set-position 2146054486')
       expect(stderr).to eq ''
@@ -70,7 +70,7 @@ describe 'commands for controlling the motor', usb: true do
     end
   end
 
-  describe 'Halt and Hold' do
+  describe 'Halt and hold' do
     it 'lets you clear a target position or velocity' do
       stdout, stderr, result = run_ticcmd('-p 230000')
       expect(stderr).to eq ''
@@ -89,7 +89,7 @@ describe 'commands for controlling the motor', usb: true do
     end
   end
 
-  describe 'Reset Command Timeout' do
+  describe 'Reset command timeout' do
     it 'runs' do
       stdout, stderr, result = run_ticcmd('--reset-command-timeout')
       expect(stderr).to eq ''
@@ -98,7 +98,7 @@ describe 'commands for controlling the motor', usb: true do
     end
   end
 
-  describe 'Deenergize/energize' do
+  describe 'De-energize/energize' do
     it 'works' do
       stdout, stderr, result = run_ticcmd('--deenergize')
       expect(stderr).to eq ''
@@ -118,7 +118,7 @@ describe 'commands for controlling the motor', usb: true do
     end
   end
 
-  describe 'Exit Safe Start' do
+  describe 'Exit safe start' do
     it 'runs' do
       stdout, stderr, result = run_ticcmd('--exit-safe-start')
       expect(stderr).to eq ''
@@ -127,7 +127,7 @@ describe 'commands for controlling the motor', usb: true do
     end
   end
 
-  describe 'Enter Safe Start' do
+  describe 'Enter safe start' do
     it 'runs' do
       stdout, stderr, result = run_ticcmd('--enter-safe-start')
       expect(stderr).to eq ''
@@ -145,7 +145,7 @@ describe 'commands for controlling the motor', usb: true do
     end
   end
 
-  describe 'Clear Driver Error' do
+  describe 'Clear driver error' do
     it 'runs' do
       stdout, stderr, result = run_ticcmd('--clear-driver-error')
       expect(stderr).to eq ''
@@ -155,7 +155,7 @@ describe 'commands for controlling the motor', usb: true do
   end
 end
 
-describe 'Set Max Speed' do
+describe 'Set max speed' do
   it 'works', usb: true do
     ['10000', '2000000']. each do |mode|
       stdout, stderr, result = run_ticcmd("--max-speed #{mode}")
@@ -167,7 +167,7 @@ describe 'Set Max Speed' do
   end
 end
 
-describe 'Set Starting Speed' do
+describe 'Set starting speed' do
   it 'works', usb: true do
     ['512', '0']. each do |mode|
       stdout, stderr, result = run_ticcmd("--starting-speed #{mode}")
@@ -179,7 +179,7 @@ describe 'Set Starting Speed' do
   end
 end
 
-describe 'Set Max Accel' do
+describe 'Set max acceleration' do
   it 'works', usb: true do
     ['10000', '2000000']. each do |mode|
       stdout, stderr, result = run_ticcmd("--max-accel #{mode}")
@@ -191,7 +191,7 @@ describe 'Set Max Accel' do
   end
 end
 
-describe 'Set Max Decel' do
+describe 'Set max deceleration' do
   it 'works', usb: true do
     ['10000', '2000000']. each do |mode|
       stdout, stderr, result = run_ticcmd("--max-decel #{mode}")
@@ -203,7 +203,7 @@ describe 'Set Max Decel' do
   end
 end
 
-describe 'Set Step Mode' do
+describe 'Set step mode' do
   it 'it complains if the step mode is invalid' do
     stdout, stderr, result = run_ticcmd('-d x --step-mode foobar')
     expect(stderr).to eq "Error: The step mode specified is invalid.\n"
@@ -223,7 +223,7 @@ describe 'Set Step Mode' do
 end
 
 
-describe 'Set Current Limit command' do
+describe 'Set current limit command' do
   it 'it prevents you from setting a current too high' do
     stdout, stderr, result = run_ticcmd('-d x --current 10000')
     expect(stderr).to eq \
@@ -245,7 +245,7 @@ describe 'Set Current Limit command' do
   end
 end
 
-describe 'Set Decay Mode' do
+describe 'Set decay mode' do
   it 'it complains if the decay mode is invalid' do
     stdout, stderr, result = run_ticcmd('-d x --decay foobar')
     expect(stderr).to eq "Error: The decay mode specified is invalid.\n"

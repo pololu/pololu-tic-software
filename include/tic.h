@@ -1160,7 +1160,7 @@ const char * tic_get_firmware_version_string(tic_handle *);
 
 /// Sets the target position of the Tic, in microsteps.
 ///
-/// This function sends a Set Target Position to the Tic.  If the Control mode
+/// This function sends a set target position to the Tic.  If the Control mode
 /// is set to Serial/I2C/USB, the Tic will start moving the motor to reach the
 /// target position.
 ///
@@ -1171,7 +1171,7 @@ tic_error * tic_set_target_position(tic_handle *, int32_t position);
 
 /// Sets the target velocity of the Tic, in microsteps per 10000 seconds.
 ///
-/// This function sends a Set Target Velocity command to the Tic.  If the
+/// This function sends a set target velocity command to the Tic.  If the
 /// Control mode is set to Serial/I2C/USB, the Tic will start accelerating or
 /// decelerating to reach the target velocity.
 ///
@@ -1184,7 +1184,7 @@ tic_error * tic_set_target_velocity(tic_handle *, int32_t velocity);
 /// the "Current position" variable, which represents where the Tic currently
 /// thinks the motor's output is.
 ///
-/// This function sends a Halt and Set Position command to the Tic.  Besides
+/// This function sends a halt and set position command to the Tic.  Besides
 /// stopping the motor and setting the current position, this command also
 /// clears the "Learn position later" flag, sets the "Input state" to "halt",
 /// and clears the "Input after scaling" variable.
@@ -1196,7 +1196,7 @@ tic_error * tic_halt_and_set_position(tic_handle *, int32_t position);
 
 /// Stops the motor abruptly without respecting the deceleration limit.
 ///
-/// This function sends a Halt and Hold command to the Tic.  Besides stopping
+/// This function sends a halt and hold command to the Tic.  Besides stopping
 /// the motor, this command also sets the "Input state" to "halt", and clears
 /// the "Input after scaling" variable.
 ///
@@ -1209,13 +1209,13 @@ tic_error * tic_halt_and_hold(tic_handle *);
 
 /// Prevents the "Command timeout" error from happening for some time.
 ///
-/// This function sends a Reset Command Timeout command to the Tic.
+/// This function sends a reset command timeout command to the Tic.
 TIC_API TIC_WARN_UNUSED
 tic_error * tic_reset_command_timeout(tic_handle *);
 
 /// Deenergizes the stepper motor coils.
 ///
-/// This function sends a Deenergize command to the Tic, causing it to disable
+/// This function sends a De-energize command to the Tic, causing it to disable
 /// its stepper motor driver.  The motor will stop moving and consuming power.
 /// The Tic will also set the "Intentionally de-energized" error bit, turn on
 /// its red LED, and drive its ERR line high.
@@ -1236,7 +1236,7 @@ tic_error * tic_deenergize(tic_handle *);
 TIC_API TIC_WARN_UNUSED
 tic_error * tic_energize(tic_handle *);
 
-/// Sends the Exit Safe Start command.
+/// Sends the Exit safe start command.
 ///
 /// In Serial/I2C/USB control mode, this command causes the Safe Start Violation
 /// error to be cleared for 200 ms.  If there are no other errors, this
@@ -1244,22 +1244,22 @@ tic_error * tic_energize(tic_handle *);
 TIC_API TIC_WARN_UNUSED
 tic_error * tic_exit_safe_start(tic_handle *);
 
-/// Sends the Enter Safe Start command.
+/// Sends the Enter safe start command.
 ///
 /// This command has no effect if safe-start is disabled in the Tic settings (see
 /// tic_settings_set_disable_safe_start()).
 ///
 /// In Serial/I2C/USB control mode, this command causes the Tic to stop the
-/// motor and set its Safe Start Violation error bit.  An Exit Safe Start
+/// motor and set its safe start violation error bit.  An Exit Safe Start
 /// command is required before the Tic will move the motor again.
 ///
-/// In RC Speed, Analog Speed, or Encoder Speed control modes, this command
+/// In RC speed, Analog speed, or Encoder speed control modes, this command
 /// causes the Tic to stop the motor and set its Safe Start Violation error bit.
 /// The control input needs to move to its neutral position before the Tic will
 /// move the motor again.
 ///
 /// In the RC Position, Analog Position, or Encoder Position control modes, this
-/// command is not useful.  It will set the Safe Start Violation error bit,
+/// command is not useful.  It will set the safe start violation error bit,
 /// causing the motor to stop, but the error bit will be cleared very quickly
 /// and the motor will continue moving.
 TIC_API TIC_WARN_UNUSED
@@ -1280,7 +1280,7 @@ tic_error * tic_enter_safe_start(tic_handle *);
 /// movement command, clears the encoder position, clears the Serial Error bit,
 /// clears the Command Timeout error bit, and clears the Errors Occurred bits.
 ///
-/// Neither command modifies the Intentionally Disabled error bit.
+/// Neither command modifies the Intentionally de-energized error bit.
 ///
 /// The Tic's serial and I2C interfaces will be unreliable for a brief period
 /// after the Tic receives the Reset command, so we recommend waiting at least
@@ -1290,20 +1290,20 @@ tic_error * tic_reset(tic_handle *);
 
 /// Attempts to clear a motor driver error.
 ///
-/// This function sends a Clear Driver Error command to the Tic.
+/// This function sends a clear driver error command to the Tic.
 TIC_API TIC_WARN_UNUSED
 tic_error * tic_clear_driver_error(tic_handle *);
 
 /// Temporarily sets the maximum speed, in units of steps per 10000 seconds.
 ///
-/// This function sends a Set Max Speed command to the Tic.  For more
+/// This function sends a set max speed command to the Tic.  For more
 /// information, see tic_settings_set_max_speed().
 TIC_API TIC_WARN_UNUSED
 tic_error * tic_set_max_speed(tic_handle *, uint32_t max_speed);
 
 /// Temporarily sets the starting speed, in units of steps per 10000 seconds.
 ///
-/// This function sends a Set Starting Speed command to the Tic.  For more
+/// This function sends a set starting speed command to the Tic.  For more
 /// information, see tic_settings_set_starting_speed().
 TIC_API TIC_WARN_UNUSED
 tic_error * tic_set_starting_speed(tic_handle *, uint32_t starting_speed);
@@ -1311,7 +1311,7 @@ tic_error * tic_set_starting_speed(tic_handle *, uint32_t starting_speed);
 /// Temporarily sets the maximum acceleration, in units of steps per second per
 /// 100 seconds.
 ///
-/// This function sends a Set Max Acceleration command to the Tic.  For more
+/// This function sends a set max acceleration command to the Tic.  For more
 /// information, see tic_settings_set_max_accel().
 TIC_API TIC_WARN_UNUSED
 tic_error * tic_set_max_accel(tic_handle *, uint32_t max_accel);
@@ -1328,7 +1328,7 @@ tic_error * tic_set_max_decel(tic_handle *, uint32_t max_decel);
 ///
 /// The step_mode argument should be one of the TIC_STEP_MODE_* macros.
 ///
-/// This function sends a Set Step Mode command to the Tic.  For more
+/// This function sends a set step mode command to the Tic.  For more
 /// information, see the Tic user's guide.
 ///
 /// See also tic_settings_set_step_mode() and tic_variables_get_step_mode().
@@ -1337,7 +1337,7 @@ tic_error * tic_set_step_mode(tic_handle *, uint8_t step_mode);
 
 /// Temporarily sets the stepper motor coil current limit in milliamps.
 ///
-/// This function sends a Set Current Limit command to the Tic.  For more
+/// This function sends a set current limit command to the Tic.  For more
 /// information, see the Tic user's guide.
 ///
 /// To set the current limit permanently, see tic_settings_set_current_limit().
@@ -1349,7 +1349,7 @@ tic_error * tic_set_current_limit(tic_handle *, uint32_t current_limit);
 /// The decay_mode argument should be TIC_DECAY_MODE_MIXED, TIC_DECAY_MODE_SLOW,
 /// or TIC_DECAY_MODE_FAST.
 ///
-/// This function sends a Set Decay Mode command to the Tic.  This decay mode
+/// This function sends a set decay mode command to the Tic.  This decay mode
 /// will stay in effect until the Tic is powered off, reset, or reinitialized,
 /// or another Set Decay Mode command is issued.  To set the decay mode
 /// permanently, see tic_settings_set_decay_mode().
@@ -1358,8 +1358,8 @@ tic_error * tic_set_decay_mode(tic_handle *, uint8_t decay_mode);
 
 /// Reads all of the Tic's status variables and returns them as an object.
 ///
-/// This function sends a Get Variables command or a Get Variables and Clear
-/// Errors Occurred command to the Tic.
+/// This function sends a get variables command or a get variables and clear
+/// errors occurred command to the Tic.
 ///
 /// The variables parameter should be a non-null pointer to a tic_variables
 /// pointer, which will receive a pointer to a new variables object if and only
