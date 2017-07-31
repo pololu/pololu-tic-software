@@ -29,6 +29,9 @@ public:
    * settings. */
   void restore_default_settings();
 
+  /** This is called when the user wants to upgrade some firmware. **/
+  void upgrade_firmware();
+
   /** This is called when it is time to check if the status of the device has
    * changed. */
   void update();

@@ -201,7 +201,7 @@ void main_controller::restore_default_settings()
   }
   catch (std::exception const & e)
   {
-    show_exception(e, "There was an error resetting to the default settings.");
+    show_exception(e);
   }
 
   // This takes care of reloading the settings and telling the view to update.
@@ -212,6 +212,38 @@ void main_controller::restore_default_settings()
     window->show_info_message(
       "Your device's settings have been reset to their default values.");
   }
+}
+
+void main_controller::upgrade_firmware()
+{
+  if (connected())
+  {
+    std::string question =
+      "This action will restart the device in bootloader mode, which "
+      "is used for firmware upgrades.  The device will disconnect "
+      "and reappear to your system as a new device.\n\n"
+      "Are you sure you want to proceed?";
+    if (!window->confirm(question))
+    {
+      return;
+    }
+
+    try
+    {
+      device_handle.start_bootloader();
+    }
+    catch (std::exception const & e)
+    {
+      show_exception(e);
+    }
+
+    really_disconnect();
+    disconnected_by_user = true;
+    connection_error = false;
+    handle_model_changed();
+  }
+
+  // TODO: Launch the firmware upgrade window.
 }
 
 /** Returns true if the device list includes the specified device. */

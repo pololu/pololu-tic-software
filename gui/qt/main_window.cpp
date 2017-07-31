@@ -1139,6 +1139,11 @@ void main_window::on_apply_settings_action_triggered()
   controller->apply_settings();
 }
 
+void main_window::on_upgrade_firmware_action_triggered()
+{
+  controller->upgrade_firmware();
+}
+
 void main_window::on_control_mode_value_currentIndexChanged(int index)
 {
   if (suppress_events) { return; }
@@ -1687,6 +1692,10 @@ void main_window::setup_menu_bar()
   apply_settings_action->setObjectName("apply_settings_action");
   apply_settings_action->setShortcut(Qt::CTRL + Qt::Key_P);
   device_menu->addAction(apply_settings_action);
+
+  upgrade_firmware_action = new QAction(this);
+  upgrade_firmware_action->setObjectName("upgrade_firmware_action");
+  device_menu->addAction(upgrade_firmware_action);
 
   help_menu = menu_bar->addMenu("");
 
@@ -2762,6 +2771,7 @@ void main_window::retranslate()
   reload_settings_action->setText(tr("Re&load settings from device"));
   restore_defaults_action->setText(tr("&Restore default settings"));
   apply_settings_action->setText(tr("&Apply settings"));
+  upgrade_firmware_action->setText(tr("&Upgrade firmware..."));
   help_menu->setTitle(tr("&Help"));
   documentation_action->setText(tr("&Online documentation..."));
   about_action->setText(tr("&About..."));

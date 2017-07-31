@@ -262,9 +262,8 @@ private slots:
   void on_set_current_position_button_clicked();
   void on_halt_button_clicked();
   void on_decelerate_button_clicked();
-
-  /** This is called by Qt when the user wants to apply settings. */
   void on_apply_settings_action_triggered();
+  void on_upgrade_firmware_action_triggered();
 
   // [all-settings]
 
@@ -376,6 +375,7 @@ private:
   QAction * reload_settings_action;
   QAction * restore_defaults_action;
   QAction * apply_settings_action;
+  QAction * upgrade_firmware_action;
   QMenu * help_menu;
   QAction * documentation_action;
   QAction * about_action;
