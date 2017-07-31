@@ -1395,6 +1395,9 @@ tic_error * tic_get_settings(tic_handle *, tic_settings ** settings);
 ///
 /// After calling this function, to make the settings actually take effect, you
 /// should call tic_reinitialize().
+///
+/// Be careful not to call this command in a fast loop to avoid wearing out the
+/// Tic's EEPROM, which is rated for only 100,000 write cycles.
 TIC_API TIC_WARN_UNUSED
 tic_error * tic_set_settings(tic_handle *, const tic_settings *);
 
