@@ -25,6 +25,9 @@ private:
 
   void setup_window();
 
+  void show_error_message(const std::string &);
+
 private slots:
   void on_browse_button_clicked();
+  void on_program_button_clicked();
 };

@@ -640,9 +640,9 @@ void PloaderHandle::readEeprom(uint8_t * image)
     }
 }
 
-void PloaderHandle::applyImage(const FirmwareArchive::Image & image)
+void PloaderHandle::applyImage(const firmware_archive::image & image)
 {
-    initialize(image.uploadType);
+    initialize(image.upload_type);
 
     eraseFlash();
 
@@ -655,7 +655,7 @@ void PloaderHandle::applyImage(const FirmwareArchive::Image & image)
     }
 
     size_t progress = 0;
-    for (const FirmwareArchive::Block & block : image.blocks)
+    for (const firmware_archive::block & block : image.blocks)
     {
         writeFlashBlock(block.address, &block.data[0], block.data.size());
 

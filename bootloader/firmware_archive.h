@@ -7,69 +7,66 @@
 #include <cassert>
 
 // Class for reading Firmware Archive (.fmi) files.
-namespace FirmwareArchive
+namespace firmware_archive
 {
-    class Block
+  class block
+  {
+  public:
+    uint32_t address;
+    std::vector<uint8_t> data;
+  };
+
+  class image
+  {
+  public:
+    uint16_t usb_vendor_id;
+    uint16_t usb_product_id;
+    uint16_t upload_type;
+    std::vector<block> blocks;
+  };
+
+  class data
+  {
+  public:
+    void read_from_string(const std::string &);
+
+    operator bool() const
     {
-    public:
-        uint32_t address;
-        std::vector<uint8_t> data;
-    };
+      return !images.empty();
+    }
 
-    class Image
+    bool matches_bootloader(uint16_t vendor_id, uint16_t product_id) const
     {
-    public:
-        uint16_t usbVendorId;
-        uint16_t usbProductId;
-        uint16_t uploadType;
-        std::vector<Block> blocks;
-    };
+      for (const image & image : images)
+      {
+        if (image.usb_vendor_id == vendor_id &&
+          image.usb_product_id == product_id)
+        {
+          return true;
+        }
+      }
+      return false;
+    }
 
-    class Data
+    const image & find_image(uint16_t vendor_id, uint16_t product_id) const
     {
-    public:
-        void readFromFile(std::istream & file, const char * fileName);
-
-        operator bool() const
+      for (const image & image : images)
+      {
+        if (image.usb_vendor_id == vendor_id &&
+          image.usb_product_id == product_id)
         {
-            return !images.empty();
+          return image;
         }
+      }
 
-        bool matchesBootloader(uint16_t usbVendorId, uint16_t usbProductId) const
-        {
-            for (const Image & image : images)
-            {
-                if (image.usbVendorId == usbVendorId &&
-                    image.usbProductId == usbProductId)
-                {
-                    return true;
-                }
-            }
-            return false;
-        }
+      throw std::runtime_error("Matching image in firmware archive not found.");
+    }
 
-        const Image & findImage(uint16_t usbVendorId, uint16_t usbProductId) const
-        {
-            for (const Image & image : images)
-            {
-                if (image.usbVendorId == usbVendorId &&
-                    image.usbProductId == usbProductId)
-                {
-                    return image;
-                }
-            }
+    std::string name;
+    std::vector<image> images;
 
-            // This should never happen because we use matchesBootloader ahead
-            // of time before calling this.
-            assert(0);
-            throw std::runtime_error("Matching image in firmware archive not found.");
-        }
-
-        std::string name;
-        std::vector<Image> images;
-
-    private:
-        void processXml(std::string s);
-    };
+  private:
+    void process_xml(const std::string &);
+  };
 }
 

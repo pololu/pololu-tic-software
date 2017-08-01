@@ -1,4 +1,5 @@
 #include "bootloader_window.h"
+#include "file_util.h"
 
 #include <bootloader.h>
 
@@ -9,6 +10,7 @@
 #include <QGridLayout>
 #include <QLabel>
 #include <QLineEdit>
+#include <QMessageBox>
 #include <QProgressBar>
 #include <QPushButton>
 #include <QWidget>
@@ -141,3 +143,38 @@ void bootloader_window::on_browse_button_clicked()
     filename_input->setText(filename);
   }
 }
+
+void bootloader_window::on_program_button_clicked()
+{
+  QString filename = filename_input->text();
+
+  std::string file_contents;
+  try
+  {
+    file_contents = read_string_from_file(filename.toStdString());
+  }
+  catch (const std::exception & e)
+  {
+    show_error_message(e.what());
+    return;
+  }
+
+  firmware_archive::data data;
+  try
+  {
+    data.read_from_string(file_contents);
+  }
+  catch (const std::exception & e)
+  {
+    show_error_message(e.what());
+    return;
+  }
+}
+
+void bootloader_window::show_error_message(const std::string & message)
+{
+  QMessageBox mbox(QMessageBox::Critical, windowTitle(),
+    QString::fromStdString(message), QMessageBox::NoButton, this);
+  mbox.exec();
+}
+

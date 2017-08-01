@@ -1,6 +1,6 @@
 #include "main_controller.h"
 #include "main_window.h"
-#include "../cli/file_utils.h"  // TODO: don't use file_utils.h
+#include <file_util.h>
 
 #include <cassert>
 #include <cmath>

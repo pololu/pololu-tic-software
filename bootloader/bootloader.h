@@ -292,9 +292,9 @@ public:
      * Returns true if the application is valid. */
     bool checkApplication();
 
-    /** Erases flash and performs any other steps needed to apply the firmware
-     * image to the device. */
-    void applyImage(const FirmwareArchive::Image & image);
+    // Erases flash and performs any other steps needed to apply the firmware
+    // image to the device
+    void applyImage(const firmware_archive::image & image);
 
     PloaderType type;
 

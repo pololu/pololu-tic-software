@@ -489,13 +489,13 @@ static void get_settings(device_selector & selector,
 
   std::string settings_string = settings.to_string();
 
-  write_string_to_file(filename, settings_string);
+  write_string_to_file_or_pipe(filename, settings_string);
 }
 
 static void set_settings(device_selector & selector,
   const std::string & filename)
 {
-  std::string settings_string = read_string_from_file(filename);
+  std::string settings_string = read_string_from_file_or_pipe(filename);
   tic::settings settings = tic::settings::read_from_string(settings_string);
 
   std::string warnings;
@@ -511,14 +511,14 @@ static void set_settings(device_selector & selector,
 static void fix_settings(const std::string & input_filename,
   const std::string & output_filename)
 {
-  std::string in_str = read_string_from_file(input_filename);
+  std::string in_str = read_string_from_file_or_pipe(input_filename);
   tic::settings settings = tic::settings::read_from_string(in_str);
 
   std::string warnings;
   settings.fix(&warnings);
   std::cerr << warnings;
 
-  write_string_to_file(output_filename, settings.to_string());
+  write_string_to_file_or_pipe(output_filename, settings.to_string());
 }
 
 static void print_debug_data(device_selector & selector)
