@@ -47,8 +47,6 @@ if (WIN32)
   )
 endif ()
 
-target_link_libraries (gui Qt5::Widgets)
-
-target_link_libraries (gui lib)
+target_link_libraries (gui Qt5::Widgets lib bootloader)
 
 install(TARGETS gui DESTINATION bin)

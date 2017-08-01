@@ -1,5 +1,7 @@
 #include "bootloader_window.h"
 
+#include <bootloader.h>
+
 #include <QAbstractListModel>
 #include <QComboBox>
 #include <QFileDialog>
@@ -11,7 +13,7 @@
 #include <QPushButton>
 #include <QWidget>
 
-#include <libusbp-1/libusbp.hpp>  // tmphax
+// #include <libusbp-1/libusbp.hpp>  // tmphax
 
 static QString directory_hint = QDir::homePath();
 
@@ -25,8 +27,8 @@ void update_bootloader_combo_box(QComboBox & box)
   }
 
   // tmphax: show all USB devices
-  auto device_list = libusbp::list_connected_devices();
-  // TODO: device_list = bootloader::list_connected_devices();
+  // auto device_list = libusbp::list_connected_devices();
+  auto device_list = bootloader::list_connected_devices();
   box.clear();
   box.addItem("", QString());
   for (const auto & device : device_list)
