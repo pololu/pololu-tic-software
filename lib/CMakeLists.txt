@@ -5,10 +5,12 @@ set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra")
 # Find libusbp using pkg-config and use it.
 pkg_check_modules(LIBUSBP REQUIRED libusbp-1)
 string (REPLACE ";" " " LIBUSBP_CFLAGS "${LIBUSBP_CFLAGS}")
+string (REPLACE ";" " " LIBUSBP_LDFLAGS "${LIBUSBP_LDFLAGS}")
 
 if (USE_SYSTEM_LIBYAML)
   pkg_check_modules(YAML REQUIRED yaml)
-  STRING(REPLACE ";" " " LIBYAML_LDFLAGS "${LIBYAML_LDFLAGS}")
+  string (REPLACE ";" " " LIBYAML_CFLAGS "${LIBYAML_CFLAGS}")
+  string (REPLACE ";" " " LIBYAML_LDFLAGS "${LIBYAML_LDFLAGS}")
 else ()
   set (LIBYAML_SRC libyaml/yaml.c)
   include_directories ("${CMAKE_CURRENT_SOURCE_DIR}/libyaml")

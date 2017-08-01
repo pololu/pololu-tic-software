@@ -25,6 +25,9 @@ endif ()
 set(USE_SYSTEM_LIBYAML FALSE CACHE BOOL
   "True if you want to use libyaml from the system instead of the bundled one.")
 
+set(USE_SYSTEM_LIBTINYXML2 FALSE CACHE BOOL
+  "True if you want to use libtinyxml2 from the system instead of the bundled one.")
+
 if (EXISTS "${CMAKE_SOURCE_DIR}/images/app.icns")
   set (POLOLU_BUILD TRUE)
 endif ()
