@@ -9,11 +9,39 @@
 #include <QPushButton>
 #include <QWidget>
 
+#include <libusbp-1/libusbp.hpp>  // tmphax
+
+void update_bootloader_combo_box(QComboBox & box)
+{
+  // Record the OS ID of the item currently selected.
+  QString id;
+  if (box.currentData().isValid())
+  {
+    id = box.currentData().toString();
+  }
+
+  // tmphax: show all USB devices
+  auto device_list = libusbp::list_connected_devices();
+  // TODO: device_list = bootloader::list_connected_devices();
+  box.clear();
+  box.addItem("", QString());
+  for (const auto & device : device_list)
+  {
+    box.addItem(
+      QString::fromStdString(device.get_os_id() +  // TODO: device.short_name()
+        " #" + device.get_serial_number()),
+      QString::fromStdString(device.get_os_id()));
+  }
+
+  int index = box.findData(id);  // could be -1 if it is not found
+  box.setCurrentIndex(index);
+}
+
 class BootloaderComboBox : public QComboBox
 {
   void showPopup()
   {
-    // TODO: edit the list of items here
+    update_bootloader_combo_box(*this);
     QComboBox::showPopup();
   }
 };
@@ -65,6 +93,7 @@ void bootloader_window::setup_window()
     QComboBox tmp;
     tmp.addItem("XXXXXX: #1234567890123456");
     device_chooser->setMinimumWidth(tmp.sizeHint().width());
+    device_chooser->setMinimumWidth(tmp.sizeHint().width() * 3); // TODO: remove
     device_chooser->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     layout->addWidget(device_chooser, 1, 1);
   }
@@ -90,10 +119,3 @@ void bootloader_window::setup_window()
 
   QMetaObject::connectSlotsByName(this);
 }
-
-/**
-void bootloader_window::on_device_chooser_open()
-{
-  device_chooser->addItem(QString());
-}
-**/
