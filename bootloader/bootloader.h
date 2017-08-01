@@ -84,6 +84,8 @@ public:
      * Should be the same as the USB product string descriptor. */
     const char * name;
 
+    const char * short_name;
+
     /* The address of the first byte of the app (used in the USB protocol). */
     uint32_t appAddress;
 
@@ -175,14 +177,19 @@ public:
         return usbInterface;
     }
 
-    std::string get_os_id() const
+    std::string get_short_name() const
     {
-      return usbInterface.get_os_id();
+      return type.short_name;
     }
 
     std::string get_serial_number() const
     {
       return serialNumber;
+    }
+
+    std::string get_os_id() const
+    {
+      return usbInterface.get_os_id();
     }
 
     libusbp::generic_interface usbInterface;

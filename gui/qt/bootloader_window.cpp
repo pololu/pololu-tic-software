@@ -34,7 +34,7 @@ void update_bootloader_combo_box(QComboBox & box)
   for (const auto & device : device_list)
   {
     box.addItem(
-      QString::fromStdString(device.get_os_id() +  // TODO: device.short_name()
+      QString::fromStdString(device.get_short_name() +
         " #" + device.get_serial_number()),
       QString::fromStdString(device.get_os_id()));
   }
@@ -100,9 +100,8 @@ void bootloader_window::setup_window()
   {
     device_chooser = new BootloaderComboBox();
     QComboBox tmp;
-    tmp.addItem("XXXXXX: #1234567890123456");
+    tmp.addItem("XXXXXX bootloader: #1234567890123456");
     device_chooser->setMinimumWidth(tmp.sizeHint().width());
-    device_chooser->setMinimumWidth(tmp.sizeHint().width() * 3); // TODO: remove
     device_chooser->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     layout->addWidget(device_chooser, 1, 1);
   }
