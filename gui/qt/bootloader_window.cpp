@@ -53,7 +53,7 @@ void bootloader_window::setup_window()
   {
     device_chooser = new QComboBox();
     QComboBox tmp;
-    tmp.addItem("TXXXXX: #1234567890123456");
+    tmp.addItem("XXXXXX: #1234567890123456");
     device_chooser->setMinimumWidth(tmp.sizeHint().width());
     device_chooser->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     layout->addWidget(device_chooser, 1, 1);
@@ -64,7 +64,6 @@ void bootloader_window::setup_window()
 
   progress_bar = new QProgressBar();
   progress_bar->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-  progress_bar->setMinimum(0);
   progress_bar->setVisible(false);
   layout->addWidget(progress_bar, 3, 1);
 
