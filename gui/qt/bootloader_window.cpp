@@ -58,16 +58,16 @@ class BootloaderComboBox : public QComboBox
 #endif
 
 bootloader_window::bootloader_window(QWidget * parent)
-  : QMainWindow(parent)
 {
   setup_window();
+
+  // Set the parent this way to improve the centering of the Window.
+  // (It's a bit far up instead of being a bit far to the right.)
+  setParent(parent, Qt::Window);
 }
 
 void bootloader_window::setup_window()
 {
-  // TODO: get this window to actually be centered on the parent; it's
-  // offset to the right, as if the parent is not accounting for the Window's width
-
   setWindowTitle(tr("Upgrade Firmware"));
   setStyleSheet("QPushButton { padding: 0.3em 1em; }");
 
