@@ -24,4 +24,7 @@ private:
   QPushButton * program_button;
 
   void setup_window();
+
+private slots:
+  void on_browse_button_clicked();
 };

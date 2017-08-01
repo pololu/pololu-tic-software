@@ -2,6 +2,8 @@
 
 #include <QAbstractListModel>
 #include <QComboBox>
+#include <QFileDialog>
+#include <QFileInfo>
 #include <QGridLayout>
 #include <QLabel>
 #include <QLineEdit>
@@ -10,6 +12,8 @@
 #include <QWidget>
 
 #include <libusbp-1/libusbp.hpp>  // tmphax
+
+static QString directory_hint = QDir::homePath();
 
 void update_bootloader_combo_box(QComboBox & box)
 {
@@ -61,6 +65,9 @@ bootloader_window::bootloader_window(QWidget * parent)
 
 void bootloader_window::setup_window()
 {
+  // TODO: get this window to actually be centered on the parent; it's
+  // offset to the right, as if the parent is not accounting for the Window's width
+
   setWindowTitle(tr("Upgrade Firmware"));
   setStyleSheet("QPushButton { padding: 0.3em 1em; }");
 
@@ -73,7 +80,7 @@ void bootloader_window::setup_window()
 
   {
     filename_input = new QLineEdit();
-    QLabel tmp;
+    QLineEdit tmp;
     tmp.setText("C:/Users/SomePersonsLongerName/Downloads/abc01a-v1.00.fmi");
     filename_input->setMinimumWidth(tmp.sizeHint().width());
     layout->addWidget(filename_input, 0, 1);
@@ -118,4 +125,18 @@ void bootloader_window::setup_window()
   setCentralWidget(central_widget);
 
   QMetaObject::connectSlotsByName(this);
+}
+
+void bootloader_window::on_browse_button_clicked()
+{
+  QString filename = QFileDialog::getOpenFileName(this,
+    tr("Select a Firmware File"),
+    directory_hint,
+    tr("Firmware image files (*.fmi)"));
+
+  if (!filename.isNull())
+  {
+    directory_hint = QFileInfo(filename).canonicalPath();
+    filename_input->setText(filename);
+  }
 }
