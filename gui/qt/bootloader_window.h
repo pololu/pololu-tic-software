@@ -2,7 +2,11 @@
 
 #include <QMainWindow>
 
+class QComboBox;
+class QLabel;
 class QLineEdit;
+class QProgressBar;
+class QPushButton;
 
 class bootloader_window : public QMainWindow
 {
@@ -13,6 +17,11 @@ public:
 
 private:
   QLineEdit * filename_input;
+  QPushButton * browse_button;
+  QComboBox * device_chooser;
+  QLabel * progress_label;
+  QProgressBar * progress_bar;
+  QPushButton * program_button;
 
   void setup_window();
 };

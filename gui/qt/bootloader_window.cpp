@@ -1,8 +1,10 @@
 #include "bootloader_window.h"
 
+#include <QComboBox>
 #include <QGridLayout>
 #include <QLabel>
 #include <QLineEdit>
+#include <QProgressBar>
 #include <QPushButton>
 #include <QWidget>
 
@@ -32,27 +34,57 @@ void bootloader_window::setup_window()
   layout->addWidget(file_label, 0, 0, FIELD_LABEL_ALIGNMENT);
 
   {
-    QLineEdit * filename_input = new QLineEdit();
-    QLabel tmpLabel;
-    tmpLabel.setText("C:/Users/SomePersonsLongerName/Downloads/abc01a-v1.00.fmi");
-    filename_input->setMinimumWidth(tmpLabel.sizeHint().width());
+    filename_input = new QLineEdit();
+    QLabel tmp;
+    tmp.setText("C:/Users/SomePersonsLongerName/Downloads/abc01a-v1.00.fmi");
+    filename_input->setMinimumWidth(tmp.sizeHint().width());
     layout->addWidget(filename_input, 0, 1);
   }
 
-  QPushButton * browse_button = new QPushButton();
+  browse_button = new QPushButton();
   browse_button->setText(tr("&Browse..."));
   browse_button->setObjectName("browse_button");
-  layout->addWidget(browse_button, 0, 20);
+  layout->addWidget(browse_button, 0, 2);
 
   QLabel * device_label = new QLabel();
   device_label->setText(tr("Device:"));
   layout->addWidget(device_label, 1, 0, FIELD_LABEL_ALIGNMENT);
 
-  layout->setColumnStretch(2, 1);
-  layout->setRowStretch(3, 1);
+  {
+    device_chooser = new QComboBox();
+    QComboBox tmp;
+    tmp.addItem("TXXXXX: #1234567890123456");
+    device_chooser->setMinimumWidth(tmp.sizeHint().width());
+    device_chooser->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    layout->addWidget(device_chooser, 1, 1);
+  }
+
+  progress_label = new QLabel();
+  layout->addWidget(progress_label, 2, 1);
+
+  progress_bar = new QProgressBar();
+  progress_bar->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+  progress_bar->setMinimum(0);
+  progress_bar->setVisible(false);
+  layout->addWidget(progress_bar, 3, 1);
+
+  program_button = new QPushButton();
+  program_button->setText(tr("&Program"));
+  program_button->setObjectName("program_button");
+  layout->addWidget(program_button, 3, 2);
+
+  layout->setColumnStretch(1, 1);
+  layout->setRowStretch(4, 1);
 
   central_widget->setLayout(layout);
   setCentralWidget(central_widget);
 
   QMetaObject::connectSlotsByName(this);
 }
+
+/**
+void bootloader_window::on_device_chooser_open()
+{
+  device_chooser->addItem(QString());
+}
+**/
