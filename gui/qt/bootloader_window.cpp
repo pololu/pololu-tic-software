@@ -9,8 +9,6 @@
 #include <QPushButton>
 #include <QWidget>
 
-#include <windows.h>
-
 class BootloaderComboBox : public QComboBox
 {
   int x = 0;
