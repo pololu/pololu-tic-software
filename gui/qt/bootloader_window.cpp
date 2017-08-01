@@ -11,21 +11,10 @@
 
 class BootloaderComboBox : public QComboBox
 {
-  int x = 0;
-
   void showPopup()
   {
-    clear();
-    addItem("hey", 1);
-    addItem("foo", 2);
-
-    /**
-    addItem("whee: " + QString::number(x), x);
-    x++;
-    addItem("bee: " + QString::number(x), x);
-    x++;
-    addItems({"hi", "there"});
-    **/
+    // TODO: edit the list of items here
+    QComboBox::showPopup();
   }
 };
 
