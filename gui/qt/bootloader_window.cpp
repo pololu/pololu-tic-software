@@ -1,5 +1,6 @@
 #include "bootloader_window.h"
 
+#include <QAbstractListModel>
 #include <QComboBox>
 #include <QGridLayout>
 #include <QLabel>
@@ -7,6 +8,28 @@
 #include <QProgressBar>
 #include <QPushButton>
 #include <QWidget>
+
+#include <windows.h>
+
+class BootloaderComboBox : public QComboBox
+{
+  int x = 0;
+
+  void showPopup()
+  {
+    clear();
+    addItem("hey", 1);
+    addItem("foo", 2);
+
+    /**
+    addItem("whee: " + QString::number(x), x);
+    x++;
+    addItem("bee: " + QString::number(x), x);
+    x++;
+    addItems({"hi", "there"});
+    **/
+  }
+};
 
 // On Mac OS X, field labels are usually right-aligned.
 #ifdef __APPLE__
@@ -51,7 +74,7 @@ void bootloader_window::setup_window()
   layout->addWidget(device_label, 1, 0, FIELD_LABEL_ALIGNMENT);
 
   {
-    device_chooser = new QComboBox();
+    device_chooser = new BootloaderComboBox();
     QComboBox tmp;
     tmp.addItem("XXXXXX: #1234567890123456");
     device_chooser->setMinimumWidth(tmp.sizeHint().width());
