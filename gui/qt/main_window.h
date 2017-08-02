@@ -319,6 +319,8 @@ private slots:
   void on_never_sleep_check_stateChanged(int state);
   void on_vin_calibration_value_valueChanged(int value);
 
+  void on_upload_complete();
+
 private:
   bool start_event_reported = false;
 

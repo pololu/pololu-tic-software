@@ -75,6 +75,8 @@ void main_window::set_controller(main_controller * controller)
 bootloader_window * main_window::open_bootloader_window()
 {
   bootloader_window * window = new bootloader_window(this);
+  connect(window, &bootloader_window::upload_complete,
+    this, &main_window::on_upload_complete);
   window->setWindowModality(Qt::WindowModal);
   window->show();
   return window;
@@ -1429,6 +1431,11 @@ void main_window::on_vin_calibration_value_valueChanged(int value)
 {
   if (suppress_events) { return; }
   controller->handle_vin_calibration_input(value);
+}
+
+void main_window::on_upload_complete()
+{
+  controller->handle_upload_complete();
 }
 
 void pin_config_row::on_func_value_currentIndexChanged(int index)

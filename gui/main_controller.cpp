@@ -1035,6 +1035,13 @@ void main_controller::handle_vin_calibration_input(int16_t vin_calibration)
   handle_settings_changed();
 }
 
+void main_controller::handle_upload_complete()
+{
+  // After a firmware upgrade is complete, allow the GUI to reconnect to the
+  // device automatically.
+  disconnected_by_user = false;
+}
+
 void main_controller::handle_pin_func_input(uint8_t pin, uint8_t func)
 {
   if (!connected()) { return; }

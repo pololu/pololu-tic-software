@@ -241,6 +241,7 @@ void bootloader_window::on_program_button_clicked()
       handle.restartDevice();
     }
     set_status("Upload complete.", 100, 100);
+    emit upload_complete();
     QThread::usleep(500000);
     close();
   }

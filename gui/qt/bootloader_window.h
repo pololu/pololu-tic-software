@@ -17,6 +17,9 @@ class bootloader_window : public QMainWindow, PloaderStatusListener
 public:
   bootloader_window(QWidget * parent = 0);
 
+signals:
+  void upload_complete();
+
 private:
   QLineEdit * filename_input;
   QPushButton * browse_button;
