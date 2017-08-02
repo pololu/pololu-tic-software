@@ -26,10 +26,11 @@ private:
   QPushButton * program_button;
 
   void setup_window();
-  void show_error_message(const std::string &);
   void set_interface_enabled(bool enabled);
   void set_status(const char * status, uint32_t progress, uint32_t max_progress);
   void clear_status();
+  void show_error_message(const std::string &);
+  bool confirm_warning(const std::string &);
 
 private slots:
   void on_browse_button_clicked();

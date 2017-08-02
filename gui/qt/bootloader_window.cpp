@@ -190,6 +190,16 @@ void bootloader_window::on_program_button_clicked()
     return;
   }
 
+  // Warn the user.  Do this before we check if the bootloader is connected.
+  const char * warning =
+    "This will completely erase your device's existing firmware and settings "
+    "before attempting to upload the selected file.\n\n"
+    "Are you sure you want to proceed?";
+  if (!confirm_warning(warning))
+  {
+    return;
+  }
+
   // Make sure the bootloader is still connected and get its details.
   auto device_list = bootloader::list_connected_devices();
   PloaderInstance device;
@@ -256,6 +266,13 @@ void bootloader_window::clear_status()
 {
   progress_label->setText("");
   progress_bar->setVisible(false);
+}
+
+bool bootloader_window::confirm_warning(const std::string & question)
+{
+  QMessageBox mbox(QMessageBox::Warning, windowTitle(),
+    QString::fromStdString(question), QMessageBox::Ok | QMessageBox::Cancel, this);
+  return mbox.exec() == QMessageBox::Ok;
 }
 
 void bootloader_window::show_error_message(const std::string & message)
