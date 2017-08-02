@@ -294,7 +294,7 @@ public:
     /** Just like readFlash, but for EEPROM instead. */
     void readEeprom(uint8_t * image);
 
-    /** Sends the Restart command, which causes the device device to reset.  This is
+    /** Sends the Restart command, which causes the device to reset.  This is
      * usually used to allow a newly-loaded application to start running. */
     void restartDevice();
 

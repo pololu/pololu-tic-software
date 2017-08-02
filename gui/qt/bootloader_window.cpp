@@ -234,9 +234,12 @@ void bootloader_window::on_program_button_clicked()
   set_interface_enabled(false);
   try
   {
-    PloaderHandle handle(device);
-    handle.setStatusListener(this);  // TODO: use a lambda instead so we don't have to inherit
-    handle.applyImage(*image);
+    {
+      PloaderHandle handle(device);
+      handle.setStatusListener(this);
+      handle.applyImage(*image);
+      handle.restartDevice();
+    }
     set_status("Upload complete.", 100, 100);
     QThread::usleep(500000);
     close();
@@ -258,6 +261,7 @@ void bootloader_window::set_interface_enabled(bool enabled)
 }
 
 // This is how we get status updates from the bootloader library.
+// TODO: use a lambda instead so we don't have to inherit
 void bootloader_window::set_status(const char * status, uint32_t progress, uint32_t max_progress)
 {
   progress_label->setText(QString(status));
@@ -285,4 +289,3 @@ void bootloader_window::show_error_message(const std::string & message)
     QString::fromStdString(message), QMessageBox::NoButton, this);
   mbox.exec();
 }
-
