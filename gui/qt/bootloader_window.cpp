@@ -207,15 +207,18 @@ void bootloader_window::on_program_button_clicked()
     return;
   }
 
-  /**
-  auto device_list = bootloader::list_connected_devices();
-
-  const firmware_archive::image & image;
-  try
+  // Find the firmware image for this bootloader.
+  const firmware_archive::image * image =
+    data.find_image(device.get_vendor_id(), device.get_product_id());
+  if (image == NULL)
   {
-    image = data.find_image(bootloader.get_vendor_id(), bootloader.get_product_id());
+    show_error_message(
+      "The firmware file does not contain any firmware "
+      "for the selected device.  "
+      "Please make sure you selected the right file.");
+    return;
   }
-  **/
+
 }
 
 void bootloader_window::show_error_message(const std::string & message)

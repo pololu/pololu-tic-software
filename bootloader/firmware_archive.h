@@ -35,18 +35,17 @@ namespace firmware_archive
       return !images.empty();
     }
 
-    const image & find_image(uint16_t vendor_id, uint16_t product_id) const
+    const image * find_image(uint16_t vendor_id, uint16_t product_id) const
     {
       for (const image & image : images)
       {
         if (image.usb_vendor_id == vendor_id &&
           image.usb_product_id == product_id)
         {
-          return image;
+          return &image;
         }
       }
-
-      throw std::runtime_error("Matching image in firmware archive not found.");
+      return NULL;
     }
 
     std::string dump_string() const;

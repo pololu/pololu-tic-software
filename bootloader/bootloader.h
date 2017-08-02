@@ -158,41 +158,51 @@ extern const std::vector<PloaderType> ploaderTypes;
 class PloaderInstance
 {
 public:
-    PloaderType type;
-    std::string serialNumber;
+  PloaderType type;
+  std::string serialNumber;
 
-    PloaderInstance()
-    {
-    }
+  PloaderInstance()
+  {
+  }
 
-    PloaderInstance(const PloaderType type,
-        libusbp::generic_interface gi,
-        std::string serialNumber)
-        : type(type), serialNumber(serialNumber), usbInterface(gi)
-    {
-    }
+PloaderInstance(const PloaderType type,
+  libusbp::generic_interface gi,
+  std::string serialNumber)
+  : type(type), serialNumber(serialNumber), usbInterface(gi)
+  {
+  }
 
-    operator bool()
-    {
-        return usbInterface;
-    }
+  operator bool()
+  {
+    return usbInterface;
+  }
 
-    std::string get_short_name() const
-    {
-      return type.short_name;
-    }
+  std::string get_short_name() const
+  {
+    return type.short_name;
+  }
 
-    std::string get_serial_number() const
-    {
-      return serialNumber;
-    }
+  std::string get_serial_number() const
+  {
+    return serialNumber;
+  }
 
-    std::string get_os_id() const
-    {
-      return usbInterface.get_os_id();
-    }
+  std::string get_os_id() const
+  {
+    return usbInterface.get_os_id();
+  }
 
-    libusbp::generic_interface usbInterface;
+  uint16_t get_vendor_id() const
+  {
+    return type.usbVendorId;
+  }
+
+  uint16_t get_product_id() const
+  {
+    return type.usbProductId;
+  }
+
+  libusbp::generic_interface usbInterface;
 };
 
 /* Represents a high-level device type or device family that can be used in
