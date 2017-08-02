@@ -236,13 +236,14 @@ void bootloader_window::on_program_button_clicked()
     PloaderHandle handle(device);
     handle.setStatusListener(this);  // TODO: use a lambda instead so we don't have to inherit
     handle.applyImage(*image);
+    set_status("Upload complete.", 100, 100);
   }
   catch (const std::exception & e)
   {
     show_error_message(e.what());
+    clear_status();
+    set_interface_enabled(true);
   }
-  clear_status();
-  set_interface_enabled(true);
 }
 
 void bootloader_window::set_interface_enabled(bool enabled)
