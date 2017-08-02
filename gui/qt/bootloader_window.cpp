@@ -13,6 +13,7 @@
 #include <QMessageBox>
 #include <QProgressBar>
 #include <QPushButton>
+#include <QThread>
 #include <QWidget>
 
 // #include <libusbp-1/libusbp.hpp>  // tmphax
@@ -237,6 +238,8 @@ void bootloader_window::on_program_button_clicked()
     handle.setStatusListener(this);  // TODO: use a lambda instead so we don't have to inherit
     handle.applyImage(*image);
     set_status("Upload complete.", 100, 100);
+    QThread::usleep(500000);
+    close();
   }
   catch (const std::exception & e)
   {
