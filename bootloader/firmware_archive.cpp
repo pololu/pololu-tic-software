@@ -27,7 +27,7 @@ static std::vector<std::string> split(const std::string & str, char delimiter)
 
 // Converts a string to an int64_t, returning an error if there is non-number
 // junk in the string or the number is out of range.
-static bool string_to_i64(const char * str, int64_t * out)
+static bool hex_string_to_i64(const char * str, int64_t * out)
 {
   assert(str != NULL);
   assert(out != NULL);
@@ -36,7 +36,7 @@ static bool string_to_i64(const char * str, int64_t * out)
   *out = 0;
 
   char * end;
-  int64_t result = strtoll(str, &end, 10);
+  int64_t result = strtoll(str, &end, 16);
   if (errno)
   {
     return false;
@@ -66,7 +66,7 @@ static firmware_archive::block process_xml_block(
   }
 
   int64_t address;
-  if (string_to_i64(address_c_str, &address))
+  if (!hex_string_to_i64(address_c_str, &address))
   {
     throw std::runtime_error("A block has an invalid address.");
   }
@@ -125,7 +125,7 @@ static firmware_archive::image process_xml_firmware_image(
     throw std::runtime_error("A firmware image is missing a product ID.");
   }
   int64_t product_id;
-  if (string_to_i64(product_c_str, &product_id))
+  if (!hex_string_to_i64(product_c_str, &product_id))
   {
     throw std::runtime_error("A firmware image has an invalid product ID.");
   }
@@ -193,13 +193,17 @@ void firmware_archive::data::process_xml(const std::string & string)
 {
   tinyxml2::XMLDocument doc;
   doc.Parse(string.c_str(), string.size());
-  if(doc.Error())
+  if (doc.Error())
   {
     throw std::runtime_error(std::string("XML error: ") + doc.ErrorName() + ".");
   }
 
-  // Check the firmware_archive element.
+  // Check the root element.
   tinyxml2::XMLElement * root = doc.RootElement();
+  if (root == NULL)
+  {
+    throw std::runtime_error("The firmware archive has no root element.");
+  }
   if (std::string(root->Name()) != "FirmwareArchive")
   {
     throw std::runtime_error("The firmware archive root element has an invalid name.");
@@ -254,7 +258,33 @@ void firmware_archive::data::read_from_string(const std::string & string)
   catch (const std::runtime_error & e)
   {
     throw std::runtime_error(
-      std::string("There was an error processing the firmware archive.")
-    );
+      std::string("There was an error processing the firmware archive.  ")
+      + e.what());
   }
+}
+
+// This is just for debugging.
+std::string firmware_archive::data::dump_string() const
+{
+  std::stringstream r;
+  r << std::hex;
+  r << "Name: " << name << std::endl;
+  r << "Images: 0x" << images.size() << std::endl;
+  for (const auto & image : images)
+  {
+    r << "Image for " << image.usb_vendor_id << ":" << image.usb_product_id
+      << "," << image.upload_type << std::endl;
+    r << "Blocks: 0x" << image.blocks.size() << std::endl;
+    for (uint32_t i = 0; i < 3 && i < image.blocks.size(); i++)
+    {
+      const auto & block = image.blocks[i];
+      r << "Block address: 0x" << block.address << std::endl;
+      r << "Block size: 0x" << block.data.size() << std::endl;
+      for (uint32_t j = 0; j < 3 && j < image.blocks.size(); j++)
+      {
+        r << "Block data byte: 0x" << (int)block.data[j] << std::endl;
+      }
+    }
+  }
+  return r.str();
 }

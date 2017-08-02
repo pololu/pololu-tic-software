@@ -146,12 +146,18 @@ void bootloader_window::on_browse_button_clicked()
 
 void bootloader_window::on_program_button_clicked()
 {
-  QString filename = filename_input->text();
+  std::string filename = filename_input->text().toStdString();
+
+  if (filename.size() == 0)
+  {
+    show_error_message("Please enter a filename.");
+    return;
+  }
 
   std::string file_contents;
   try
   {
-    file_contents = read_string_from_file(filename.toStdString());
+    file_contents = read_string_from_file(filename);
   }
   catch (const std::exception & e)
   {

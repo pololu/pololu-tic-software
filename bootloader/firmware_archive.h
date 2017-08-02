@@ -35,19 +35,6 @@ namespace firmware_archive
       return !images.empty();
     }
 
-    bool matches_bootloader(uint16_t vendor_id, uint16_t product_id) const
-    {
-      for (const image & image : images)
-      {
-        if (image.usb_vendor_id == vendor_id &&
-          image.usb_product_id == product_id)
-        {
-          return true;
-        }
-      }
-      return false;
-    }
-
     const image & find_image(uint16_t vendor_id, uint16_t product_id) const
     {
       for (const image & image : images)
@@ -61,6 +48,8 @@ namespace firmware_archive
 
       throw std::runtime_error("Matching image in firmware archive not found.");
     }
+
+    std::string dump_string() const;
 
     std::string name;
     std::vector<image> images;
