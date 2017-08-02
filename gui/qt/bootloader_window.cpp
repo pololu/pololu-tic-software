@@ -190,6 +190,23 @@ void bootloader_window::on_program_button_clicked()
     return;
   }
 
+  // Make sure the bootloader is still connected and get its details.
+  auto device_list = bootloader::list_connected_devices();
+  PloaderInstance device;
+  for (const auto & candidate : device_list)
+  {
+    if (candidate.get_os_id() == bootloader_id)
+    {
+      device = candidate;
+    }
+  }
+  if (!device)
+  {
+    show_error_message("The selected device is no longer connected.");
+    update_bootloader_combo_box(*device_chooser);
+    return;
+  }
+
   /**
   auto device_list = bootloader::list_connected_devices();
 
