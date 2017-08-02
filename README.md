@@ -1,7 +1,7 @@
 # Tic Stepper Motor Controller software
 
-Version: 1.0.0<br>
-Release date: 2017-07-18<br>
+Version: 1.1.0<br>
+Release date: 2017-08-02<br>
 [www.pololu.com](https://www.pololu.com/)
 
 This repository contains the source code of the configuration and control software for
@@ -19,4 +19,10 @@ from source.
 
 ## Version history
 
-* 1.0.0 (2017-07-18): Original release.
+- 1.1.0 (2017-08-02):
+  - ticgui: Added support for firmware upgrades.
+  - ticgui: Improved some of the text.
+  - ticcmd: Allowed '#' at the beginning of the serial number argument.
+  - libpololu-tic: Added `tic_start_bootloader()`.
+  - libpololu-tic and ticcmd: Added support for the serial response delay setting.
+- 1.0.0 (2017-07-18): Original release.
