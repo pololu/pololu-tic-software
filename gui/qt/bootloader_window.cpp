@@ -220,6 +220,7 @@ void bootloader_window::on_program_button_clicked()
   }
 
   // Finally update the firmware.
+  set_interface_enabled(false);
   try
   {
     PloaderHandle handle(device);
@@ -230,8 +231,16 @@ void bootloader_window::on_program_button_clicked()
   {
     show_error_message(e.what());
   }
-  progress_label->setVisible(false);
-  progress_bar->setVisible(false);
+  clear_status();
+  set_interface_enabled(true);
+}
+
+void bootloader_window::set_interface_enabled(bool enabled)
+{
+  device_chooser->setEnabled(enabled);
+  filename_input->setEnabled(enabled);
+  program_button->setEnabled(enabled);
+  browse_button->setEnabled(enabled);
 }
 
 // This is how we get status updates from the bootloader library.
@@ -240,8 +249,13 @@ void bootloader_window::set_status(const char * status, uint32_t progress, uint3
   progress_label->setText(QString(status));
   progress_bar->setRange(0, max_progress);
   progress_bar->setValue(progress);
-  progress_label->setVisible(true);
   progress_bar->setVisible(true);
+}
+
+void bootloader_window::clear_status()
+{
+  progress_label->setText("");
+  progress_bar->setVisible(false);
 }
 
 void bootloader_window::show_error_message(const std::string & message)
