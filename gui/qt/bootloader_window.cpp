@@ -84,7 +84,7 @@ void bootloader_window::setup_window()
 
   {
     filename_input = new QLineEdit();
-    QLineEdit tmp;
+    QLabel tmp;
     tmp.setText("C:/Users/SomePersonsLongerName/Downloads/abc01a-v1.00.fmi");
     filename_input->setMinimumWidth(tmp.sizeHint().width());
     layout->addWidget(filename_input, 0, 1);
@@ -146,14 +146,15 @@ void bootloader_window::on_browse_button_clicked()
 
 void bootloader_window::on_program_button_clicked()
 {
+  // Make sure a firmware file was selected.
   std::string filename = filename_input->text().toStdString();
-
-  if (filename.size() == 0)
+  if (filename.empty())
   {
     show_error_message("Please enter a filename.");
     return;
   }
 
+  // Read in the firmware file.
   std::string file_contents;
   try
   {
@@ -165,6 +166,7 @@ void bootloader_window::on_program_button_clicked()
     return;
   }
 
+  // Parse the firmware file.
   firmware_archive::data data;
   try
   {
@@ -175,6 +177,28 @@ void bootloader_window::on_program_button_clicked()
     show_error_message(e.what());
     return;
   }
+
+  // Make sure a bootloader was selected.
+  std::string bootloader_id;
+  if (device_chooser->currentData().isValid())
+  {
+    bootloader_id = device_chooser->currentData().toString().toStdString();
+  }
+  if (bootloader_id.empty())
+  {
+    show_error_message("Please select a device.");
+    return;
+  }
+
+  /**
+  auto device_list = bootloader::list_connected_devices();
+
+  const firmware_archive::image & image;
+  try
+  {
+    image = data.find_image(bootloader.get_vendor_id(), bootloader.get_product_id());
+  }
+  **/
 }
 
 void bootloader_window::show_error_message(const std::string & message)
