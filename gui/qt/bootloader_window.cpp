@@ -16,8 +16,6 @@
 #include <QTimer>
 #include <QWidget>
 
-// #include <libusbp-1/libusbp.hpp>  // tmphax
-
 static QString directory_hint = QDir::homePath();
 
 static void update_device_combo_box(QComboBox & box, bool & device_was_selected)
