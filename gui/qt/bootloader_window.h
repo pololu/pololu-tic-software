@@ -1,5 +1,7 @@
 #pragma once
 
+#include <bootloader.h>
+
 #include <QMainWindow>
 
 class QComboBox;
@@ -8,7 +10,7 @@ class QLineEdit;
 class QProgressBar;
 class QPushButton;
 
-class bootloader_window : public QMainWindow
+class bootloader_window : public QMainWindow, PloaderStatusListener
 {
   Q_OBJECT
 
@@ -26,6 +28,8 @@ private:
   void setup_window();
 
   void show_error_message(const std::string &);
+
+  void set_status(const char * status, uint32_t progress, uint32_t max_progress);
 
 private slots:
   void on_browse_button_clicked();

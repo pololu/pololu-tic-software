@@ -219,6 +219,29 @@ void bootloader_window::on_program_button_clicked()
     return;
   }
 
+  // Finally update the firmware.
+  try
+  {
+    PloaderHandle handle(device);
+    handle.setStatusListener(this);  // TODO: use a lambda instead so we don't have to inherit
+    handle.applyImage(*image);
+  }
+  catch (const std::exception & e)
+  {
+    show_error_message(e.what());
+  }
+  progress_label->setVisible(false);
+  progress_bar->setVisible(false);
+}
+
+// This is how we get status updates from the bootloader library.
+void bootloader_window::set_status(const char * status, uint32_t progress, uint32_t max_progress)
+{
+  progress_label->setText(QString(status));
+  progress_bar->setRange(0, max_progress);
+  progress_bar->setValue(progress);
+  progress_label->setVisible(true);
+  progress_bar->setVisible(true);
 }
 
 void bootloader_window::show_error_message(const std::string & message)

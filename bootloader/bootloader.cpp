@@ -431,7 +431,7 @@ void PloaderHandle::eraseFlash()
         if (listener)
         {
             uint32_t progress = maxProgress - progressLeft;
-            listener->setStatus("Erasing flash...", progress, maxProgress);
+            listener->set_status("Erasing flash...", progress, maxProgress);
         }
 
         if (progressLeft == 0)
@@ -499,7 +499,7 @@ void PloaderHandle::writeFlash(const uint8_t * image)
             // These progress numbers aren't very good because they don't
             // account for how many blocks actually need to be written to flash.
             uint32_t progress = type.appSize - (address - type.appAddress);
-            listener->setStatus("Writing flash...", progress, type.appSize);
+            listener->set_status("Writing flash...", progress, type.appSize);
         }
     }
 }
@@ -530,7 +530,7 @@ void PloaderHandle::readFlash(uint8_t * image)
 
         if (listener)
         {
-            listener->setStatus("Reading flash...",
+            listener->set_status("Reading flash...",
                 address - type.appAddress, type.appSize);
         }
     }
@@ -604,7 +604,7 @@ void PloaderHandle::writeEeprom(const uint8_t * image)
         if (listener)
         {
             uint32_t progress = address - type.eepromAddress;
-            listener->setStatus(message, progress, type.eepromSize);
+            listener->set_status(message, progress, type.eepromSize);
         }
     }
 }
@@ -635,7 +635,7 @@ void PloaderHandle::readEeprom(uint8_t * image)
         if (listener)
         {
             uint32_t progress = address - type.eepromAddress;
-            listener->setStatus("Reading EEPROM...", progress, endAddress);
+            listener->set_status("Reading EEPROM...", progress, endAddress);
         }
     }
 }
@@ -662,7 +662,7 @@ void PloaderHandle::applyImage(const firmware_archive::image & image)
         if (listener)
         {
             progress++;
-            listener->setStatus("Writing flash...", progress, image.blocks.size());
+            listener->set_status("Writing flash...", progress, image.blocks.size());
         }
     }
 }

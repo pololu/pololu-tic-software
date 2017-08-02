@@ -245,7 +245,7 @@ std::vector<PloaderInstance> ploaderListBootloaders();
 class PloaderStatusListener
 {
 public:
-    virtual void setStatus(const char * status,
+    virtual void set_status(const char * status,
         uint32_t progress, uint32_t maxProgress) = 0;
 };
 
