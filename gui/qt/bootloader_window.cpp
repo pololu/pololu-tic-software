@@ -3,7 +3,6 @@
 
 #include <bootloader.h>
 
-#include <QAbstractListModel>
 #include <QComboBox>
 #include <QFileDialog>
 #include <QFileInfo>
@@ -14,13 +13,14 @@
 #include <QProgressBar>
 #include <QPushButton>
 #include <QThread>
+#include <QTimer>
 #include <QWidget>
 
 // #include <libusbp-1/libusbp.hpp>  // tmphax
 
 static QString directory_hint = QDir::homePath();
 
-void update_bootloader_combo_box(QComboBox & box)
+static void update_device_combo_box(QComboBox & box, bool & device_was_selected)
 {
   // Record the OS ID of the item currently selected.
   QString id;
@@ -28,12 +28,17 @@ void update_bootloader_combo_box(QComboBox & box)
   {
     id = box.currentData().toString();
   }
+  if (!id.isEmpty())
+  {
+    // A device has been selected.  Record this so we don't automatically
+    // switch to another device and surprise the user.
+    device_was_selected = true;
+  }
 
   // tmphax: show all USB devices
   // auto device_list = libusbp::list_connected_devices();
   auto device_list = bootloader::list_connected_devices();
   box.clear();
-  box.addItem("", QString());
   for (const auto & device : device_list)
   {
     box.addItem(
@@ -42,18 +47,10 @@ void update_bootloader_combo_box(QComboBox & box)
       QString::fromStdString(device.get_os_id()));
   }
 
-  int index = box.findData(id);  // could be -1 if it is not found
+  int index = box.findData(id);
+  if (index == -1 && !device_was_selected) { index = 0; }
   box.setCurrentIndex(index);
 }
-
-class BootloaderComboBox : public QComboBox
-{
-  void showPopup()
-  {
-    update_bootloader_combo_box(*this);
-    QComboBox::showPopup();
-  }
-};
 
 // On Mac OS X, field labels are usually right-aligned.
 #ifdef __APPLE__
@@ -101,7 +98,7 @@ void bootloader_window::setup_window()
   layout->addWidget(device_label, 1, 0, FIELD_LABEL_ALIGNMENT);
 
   {
-    device_chooser = new BootloaderComboBox();
+    device_chooser = new QComboBox();
     QComboBox tmp;
     tmp.addItem("XXXXXX bootloader: #1234567890123456");
     device_chooser->setMinimumWidth(tmp.sizeHint().width());
@@ -128,7 +125,18 @@ void bootloader_window::setup_window()
   central_widget->setLayout(layout);
   setCentralWidget(central_widget);
 
+  update_timer = new QTimer(this);
+  update_timer->setObjectName("update_timer");
+  update_timer->start(500);
+
   QMetaObject::connectSlotsByName(this);
+
+  on_update_timer_timeout();
+}
+
+void bootloader_window::on_update_timer_timeout()
+{
+  update_device_combo_box(*device_chooser, device_was_selected);
 }
 
 void bootloader_window::on_browse_button_clicked()
@@ -214,7 +222,7 @@ void bootloader_window::on_program_button_clicked()
   if (!device)
   {
     show_error_message("The selected device is no longer connected.");
-    update_bootloader_combo_box(*device_chooser);
+    update_device_combo_box(*device_chooser, device_was_selected);
     return;
   }
 
