@@ -250,6 +250,7 @@ void bootloader_window::on_program_button_clicked()
     emit upload_complete();
     QThread::usleep(500000);
     close();
+    // TODO: do we need to do something to avoid a memory leak now?
   }
   catch (const std::exception & e)
   {

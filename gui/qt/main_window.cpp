@@ -93,6 +93,7 @@ void main_window::set_update_timer_interval(uint32_t interval_ms)
   assert(interval_ms <= std::numeric_limits<int>::max());
   update_timer->setInterval(interval_ms);
 }
+
 void main_window::show_error_message(std::string const & message)
 {
   QMessageBox mbox(QMessageBox::Critical, windowTitle(),
