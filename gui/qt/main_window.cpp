@@ -82,16 +82,15 @@ bootloader_window * main_window::open_bootloader_window()
   return window;
 }
 
-void main_window::start_update_timer(uint32_t interval_ms)
-{
-  assert(interval_ms <= std::numeric_limits<int>::max());
-  update_timer->start(interval_ms);
-}
-
 void main_window::set_update_timer_interval(uint32_t interval_ms)
 {
   assert(interval_ms <= std::numeric_limits<int>::max());
   update_timer->setInterval(interval_ms);
+}
+
+void main_window::start_update_timer()
+{
+  update_timer->start(0);
 }
 
 void main_window::show_error_message(std::string const & message)
@@ -875,7 +874,7 @@ void main_window::update_manual_target_controls()
 
 void main_window::showEvent(QShowEvent * event)
 {
-  Q_UNUSED(event);
+  QMainWindow::showEvent(event);
   if (!start_event_reported)
   {
     start_event_reported = true;

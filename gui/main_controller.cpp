@@ -19,22 +19,8 @@ void main_controller::start()
   assert(!connected());
 
   // Start the update timer so that update() will be called regularly.
-  window->start_update_timer(UPDATE_INTERVAL_MS_DISCONNECTED);
-
-  // The program has just started, so try to connect to a device.
-
-  bool successfully_updated_list = update_device_list();
-  if (successfully_updated_list)
-  {
-    window->set_device_list_contents(device_list);
-
-    // Automatically connect if there is only one device.
-    if (device_list.size() == 1)
-    {
-      connect_device(device_list.at(0));
-      return;
-    }
-  }
+  window->set_update_timer_interval(UPDATE_INTERVAL_MS_DISCONNECTED);
+  window->start_update_timer();
 
   handle_model_changed();
 }

@@ -83,13 +83,12 @@ public:
 
   bootloader_window * open_bootloader_window();
 
-  /** This causes the window to call the controller's update() function
-   * periodically, on the same thread as everything else.
-   *
-   * interval_ms is the amount of time between updates, in milliseconds.
-   */
-  void start_update_timer(uint32_t interval_ms);
+  // This causes the window to call the controller's update() function
+  // periodically, on the same thread as everything else.
+  //
+  // interval_ms is the amount of time between updates, in milliseconds.
   void set_update_timer_interval(uint32_t interval_ms);
+  void start_update_timer();
 
   void show_error_message(std::string const & message);
   void show_warning_message(std::string const & message);
