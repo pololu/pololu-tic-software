@@ -874,7 +874,6 @@ void main_window::update_manual_target_controls()
 
 void main_window::showEvent(QShowEvent * event)
 {
-  QMainWindow::showEvent(event);
   if (!start_event_reported)
   {
     start_event_reported = true;
