@@ -2827,7 +2827,7 @@ void main_window::retranslate()
   error_rows[TIC_ERROR_INTENTIONALLY_DEENERGIZED].name_label->setText(tr("Intentionally de-energized"));
   error_rows[TIC_ERROR_MOTOR_DRIVER_ERROR]       .name_label->setText(tr("Motor driver error"));
   error_rows[TIC_ERROR_LOW_VIN]                  .name_label->setText(tr("Low VIN"));
-  error_rows[TIC_ERROR_KILL_SWITCH]              .name_label->setText(tr("Kill switch"));
+  error_rows[TIC_ERROR_KILL_SWITCH]              .name_label->setText(tr("Kill switch active"));
   error_rows[TIC_ERROR_REQUIRED_INPUT_INVALID]   .name_label->setText(tr("Required input invalid"));
   error_rows[TIC_ERROR_COMMAND_TIMEOUT]          .name_label->setText(tr("Command timeout"));
   error_rows[TIC_ERROR_SAFE_START_VIOLATION]     .name_label->setText(tr("Safe start violation"));

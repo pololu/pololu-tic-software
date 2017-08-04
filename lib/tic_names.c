@@ -18,7 +18,7 @@ const tic_name tic_error_names_ui[] =
   { "Intentionally de-energized", 1 << TIC_ERROR_INTENTIONALLY_DEENERGIZED },
   { "Motor driver error", 1 << TIC_ERROR_MOTOR_DRIVER_ERROR },
   { "Low VIN", 1 << TIC_ERROR_LOW_VIN },
-  { "Kill switch", 1 << TIC_ERROR_KILL_SWITCH },
+  { "Kill switch active", 1 << TIC_ERROR_KILL_SWITCH },
   { "Required input invalid", 1 << TIC_ERROR_REQUIRED_INPUT_INVALID },
   { "Serial error", 1 << TIC_ERROR_SERIAL_ERROR },
   { "Command timeout", 1 << TIC_ERROR_COMMAND_TIMEOUT },
