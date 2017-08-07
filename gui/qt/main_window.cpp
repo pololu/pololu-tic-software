@@ -35,6 +35,10 @@
 #ifdef _WIN32
 Q_IMPORT_PLUGIN (QWindowsIntegrationPlugin);
 #endif
+#ifdef __linux__
+Q_IMPORT_PLUGIN (QLinuxFbIntegrationPlugin);
+Q_IMPORT_PLUGIN (QXcbIntegrationPlugin);
+#endif
 #endif
 
 #define UINT12_MAX 0xFFF // 4095

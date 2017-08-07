@@ -5,9 +5,11 @@ rec {
     builder = ./nix/builder.sh;
     src = nixcrpkgs.filter ./.;
     cross_inputs = [ env.libusbp env.qt ];
+    dejavu = env.dejavu-fonts;
   };
 
   win32 = build nixcrpkgs.win32;
+  linux32 = build nixcrpkgs.linux32;
 
   license_data = env: {
     commit = builtins.getEnv "commit";
