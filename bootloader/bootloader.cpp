@@ -3,6 +3,7 @@
  * possible between the different bootloaders. */
 
 #include "bootloader.h"
+#include <cstring>
 
 // Request codes used to talk to the bootloader.
 #define REQUEST_INITIALIZE         0x80
