@@ -37,7 +37,7 @@ Errors currently stopping the motor:
   - Intentionally de-energized
   - Motor driver error
   - Low VIN
-  - Kill switch
+  - Kill switch active
   - Required input invalid
   - Serial error
   - Command timeout
@@ -54,7 +54,7 @@ Errors that occurred since last check:
   - Intentionally de-energized
   - Motor driver error
   - Low VIN
-  - Kill switch
+  - Kill switch active
   - Required input invalid
   - Serial error
   - Command timeout
