@@ -1,6 +1,5 @@
 #include "cli.h"
 
-// [all-settings]
 static const char help[] =
   CLI_NAME ": Pololu Tic Command-line Utility\n"
   "Version " SOFTWARE_VERSION_STRING "\n"
@@ -11,6 +10,9 @@ static const char help[] =
   "  --full                       When used with --status, shows more.\n"
   "  -d SERIALNUMBER              Specifies the serial number of the device.\n"
   "  --list                       List devices connected to computer.\n"
+  "  --pause                      Pause program at the end.\n"
+  "  --pause-on-error             Pause program at the end if an error happens.\n"
+  "  -h, --help                   Show this help screen.\n"
   "\n"
   "Control commands:\n"
   "  -p, --position NUM           Set target position in microsteps.\n"
@@ -40,7 +42,6 @@ static const char help[] =
   "  --settings FILE              Load settings file into device.\n"
   "  --get-settings FILE          Read device settings and write to file.\n"
   "  --fix-settings IN OUT        Read settings from a file and fix them.\n"
-  "  -h, --help                   Show this help screen.\n"
   "\n"
   "For more help, see: " DOCUMENTATION_URL "\n"
   "\n";
@@ -55,6 +56,12 @@ struct arguments
   std::string serial_number;
 
   bool show_list = false;
+
+  bool pause = false;
+
+  bool pause_on_error = false;
+
+  bool show_help = false;
 
   bool set_target_position = false;
   int32_t target_position;
@@ -114,8 +121,6 @@ struct arguments
   std::string fix_settings_input_filename;
   std::string fix_settings_output_filename;
 
-  bool show_help = false;
-
   bool get_debug_data = false;
 
   uint32_t test_procedure = 0;
@@ -124,6 +129,7 @@ struct arguments
   {
     return show_status ||
       show_list ||
+      show_help ||
       set_target_position ||
       set_target_velocity ||
       halt_and_set_position ||
@@ -146,7 +152,6 @@ struct arguments
       set_settings ||
       get_settings ||
       fix_settings ||
-      show_help ||
       get_debug_data ||
       test_procedure;
   }
@@ -300,6 +305,19 @@ static arguments parse_args(int argc, char ** argv)
     {
       args.show_list = true;
     }
+    else if (arg == "--pause")
+    {
+      args.pause = true;
+    }
+    else if (arg == "--pause-on-error")
+    {
+      args.pause_on_error = true;
+    }
+    else if (arg == "-h" || arg == "--help" ||
+      arg == "--h" || arg == "-help" || arg == "/help" || arg == "/h")
+    {
+      args.show_help = true;
+    }
     else if (arg == "-p" || arg == "--position")
     {
       args.set_target_position = true;
@@ -405,11 +423,6 @@ static arguments parse_args(int argc, char ** argv)
       args.fix_settings = true;
       args.fix_settings_input_filename = parse_arg_string(arg_reader);
       args.fix_settings_output_filename = parse_arg_string(arg_reader);
-    }
-    else if (arg == "-h" || arg == "--help" ||
-      arg == "--h" || arg == "-help" || arg == "/help" || arg == "/h")
-    {
-      args.show_help = true;
     }
     else if (arg == "--debug")
     {
@@ -576,10 +589,8 @@ static void test_procedure(device_selector & selector, uint32_t procedure)
 // A note about ordering: We want to do all the setting stuff first because it
 // could affect subsequent options.  We want to shoe the status last, because it
 // could be affected by options before it.
-static void run(int argc, char ** argv)
+static void run(const arguments & args)
 {
-  arguments args = parse_args(argc, argv);
-
   if (args.show_help || !args.action_specified())
   {
     std::cout << help;
@@ -731,9 +742,11 @@ int main(int argc, char ** argv)
 {
   int exit_code = 0;
 
+  arguments args;
   try
   {
-    run(argc, argv);
+    args = parse_args(argc, argv);
+    run(args);
   }
   catch (const exception_with_exit_code & error)
   {
@@ -744,6 +757,13 @@ int main(int argc, char ** argv)
   {
     std::cerr << "Error: " << error.what() << std::endl;
     exit_code = EXIT_OPERATION_FAILED;
+  }
+
+  if (args.pause || (args.pause_on_error && exit_code))
+  {
+    std::cout << "Press enter to continue." << std::endl;
+    char input;
+    std::cin.get(input);
   }
 
   return exit_code;
