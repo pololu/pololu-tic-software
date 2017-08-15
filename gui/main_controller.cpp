@@ -700,12 +700,20 @@ void main_controller::handle_settings_changed()
   window->set_never_sleep(tic_settings_get_never_sleep(settings.get_pointer()));
   window->set_vin_calibration(tic_settings_get_vin_calibration(settings.get_pointer()));
 
-  for (int i = 0; i <= 4; i++)
+  for (int i = 0; i < 5; i++)
   {
-    window->set_pin_func(i, tic_settings_get_pin_func(settings.get_pointer(), i));
-    window->set_pin_pullup(i, tic_settings_get_pin_pullup(settings.get_pointer(), i));
-    window->set_pin_polarity(i, tic_settings_get_pin_polarity(settings.get_pointer(), i));
-    window->set_pin_analog(i, tic_settings_get_pin_analog(settings.get_pointer(), i));
+    uint8_t func = tic_settings_get_pin_func(settings.get_pointer(), i);
+    bool pullup = tic_settings_get_pin_pullup(settings.get_pointer(), i);
+    bool polarity = tic_settings_get_pin_polarity(settings.get_pointer(), i);
+    bool analog = tic_settings_get_pin_analog(settings.get_pointer(), i);
+
+    bool enabled = func != TIC_PIN_FUNC_DEFAULT;
+    bool polarity_enabled = func == TIC_PIN_FUNC_KILL_SWITCH;
+
+    window->set_pin_func(i, func);
+    window->set_pin_pullup(i, pullup, enabled);
+    window->set_pin_polarity(i, polarity, polarity_enabled);
+    window->set_pin_analog(i, analog, enabled);
   }
 
   window->set_apply_settings_enabled(connected() && settings_modified);

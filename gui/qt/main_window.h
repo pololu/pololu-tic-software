@@ -46,7 +46,8 @@ public:
     : pin(pin), QObject(parent)
     {}
 
-  void setup(QGridLayout * layout, int row);
+  void setup(QGridLayout * layout, int row,
+    const char * pullup_message = NULL, bool hide_analog = false);
   void add_funcs(uint16_t funcs);
 
 private:
@@ -209,9 +210,9 @@ public:
   void set_vin_calibration(int16_t vin_calibration);
 
   void set_pin_func(uint8_t pin, uint8_t func);
-  void set_pin_pullup(uint8_t pin, bool pullup);
-  void set_pin_polarity(uint8_t pin, bool polarity);
-  void set_pin_analog(uint8_t pin, bool analog);
+  void set_pin_pullup(uint8_t pin, bool pullup, bool enabled);
+  void set_pin_polarity(uint8_t pin, bool polarity, bool enabled);
+  void set_pin_analog(uint8_t pin, bool analog, bool enabled);
 
   void set_motor_status_message(std::string const & message, bool stopped = true);
 

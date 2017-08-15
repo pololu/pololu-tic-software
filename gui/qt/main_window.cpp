@@ -763,19 +763,34 @@ void main_window::set_pin_func(uint8_t pin, uint8_t func)
   set_u8_combo_box(pin_config_rows[pin]->func_value, func);
 }
 
-void main_window::set_pin_pullup(uint8_t pin, bool pullup)
+void main_window::set_pin_pullup(uint8_t pin, bool pullup, bool enabled)
 {
-  set_check_box(pin_config_rows[pin]->pullup_check, pullup);
+  QCheckBox * check = pin_config_rows[pin]->pullup_check;
+  if (check != NULL)
+  {
+    set_check_box(check, pullup);
+    check->setEnabled(enabled);
+  }
 }
 
-void main_window::set_pin_polarity(uint8_t pin, bool polarity)
+void main_window::set_pin_polarity(uint8_t pin, bool polarity, bool enabled)
 {
-  set_check_box(pin_config_rows[pin]->polarity_check, polarity);
+  QCheckBox * check = pin_config_rows[pin]->polarity_check;
+  if (check != NULL)
+  {
+    set_check_box(check, polarity);
+    check->setEnabled(enabled);
+  }
 }
 
-void main_window::set_pin_analog(uint8_t pin, bool analog)
+void main_window::set_pin_analog(uint8_t pin, bool analog, bool enabled)
 {
-  set_check_box(pin_config_rows[pin]->analog_check, analog);
+  QCheckBox * check = pin_config_rows[pin]->analog_check;
+  if (check != NULL)
+  {
+    set_check_box(check, analog);
+    check->setEnabled(enabled);
+  }
 }
 
 void main_window::set_motor_status_message(std::string const & message, bool stopped)
@@ -1566,7 +1581,8 @@ main_controller * pin_config_row::window_controller() const
   return ((main_window *)parent())->controller;
 }
 
-void pin_config_row::setup(QGridLayout * layout, int row)
+void pin_config_row::setup(QGridLayout * layout, int row,
+  const char * pullup_message, bool hide_analog)
 {
   // Note that the slots must be manually connected because connectSlotsByName()
   // requires the object emitting the signal to be a child of the object that
@@ -1579,27 +1595,44 @@ void pin_config_row::setup(QGridLayout * layout, int row)
   connect(func_value, SIGNAL(currentIndexChanged(int)), this,
     SLOT(on_func_value_currentIndexChanged(int)));
 
-  pullup_check = new QCheckBox();
-  connect(pullup_check, SIGNAL(stateChanged(int)), this,
-    SLOT(on_pullup_check_stateChanged(int)));
+  QWidget * pullup_item;
+  if (pullup_message)
+  {
+    QLabel * pullup_label = new QLabel();
+    pullup_label->setText(pullup_message);
+    pullup_item = pullup_label;
+  }
+  else
+  {
+    pullup_check = new QCheckBox();
+    connect(pullup_check, SIGNAL(stateChanged(int)), this,
+      SLOT(on_pullup_check_stateChanged(int)));
+    pullup_item = pullup_check;
+  }
 
   polarity_check = new QCheckBox();
   connect(polarity_check, SIGNAL(stateChanged(int)), this,
     SLOT(on_polarity_check_stateChanged(int)));
 
-  analog_check = new QCheckBox();
-  connect(analog_check, SIGNAL(stateChanged(int)), this,
-    SLOT(on_analog_check_stateChanged(int)));
+  if (!hide_analog)
+  {
+    analog_check = new QCheckBox();
+    connect(analog_check, SIGNAL(stateChanged(int)), this,
+      SLOT(on_analog_check_stateChanged(int)));
+  }
 
   layout->addWidget(name_label, row, 0, FIELD_LABEL_ALIGNMENT);
   layout->addWidget(func_value, row, 1);
   layout->addItem(new QSpacerItem(func_value->fontMetrics().height(), 1), row, 2);
-  layout->addWidget(pullup_check, row, 3);
+  layout->addWidget(pullup_item, row, 3);
   layout->addWidget(polarity_check, row, 4);
-  layout->addWidget(analog_check, row, 5);
+  if (analog_check != NULL)
+  {
+    layout->addWidget(analog_check, row, 5);
+  }
 }
 
-static std::array<char const * const, 8> const pin_func_names =
+static const std::array<const char *, 8> pin_func_names =
 {
   "Default",
   "User I/O",
@@ -2591,7 +2624,7 @@ QWidget * main_window::setup_pin_config_box()
                                               (1 << TIC_PIN_FUNC_KILL_SWITCH));
 
   pin_config_rows[TIC_PIN_NUM_TX] = new pin_config_row(TIC_PIN_NUM_TX, this);
-  pin_config_rows[TIC_PIN_NUM_TX]->setup(layout, row++);
+  pin_config_rows[TIC_PIN_NUM_TX]->setup(layout, row++, "(always pulled up)");
   pin_config_rows[TIC_PIN_NUM_TX]->add_funcs((1 << TIC_PIN_FUNC_DEFAULT) |
                                              (1 << TIC_PIN_FUNC_USER_IO) |
                                              (1 << TIC_PIN_FUNC_USER_INPUT) |
@@ -2600,7 +2633,7 @@ QWidget * main_window::setup_pin_config_box()
                                              (1 << TIC_PIN_FUNC_KILL_SWITCH));
 
   pin_config_rows[TIC_PIN_NUM_RX] = new pin_config_row(TIC_PIN_NUM_RX, this);
-  pin_config_rows[TIC_PIN_NUM_RX]->setup(layout, row++);
+  pin_config_rows[TIC_PIN_NUM_RX]->setup(layout, row++, "(always pulled up)");
   pin_config_rows[TIC_PIN_NUM_RX]->add_funcs((1 << TIC_PIN_FUNC_DEFAULT) |
                                              (1 << TIC_PIN_FUNC_USER_IO) |
                                              (1 << TIC_PIN_FUNC_USER_INPUT) |
@@ -2609,7 +2642,7 @@ QWidget * main_window::setup_pin_config_box()
                                              (1 << TIC_PIN_FUNC_KILL_SWITCH));
 
   pin_config_rows[TIC_PIN_NUM_RC] = new pin_config_row(TIC_PIN_NUM_RC, this);
-  pin_config_rows[TIC_PIN_NUM_RC]->setup(layout, row++);
+  pin_config_rows[TIC_PIN_NUM_RC]->setup(layout, row++, "(always pulled down)", true);
   pin_config_rows[TIC_PIN_NUM_RC]->add_funcs((1 << TIC_PIN_FUNC_DEFAULT) |
                                              (1 << TIC_PIN_FUNC_USER_INPUT) |
                                              (1 << TIC_PIN_FUNC_RC) |
@@ -2906,9 +2939,18 @@ void main_window::retranslate()
 
   for (pin_config_row * pcr : pin_config_rows)
   {
-    pcr->pullup_check->setText(tr("Pull-up"));
-    pcr->polarity_check->setText(tr("Active high"));
-    pcr->analog_check->setText(tr("Analog"));
+    if (pcr->pullup_check != NULL)
+    {
+      pcr->pullup_check->setText(tr("Pull-up"));
+    }
+    if (pcr->polarity_check != NULL)
+    {
+      pcr->polarity_check->setText(tr("Active high"));
+    }
+    if (pcr->analog_check != NULL)
+    {
+      pcr->analog_check->setText(tr("Analog"));
+    }
   }
 
   error_settings_box->setTitle(tr("Soft error response"));
