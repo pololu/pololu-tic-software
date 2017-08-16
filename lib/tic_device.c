@@ -231,7 +231,7 @@ void tic_device_free(tic_device * device)
   }
 }
 
-const uint32_t tic_device_get_product(const tic_device * device)
+uint32_t tic_device_get_product(const tic_device * device)
 {
   if (device == NULL) { return 0; }
   return device->product;
