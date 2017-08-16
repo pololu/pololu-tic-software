@@ -55,13 +55,13 @@ tic_error * tic_list_connected_devices(
     uint16_t vendor_id;
     error = tic_usb_error(libusbp_device_get_vendor_id(usb_device, &vendor_id));
     if (error) { break; }
-    if (vendor_id != USB_VENDOR_ID_POLOLU) { continue; }
+    if (vendor_id != TIC_VENDOR_ID) { continue; }
 
     // Check the USB product ID.
     uint16_t product_id;
     error = tic_usb_error(libusbp_device_get_product_id(usb_device, &product_id));
     if (error) { break; }
-    if (product_id != USB_PRODUCT_ID_TIC01A) { continue; }
+    if (product_id != TIC_PRODUCT_ID_T825) { continue; }
 
     // Get the USB interface.
     libusbp_generic_interface * usb_interface = NULL;

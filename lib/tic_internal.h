@@ -21,16 +21,11 @@
 #define TIC_PRINTF(f, a) __attribute__((format (printf, f, a)))
 #endif
 
-#define USB_VENDOR_ID_POLOLU 0x1FFB
-#define USB_PRODUCT_ID_TIC01A 0x00B3
-
 // A setup packet bRequest value from USB 2.0 Table 9-4
 #define USB_REQUEST_GET_DESCRIPTOR 6
 
 // A descriptor type from USB 2.0 Table 9-5
 #define USB_DESCRIPTOR_TYPE_STRING 3
-
-#define TIC_FIRMWARE_MODIFICATION_STRING_INDEX 4
 
 
 // Internal string manipulation library.
