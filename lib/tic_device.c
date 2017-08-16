@@ -8,7 +8,7 @@ struct tic_device
   char * serial_number;
   char * os_id;
   uint16_t firmware_version;
-  // TODO: uint32_t product
+  uint32_t product;
 };
 
 tic_error * tic_list_connected_devices(
@@ -61,7 +61,10 @@ tic_error * tic_list_connected_devices(
     uint16_t product_id;
     error = tic_usb_error(libusbp_device_get_product_id(usb_device, &product_id));
     if (error) { break; }
-    if (product_id != TIC_PRODUCT_ID_T825) { continue; }
+    if (product_id != TIC_PRODUCT_ID_T825)
+    {
+      continue;
+    }
 
     // Get the USB interface.
     libusbp_generic_interface * usb_interface = NULL;
@@ -110,6 +113,20 @@ tic_error * tic_list_connected_devices(
     error = tic_usb_error(libusbp_device_get_revision(
         usb_device, &new_device->firmware_version));
     if (error) { break; }
+
+    // Get the product code.
+    switch (product_id)
+    {
+    case TIC_PRODUCT_ID_T825:
+      new_device->product = TIC_PRODUCT_T825;
+      break;
+    }
+    if (new_device->product == 0)
+    {
+      // Should not ever happen.
+      error = tic_error_create("Unknown product.");
+      break;
+    }
   }
 
   if (error == NULL)
@@ -212,6 +229,12 @@ void tic_device_free(tic_device * device)
     libusbp_string_free(device->serial_number);
     free(device);
   }
+}
+
+const uint32_t tic_device_get_product(const tic_device * device)
+{
+  if (device == NULL) { return 0; }
+  return device->product;
 }
 
 const char * tic_device_get_name(const tic_device * device)

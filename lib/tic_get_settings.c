@@ -317,7 +317,7 @@ tic_error * tic_get_settings(tic_handle * handle, tic_settings ** settings)
 
   tic_error * error = NULL;
 
-  uint32_t product = TIC_PRODUCT_T825;  // TODO: get from handle
+  uint32_t product = tic_device_get_product(tic_handle_get_device(handle));
 
   // Allocate the new settings object.
   tic_settings * new_settings = NULL;
