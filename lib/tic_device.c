@@ -206,7 +206,11 @@ tic_error * tic_device_copy(const tic_device * source, tic_device ** dest)
     }
   }
 
-  new_device->firmware_version = source->firmware_version;
+  if (error == NULL)
+  {
+    new_device->firmware_version = source->firmware_version;
+    new_device->product = source->product;
+  }
 
   if (error == NULL)
   {
