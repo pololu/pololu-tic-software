@@ -157,7 +157,7 @@ Run these commands to build this software and install it:
     wget https://github.com/pololu/pololu-tic-software/archive/master.tar.gz
     tar -xzf master.tar.gz
     cd pololu-tic-software-master
-    MSYS2_ARG_CONV_EXCL= cmake . -G"MSYS Makefiles" -DCMAKE_INSTALL_PREFIX=$MINGW_PREFIX
+    MSYS2_ARG_CONV_EXCL=- cmake . -G"MSYS Makefiles" -DCMAKE_INSTALL_PREFIX=$MINGW_PREFIX
     make install DESTDIR=/
 
 You should now be able to run the command-line utility by running `ticcmd` in
