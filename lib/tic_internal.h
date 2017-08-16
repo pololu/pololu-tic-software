@@ -56,7 +56,7 @@ bool tic_name_to_code(const tic_name * table, const char * name, uint32_t * code
 bool tic_code_to_name(const tic_name * table, uint32_t code, const char ** name);
 
 extern const tic_name tic_bool_names[];
-extern const tic_name tic_product_names[];
+extern const tic_name tic_short_product_names[];
 extern const tic_name tic_step_mode_names[];
 extern const tic_name tic_control_mode_names[];
 extern const tic_name tic_response_names[];

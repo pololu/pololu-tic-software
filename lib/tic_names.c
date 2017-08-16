@@ -7,7 +7,7 @@ const tic_name tic_bool_names[] =
   { NULL, 0 },
 };
 
-const tic_name tic_product_names[] =
+const tic_name tic_short_product_names[] =
 {
   { "T825", TIC_PRODUCT_T825 },
   { NULL, 0 },
