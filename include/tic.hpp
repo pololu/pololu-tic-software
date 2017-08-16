@@ -512,6 +512,11 @@ namespace tic
     {
     }
 
+    uint32_t get_product() const noexcept
+    {
+      return tic_device_get_product(pointer);
+    }
+
     /// Gets the full name of the device (e.g. "Tic USB Stepper Motor Controller
     /// T825") as an ASCII-encoded string.
     /// If the device is null, returns an empty string.
