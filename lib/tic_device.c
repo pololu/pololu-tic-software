@@ -240,13 +240,13 @@ uint32_t tic_device_get_product(const tic_device * device)
 const char * tic_device_get_name(const tic_device * device)
 {
   if (device == NULL) { return ""; }
-  return "Tic T825 Stepper Motor Controller";
+  return tic_look_up_product_name_ui(device->product);
 }
 
 const char * tic_device_get_short_name(const tic_device * device)
 {
   if (device == NULL) { return ""; }
-  return "T825";
+  return tic_look_up_product_name_short(device->product);
 }
 
 const char * tic_device_get_serial_number(const tic_device * device)

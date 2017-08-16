@@ -7,9 +7,15 @@ const tic_name tic_bool_names[] =
   { NULL, 0 },
 };
 
-const tic_name tic_short_product_names[] =
+const tic_name tic_product_names_short[] =
 {
   { "T825", TIC_PRODUCT_T825 },
+  { NULL, 0 },
+};
+
+const tic_name tic_product_names_ui[] =
+{
+  { "Tic T825 Stepper Motor Controller", TIC_PRODUCT_T825 },
   { NULL, 0 },
 };
 
@@ -164,6 +170,20 @@ const tic_name tic_pin_func_names[] =
   { "kill_switch", TIC_PIN_FUNC_KILL_SWITCH },
   { NULL, 0 },
 };
+
+const char * tic_look_up_product_name_short(uint32_t product)
+{
+  const char * str = "";
+  tic_code_to_name(tic_product_names_short, product, &str);
+  return str;
+}
+
+const char * tic_look_up_product_name_ui(uint32_t product)
+{
+  const char * str = "(Unknown)";
+  tic_code_to_name(tic_product_names_ui, product, &str);
+  return str;
+}
 
 const char * tic_look_up_error_name_ui(uint32_t error)
 {

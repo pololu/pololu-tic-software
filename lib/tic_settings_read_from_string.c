@@ -50,7 +50,7 @@ static bool tic_parse_pin_config(const char * input,
 static tic_error * apply_product_name(tic_settings * settings, const char * product_name)
 {
   uint32_t product;
-  if (!tic_name_to_code(tic_short_product_names, product_name, &product))
+  if (!tic_name_to_code(tic_product_names_short, product_name, &product))
   {
     return tic_error_create("Unrecognized product name.");
   }

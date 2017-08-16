@@ -96,6 +96,18 @@ void tic_string_free(char *);
 
 // Name lookup //////////////////////////////////////////////////////////////////
 
+/// Looks up a short code string without spaces representing the product.  The
+/// product argument should be one of the TIC_PRODUCT_* macros, but if it is
+/// not, this function returns an empty string.
+TIC_API
+const char * tic_look_up_product_name_short(uint32_t product);
+
+/// Looks up a user-friendly string for the product name.  The product argument
+/// should be one of the TIC_PRODUCT_* macros, but if it is not, this function
+/// returns "(Unknown)".
+TIC_API
+const char * tic_look_up_product_name_ui(uint32_t product);
+
 /// Looks up a user-friendly string corresponding to the specified error bit,
 /// e.g. "Safe start violation".  The error argument should be of the form (1 <<
 /// x) where x is one of the TIC_ERROR_* macros, but if it is not, this function

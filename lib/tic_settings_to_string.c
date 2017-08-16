@@ -47,8 +47,7 @@ tic_error * tic_settings_to_string(const tic_settings * settings, char ** string
 
   {
     uint32_t product = tic_settings_get_product(settings);
-    const char * product_str = "";
-    tic_code_to_name(tic_short_product_names, product, &product_str);
+    const char * product_str = tic_look_up_product_name_short(product);
     tic_sprintf(&str, "product: %s\n", product_str);
   }
 
