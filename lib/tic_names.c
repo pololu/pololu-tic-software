@@ -10,12 +10,14 @@ const tic_name tic_bool_names[] =
 const tic_name tic_product_names_short[] =
 {
   { "T825", TIC_PRODUCT_T825 },
+  { "T834", TIC_PRODUCT_T834 },
   { NULL, 0 },
 };
 
 const tic_name tic_product_names_ui[] =
 {
   { "Tic T825 Stepper Motor Controller", TIC_PRODUCT_T825 },
+  { "Tic T834 Stepper Motor Controller", TIC_PRODUCT_T834 },
   { NULL, 0 },
 };
 
