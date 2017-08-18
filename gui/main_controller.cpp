@@ -708,12 +708,14 @@ void main_controller::handle_settings_changed()
     bool analog = tic_settings_get_pin_analog(settings.get_pointer(), i);
 
     bool enabled = func != TIC_PIN_FUNC_DEFAULT;
+    bool pullup_enabled = enabled && func != TIC_PIN_FUNC_POT_POWER;
     bool polarity_enabled = func == TIC_PIN_FUNC_KILL_SWITCH;
+    bool analog_enabled = enabled;
 
     window->set_pin_func(i, func);
-    window->set_pin_pullup(i, pullup, enabled);
+    window->set_pin_pullup(i, pullup, pullup_enabled);
     window->set_pin_polarity(i, polarity, polarity_enabled);
-    window->set_pin_analog(i, analog, enabled);
+    window->set_pin_analog(i, analog, analog_enabled);
   }
 
   window->set_apply_settings_enabled(connected() && settings_modified);
