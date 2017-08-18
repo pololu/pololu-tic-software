@@ -590,11 +590,12 @@ uint16_t LearnPage::full_range() const
 
 void LearnPage::warn_if_close_to_neutral() const
 {
-  std::string direction = (step == MAX) ? "maximum" : "minimum";
-
   if (learned_ranges[step].intersects(learned_ranges[NEUTRAL]))
   {
     // The input was indistinguishable from the neutral inputs, so warn the user!
+
+    std::string direction = (step == MAX) ? "maximum" : "minimum";
+
     window()->show_warning_message(
       "The values sampled for the " + direction + " input (" +
       learned_ranges[step].to_string() +
@@ -606,8 +607,7 @@ void LearnPage::warn_if_close_to_neutral() const
       "and you should set the target " + direction +
       " setting to 0 to make the target unidirectional.\n"
       "\n"
-      "You can press the Back button to try again if this is not the desired "
-      "behavior.");
+      "You can go back and try again if this is not the desired behavior.");
   }
 }
 
