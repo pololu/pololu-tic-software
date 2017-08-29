@@ -190,6 +190,11 @@ tic_error * tic_device_copy(const tic_device * source, tic_device ** dest)
 
   if (error == NULL)
   {
+    new_device->product = source->product;
+  }
+
+  if (error == NULL)
+  {
     new_device->serial_number = strdup(source->serial_number);
     if (new_device->serial_number == NULL)
     {
