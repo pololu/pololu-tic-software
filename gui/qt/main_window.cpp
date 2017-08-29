@@ -2306,7 +2306,7 @@ QWidget * main_window::setup_encoder_settings_box()
   {
     encoder_prescaler_value = new QSpinBox();
     encoder_prescaler_value->setObjectName("encoder_prescaler_value");
-    encoder_prescaler_value->setRange(0, INT32_MAX);
+    encoder_prescaler_value->setRange(1, INT32_MAX);
     encoder_prescaler_label = new QLabel();
     encoder_prescaler_label->setBuddy(encoder_prescaler_value);
     layout->addWidget(encoder_prescaler_label, row, 0, FIELD_LABEL_ALIGNMENT);
@@ -2317,7 +2317,7 @@ QWidget * main_window::setup_encoder_settings_box()
   {
     encoder_postscaler_value = new QSpinBox();
     encoder_postscaler_value->setObjectName("encoder_postscaler_value");
-    encoder_postscaler_value->setRange(0, INT32_MAX);
+    encoder_postscaler_value->setRange(1, INT32_MAX);
     encoder_postscaler_label = new QLabel();
     encoder_postscaler_label->setBuddy(encoder_postscaler_value);
     layout->addWidget(encoder_postscaler_label, row, 0, FIELD_LABEL_ALIGNMENT);
