@@ -535,6 +535,11 @@ void main_window::set_serial_crc_enabled(bool serial_crc_enabled)
   set_check_box(serial_crc_enabled_check, serial_crc_enabled);
 }
 
+void main_window::set_serial_response_delay(uint8_t delay)
+{
+  set_spin_box(serial_response_delay_value, delay);
+}
+
 void main_window::set_command_timeout(uint16_t command_timeout)
 {
   if (command_timeout == 0)
@@ -1201,6 +1206,12 @@ void main_window::on_serial_crc_enabled_check_stateChanged(int state)
 {
   if (suppress_events) { return; }
   controller->handle_serial_crc_enabled_input(state == Qt::Checked);
+}
+
+void main_window::on_serial_response_delay_value_valueChanged(int state)
+{
+  if (suppress_events) { return; }
+  controller->handle_serial_response_delay_input(state);
 }
 
 void main_window::on_command_timeout_check_stateChanged(int state)
@@ -2248,6 +2259,17 @@ QWidget * main_window::setup_serial_settings_box()
     layout->addWidget(serial_device_number_value, 1, 1, Qt::AlignLeft);
   }
 
+  {
+    serial_response_delay_value = new QSpinBox();
+    serial_response_delay_value->setObjectName("serial_response_delay_value");
+    serial_response_delay_value->setSuffix(" \u00b5s");
+    serial_response_delay_value->setRange(0, UINT8_MAX);
+    serial_response_delay_label = new QLabel();
+    serial_response_delay_label->setBuddy(serial_response_delay_value);
+    layout->addWidget(serial_response_delay_label, 2, 0, FIELD_LABEL_ALIGNMENT);
+    layout->addWidget(serial_response_delay_value, 2, 1, Qt::AlignLeft);
+  }
+
   layout->addItem(new QSpacerItem(fontMetrics().height(), 1), 0, 2);
 
   {
@@ -2895,6 +2917,7 @@ void main_window::retranslate()
   serial_baud_rate_label->setText(tr("Baud rate:"));
   serial_device_number_label->setText(tr("Device number:"));
   serial_crc_enabled_check->setText(tr("Enable CRC"));
+  serial_response_delay_label->setText(tr("Response delay:"));
   command_timeout_check->setText(tr("Enable command timeout:"));
 
   encoder_settings_box->setTitle(tr("Encoder"));

@@ -169,6 +169,7 @@ public:
   void set_serial_baud_rate(uint32_t serial_baud_rate);
   void set_serial_device_number(uint8_t serial_device_number);
   void set_serial_crc_enabled(bool serial_crc_enabled);
+  void set_serial_response_delay(uint8_t serial_response_delay);
   void set_command_timeout(uint16_t command_timeout);
 
   void set_encoder_prescaler(uint32_t encoder_prescaler);
@@ -276,6 +277,7 @@ private slots:
   void on_serial_baud_rate_value_editingFinished();
   void on_serial_device_number_value_valueChanged(int value);
   void on_serial_crc_enabled_check_stateChanged(int state);
+  void on_serial_response_delay_value_valueChanged(int value);
   void on_command_timeout_check_stateChanged(int state);
   void on_command_timeout_value_valueChanged(double value);
 
@@ -511,6 +513,8 @@ private:
   QLabel * serial_device_number_label;
   QSpinBox * serial_device_number_value;
   QCheckBox * serial_crc_enabled_check;
+  QLabel * serial_response_delay_label;
+  QSpinBox * serial_response_delay_value;
   QCheckBox * command_timeout_check;
   QDoubleSpinBox * command_timeout_value;
 

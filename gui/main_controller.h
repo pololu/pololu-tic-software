@@ -83,6 +83,7 @@ public:
   void handle_serial_baud_rate_input_finished();
   void handle_serial_device_number_input(uint8_t serial_device_number);
   void handle_serial_crc_enabled_input(bool serial_crc_enabled);
+  void handle_serial_response_delay_input(uint8_t delay);
   void handle_command_timeout_input(uint16_t command_timeout);
 
   void handle_encoder_prescaler_input(uint32_t encoder_prescaler);
