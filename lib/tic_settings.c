@@ -2,7 +2,7 @@
 
 struct tic_settings
 {
-  uint32_t product;
+  uint8_t product;
 
   uint8_t control_mode;
   bool never_sleep;

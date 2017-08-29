@@ -8,7 +8,7 @@ struct tic_device
   char * serial_number;
   char * os_id;
   uint16_t firmware_version;
-  uint32_t product;
+  uint8_t product;
 };
 
 tic_error * tic_list_connected_devices(
@@ -236,7 +236,7 @@ void tic_device_free(tic_device * device)
   }
 }
 
-uint32_t tic_device_get_product(const tic_device * device)
+uint8_t tic_device_get_product(const tic_device * device)
 {
   if (device == NULL) { return 0; }
   return device->product;
