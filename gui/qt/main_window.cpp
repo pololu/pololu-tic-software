@@ -2918,6 +2918,10 @@ void main_window::retranslate()
   serial_device_number_label->setText(tr("Device number:"));
   serial_crc_enabled_check->setText(tr("Enable CRC"));
   serial_response_delay_label->setText(tr("Response delay:"));
+  serial_response_delay_value->setToolTip(tr(
+      "The minimum time the Tic delays before replying to a serial command and "
+      "the minimum time the Tic will stretch the I\u00B2C clock."));
+
   command_timeout_check->setText(tr("Enable command timeout:"));
 
   encoder_settings_box->setTitle(tr("Encoder"));
