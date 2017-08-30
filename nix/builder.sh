@@ -6,7 +6,9 @@ cmake-cross $src \
 
 make
 make install
+
 $host-strip $out/bin/*
+rm -r $out/include $out/lib
 cp version.txt $out/
 
 if [ $os = "linux" ]; then
