@@ -6,11 +6,17 @@ set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra")
 pkg_check_modules(LIBUSBP REQUIRED libusbp-1)
 string (REPLACE ";" " " LIBUSBP_CFLAGS "${LIBUSBP_CFLAGS}")
 string (REPLACE ";" " " LIBUSBP_LDFLAGS "${LIBUSBP_LDFLAGS}")
+if (NOT BUILD_SHARED_LIBS)
+  set (PC_REQUIRES "${PC_REQUIRES} libusbp-1")
+endif ()
 
 if (USE_SYSTEM_LIBYAML)
   pkg_check_modules(YAML REQUIRED yaml)
   string (REPLACE ";" " " LIBYAML_CFLAGS "${LIBYAML_CFLAGS}")
   string (REPLACE ";" " " LIBYAML_LDFLAGS "${LIBYAML_LDFLAGS}")
+  if (NOT BUILD_SHARED_LIBS)
+    set (PC_REQUIRES "${PC_REQUIRES} yaml")
+  endif ()
 else ()
   set (LIBYAML_SRC libyaml/yaml.c)
   include_directories ("${CMAKE_CURRENT_SOURCE_DIR}/libyaml")
@@ -60,3 +66,17 @@ set_target_properties(lib PROPERTIES
 )
 
 target_link_libraries (lib "${LIBUSBP_LDFLAGS}" "${LIBYAML_LDFLAGS}")
+
+configure_file (
+  "lib.pc.in"
+  "libpololu-tic-${SOFTWARE_VERSION_MAJOR}.pc"
+  @ONLY
+)
+
+install(FILES "${CMAKE_CURRENT_BINARY_DIR}/libpololu-tic-${SOFTWARE_VERSION_MAJOR}.pc"
+  DESTINATION lib/pkgconfig)
+
+install(TARGETS lib
+  RUNTIME DESTINATION bin
+  LIBRARY DESTINATION lib
+  ARCHIVE DESTINATION lib)
