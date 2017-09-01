@@ -58,7 +58,7 @@ static void tic_settings_fix_enums(tic_settings * settings, tic_string * warning
   {
     uint8_t mode = tic_settings_get_step_mode(settings);
 
-    uint8_t valid_step_modes[6] = {
+    uint8_t valid_step_modes[] = {
       TIC_STEP_MODE_MICROSTEP1,
       TIC_STEP_MODE_MICROSTEP2,
       TIC_STEP_MODE_MICROSTEP4,
@@ -67,7 +67,7 @@ static void tic_settings_fix_enums(tic_settings * settings, tic_string * warning
       TIC_STEP_MODE_MICROSTEP32,
     };
 
-    if (!enum_is_valid(mode, valid_step_modes, 6))
+    if (!enum_is_valid(mode, valid_step_modes, sizeof(valid_step_modes)))
     {
       mode = TIC_STEP_MODE_MICROSTEP1;
       tic_sprintf(warnings,
