@@ -228,6 +228,8 @@ private:
 
   void update_manual_target_controls();
 
+  void center_at_startup_if_needed();
+
 protected:
   /** This is called by Qt just before the window is shown for the first time,
    * and is also called whenever the window becomes unminimized. */

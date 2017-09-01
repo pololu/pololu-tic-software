@@ -5,11 +5,13 @@
 
 #include "BallScrollBar.h"
 
+#include <QApplication>
 #include <QButtonGroup>
 #include <QCheckBox>
 #include <QCloseEvent>
 #include <QComboBox>
 #include <QDesktopServices>
+#include <QDesktopWidget>
 #include <QDoubleSpinBox>
 #include <QFileDialog>
 #include <QGridLayout>
@@ -18,6 +20,7 @@
 #include <QLabel>
 #include <QMenuBar>
 #include <QMessageBox>
+#include <QProcessEnvironment>
 #include <QPushButton>
 #include <QRadioButton>
 #include <QShortcut>
@@ -896,8 +899,39 @@ void main_window::update_manual_target_controls()
   }
 }
 
+void main_window::center_at_startup_if_needed()
+{
+  // Center the window.  This fixes a strange bug on the Raspbian Jessie where
+  // the window would appear in the upper left with its title bar off the
+  // screen.  On other platforms, the default window position did not make much
+  // sense, so it is nice to center it.
+  //
+  // In case this causes problems, you can set the TICGUI_CENTER environment
+  // variable to "N".
+  //
+  // NOTE: This position issue on Raspbian is a bug in Qt that should be fixed.
+  // Another workaround for it was to uncomment the lines in retranslate() that
+  // set up errors_stopping_header_label, error_rows[*].name_label, and
+  // manual_target_velocity_mode_radio, but then the Window would strangely
+  // start in the lower right.
+  auto env = QProcessEnvironment::systemEnvironment();
+  if (env.value("TICGUI_CENTER") != "N")
+  {
+    setGeometry(
+      QStyle::alignedRect(
+        Qt::LeftToRight,
+        Qt::AlignCenter,
+        size(),
+        qApp->desktop()->availableGeometry()
+        )
+      );
+  }
+}
+
 void main_window::showEvent(QShowEvent * event)
 {
+  center_at_startup_if_needed();
+
   if (!start_event_reported)
   {
     start_event_reported = true;
