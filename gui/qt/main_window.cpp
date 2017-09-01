@@ -83,7 +83,7 @@ bootloader_window * main_window::open_bootloader_window()
 {
   bootloader_window * window = new bootloader_window(this);
   connect(window, &bootloader_window::upload_complete,
-    this, &main_window::on_upload_complete);
+    this, &main_window::upload_complete);
   window->setWindowModality(Qt::WindowModal);
   window->show();
   return window;
@@ -1496,7 +1496,7 @@ void main_window::on_vin_calibration_value_valueChanged(int value)
   controller->handle_vin_calibration_input(value);
 }
 
-void main_window::on_upload_complete()
+void main_window::upload_complete()
 {
   controller->handle_upload_complete();
 }
