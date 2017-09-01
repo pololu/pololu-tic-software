@@ -45,6 +45,7 @@ add_library (lib
   tic_handle.c
   tic_names.c
   tic_settings.c
+  tic_settings_fix.c
   tic_settings_read_from_string.c
   tic_settings_to_string.c
   tic_string.c
