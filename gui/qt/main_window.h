@@ -79,7 +79,7 @@ class main_window : public QMainWindow
 public:
   main_window(QWidget * parent = 0);
 
-  /** Stores a pointer to the main_controller object so that we can report events. **/
+  // Stores a pointer to the controller so we can send user input events.
   void set_controller(main_controller * controller);
 
   bootloader_window * open_bootloader_window();
@@ -95,37 +95,38 @@ public:
   void show_warning_message(std::string const & message);
   void show_info_message(std::string const & message);
 
-  /** Show an OK/Cancel dialog, return true if the user selects OK. */
+  // Show an OK/Cancel dialog, return true if the user selects OK.
   bool confirm(std::string const & question);
 
   void set_device_list_contents(std::vector<tic::device> const & device_list);
   void set_device_list_selected(tic::device const & device);
 
-  /** Sets the label that shows the connection status/error. */
+  // Sets the label that shows the connection status/error.
   void set_connection_status(std::string const & status, bool error);
 
-  /** Controls whether the main controls of the application are enabled or
-   * disabled. **/
+  // Controls whether the main controls of the application are enabled or
+  // disabled.
   void set_tab_pages_enabled(bool enabled);
 
   void set_manual_target_box_enabled(bool enabled);
   void set_deenergize_button_enabled(bool enabled);
   void set_resume_button_enabled(bool enabled);
 
-  /** Controls whether the apply settings action/button is enabled or
-   * disabled. */
+  // Controls whether the apply settings action/button is enabled or
+  // disabled.
   void set_apply_settings_enabled(bool enabled);
 
-  /** Controls whether the open and save settings file actions are enabled or disabled. */
+  // Controls whether the open and save settings file actions are enabled or
+  // disabled.
   void set_open_save_settings_enabled(bool enabled);
 
-  /** Controls whether the disconnect action is enabled or disabled. */
+  // Controls whether the disconnect action is enabled or disabled.
   void set_disconnect_enabled(bool enabled);
 
-  /** Controls whether the reload settings from device action is enabled. */
+  // Controls whether the reload settings from device action is enabled.
   void set_reload_settings_enabled(bool enabled);
 
-  /** Controls whether the restore defaults option is enabled. */
+  // Controls whether the restore defaults option is enabled.
   void set_restore_defaults_enabled(bool enabled);
 
   void set_device_name(std::string const & name, bool link_enabled);
@@ -218,9 +219,9 @@ public:
   void set_motor_status_message(std::string const & message, bool stopped = true);
 
 private:
-  /** Helper method for setting the index of a combo box, given the desired
-   * uint8_t item value. Sets index of -1 for no selection if the specified
-   * value is not found. */
+  // Helper method for setting the index of a combo box, given the desired
+  // uint8_t item value. Sets index of -1 for no selection if the specified
+  // value is not found.
   void set_u8_combo_box(QComboBox * combo, uint8_t value);
   void set_spin_box(QSpinBox * box, int value);
   void set_double_spin_box(QDoubleSpinBox * spin, double value);
@@ -231,12 +232,12 @@ private:
   void center_at_startup_if_needed();
 
 protected:
-  /** This is called by Qt just before the window is shown for the first time,
-   * and is also called whenever the window becomes unminimized. */
+  // This is called by Qt just before the window is shown for the first time,
+  // and is also called whenever the window becomes unminimized.
   void showEvent(QShowEvent *) override;
 
-  /** This is called by Qt when the "close" slot is triggered, meaning that
-   * the user wants to close the window. */
+  // This is called by Qt when the "close" slot is triggered, meaning that
+  // the user wants to close the window.
   void closeEvent(QCloseEvent *) override;
 
 private slots:
@@ -328,9 +329,9 @@ private slots:
 private:
   bool start_event_reported = false;
 
-  /* We set this to true temporarily when programmatically setting the value
-   * of an input in order to suppress sending a spurious user-input event to
-   * the rest of the program. */
+  // We set this to true temporarily when programmatically setting the value of
+  // an input in order to suppress sending a spurious user-input event to the
+  // rest of the program.
   bool suppress_events = false;
 
   QTimer * update_timer;

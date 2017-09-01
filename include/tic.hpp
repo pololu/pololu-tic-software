@@ -238,12 +238,12 @@ namespace tic
     }
   };
 
-  /*! \cond */
+  /// \cond
   inline void throw_if_needed(tic_error * err)
   {
     if (err != NULL) { throw error(err); }
   }
-  /*! \endcond */
+  /// \endcond
 
   /// Represets the settings for a Tic.  This object just stores plain old data;
   /// it does not have any pointers or handles for other resources.

@@ -18,7 +18,7 @@
 #define FINISH_BUTTON_TEXT tr("Finish")
 #endif
 
-/** Take 20 samples, one sample every 50 ms. Total time is 1 s. */
+// Take 20 samples, one sample every 50 ms. Total time is 1 s.
 static uint32_t const SAMPLE_COUNT = 20;
 
 InputWizard::InputWizard(main_window * parent)

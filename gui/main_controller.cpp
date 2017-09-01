@@ -5,7 +5,7 @@
 #include <cassert>
 #include <cmath>
 
-/** This is how often we fetch the variables from the device. */
+// This is how often we fetch the variables from the device.
 static uint32_t const UPDATE_INTERVAL_MS_DISCONNECTED = 500;
 static uint32_t const UPDATE_INTERVAL_MS_CONNECTED = 50;
 
@@ -25,8 +25,8 @@ void main_controller::start()
   handle_model_changed();
 }
 
-/** Returns the device that matches the specified OS ID from the list, or a null
- * device if none match. */
+// Returns the device that matches the specified OS ID from the list, or a null
+// device if none match.
 static tic::device device_with_os_id(
   std::vector<tic::device> const & device_list,
   std::string const & id)
@@ -232,7 +232,7 @@ void main_controller::upgrade_firmware()
   window->open_bootloader_window();
 }
 
-/** Returns true if the device list includes the specified device. */
+// Returns true if the device list includes the specified device.
 static bool device_list_includes(
   std::vector<tic::device> const & device_list,
   tic::device const & device)
