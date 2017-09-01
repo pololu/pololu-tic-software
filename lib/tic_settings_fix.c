@@ -1,8 +1,106 @@
 #include "tic_internal.h"
 
+static bool enum_is_valid(uint8_t code, uint8_t * valid_codes, uint8_t code_count)
+{
+  for (uint32_t i = 0; i < code_count; i++)
+  {
+    if (code == valid_codes[i]) { return true; }
+  }
+  return false;
+}
+
+// Fixes enumerated values to be valid (e.g. control_mode).
+//
+// These enumerated values could only be wrong if buggy software was used to
+// write to the Tic's EEPROM.
+//
+// Note that for boolean settings like ignore_err_line_high, the tic_settings
+// object cannot even hold invalid values, so there is no need to check them
+// here.  If the EEPROM has invalid boolean values, they got corrected by
+// tic_get_settings, which knows how the firmware treats booleans.
+static void tic_settings_fix_enums(tic_settings * settings, tic_string * warnings)
+{
+  {
+    uint8_t control_mode = tic_settings_get_control_mode(settings);
+    if (control_mode > TIC_CONTROL_MODE_ENCODER_SPEED)
+    {
+      control_mode = TIC_CONTROL_MODE_SERIAL;
+      tic_sprintf(warnings,
+        "Warning: The control mode was invalid "
+        "so it will be changed to Serial/I2C/USB.\n");
+    }
+    tic_settings_set_control_mode(settings, control_mode);
+  }
+
+  {
+    uint8_t response = tic_settings_get_soft_error_response(settings);
+    if (response > TIC_RESPONSE_GO_TO_POSITION)
+    {
+      response = TIC_RESPONSE_DECEL_TO_HOLD;
+      tic_sprintf(warnings,
+        "Warning: The soft error response was invalid "
+        "so it will be changed to \"Decelerate to hold\".\n");
+    }
+    tic_settings_set_soft_error_response(settings, response);
+  }
+
+  {
+    uint8_t scaling_degree = tic_settings_get_input_scaling_degree(settings);
+    if (scaling_degree > TIC_SCALING_DEGREE_CUBIC)
+    {
+      tic_sprintf(warnings,
+        "Warning: The scaling degree was invalid "
+        "so it will be changed to linear.\n");
+    }
+    tic_settings_set_input_scaling_degree(settings, scaling_degree);
+  }
+
+  {
+    uint8_t mode = tic_settings_get_step_mode(settings);
+
+    uint8_t valid_step_modes[6] = {
+      TIC_STEP_MODE_MICROSTEP1,
+      TIC_STEP_MODE_MICROSTEP2,
+      TIC_STEP_MODE_MICROSTEP4,
+      TIC_STEP_MODE_MICROSTEP8,
+      TIC_STEP_MODE_MICROSTEP16,
+      TIC_STEP_MODE_MICROSTEP32,
+    };
+
+    if (!enum_is_valid(mode, valid_step_modes, 6))
+    {
+      mode = TIC_STEP_MODE_MICROSTEP1;
+      tic_sprintf(warnings,
+        "Warning: The step mode is invalid "
+        "so it will be changed to 1 (full step).\n");
+    }
+
+    tic_settings_set_step_mode(settings, mode);
+  }
+
+  {
+    uint8_t mode = tic_settings_get_decay_mode(settings);
+
+    uint8_t valid_decay_modes[3] = {
+      TIC_DECAY_MODE_MIXED,
+      TIC_DECAY_MODE_SLOW,
+      TIC_DECAY_MODE_FAST,
+    };
+
+    if (!enum_is_valid(mode, valid_decay_modes, 6))
+    {
+      mode = TIC_DECAY_MODE_MIXED;
+      tic_sprintf(warnings,
+        "Warning: The decay mode is invalid "
+        "so it will be changed to mixed.\n");
+    }
+    tic_settings_set_decay_mode(settings, mode);
+  }
+}
+
 static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings)
 {
-  // TODO: fix enumeration values to be valid (e.g. control_mode)
+  tic_settings_fix_enums(settings, warnings);
 
   // Note: We don't enforce the fact the the RC pin cannot have a pull-up and
   // the TX and RX pins always have pull-ups.  The firmware's default settings
@@ -307,37 +405,6 @@ static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings
         settings, current_during_error);
     }
     tic_settings_set_current_limit_during_error(settings, current_during_error);
-  }
-
-  {
-    uint8_t decay_mode = tic_settings_get_decay_mode(settings);
-    if (decay_mode != TIC_DECAY_MODE_MIXED &&
-      decay_mode != TIC_DECAY_MODE_SLOW &&
-      decay_mode != TIC_DECAY_MODE_FAST)
-    {
-      decay_mode = TIC_DECAY_MODE_MIXED;
-      tic_sprintf(warnings,
-        "Warning: The decay mode is invalid "
-        "so it will be changed to mixed.\n");
-    }
-  }
-
-  {
-    uint8_t mode = tic_settings_get_step_mode(settings);
-    if (mode != TIC_STEP_MODE_MICROSTEP1 &&
-      mode != TIC_STEP_MODE_MICROSTEP2 &&
-      mode != TIC_STEP_MODE_MICROSTEP4 &&
-      mode != TIC_STEP_MODE_MICROSTEP8 &&
-      mode != TIC_STEP_MODE_MICROSTEP16 &&
-      mode != TIC_STEP_MODE_MICROSTEP32)
-    {
-      mode = TIC_STEP_MODE_MICROSTEP1;
-      tic_sprintf(warnings,
-        "Warning: The step mode is invalid "
-        "so it will be changed to 1 (full step).\n");
-    }
-
-    tic_settings_set_step_mode(settings, mode);
   }
 
   {
