@@ -179,9 +179,9 @@ void main_window::set_tab_pages_enabled(bool enabled)
   }
 }
 
-void main_window::set_manual_target_box_enabled(bool enabled)
+void main_window::set_manual_target_enabled(bool enabled)
 {
-  manual_target_box->setEnabled(enabled);
+  manual_target_widget->setEnabled(enabled);
 }
 
 void main_window::set_deenergize_button_enabled(bool enabled)
@@ -1706,6 +1706,15 @@ void pin_config_row::add_funcs(uint16_t funcs)
 
 void main_window::setup_window()
 {
+  // If the TICGUI_COMPACT environment variable is set to "Y", we enable
+  // "compact" mode, which is suitable for systems where the regular layout
+  // would not fit (e.g. a Linux system with a 1024x768 monitor).
+  auto env = QProcessEnvironment::systemEnvironment();
+  if (env.value("TICGUI_COMPACT") == "Y")
+  {
+    compact = true;
+  }
+
   // Make buttons a little bit bigger so they're easier to click.
   // TODO: do we only want this on certain buttons?
   setStyleSheet("QPushButton { padding: 0.3em 1em; }");
@@ -1837,9 +1846,30 @@ QWidget * main_window::setup_tab_widget()
 {
   tab_widget = new QTabWidget();
 
-  tab_widget->addTab(setup_status_page_widget(), tr("Status"));
-  tab_widget->addTab(setup_input_motor_settings_page_widget(), tr("Input and motor settings"));
-  tab_widget->addTab(setup_advanced_settings_page_widget(), tr("Advanced settings"));
+  if (compact)
+  {
+    tab_widget->addTab(setup_status_page_widget(),
+      tr("Status"));
+    tab_widget->addTab(setup_errors_widget(),
+      tr("Errors"));
+    tab_widget->addTab(setup_manual_target_widget(),
+      tr("Set target"));
+    tab_widget->addTab(setup_input_motor_settings_page_widget(),
+      tr("Input settings"));
+    tab_widget->addTab(setup_motor_settings_widget(),
+      tr("Motor settings"));
+    tab_widget->addTab(setup_advanced_settings_page_widget(),
+      tr("Advanced settings"));
+  }
+  else
+  {
+    tab_widget->addTab(setup_status_page_widget(),
+      tr("Status"));
+    tab_widget->addTab(setup_input_motor_settings_page_widget(),
+      tr("Input and motor settings"));
+    tab_widget->addTab(setup_advanced_settings_page_widget(),
+      tr("Advanced settings"));
+  }
 
   return tab_widget;
 }
@@ -1852,10 +1882,16 @@ QWidget * main_window::setup_status_page_widget()
   QGridLayout * layout = status_page_layout = new QGridLayout();
 
   layout->addWidget(setup_device_info_box(), 0, 0, 1, 2);
-  layout->addWidget(setup_errors_box(), 0, 2, 2, 1);
+  if (!compact)
+  {
+    layout->addWidget(setup_errors_box(), 0, 2, 2, 1);
+  }
   layout->addWidget(setup_input_status_box(), 1, 0);
   layout->addWidget(setup_operation_status_box(), 1, 1);
-  layout->addWidget(setup_manual_target_box(), 2, 0, 1, 4);
+  if (!compact)
+  {
+    layout->addWidget(setup_manual_target_box(), 2, 0, 1, 4);
+  }
 
   layout->setColumnStretch(3, 1);
   layout->setRowStretch(3, 1);
@@ -1991,10 +2027,9 @@ QWidget * main_window::setup_operation_status_box()
   return operation_status_box;
 }
 
-QWidget * main_window::setup_manual_target_box()
+QLayout * main_window::setup_manual_target_layout()
 {
-  manual_target_box = new QGroupBox();
-  QGridLayout * layout = manual_target_box_layout = new QGridLayout();
+  QGridLayout * layout = new QGridLayout();
   int row = 0;
 
   {
@@ -2136,11 +2171,11 @@ QWidget * main_window::setup_manual_target_box()
   // entry spin box and set range limits if enter is pressed on range limit spin
   // boxes.
   {
-    manual_target_return_key_shortcut = new QShortcut(manual_target_box);
+    manual_target_return_key_shortcut = new QShortcut(manual_target_widget);
     manual_target_return_key_shortcut->setObjectName("manual_target_return_key_shortcut");
     manual_target_return_key_shortcut->setContext(Qt::WidgetWithChildrenShortcut);
     manual_target_return_key_shortcut->setKey(Qt::Key_Return);
-    manual_target_enter_key_shortcut = new QShortcut(manual_target_box);
+    manual_target_enter_key_shortcut = new QShortcut(manual_target_widget);
     manual_target_enter_key_shortcut->setObjectName("manual_target_enter_key_shortcut");
     manual_target_enter_key_shortcut->setContext(Qt::WidgetWithChildrenShortcut);
     manual_target_enter_key_shortcut->setKey(Qt::Key_Enter);
@@ -2151,18 +2186,29 @@ QWidget * main_window::setup_manual_target_box()
       SLOT(on_manual_target_return_key_shortcut_activated()));
   }
 
-
   layout->setColumnStretch(1, 1);
   layout->setColumnStretch(5, 1);
-
-  manual_target_box->setLayout(layout);
-  return manual_target_box;
+  layout->setRowStretch(6, 1);
+  return layout;
 }
 
-QWidget * main_window::setup_errors_box()
+QWidget * main_window::setup_manual_target_box()
 {
-  errors_box = new QGroupBox();
-  QVBoxLayout * layout = errors_box_layout = new QVBoxLayout();
+  manual_target_widget = manual_target_box = new QGroupBox();
+  manual_target_widget->setLayout(setup_manual_target_layout());
+  return manual_target_widget;
+}
+
+QWidget * main_window::setup_manual_target_widget()
+{
+  manual_target_widget = new QWidget();
+  manual_target_widget->setLayout(setup_manual_target_layout());
+  return manual_target_widget;
+}
+
+QLayout * main_window::setup_errors_layout()
+{
+  QVBoxLayout * layout = new QVBoxLayout();
 
   layout->addLayout(setup_error_table_layout());
 
@@ -2172,15 +2218,30 @@ QWidget * main_window::setup_errors_box()
     layout->addWidget(errors_reset_counts_button, 0, Qt::AlignRight);
   }
 
+  layout->addStretch(1);
+
   reset_error_counts();
 
-  errors_box->setLayout(layout);
+  return layout;
+}
+
+QWidget * main_window::setup_errors_box()
+{
+  errors_box = new QGroupBox();
+  errors_box->setLayout(setup_errors_layout());
   return errors_box;
+}
+
+QWidget * main_window::setup_errors_widget()
+{
+  QWidget * widget = new QWidget();
+  widget->setLayout(setup_errors_layout());
+  return widget;
 }
 
 QLayout * main_window::setup_error_table_layout()
 {
-  QGridLayout * layout = error_table_layout = new QGridLayout();
+  QGridLayout * layout = new QGridLayout();
   layout->setHorizontalSpacing(fontMetrics().height());
   // Remove spaces between rows so row background fill looks good.
   layout->setVerticalSpacing(0);
@@ -2212,6 +2273,8 @@ QLayout * main_window::setup_error_table_layout()
   // Adjust height of header row to match error rows.
   layout->setRowMinimumHeight(0, layout->rowMinimumHeight(1));
 
+  layout->setColumnStretch(2, 1);
+
   return layout;
 }
 
@@ -2229,7 +2292,10 @@ QWidget * main_window::setup_input_motor_settings_page_widget()
   layout->addWidget(setup_encoder_settings_box(), 2, 0);
   layout->addWidget(setup_conditioning_settings_box(), 3, 0);
   layout->addWidget(setup_scaling_settings_box(), 2, 1, 2, 1);
-  layout->addWidget(setup_motor_settings_box(), 1, 2, 3, 1);
+  if (!compact)
+  {
+    layout->addWidget(setup_motor_settings_box(), 1, 2, 3, 1);
+  }
 
   layout->setColumnStretch(3, 1);
   layout->setRowStretch(4, 1);
@@ -2505,10 +2571,9 @@ QWidget * main_window::setup_scaling_settings_box()
   return scaling_settings_box;
 }
 
-QWidget * main_window::setup_motor_settings_box()
+QLayout * main_window::setup_motor_settings_layout()
 {
-  motor_settings_box = new QGroupBox();
-  QGridLayout * layout = motor_settings_box_layout = new QGridLayout();
+  QGridLayout * layout = new QGridLayout();
   int row = 0;
 
   {
@@ -2634,8 +2699,21 @@ QWidget * main_window::setup_motor_settings_box()
   layout->setColumnStretch(2, 1);
   layout->setRowStretch(row, 1);
 
-  motor_settings_box->setLayout(layout);
+  return layout;
+}
+
+QWidget * main_window::setup_motor_settings_box()
+{
+  motor_settings_box = new QGroupBox();
+  motor_settings_box->setLayout(setup_motor_settings_layout());
   return motor_settings_box;
+}
+
+QWidget * main_window::setup_motor_settings_widget()
+{
+  QWidget * widget = new QWidget();
+  widget->setLayout(setup_motor_settings_layout());
+  return widget;
 }
 
 //// advanced settings page
@@ -2912,7 +2990,10 @@ void main_window::retranslate()
   position_uncertain_label->setText(tr("Uncertain:"));
   current_velocity_label->setText(tr("Current velocity:"));
 
-  errors_box->setTitle(tr("Errors"));
+  if (errors_box)
+  {
+    errors_box->setTitle(tr("Errors"));
+  }
   errors_stopping_header_label->setText(tr("Stopping motor?"));
   errors_count_header_label->setText(tr("Count"));
   error_rows[TIC_ERROR_INTENTIONALLY_DEENERGIZED].name_label->setText(tr("Intentionally de-energized"));
@@ -2931,7 +3012,10 @@ void main_window::retranslate()
   error_rows[TIC_ERROR_ENCODER_SKIP]             .name_label->setText(tr("Encoder skip"));
   errors_reset_counts_button->setText(tr("Reset c&ounts"));
 
-  manual_target_box->setTitle(tr(u8"Set target (Serial\u2009/\u2009I\u00B2C\u2009/\u2009USB mode only)"));
+  if (manual_target_box)
+  {
+    manual_target_box->setTitle(tr(u8"Set target (Serial\u2009/\u2009I\u00B2C\u2009/\u2009USB mode only)"));
+  }
   manual_target_position_mode_radio->setText(tr("Set &position"));
   manual_target_velocity_mode_radio->setText(tr("Set &velocity"));
   update_manual_target_controls();
@@ -2978,7 +3062,10 @@ void main_window::retranslate()
   scaling_max_label->setText(tr("Maximum:"));
   input_scaling_degree_label->setText(tr("Scaling degree:"));
 
-  motor_settings_box->setTitle(tr("Motor"));
+  if (motor_settings_box)
+  {
+    motor_settings_box->setTitle(tr("Motor"));
+  }
   invert_motor_direction_check->setText(tr("Invert motor direction"));
   speed_max_label->setText(tr("Max speed:"));
   starting_speed_label->setText(tr("Starting speed:"));

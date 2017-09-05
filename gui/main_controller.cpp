@@ -724,7 +724,7 @@ void main_controller::handle_settings_changed()
 
 void main_controller::handle_settings_applied()
 {
-  window->set_manual_target_box_enabled(control_mode_is_serial(settings));
+  window->set_manual_target_enabled(control_mode_is_serial(settings));
 
   // this must be last so the preceding code can compare old and new settings
   cached_settings = settings;

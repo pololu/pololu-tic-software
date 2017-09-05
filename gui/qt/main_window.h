@@ -108,7 +108,7 @@ public:
   // disabled.
   void set_tab_pages_enabled(bool enabled);
 
-  void set_manual_target_box_enabled(bool enabled);
+  void set_manual_target_enabled(bool enabled);
   void set_deenergize_button_enabled(bool enabled);
   void set_resume_button_enabled(bool enabled);
 
@@ -349,8 +349,12 @@ private:
   QWidget * setup_device_info_box();
   QWidget * setup_input_status_box();
   QWidget * setup_operation_status_box();
+  QLayout * setup_manual_target_layout();
   QWidget * setup_manual_target_box();
+  QWidget * setup_manual_target_widget();
+  QLayout * setup_errors_layout();
   QWidget * setup_errors_box();
+  QWidget * setup_errors_widget();
   QLayout * setup_error_table_layout();
 
   QWidget * setup_input_motor_settings_page_widget();
@@ -359,7 +363,9 @@ private:
   QWidget * setup_encoder_settings_box();
   QWidget * setup_conditioning_settings_box();
   QWidget * setup_scaling_settings_box();
+  QLayout * setup_motor_settings_layout();
   QWidget * setup_motor_settings_box();
+  QWidget * setup_motor_settings_widget();
 
   QWidget * setup_advanced_settings_page_widget();
   QWidget * setup_pin_config_box();
@@ -389,6 +395,9 @@ private:
   QMenu * help_menu;
   QAction * documentation_action;
   QAction * about_action;
+
+  // True if we are using the compact layout.
+  bool compact = false;
 
   QWidget * central_widget;
   QVBoxLayout * central_widget_layout;
@@ -460,8 +469,8 @@ private:
   uint8_t cached_input_state = 0;
   int32_t cached_input_after_scaling;
 
-  QGroupBox * manual_target_box;
-  QGridLayout * manual_target_box_layout;
+  QGroupBox * manual_target_box = NULL;
+  QWidget * manual_target_widget;
   QVBoxLayout * manual_target_mode_layout;
   QVBoxLayout * manual_target_checks_layout;
 
@@ -489,9 +498,7 @@ private:
   QPushButton * halt_button;
   QPushButton * decelerate_button;
 
-  QGroupBox * errors_box;
-  QVBoxLayout * errors_box_layout;
-  QGridLayout * error_table_layout;
+  QGroupBox * errors_box = NULL;
   QLabel * errors_stopping_header_label;
   QLabel * errors_count_header_label;
   std::array<error_row, 32> error_rows;
@@ -556,8 +563,7 @@ private:
 
   InputWizard * input_wizard;
 
-  QGroupBox * motor_settings_box;
-  QGridLayout * motor_settings_box_layout;
+  QGroupBox * motor_settings_box = NULL;
   QCheckBox * invert_motor_direction_check;
   QLabel * speed_max_label;
   QSpinBox * speed_max_value;
