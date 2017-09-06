@@ -915,7 +915,7 @@ void main_window::center_at_startup_if_needed()
   // manual_target_velocity_mode_radio, but then the Window would strangely
   // start in the lower right.
   auto env = QProcessEnvironment::systemEnvironment();
-  if (env.value("TICGUI_CENTER") == "Y")
+  if (env.value("TICGUI_CENTER") != "N")
   {
     setGeometry(
       QStyle::alignedRect(
