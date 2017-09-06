@@ -176,6 +176,10 @@ private:
   // to a USB error).
   bool variables_update_failed = false;
 
+  // The number of updates to wait for before updating the
+  // device list again (saves CPU time).
+  uint32_t update_device_list_counter = 1;
+
   void reload_variables();
 
   // Returns true if we are currently connected to a device.

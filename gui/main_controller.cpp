@@ -6,8 +6,10 @@
 #include <cmath>
 
 // This is how often we fetch the variables from the device.
-static uint32_t const UPDATE_INTERVAL_MS_DISCONNECTED = 500;
-static uint32_t const UPDATE_INTERVAL_MS_CONNECTED = 50;
+static const uint32_t UPDATE_INTERVAL_MS = 50;
+
+// Only update the device list once per second to save CPU time.
+static const uint32_t UPDATE_DEVICE_LIST_DIVIDER = 20;
 
 void main_controller::set_window(main_window * window)
 {
@@ -19,7 +21,7 @@ void main_controller::start()
   assert(!connected());
 
   // Start the update timer so that update() will be called regularly.
-  window->set_update_timer_interval(UPDATE_INTERVAL_MS_DISCONNECTED);
+  window->set_update_timer_interval(UPDATE_INTERVAL_MS);
   window->start_update_timer();
 
   handle_model_changed();
@@ -117,7 +119,6 @@ void main_controller::connect_device(tic::device const & device)
     show_exception(e, "There was an error getting the status of the device.");
   }
 
-  window->set_update_timer_interval(UPDATE_INTERVAL_MS_CONNECTED);
   handle_model_changed();
 }
 
@@ -132,7 +133,6 @@ void main_controller::really_disconnect()
 {
   device_handle.close();
   settings_modified = false;
-  window->set_update_timer_interval(UPDATE_INTERVAL_MS_DISCONNECTED);
 }
 
 void main_controller::set_connection_error(std::string const & error_message)
@@ -242,23 +242,29 @@ static bool device_list_includes(
 
 void main_controller::update()
 {
-  // This is called regularly by the view when it is time to check for updates
-  // to the state of the USB devices.  This runs on the same thread as
+  // This is called regularly by the view when it is time to check for
+  // updates to the state of USB devices.  This runs on the same thread as
   // everything else, so we should be careful not to do anything too slow
   // here.  If the user tries to use the UI at all while this function is
   // running, the UI cannot respond until this function returns.
 
-  bool successfully_updated_list = update_device_list();
-  if (successfully_updated_list && device_list_changed)
+  bool successfully_updated_list = false;
+  if (--update_device_list_counter == 0)
   {
-    window->set_device_list_contents(device_list);
-    if (connected())
+    update_device_list_counter = UPDATE_DEVICE_LIST_DIVIDER;
+
+    successfully_updated_list = update_device_list();
+    if (successfully_updated_list && device_list_changed)
     {
-      window->set_device_list_selected(device_handle.get_device());
-    }
-    else
-    {
-      window->set_device_list_selected(tic::device()); // show "Not connected"
+      window->set_device_list_contents(device_list);
+      if (connected())
+      {
+        window->set_device_list_selected(device_handle.get_device());
+      }
+      else
+      {
+        window->set_device_list_selected(tic::device()); // show "Not connected"
+      }
     }
   }
 
