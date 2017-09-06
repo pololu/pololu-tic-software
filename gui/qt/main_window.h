@@ -472,7 +472,6 @@ private:
   QGroupBox * manual_target_box = NULL;
   QWidget * manual_target_widget;
   QVBoxLayout * manual_target_mode_layout;
-  QVBoxLayout * manual_target_checks_layout;
 
   QRadioButton * manual_target_position_mode_radio;
   QRadioButton * manual_target_velocity_mode_radio;

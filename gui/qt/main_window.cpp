@@ -2111,7 +2111,7 @@ QLayout * main_window::setup_manual_target_layout()
   layout->addItem(new QSpacerItem(1, fontMetrics().height()), row++, 0);
 
   {
-    QVBoxLayout * layout = manual_target_checks_layout = new QVBoxLayout;
+    QVBoxLayout * checks_layout = new QVBoxLayout();
 
     auto_set_target_check = new QCheckBox();
     auto_set_target_check->setObjectName("auto_set_target_check");
@@ -2120,11 +2120,13 @@ QLayout * main_window::setup_manual_target_layout()
     auto_zero_target_check = new QCheckBox();
     auto_zero_target_check->setObjectName("auto_zero_target_check");
 
-    layout->addStretch(1);
-    layout->addWidget(auto_set_target_check);
-    layout->addWidget(auto_zero_target_check);
+    checks_layout->addStretch(1);
+    checks_layout->addWidget(auto_set_target_check);
+    checks_layout->addWidget(auto_zero_target_check);
+
+    int col_span = compact ? 5 : 3;
+    layout->addLayout(checks_layout, row, 0, 2, col_span);
   }
-  layout->addLayout(manual_target_checks_layout, row, 0, 2, 3);
 
   {
     current_position_entry_value = new QSpinBox();
@@ -2136,11 +2138,22 @@ QLayout * main_window::setup_manual_target_layout()
 
     current_position_halts_label = new QLabel();
 
-    layout->addWidget(current_position_entry_value, row + 1, 3);
-    layout->addWidget(set_current_position_button, row + 1, 4, Qt::AlignLeft);
-    layout->addWidget(current_position_halts_label, row + 1, 5, Qt::AlignLeft);
+    if (compact)
+    {
+      QHBoxLayout * set_position_layout = new QHBoxLayout();
+      set_position_layout->addWidget(current_position_entry_value);
+      set_position_layout->addWidget(set_current_position_button);
+      set_position_layout->addWidget(current_position_halts_label);
+      set_position_layout->addStretch(1);
+      layout->addLayout(set_position_layout, row + 2, 0, 1, 5);
+    }
+    else
+    {
+      layout->addWidget(current_position_entry_value, row + 1, 3);
+      layout->addWidget(set_current_position_button, row + 1, 4, Qt::AlignLeft);
+      layout->addWidget(current_position_halts_label, row + 1, 5, Qt::AlignLeft);
+    }
   }
-
 
   {
     decelerate_button = new QPushButton();
@@ -2149,8 +2162,11 @@ QLayout * main_window::setup_manual_target_layout()
     halt_button = new QPushButton();
     halt_button->setObjectName("halt_button");
 
-    layout->addWidget(decelerate_button, row, 5, Qt::AlignRight);
-    layout->addWidget(halt_button, row + 1, 5, Qt::AlignRight);
+    int col_span = compact ? 3 : 1;
+    int col = 5 - (col_span - 1);
+
+    layout->addWidget(decelerate_button, row, col, 1, col_span, Qt::AlignRight);
+    layout->addWidget(halt_button, row + 1, col, 1, col_span, Qt::AlignRight);
   }
 
   // Make spin boxes wide enough to display the largest possible values.
@@ -2188,7 +2204,7 @@ QLayout * main_window::setup_manual_target_layout()
 
   layout->setColumnStretch(1, 1);
   layout->setColumnStretch(5, 1);
-  layout->setRowStretch(6, 1);
+  layout->setRowStretch(7, 1);
   return layout;
 }
 
