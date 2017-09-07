@@ -6,7 +6,7 @@ set (GUI_NAME "ticgui")
 set (DOCUMENTATION_URL "https://www.pololu.com/docs/0J71")
 
 set (SOFTWARE_VERSION_MAJOR 1)
-set (SOFTWARE_VERSION_MINOR 1)
+set (SOFTWARE_VERSION_MINOR 2)
 set (SOFTWARE_VERSION_PATCH 0)
 
 option (BUILD_SHARED_LIBS "Build a shared library" TRUE)
@@ -109,3 +109,7 @@ add_subdirectory (bootloader)
 if (ENABLE_GUI)
   add_subdirectory (gui)
 endif ()
+
+# Install the header files into include/
+install(FILES include/tic.h include/tic.hpp include/tic_protocol.h
+  DESTINATION "include/libpololu-tic-${SOFTWARE_VERSION_MAJOR}")

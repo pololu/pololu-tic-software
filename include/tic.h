@@ -477,9 +477,11 @@ TIC_API
 bool tic_settings_get_input_averaging_enabled(const tic_settings *);
 
 /// Sets the input hysteresis setting.
+///
+/// This setting is described in the "Analog/RC input handling" section of the
+/// Tic user's guide.
 TIC_API
 void tic_settings_set_input_hysteresis(tic_settings *, uint16_t);
-// TODO: document this setting
 
 /// Gets the input hysteresis setting as described in
 /// tic_settings_set_input_hysteresis().
@@ -1108,7 +1110,7 @@ void tic_device_free(tic_device *);
 /// Gets the product code of the device, which will be one of the TIC_PRODUCT_*
 /// macros.  If the device is NULL, returns 0 instead.
 TIC_API TIC_WARN_UNUSED
-uint32_t tic_device_get_product(const tic_device *);
+uint8_t tic_device_get_product(const tic_device *);
 
 /// Gets the full name of the device (e.g. "Tic USB Stepper Motor Controller
 /// T825") as an ASCII-encoded string.  The string will be valid at least as

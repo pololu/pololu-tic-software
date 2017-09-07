@@ -10,6 +10,7 @@ rec {
 
   win32 = build nixcrpkgs.win32;
   linux32 = build nixcrpkgs.linux32;
+  rpi = build nixcrpkgs.rpi;
 
   license_data = env: {
     commit = builtins.getEnv "commit";

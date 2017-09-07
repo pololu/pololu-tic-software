@@ -79,7 +79,7 @@ class main_window : public QMainWindow
 public:
   main_window(QWidget * parent = 0);
 
-  /** Stores a pointer to the main_controller object so that we can report events. **/
+  // Stores a pointer to the controller so we can send user input events.
   void set_controller(main_controller * controller);
 
   bootloader_window * open_bootloader_window();
@@ -95,37 +95,38 @@ public:
   void show_warning_message(std::string const & message);
   void show_info_message(std::string const & message);
 
-  /** Show an OK/Cancel dialog, return true if the user selects OK. */
+  // Show an OK/Cancel dialog, return true if the user selects OK.
   bool confirm(std::string const & question);
 
   void set_device_list_contents(std::vector<tic::device> const & device_list);
   void set_device_list_selected(tic::device const & device);
 
-  /** Sets the label that shows the connection status/error. */
+  // Sets the label that shows the connection status/error.
   void set_connection_status(std::string const & status, bool error);
 
-  /** Controls whether the main controls of the application are enabled or
-   * disabled. **/
+  // Controls whether the main controls of the application are enabled or
+  // disabled.
   void set_tab_pages_enabled(bool enabled);
 
-  void set_manual_target_box_enabled(bool enabled);
+  void set_manual_target_enabled(bool enabled);
   void set_deenergize_button_enabled(bool enabled);
   void set_resume_button_enabled(bool enabled);
 
-  /** Controls whether the apply settings action/button is enabled or
-   * disabled. */
+  // Controls whether the apply settings action/button is enabled or
+  // disabled.
   void set_apply_settings_enabled(bool enabled);
 
-  /** Controls whether the open and save settings file actions are enabled or disabled. */
+  // Controls whether the open and save settings file actions are enabled or
+  // disabled.
   void set_open_save_settings_enabled(bool enabled);
 
-  /** Controls whether the disconnect action is enabled or disabled. */
+  // Controls whether the disconnect action is enabled or disabled.
   void set_disconnect_enabled(bool enabled);
 
-  /** Controls whether the reload settings from device action is enabled. */
+  // Controls whether the reload settings from device action is enabled.
   void set_reload_settings_enabled(bool enabled);
 
-  /** Controls whether the restore defaults option is enabled. */
+  // Controls whether the restore defaults option is enabled.
   void set_restore_defaults_enabled(bool enabled);
 
   void set_device_name(std::string const & name, bool link_enabled);
@@ -169,6 +170,7 @@ public:
   void set_serial_baud_rate(uint32_t serial_baud_rate);
   void set_serial_device_number(uint8_t serial_device_number);
   void set_serial_crc_enabled(bool serial_crc_enabled);
+  void set_serial_response_delay(uint8_t serial_response_delay);
   void set_command_timeout(uint16_t command_timeout);
 
   void set_encoder_prescaler(uint32_t encoder_prescaler);
@@ -217,9 +219,9 @@ public:
   void set_motor_status_message(std::string const & message, bool stopped = true);
 
 private:
-  /** Helper method for setting the index of a combo box, given the desired
-   * uint8_t item value. Sets index of -1 for no selection if the specified
-   * value is not found. */
+  // Helper method for setting the index of a combo box, given the desired
+  // uint8_t item value. Sets index of -1 for no selection if the specified
+  // value is not found.
   void set_u8_combo_box(QComboBox * combo, uint8_t value);
   void set_spin_box(QSpinBox * box, int value);
   void set_double_spin_box(QDoubleSpinBox * spin, double value);
@@ -227,13 +229,15 @@ private:
 
   void update_manual_target_controls();
 
+  void center_at_startup_if_needed();
+
 protected:
-  /** This is called by Qt just before the window is shown for the first time,
-   * and is also called whenever the window becomes unminimized. */
+  // This is called by Qt just before the window is shown for the first time,
+  // and is also called whenever the window becomes unminimized.
   void showEvent(QShowEvent *) override;
 
-  /** This is called by Qt when the "close" slot is triggered, meaning that
-   * the user wants to close the window. */
+  // This is called by Qt when the "close" slot is triggered, meaning that
+  // the user wants to close the window.
   void closeEvent(QCloseEvent *) override;
 
 private slots:
@@ -276,6 +280,7 @@ private slots:
   void on_serial_baud_rate_value_editingFinished();
   void on_serial_device_number_value_valueChanged(int value);
   void on_serial_crc_enabled_check_stateChanged(int state);
+  void on_serial_response_delay_value_valueChanged(int value);
   void on_command_timeout_check_stateChanged(int state);
   void on_command_timeout_value_valueChanged(double value);
 
@@ -319,17 +324,17 @@ private slots:
   void on_never_sleep_check_stateChanged(int state);
   void on_vin_calibration_value_valueChanged(int value);
 
-  void on_upload_complete();
+  void upload_complete();
 
 private:
   bool start_event_reported = false;
 
-  /* We set this to true temporarily when programmatically setting the value
-   * of an input in order to suppress sending a spurious user-input event to
-   * the rest of the program. */
+  // We set this to true temporarily when programmatically setting the value of
+  // an input in order to suppress sending a spurious user-input event to the
+  // rest of the program.
   bool suppress_events = false;
 
-  QTimer * update_timer;
+  QTimer * update_timer = NULL;
 
   // These are low-level functions called in the constructor that set up the
   // GUI elements.
@@ -344,8 +349,12 @@ private:
   QWidget * setup_device_info_box();
   QWidget * setup_input_status_box();
   QWidget * setup_operation_status_box();
+  QLayout * setup_manual_target_layout();
   QWidget * setup_manual_target_box();
+  QWidget * setup_manual_target_widget();
+  QLayout * setup_errors_layout();
   QWidget * setup_errors_box();
+  QWidget * setup_errors_widget();
   QLayout * setup_error_table_layout();
 
   QWidget * setup_input_motor_settings_page_widget();
@@ -354,7 +363,9 @@ private:
   QWidget * setup_encoder_settings_box();
   QWidget * setup_conditioning_settings_box();
   QWidget * setup_scaling_settings_box();
+  QLayout * setup_motor_settings_layout();
   QWidget * setup_motor_settings_box();
+  QWidget * setup_motor_settings_widget();
 
   QWidget * setup_advanced_settings_page_widget();
   QWidget * setup_pin_config_box();
@@ -384,6 +395,9 @@ private:
   QMenu * help_menu;
   QAction * documentation_action;
   QAction * about_action;
+
+  // True if we are using the compact layout.
+  bool compact = false;
 
   QWidget * central_widget;
   QVBoxLayout * central_widget_layout;
@@ -455,10 +469,9 @@ private:
   uint8_t cached_input_state = 0;
   int32_t cached_input_after_scaling;
 
-  QGroupBox * manual_target_box;
-  QGridLayout * manual_target_box_layout;
+  QGroupBox * manual_target_box = NULL;
+  QWidget * manual_target_widget;
   QVBoxLayout * manual_target_mode_layout;
-  QVBoxLayout * manual_target_checks_layout;
 
   QRadioButton * manual_target_position_mode_radio;
   QRadioButton * manual_target_velocity_mode_radio;
@@ -484,9 +497,7 @@ private:
   QPushButton * halt_button;
   QPushButton * decelerate_button;
 
-  QGroupBox * errors_box;
-  QVBoxLayout * errors_box_layout;
-  QGridLayout * error_table_layout;
+  QGroupBox * errors_box = NULL;
   QLabel * errors_stopping_header_label;
   QLabel * errors_count_header_label;
   std::array<error_row, 32> error_rows;
@@ -511,6 +522,8 @@ private:
   QLabel * serial_device_number_label;
   QSpinBox * serial_device_number_value;
   QCheckBox * serial_crc_enabled_check;
+  QLabel * serial_response_delay_label;
+  QSpinBox * serial_response_delay_value;
   QCheckBox * command_timeout_check;
   QDoubleSpinBox * command_timeout_value;
 
@@ -549,8 +562,7 @@ private:
 
   InputWizard * input_wizard;
 
-  QGroupBox * motor_settings_box;
-  QGridLayout * motor_settings_box_layout;
+  QGroupBox * motor_settings_box = NULL;
   QCheckBox * invert_motor_direction_check;
   QLabel * speed_max_label;
   QSpinBox * speed_max_value;

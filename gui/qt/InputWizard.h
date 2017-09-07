@@ -20,9 +20,9 @@ public:
 
   void compute_from_samples(std::vector<uint16_t> const & samples);
 
-  /** Widens the range around the average, then shifts min and max in unison to
-    be equidistant from average (or as close to equidistant as possible if
-    limits don't allow). */
+  // Widens the range around the average, then shifts min and max in unison to
+  // be equidistant from average (or as close to equidistant as possible if
+  // limits don't allow).
   void widen_and_center_on_average(uint16_t range);
 
   uint16_t max = 0;
