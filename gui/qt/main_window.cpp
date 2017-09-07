@@ -1535,8 +1535,8 @@ void pin_config_row::on_analog_check_stateChanged(int state)
 #define INDENT(s) (QString("    ") + (s))
 #endif
 
-static void setup_read_only_text_field(QGridLayout * layout, int row, int from_col, int value_col_span,
-  QLabel ** label, QLabel ** value)
+static void setup_read_only_text_field(QGridLayout * layout, int row, int from_col,
+  int value_col_span, QLabel ** label, QLabel ** value)
 {
   QLabel * new_value = new QLabel();
   new_value->setTextInteractionFlags(Qt::TextSelectableByMouse);
