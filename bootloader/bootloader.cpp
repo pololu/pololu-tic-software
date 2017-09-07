@@ -1,6 +1,6 @@
-/* This file uses libusbp to talk to the bootloaders, and provides a
- * higher-level interface to application code that hides as many differences as
- * possible between the different bootloaders. */
+// Code for talking to the device's bootloader and doing firmware upgrades.
+
+// TODO: fix code style of this file and related files
 
 #include "bootloader.h"
 #include <cstring>

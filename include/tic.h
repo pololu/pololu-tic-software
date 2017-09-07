@@ -464,9 +464,11 @@ TIC_API
 bool tic_settings_get_input_averaging_enabled(const tic_settings *);
 
 /// Sets the input hysteresis setting.
+///
+/// This setting is described in the "Analog/RC input handling" section of the
+/// Tic user's guide.
 TIC_API
 void tic_settings_set_input_hysteresis(tic_settings *, uint16_t);
-// TODO: document this setting
 
 /// Gets the input hysteresis setting as described in
 /// tic_settings_set_input_hysteresis().

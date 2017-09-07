@@ -334,7 +334,7 @@ private:
   // rest of the program.
   bool suppress_events = false;
 
-  QTimer * update_timer;
+  QTimer * update_timer = NULL;
 
   // These are low-level functions called in the constructor that set up the
   // GUI elements.

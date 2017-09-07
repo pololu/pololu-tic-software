@@ -91,13 +91,15 @@ bootloader_window * main_window::open_bootloader_window()
 
 void main_window::set_update_timer_interval(uint32_t interval_ms)
 {
+  assert(update_timer);
   assert(interval_ms <= std::numeric_limits<int>::max());
   update_timer->setInterval(interval_ms);
 }
 
 void main_window::start_update_timer()
 {
-  update_timer->start(0);
+  assert(update_timer);
+  update_timer->start();
 }
 
 void main_window::show_error_message(std::string const & message)
@@ -915,7 +917,7 @@ void main_window::center_at_startup_if_needed()
   // manual_target_velocity_mode_radio, but then the Window would strangely
   // start in the lower right.
   auto env = QProcessEnvironment::systemEnvironment();
-  if (env.value("TICGUI_CENTER") == "Y")
+  if (env.value("TICGUI_CENTER") != "N")
   {
     setGeometry(
       QStyle::alignedRect(
