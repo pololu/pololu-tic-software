@@ -512,7 +512,7 @@ namespace tic
     {
     }
 
-    uint32_t get_product() const noexcept
+    uint8_t get_product() const noexcept
     {
       return tic_device_get_product(pointer);
     }
