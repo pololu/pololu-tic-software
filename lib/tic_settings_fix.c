@@ -85,7 +85,14 @@ static void tic_settings_fix_enums(tic_settings * settings, tic_string * warning
       TIC_DECAY_MODE_MIXED,
       TIC_DECAY_MODE_SLOW,
       TIC_DECAY_MODE_FAST,
+      TIC_DECAY_MODE_MIXED_25,
+      TIC_DECAY_MODE_MIXED_50,
+      TIC_DECAY_MODE_MIXED_75,
     };
+
+    // TODO: the set of available decay modes should depend on the product.
+    // And for T834, mixed should get automatically changed to mixed75 so
+    // we don't have to show two different options in the GUI that are the same.
 
     if (!enum_is_valid(mode, valid_decay_modes, 6))
     {

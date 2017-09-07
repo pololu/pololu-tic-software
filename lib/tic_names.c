@@ -45,6 +45,9 @@ const tic_name tic_decay_mode_names[] =
   { "mixed", TIC_DECAY_MODE_MIXED },
   { "slow", TIC_DECAY_MODE_SLOW },
   { "fast", TIC_DECAY_MODE_FAST },
+  { "mixed25", TIC_DECAY_MODE_MIXED_25 },
+  { "mixed50", TIC_DECAY_MODE_MIXED_50 },
+  { "mixed75", TIC_DECAY_MODE_MIXED_75 },
   { NULL, 0 },
 };
 
@@ -53,6 +56,9 @@ const tic_name tic_decay_mode_names_ui[] =
   { "Mixed", TIC_DECAY_MODE_MIXED },
   { "Slow", TIC_DECAY_MODE_SLOW },
   { "Fast", TIC_DECAY_MODE_FAST },
+  { "Mixed 25%", TIC_DECAY_MODE_MIXED_25 },
+  { "Mixed 50%", TIC_DECAY_MODE_MIXED_50 },
+  { "Mixed 75%", TIC_DECAY_MODE_MIXED_75 },
   { NULL, 0 },
 };
 

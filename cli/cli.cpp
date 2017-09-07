@@ -259,6 +259,18 @@ static uint8_t parse_arg_decay_mode(arg_reader & arg_reader)
   {
     return TIC_DECAY_MODE_FAST;
   }
+  else if (decay_str == "mixed25" || decay_str == "Mixed 25%")
+  {
+    return TIC_DECAY_MODE_MIXED_25;
+  }
+  else if (decay_str == "mixed50" || decay_str == "Mixed 50%")
+  {
+    return TIC_DECAY_MODE_MIXED_25;
+  }
+  else if (decay_str == "mixed75" || decay_str == "Mixed 75%")
+  {
+    return TIC_DECAY_MODE_MIXED_25;
+  }
   else
   {
     throw exception_with_exit_code(EXIT_BAD_ARGS,
