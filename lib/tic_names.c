@@ -179,14 +179,14 @@ const tic_name tic_pin_func_names[] =
   { NULL, 0 },
 };
 
-const char * tic_look_up_product_name_short(uint32_t product)
+const char * tic_look_up_product_name_short(uint8_t product)
 {
   const char * str = "";
   tic_code_to_name(tic_product_names_short, product, &str);
   return str;
 }
 
-const char * tic_look_up_product_name_ui(uint32_t product)
+const char * tic_look_up_product_name_ui(uint8_t product)
 {
   const char * str = "(Unknown)";
   tic_code_to_name(tic_product_names_ui, product, &str);

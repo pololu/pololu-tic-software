@@ -81,7 +81,7 @@ static void tic_settings_fix_enums(tic_settings * settings, tic_string * warning
   {
     uint8_t mode = tic_settings_get_decay_mode(settings);
 
-    uint8_t valid_decay_modes[3] = {
+    uint8_t valid_decay_modes[6] = {
       TIC_DECAY_MODE_MIXED,
       TIC_DECAY_MODE_SLOW,
       TIC_DECAY_MODE_FAST,
