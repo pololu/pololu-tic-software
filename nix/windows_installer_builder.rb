@@ -2,13 +2,6 @@ require 'fileutils'
 require 'pathname'
 include FileUtils
 
-# Make sure the user did not forget to run nix/build_installer.rb.
-['commit', 'nixcrpkgs_commit', 'nixpkgs_commit'].each do |var|
-  if ENV.fetch(var).empty?
-    raise "Required environment variable $#{var} is empty."
-  end
-end
-
 OutDir = Pathname(ENV.fetch('out'))
 PayloadDir = Pathname(ENV.fetch('payload'))
 LibusbpDir = Pathname(ENV.fetch('libusbp'))
@@ -20,52 +13,7 @@ cp_r PayloadDir, OutDir + 'payload'
 cp_r SrcDir + 'drivers', OutDir
 cp_r SrcDir + 'images', OutDir
 cp LibusbpDir + 'bin' + 'libusbp-install-helper-1.dll', OutDir
-
-File.open(OutDir + 'LICENSE.html', 'w') do |f|
-  f.puts <<EOF
-<!DOCTYPE html>
-<html>
-<head>
-<style>
-pre {
-  padding-left: 5em;
-  padding-bottom: 1em;
-  border-bottom: 1em solid #DDD;
-}
-</style>
-<meta charset="utf-8">
-<title>License Information</title>
-<body>
-<p>
-  This document contains the license information for this software release.
-</p>
-<h2>Source code</h2>
-<p>
-  Source code and instructions for building this software can be found in the
-  <a href="https://github.com/pololu/pololu-tic-software">pololu-tic-software</a> repository.
-</p>
-<p>
-  This release was built from
-  <a href="https://github.com/pololu/pololu-tic-software/tree/#{ENV.fetch('commit')}">
-  pololu-tic-software commit #{ENV.fetch('commit')}</a>,
-  <a href="https://github.com/pololu/nixcrpkgs/tree/#{ENV.fetch('nixcrpkgs_commit')}">
-  nixcrpkgs commit #{ENV.fetch('nixcrpkgs_commit')}</a>, and
-  <a href="https://github.com/nixos/nixpkgs/tree/#{ENV.fetch('nixpkgs_commit')}">
-  nixpkgs commit #{ENV.fetch('nixpkgs_commit')}</a>.
-</p>
-<p>
-  Notable library versions:
-</p>
-<ul>
-  <li>libusbp - #{ENV.fetch('libusbp_version')}
-  <li>qt - #{ENV.fetch('qt_version')}
-</ul>
-EOF
-
-  ENV.fetch('license_fragments').split(' ').each do |fragment|
-    f.puts File.read(fragment)
-  end
-end
+cp ENV.fetch('license'), Outdir + 'LICENSE.html'
 
 File.open(OutDir + 'app.wixproj', 'w') do |f|
   f.write <<EOF

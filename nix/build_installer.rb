@@ -8,11 +8,11 @@
 require 'pathname'
 
 if ARGV.empty?
-  $stderr.puts "usage: build_installer.rb <windows|linux|macos>"
+  $stderr.puts "usage: build_installer.rb <windows|linux32|rpi|macos>_installer"
   exit 1
 end
 
-os = ARGV.shift
+attr_name = ARGV.shift
 
 # Read in the NIX_PATH as a hash.
 nix_path = {}
@@ -38,5 +38,5 @@ env = {}
 env['commit'] = get_git_commit('.')
 env['nixcrpkgs_commit'] = get_git_commit(nix_path.fetch('nixcrpkgs'))
 env['nixpkgs_commit'] = get_git_commit(nix_path.fetch('nixpkgs'))
-cmd = "nix-build -A #{os}_installer"
+cmd = "nix-build -A #{attr_name}"
 exec(env, cmd)
