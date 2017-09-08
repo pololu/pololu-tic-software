@@ -8,7 +8,7 @@
 require 'pathname'
 
 if ARGV.empty?
-  $stderr.puts "usage: build_installer.rb <windows|linux32|rpi|macos>_installer"
+  $stderr.puts "usage: build_installer.rb <win32|linux32|rpi|macos>_installer"
   exit 1
 end
 

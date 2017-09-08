@@ -1,9 +1,11 @@
 rec {
   nixcrpkgs = import <nixcrpkgs>;
 
+  src = nixcrpkgs.filter ./.;
+
   build = env: env.make_derivation {
     builder = ./nix/builder.sh;
-    src = nixcrpkgs.filter ./.;
+    inherit src;
     cross_inputs = [ env.libusbp env.qt ];
     dejavu = (if env.os == "linux" then env.dejavu-fonts else null);
   };
@@ -31,10 +33,11 @@ rec {
   linux32 = build nixcrpkgs.linux32;
   rpi = build nixcrpkgs.rpi;
 
-  windows_installer = nixcrpkgs.win32.make_derivation {
-    name = "windows-installer";
+  win32_installer = nixcrpkgs.win32.make_derivation {
+    name = "win32-installer";
     builder.ruby = ./nix/windows_installer_builder.rb;
     payload = build nixcrpkgs.win32;
+    inherit src;
     libusbp = nixcrpkgs.win32.libusbp;
     license = build_license nixcrpkgs.win32;
   };

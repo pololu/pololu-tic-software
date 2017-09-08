@@ -13,7 +13,7 @@ cp_r PayloadDir, OutDir + 'payload'
 cp_r SrcDir + 'drivers', OutDir
 cp_r SrcDir + 'images', OutDir
 cp LibusbpDir + 'bin' + 'libusbp-install-helper-1.dll', OutDir
-cp ENV.fetch('license'), Outdir + 'LICENSE.html'
+cp ENV.fetch('license'), OutDir + 'LICENSE.html'
 
 File.open(OutDir + 'app.wixproj', 'w') do |f|
   f.write <<EOF
