@@ -37,19 +37,20 @@ rec {
     name = "win32-installer";
     builder.ruby = ./nix/windows_installer_builder.rb;
     payload = build nixcrpkgs.win32;
+    license = build_license nixcrpkgs.win32;
     inherit src;
     libusbp = nixcrpkgs.win32.libusbp;
-    license = build_license nixcrpkgs.win32;
   };
 
-  build_linux_installer = env:
+  build_linux_installer = env: env_name:
     env.make_derivation {
-      name = "linux-installer";
+      name = "${env_name}-installer";
       builder.ruby = ./nix/linux_installer_builder.rb;
       payload = build env;
       license = build_license env;
+      inherit src env_name;
     };
 
-  linux32_installer = build_linux_installer nixcrpkgs.linux32;
-  rpi_installer = build_linux_installer nixcrpkgs.linux32;
+  linux32_installer = build_linux_installer nixcrpkgs.linux32 "linux32";
+  rpi_installer = build_linux_installer nixcrpkgs.linux32 "rpi";
 }

@@ -8,7 +8,7 @@ LibusbpDir = Pathname(ENV.fetch('libusbp'))
 SrcDir = Pathname(ENV.fetch('src'))
 Version = File.read(PayloadDir + 'version.txt')
 
-mkdir ENV.fetch('out')
+mkdir OutDir
 cp_r PayloadDir, OutDir + 'payload'
 cp_r SrcDir + 'drivers', OutDir
 cp_r SrcDir + 'images', OutDir
