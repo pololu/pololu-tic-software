@@ -52,5 +52,5 @@ rec {
     };
 
   linux32_installer = build_linux_installer nixcrpkgs.linux32 "linux32";
-  rpi_installer = build_linux_installer nixcrpkgs.linux32 "rpi";
+  rpi_installer = build_linux_installer nixcrpkgs.rpi "rpi";
 }
