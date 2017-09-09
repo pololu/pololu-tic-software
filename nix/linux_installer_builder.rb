@@ -2,41 +2,20 @@ require 'fileutils'
 require 'pathname'
 include FileUtils
 
+ENV['PATH'] = ENV.fetch('_PATH')
+
 EnvName = ENV.fetch('env_name')
 OutDir = Pathname(ENV.fetch('out'))
 PayloadDir = Pathname(ENV.fetch('payload'))
 SrcDir = Pathname(ENV.fetch('src'))
 Version = File.read(PayloadDir + 'version.txt')
 
-StagingDir = OutDir + ('tic-linux')
+StagingDir = OutDir + 'pololu-tic'
 
 mkdir_p StagingDir
 cp_r Dir.glob(PayloadDir + 'bin' + '*'), StagingDir
 cp_r SrcDir + 'udev-rules' + '99-pololu.rules', StagingDir
 cp ENV.fetch('license'), StagingDir + 'LICENSE.html'
-
-File.open(StagingDir + 'README.txt', 'w') do |f|
-  f.puts <<EOF
-Pololu Tic Stepper Motor Controller Software #{Version} for #{EnvName}
-
-To install this software, we recommend opening up a terminal, navigating to this
-directory, and then running this command:
-
-  ./install.sh
-
-The install.sh script will install files and directories to the following
-locations on your system:
-
-  /usr/local/bin/pololu-tic/
-  /usr/local/bin/ticcmd
-  /usr/local/bin/ticgui
-  /etc/udev/99-pololu.rules
-
-For more information, see the Tic Stepper Motor Controller User's Guide:
-
-https://www.pololu.com/docs/0J71
-EOF
-end
 
 File.open(StagingDir + 'README.txt', 'w') do |f|
   f.puts <<EOF
@@ -77,3 +56,7 @@ end
 
 chmod_R 'u+w', StagingDir
 chmod 'u+x', StagingDir + 'install.sh'
+
+cd OutDir
+success = system("tar cJfv pololu-tic-#{Version}-#{EnvName}.tar.xz pololu-tic")
+raise "tar failed: error #{$?.exitstatus}" if !success
