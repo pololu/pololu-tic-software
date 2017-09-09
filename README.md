@@ -1,6 +1,6 @@
 # Tic Stepper Motor Controller software
 
-Version: 1.2.0<br>
+Version: 1.3.0<br>
 Release date: 2017-08-29<br>
 [www.pololu.com](https://www.pololu.com/)
 
@@ -19,6 +19,10 @@ from source.
 
 ## Version history
 
+- 1.3.0 (2017-09-08):
+  - Added support for building installers for Linux.
+  - ticgui: Added the compact layout.  Can be enabled with `TICGUI_COMPACT=Y`.
+  - ticgui: Center the window at startup.  Can be disabled with `TICGUI_CENTER=N`.
 - 1.2.0 (2017-08-28):
   - ticgui: Added support for the "Serial response delay" setting.
   - ticgui: Fixed how error messages at program startup are handled.  They are now shown after the window is displayed, which fixes a bug that caused the windows to start in the upper left corner with its title bar off the screen.
