@@ -10,6 +10,10 @@ rec {
     dejavu = (if env.os == "linux" then env.dejavu-fonts else null);
   };
 
+  win32 = build nixcrpkgs.win32;
+  linux-x86 = build nixcrpkgs.linux-x86;
+  linux-rpi = build nixcrpkgs.linux-rpi;
+
   build_license = env:
     let
       license_set =
@@ -21,17 +25,13 @@ rec {
       env.native.make_derivation {
         name = "license";
         builder.ruby = ./nix/license_builder.rb;
-        src = win32.src;
+        inherit src;
         commit = builtins.getEnv "commit";
         nixcrpkgs_commit = builtins.getEnv "nixcrpkgs_commit";
         nixpkgs_commit = builtins.getEnv "nixpkgs_commit";
         license_names = builtins.attrNames license_set;
         licenses = builtins.attrValues license_set;
       };
-
-  win32 = build nixcrpkgs.win32;
-  linux32 = build nixcrpkgs.linux32;
-  rpi = build nixcrpkgs.rpi;
 
   win32_installer = nixcrpkgs.win32.make_derivation {
     name = "win32-installer";
@@ -51,6 +51,10 @@ rec {
       inherit src env_name;
     };
 
-  linux32_installer = build_linux_installer nixcrpkgs.linux32 "linux32";
-  rpi_installer = build_linux_installer nixcrpkgs.rpi "rpi";
+  linux-x86_installer = build_linux_installer nixcrpkgs.linux-x86 "linux-x86";
+  linux-rpi_installer = build_linux_installer nixcrpkgs.linux-rpi "linux-rpi";
+
+  installers = nixcrpkgs.bundle {
+    inherit win32_installer linux-x86_installer linux-rpi_installer;
+  };
 }
