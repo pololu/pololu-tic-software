@@ -19,7 +19,7 @@ from source.
 
 ## Version history
 
-- 1.3.0 (2017-09-08):
+- 1.3.0 (2017-09-11):
   - Added support for building installers for Linux.
   - ticgui: Added the compact layout.  Can be enabled with `TICGUI_COMPACT=Y`.
   - ticgui: Center the window at startup.  Can be disabled with `TICGUI_CENTER=N`.
