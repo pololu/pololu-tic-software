@@ -6,9 +6,10 @@ instructions.
 
 ## Building from source on Linux with Nixcrpkgs
 
-The Windows version of this software can be cross-compiled on a Linux machine
-using [Nixcrpkgs](https://github.com/pololu/nixcrpkgs), a collection of tools
-for cross-compiling.  This is how we build our installers for Windows.
+This software can be cross-compiled on a Linux machine using
+[Nixcrpkgs](https://github.com/pololu/nixcrpkgs), a collection of tools for
+cross-compiling.  This is how we build our binary releases for Windows and
+Linux.
 
 To get started, you should first install [Nix, the purely functional
 package manager](http://nixos.org/nix/), on a Linux machine by following the
@@ -16,27 +17,30 @@ instructions on the Nix website.
 
 Next, download the latest version of
 [Nixcrpkgs](https://github.com/pololu/nixcrpkgs), a collection of tools for
-cross-compiling, and add nixcrpkgs to your `NIX_PATH` environment variable.  In
-these instructions, we will download it to your home directory, but you could
-put it somewhere else if you want.
+cross-compiling, and add nixcrpkgs to your `NIX_PATH` environment variable.  You
+will need to have [git](https://git-scm.com/) installed.  (If you don't want to
+install git, you can download Nixcrpkgs as a ZIP file from GitHub instead.)
 
-    cd ~
-    wget https://github.com/pololu/nixcrpkgs/archive/master.tar.gz
-    tar -xf master.tar.gz
-    mv nixcrpkgs-master nixcrpkgs
+    git clone https://github.com/pololu/nixcrpkgs
     export NIX_PATH=$NIX_PATH:nixcrpkgs=$(pwd)/nixcrpkgs
 
 Now run these commands to download this software and build it:
 
-    wget https://github.com/pololu/pololu-tic-software/archive/master.tar.gz
-    tar -xzf master.tar.gz
-    cd pololu-tic-software-master
-    nix-build -A win32
+    git clone https://github.com/pololu/pololu-tic-software tic
+    cd tic
+    nix-build -A linux-x86
 
-At this point, `nix-build` will start running the build procedure defined in
-`default.nix`.  The first time you run this command, it will take a while to
-complete because `nix-build` has to build the cross-compilers and libraries
-defined in Nixcrpkgs that are needed for this software.
+The name `linux-x86` in the command above is the name of an attribute in the set
+defined in `default.nix`, which specifies that we want to build the architecture
+for a Linux machine running on an i686 processor.  You can specify `win32`
+instead to get a version for Windows, and you can look in `default.nix` to see
+the names of other supported platforms.
+
+The first time you build the software with this method, because it involves
+building a GCC cross-compiler and Qt from source, it will take a lot of time,
+memory, and disk space.  Subsequent builds will usually be faster because the
+the compiled Qt and GCC versions can be reused if you have not changed the
+recipes for building them.
 
 Once the build is completed, there should be a symbolic link in the current
 directory named `result` that points to the compiled software.
@@ -44,19 +48,19 @@ directory named `result` that points to the compiled software.
 
 ## Building from source on Linux (for Linux)
 
-You will need to install tar, wget, gcc, make, CMake, libudev, and Qt 5.  Most
+You will need to install git, gcc, make, CMake, libudev, and Qt 5.  Most
 Linux distributions come with a package manager that you can use to install
 these dependencies.
 
 On Ubuntu, Raspbian, and other Debian-based distributions, you can install the
 dependencies by running:
 
-    sudo apt-get install build-essential tar wget cmake libudev-dev qtbase5-dev
+    sudo apt-get install build-essential git cmake libudev-dev qtbase5-dev
 
 On Arch Linux, libudev should already be installed, and you can install the
 other dependencies by running:
 
-    pacman -Sy base-devel tar wget cmake qt5-base
+    pacman -Sy base-devel git cmake qt5-base
 
 For other Linux distributions, consult the documentation of your distribution
 for information about how to install these dependencies.
@@ -65,10 +69,11 @@ This software depends on the Pololu USB Library version 1.x.x (libusbp-1).  Run
 the commands below to download, compile, and install the latest version of that
 library on your computer.
 
-    wget https://github.com/pololu/libusbp/archive/v1-latest.tar.gz
-    tar -xf v1-latest.tar.gz
-    cd libusbp-v1-latest
-    cmake .
+    git clone https://github.com/pololu/libusbp
+    cd libusbp
+    mkdir build
+    cd build
+    cmake ..
     make
     sudo make install
 
@@ -81,15 +86,17 @@ retry the instructions above.
 
 Run these commands to download, build, and install this software:
 
-    wget https://github.com/pololu/pololu-tic-software/archive/master.tar.gz
-    tar -xzf master.tar.gz
-    cd pololu-tic-software-master
-    cmake .
+    git clone https://github.com/pololu/pololu-tic-software tic
+    cd tic
+    mkdir build
+    cd build
+    cmake ..
     make
     sudo make install
 
 You will need to install a udev rule to give non-root users permission to access
-Pololu USB devices. Run this command:
+Pololu USB devices. Run this command from the top-level directory of this
+repository:
 
     sudo cp udev-rules/99-pololu.rules /etc/udev/rules.d/
 
@@ -130,7 +137,7 @@ Windows and 64-bit (x86_64) Windows.
 
 Run this command to install the required development tools:
 
-    pacman -S base-devel tar mingw-w64-i686-{toolchain,cmake,tinyxml2,qt5}
+    pacman -S base-devel git mingw-w64-i686-{toolchain,cmake,tinyxml2,qt5}
 
 If pacman prompts you to enter a selection of packages to install, just press
 enter to install all of the packages.
@@ -139,10 +146,11 @@ This software depends on the Pololu USB Library version 1.x.x (libusbp-1).  Run
 the commands below to download, compile, and install the latest version of that
 library into your MSYS2 environment.
 
-    wget https://github.com/pololu/libusbp/archive/v1-latest.tar.gz
-    tar -xzf v1-latest.tar.gz
-    cd libusbp-v1-latest
-    MSYS2_ARG_CONV_EXCL=- cmake . -G"MSYS Makefiles" -DCMAKE_INSTALL_PREFIX=$MINGW_PREFIX
+    git clone https://github.com/pololu/libusbp
+    cd libusbp
+    mkdir build
+    cd build
+    MSYS2_ARG_CONV_EXCL=- cmake .. -G"MSYS Makefiles" -DCMAKE_INSTALL_PREFIX=$MINGW_PREFIX
     make install DESTDIR=/
 
 You can test to see if libusbp-1 was installed correctly by running
@@ -154,10 +162,11 @@ retry the instructions above.
 
 Run these commands to build this software and install it:
 
-    wget https://github.com/pololu/pololu-tic-software/archive/master.tar.gz
-    tar -xzf master.tar.gz
-    cd pololu-tic-software-master
-    MSYS2_ARG_CONV_EXCL=- cmake . -G"MSYS Makefiles" -DCMAKE_INSTALL_PREFIX=$MINGW_PREFIX
+    git clone https://github.com/pololu/pololu-tic-software tic
+    cd tic
+    mkdir build
+    cd build
+    MSYS2_ARG_CONV_EXCL=- cmake .. -G"MSYS Makefiles" -DCMAKE_INSTALL_PREFIX=$MINGW_PREFIX
     make install DESTDIR=/
 
 You should now be able to run the command-line utility by running `ticcmd` in
@@ -171,16 +180,17 @@ First, install [Homebrew](http://brew.sh/).
 
 Then use brew to install the dependencies:
 
-    brew install pkg-config wget cmake tinyxml2 qt5
+    brew install pkg-config cmake tinyxml2 qt5
 
 This software depends on the Pololu USB Library version 1.x.x (libusbp-1).  Run
 the commands below to download, compile, and install the latest version of that
 library on your computer.
 
-    wget https://github.com/pololu/libusbp/archive/v1-latest.tar.gz
-    tar -xzf v1-latest.tar.gz
-    cd libusbp-v1-latest
-    cmake .
+    git clone https://github.com/pololu/libusbp
+    cd libusbp
+    mkdir build
+    cd build
+    cmake ..
     make
     sudo make install
 
@@ -193,15 +203,14 @@ retry the instructions above.
 
 Run these commands to build this software and install it:
 
-    wget https://github.com/pololu/pololu-tic-software/archive/master.tar.gz
-    tar -xzf master.tar.gz
-    cd pololu-tic-software-master
-    cmake . -DCMAKE_PREFIX_PATH=$(brew --prefix qt5)
+    git clone https://github.com/pololu/pololu-tic-software tic
+    cd tic
+    mkdir build
+    cd build
+    cmake .. -DCMAKE_PREFIX_PATH=$(brew --prefix qt5)
     make
     sudo make install
 
 You should now be able to run the command-line utility by running `ticcmd` in
 your shell, and you should be able to start the graphical configuration utility
 by running `ticgui`.
-
-
