@@ -48,9 +48,12 @@ directory named `result` that points to the compiled software.
 
 ## Building from source on Linux (for Linux)
 
-You will need to install git, gcc, make, CMake, libudev, and Qt 5.  Most
-Linux distributions come with a package manager that you can use to install
-these dependencies.
+Another way to build for Linux is to use the development tools provided by your
+Linux distribution.  You will need to install git, gcc, make, CMake, libudev,
+and Qt 5.  Most Linux distributions come with a package manager that you can use
+to install these dependencies.  Note that if you use this method, the
+executables you build will most likely depend on a plethora of shared libraries
+from your Linux distribution.
 
 On Ubuntu, Raspbian, and other Debian-based distributions, you can install the
 dependencies by running:
