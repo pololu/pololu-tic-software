@@ -15,7 +15,7 @@ To get started, you should first install [Nix, the purely functional
 package manager](http://nixos.org/nix/), on a Linux machine by following the
 instructions on the Nix website.
 
-Next, download the latest version of
+Next, run the comamnds below to download the latest version of
 [Nixcrpkgs](https://github.com/pololu/nixcrpkgs), a collection of tools for
 cross-compiling, and add nixcrpkgs to your `NIX_PATH` environment variable.  You
 will need to have [git](https://git-scm.com/) installed.  (If you don't want to
@@ -31,7 +31,7 @@ Now run these commands to download this software and build it:
     nix-build -A linux-x86
 
 The name `linux-x86` in the command above is the name of an attribute in the set
-defined in `default.nix`, which specifies that we want to build the architecture
+defined in `default.nix`, which specifies that we want to build the software
 for a Linux machine running on an i686 processor.  You can specify `win32`
 instead to get a version for Windows, and you can look in `default.nix` to see
 the names of other supported platforms.
@@ -69,7 +69,7 @@ This software depends on the Pololu USB Library version 1.x.x (libusbp-1).  Run
 the commands below to download, compile, and install the latest version of that
 library on your computer.
 
-    git clone https://github.com/pololu/libusbp
+    git clone https://github.com/pololu/libusbp -b v1-latest
     cd libusbp
     mkdir build
     cd build
@@ -131,9 +131,7 @@ download, install, and update your MSYS2 environment.  In particular, be sure to
 update your installed packages.
 
 Next, start a shell by selecting "MinGW-w64 Win32 Shell" from your Start menu or
-running `mingw32.exe`.  This is the right shell to use for building 32-bit
-Windows software.  The resulting software should work on both 32-bit (i686)
-Windows and 64-bit (x86_64) Windows.
+running `mingw32.exe`.
 
 Run this command to install the required development tools:
 
@@ -146,7 +144,7 @@ This software depends on the Pololu USB Library version 1.x.x (libusbp-1).  Run
 the commands below to download, compile, and install the latest version of that
 library into your MSYS2 environment.
 
-    git clone https://github.com/pololu/libusbp
+    git clone https://github.com/pololu/libusbp -b v1-latest
     cd libusbp
     mkdir build
     cd build
@@ -186,7 +184,7 @@ This software depends on the Pololu USB Library version 1.x.x (libusbp-1).  Run
 the commands below to download, compile, and install the latest version of that
 library on your computer.
 
-    git clone https://github.com/pololu/libusbp
+    git clone https://github.com/pololu/libusbp -b v1-latest
     cd libusbp
     mkdir build
     cd build
