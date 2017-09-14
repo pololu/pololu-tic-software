@@ -114,6 +114,8 @@ static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings
   // for TX and RX don't set the pull-up bit, so it would be bad to complain to
   // the user about that.
 
+  uint8_t product = tic_settings_get_product(settings);
+
   uint8_t control_mode = tic_settings_get_control_mode(settings);
 
   bool speed_control_mode = false;
@@ -375,10 +377,11 @@ static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings
 
   {
     uint32_t current = tic_settings_get_current_limit(settings);
+    uint32_t max_current = tic_get_max_allowed_current(product);
 
-    if (current > TIC_MAX_ALLOWED_CURRENT)
+    if (current > max_current)
     {
-      current = TIC_MAX_ALLOWED_CURRENT;
+      current = max_current;
       tic_sprintf(warnings,
         "Warning: The current limit is too high "
         "so it will be lowered to %u mA.\n", current);

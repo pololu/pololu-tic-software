@@ -1440,6 +1440,18 @@ TIC_API TIC_WARN_UNUSED
 tic_error * tic_get_debug_data(tic_handle *, uint8_t * data, size_t * size);
 /// \endcond
 
+
+//// Miscellaneous
+
+/// Gets the maximum allowed current limit setting for the specified Tic
+/// product (one the TIC_PRODUCT_* macros), in milliamps.
+///
+/// If you try to set a current limit higher than this, the Tic's firmware will
+/// adjust it down because of of hardware limitations.
+TIC_API TIC_WARN_UNUSED
+uint32_t tic_get_max_allowed_current(uint8_t product);
+
+
 #ifdef __cplusplus
 }
 #endif

@@ -476,14 +476,18 @@ static void print_list(device_selector & selector)
 
 static void set_current_limit_after_warning(device_selector & selector, uint32_t current_limit)
 {
-  if (current_limit > TIC_MAX_ALLOWED_CURRENT)
+  tic::handle handle = ::handle(selector);
+
+  uint32_t max_current = tic_get_max_allowed_current(handle.get_device().get_product());
+  if (current_limit > max_current)
   {
-    current_limit = TIC_MAX_ALLOWED_CURRENT;
+    current_limit = max_current;
     std::cerr
       << "Warning: The current limit was too high "
       << "so it will be lowered to " << current_limit << " mA." << std::endl;
   }
-  handle(selector).set_current_limit(current_limit);
+
+  handle.set_current_limit(current_limit);
 }
 
 static void get_status(device_selector & selector, bool full_output)

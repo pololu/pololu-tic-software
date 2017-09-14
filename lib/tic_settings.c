@@ -186,8 +186,9 @@ uint32_t tic_settings_achievable_current_limit(const tic_settings * settings,
   uint32_t current_limit)
 {
   if (settings == NULL) { return 0; }
-  uint8_t code = tic_current_limit_to_code(current_limit);
-  return tic_current_limit_from_code(code);
+  uint8_t product = tic_settings_get_product(settings);
+  uint8_t code = tic_current_limit_to_code(product, current_limit);
+  return tic_current_limit_from_code(product, code);
 }
 
 void tic_settings_set_product(tic_settings * settings, uint8_t product)
