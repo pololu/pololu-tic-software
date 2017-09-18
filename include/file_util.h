@@ -71,7 +71,7 @@ namespace
     return file;
   }
 
-  inline std::string write_string_to_file(const std::string & filename,
+  inline void write_string_to_file(const std::string & filename,
     const std::string & contents)
   {
     std::ofstream file;
