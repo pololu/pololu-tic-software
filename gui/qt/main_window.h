@@ -1,5 +1,7 @@
 #pragma once
 
+#include <array>
+
 #include "tic.hpp"
 
 #include "bootloader_window.h"
