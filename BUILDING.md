@@ -81,6 +81,7 @@ library on your computer.
     cmake ..
     make
     sudo make install
+    cd ../..
 
 You can test to see if libusbp-1 was installed correctly by running
 `pkg-config libusbp-1 --cflags`,
@@ -98,12 +99,13 @@ Run these commands to download, build, and install this software:
     cmake ..
     make
     sudo make install
+    cd ../..
 
 You will need to install a udev rule to give non-root users permission to access
 Pololu USB devices. Run this command from the top-level directory of this
 repository:
 
-    sudo cp udev-rules/99-pololu.rules /etc/udev/rules.d/
+    sudo cp tic/udev-rules/99-pololu.rules /etc/udev/rules.d/
 
 You should now be able to run the command-line utility by running `ticcmd` in
 your shell, and you should be able to start the graphical configuration utility
@@ -155,6 +157,7 @@ library into your MSYS2 environment.
     cd build
     MSYS2_ARG_CONV_EXCL=- cmake .. -G"MSYS Makefiles" -DCMAKE_INSTALL_PREFIX=$MINGW_PREFIX
     make install DESTDIR=/
+    cd ../..
 
 You can test to see if libusbp-1 was installed correctly by running
 `pkg-config libusbp-1 --cflags`,
@@ -171,6 +174,7 @@ Run these commands to build this software and install it:
     cd build
     MSYS2_ARG_CONV_EXCL=- cmake .. -G"MSYS Makefiles" -DCMAKE_INSTALL_PREFIX=$MINGW_PREFIX
     make install DESTDIR=/
+    cd ../..
 
 You should now be able to run the command-line utility by running `ticcmd` in
 your shell, and you should be able to start the graphical configuration utility
@@ -196,6 +200,7 @@ library on your computer.
     cmake ..
     make
     sudo make install
+    cd ../..
 
 You can test to see if libusbp-1 was installed correctly by running
 `pkg-config libusbp-1 --cflags`,
@@ -213,6 +218,7 @@ Run these commands to build this software and install it:
     cmake .. -DCMAKE_PREFIX_PATH=$(brew --prefix qt5)
     make
     sudo make install
+    cd ../..
 
 You should now be able to run the command-line utility by running `ticcmd` in
 your shell, and you should be able to start the graphical configuration utility
