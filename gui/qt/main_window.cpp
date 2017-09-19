@@ -2707,9 +2707,8 @@ QLayout * main_window::setup_motor_settings_layout()
     decay_mode_value->addItem("Mixed", TIC_DECAY_MODE_MIXED);
     decay_mode_value->addItem("Slow", TIC_DECAY_MODE_SLOW);
     decay_mode_value->addItem("Fast", TIC_DECAY_MODE_FAST);
-    decay_mode_value->addItem("Mixed 25%", TIC_DECAY_MODE_MIXED_25);
-    decay_mode_value->addItem("Mixed 50%", TIC_DECAY_MODE_MIXED_50);
-    decay_mode_value->addItem("Mixed 75%", TIC_DECAY_MODE_MIXED_75);
+    decay_mode_value->addItem("Mode 3", TIC_DECAY_MODE_MODE3);
+    decay_mode_value->addItem("Mode 4", TIC_DECAY_MODE_MODE4);
     // TODO: the set of available decay modes needs to depend on the product
     decay_mode_label = new QLabel();
     decay_mode_label->setBuddy(decay_mode_value);

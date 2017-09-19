@@ -45,8 +45,9 @@ tic_error * tic_settings_to_string(const tic_settings * settings, char ** string
   tic_sprintf(&str, "# Pololu Tic USB Stepper Controller settings file.\n");
   tic_sprintf(&str, "# " DOCUMENTATION_URL "\n");
 
+  uint8_t product = tic_settings_get_product(settings);
+
   {
-    uint8_t product = tic_settings_get_product(settings);
     const char * product_str = tic_look_up_product_name_short(product);
     tic_sprintf(&str, "product: %s\n", product_str);
   }
@@ -267,16 +268,16 @@ tic_error * tic_settings_to_string(const tic_settings * settings, char ** string
 
   {
     uint8_t mode = tic_settings_get_step_mode(settings);
-    const char * mode_str = "";
-    tic_code_to_name(tic_step_mode_names, mode, &mode_str);
-    tic_sprintf(&str, "step_mode: %s\n", mode_str);
+    const char * name = "";
+    tic_code_to_name(tic_step_mode_names, mode, &name);
+    tic_sprintf(&str, "step_mode: %s\n", name);
   }
 
   {
     uint8_t mode = tic_settings_get_decay_mode(settings);
-    const char * mode_str = "";
-    tic_code_to_name(tic_decay_mode_names, mode, &mode_str);
-    tic_sprintf(&str, "decay_mode: %s\n", mode_str);
+    const char * name;
+    tic_look_up_decay_mode_name(mode, product, TIC_NAME_SNAKE_CASE, &name);
+    tic_sprintf(&str, "decay_mode: %s\n", name);
   }
 
   {

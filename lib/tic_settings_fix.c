@@ -85,9 +85,8 @@ static void tic_settings_fix_enums(tic_settings * settings, tic_string * warning
       TIC_DECAY_MODE_MIXED,
       TIC_DECAY_MODE_SLOW,
       TIC_DECAY_MODE_FAST,
-      TIC_DECAY_MODE_MIXED_25,
-      TIC_DECAY_MODE_MIXED_50,
-      TIC_DECAY_MODE_MIXED_75,
+      TIC_DECAY_MODE_MODE3,
+      TIC_DECAY_MODE_MODE4,
     };
 
     // TODO: the set of available decay modes should depend on the product.

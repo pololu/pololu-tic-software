@@ -247,35 +247,17 @@ static uint8_t parse_arg_step_mode(arg_reader & arg_reader)
 static uint8_t parse_arg_decay_mode(arg_reader & arg_reader)
 {
   std::string decay_str = parse_arg_string(arg_reader);
-  if (decay_str == "mixed" || decay_str == "Mixed")
-  {
-    return TIC_DECAY_MODE_MIXED;
-  }
-  else if (decay_str == "slow" || decay_str == "Slow")
-  {
-    return TIC_DECAY_MODE_SLOW;
-  }
-  else if (decay_str == "fast" || decay_str == "Fast")
-  {
-    return TIC_DECAY_MODE_FAST;
-  }
-  else if (decay_str == "mixed25" || decay_str == "Mixed 25%")
-  {
-    return TIC_DECAY_MODE_MIXED_25;
-  }
-  else if (decay_str == "mixed50" || decay_str == "Mixed 50%")
-  {
-    return TIC_DECAY_MODE_MIXED_25;
-  }
-  else if (decay_str == "mixed75" || decay_str == "Mixed 75%")
-  {
-    return TIC_DECAY_MODE_MIXED_25;
-  }
-  else
+
+  uint8_t code;
+
+  if (!tic_look_up_decay_mode_code(decay_str.c_str(),
+      0, TIC_NAME_UI | TIC_NAME_SNAKE_CASE, &code))
   {
     throw exception_with_exit_code(EXIT_BAD_ARGS,
       "The decay mode specified is invalid.");
   }
+
+  return code;
 }
 
 static arguments parse_args(int argc, char ** argv)

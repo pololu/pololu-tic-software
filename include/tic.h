@@ -95,7 +95,7 @@ extern "C" {
 void tic_string_free(char *);
 
 
-// Name lookup //////////////////////////////////////////////////////////////////
+// Simple name lookup ///////////////////////////////////////////////////////////
 
 /// Looks up a short code string without spaces representing the product.  The
 /// product argument should be one of the TIC_PRODUCT_* macros, but if it is
@@ -117,6 +117,8 @@ const char * tic_look_up_product_name_ui(uint8_t product);
 TIC_API
 const char * tic_look_up_error_name_ui(uint32_t error);
 
+/// Note: This function is deprecated.  See tic_look_up_decay_mode_name().
+///
 /// Looks up a user-friendly string corresponding to the specified decay mode, e.g. "Mixed".
 /// The decay_mode argument should be one of the TIC_DECAY_MODE_* macros, but if
 /// it is not, this function returns "(Unknown)".  The returned string will
@@ -169,6 +171,68 @@ const char * tic_look_up_pin_state_name_ui(uint8_t pin_state);
 /// be freed.
 TIC_API
 const char * tic_look_up_planning_mode_name_ui(uint8_t planning_mode);
+
+
+// Advanced name/code lookup ////////////////////////////////////////////////////
+
+#define TIC_NAME_UI 1
+#define TIC_NAME_SNAKE_CASE 2
+
+/// Looks up a string corresponding to the specified decay mode.
+///
+/// The `decay_mode` argument should be one of the TIC_DECAY_MODE_* macros that is
+/// valid for the specified product.
+///
+/// The `product` argument should be the TIC_PRODUCT_* macro of the product you
+/// are using.  If you do not know which product you are using, specify 0 to get
+/// generic names.
+///
+/// The `flags` argument should be an inclusive OR of some subset of the
+/// following flags:
+///
+/// - `TIC_NAME_UI` to retrieve a UI-style name (e.g. "Mixed 50%").
+/// - `TIC_NAME_SNAKE_CASE` to retrieve a snake_case name (e.g. "mixed50").
+///
+/// If no name style is specified, `TIC_NAME_UI` is assumed.
+///
+/// The `name` argument should be a pointer to a variable to receive the name
+/// string, or NULL.  If it is not NULL, this function uses the pointer to
+/// return a pointer to the name string to the caller.  The returned string is
+/// valid indefinitely, and should not be freed.  The string will be "(Unknown)"
+/// (UI-style) or "" (snake-case) if the function failed.
+///
+/// If this function succeeds, it returns true.  Otherwise, it returns false.
+///
+/// See also tic_look_up_decay_mode_code().
+TIC_API
+bool tic_look_up_decay_mode_name(uint8_t decay_mode,
+  uint8_t product, uint32_t flags, const char ** name);
+
+/// Looks up the the decay mode corresponding to the specified input string.
+///
+/// The `name` argument should be a null-terminated string.
+///
+/// The `product` argument should be the TIC_PRODUCT_* macro of the product you
+/// are using.  If you do not know which product you are using, specify 0 to
+/// allow any decay mode name for any product.
+///
+/// The `flags` argument should be an inclusive OR of some subset of the
+/// following flags:
+///
+/// - `TIC_NAME_UI` to allow UI-style names (e.g. "Mixed 50%").
+/// - `TIC_NAME_SNAKE_CASE` to allow snake_case names (e.g. "mixed50").
+///
+/// The `code` argument should be a pointer to a variable to receive the code,
+/// or NULL.  If it is not NULL, this function uses the pointer to return the
+/// decay mode code to the caller.  If the function fails, the returned code
+/// will be 0.
+///
+/// If this function succeeds, it returns true.  Otherwise, it returns false.
+///
+/// See also tic_look_up_decay_mode_name().
+TIC_API
+bool tic_look_up_decay_mode_code(const char * name,
+  uint8_t product, uint32_t flags, uint8_t * code);
 
 
 // tic_error ////////////////////////////////////////////////////////////////////

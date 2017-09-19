@@ -80,6 +80,8 @@ void print_status(const tic::variables & vars,
   // The output here is YAML so that people can more easily write scripts that
   // use it.
 
+  uint8_t product = tic_settings_get_product(settings.get_pointer());
+
   std::cout << std::left << std::setfill(' ');
 
   std::cout << left_column << "Name: "
@@ -206,9 +208,9 @@ void print_status(const tic::variables & vars,
       << vars.get_current_limit() << " mA"
       << std::endl;
 
-    std::cout << left_column << "Decay mode: "
-      << tic_look_up_decay_mode_name_ui(vars.get_decay_mode())
-      << std::endl;
+    const char * decay_name;
+    tic_look_up_decay_mode_name(vars.get_decay_mode(), product, 0, &decay_name);
+    std::cout << left_column << "Decay mode: " << decay_name << std::endl;
   }
 
   std::cout << std::endl;

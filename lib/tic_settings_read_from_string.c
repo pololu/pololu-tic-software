@@ -563,8 +563,8 @@ static tic_error * apply_string_pair(tic_settings * settings,
   }
   else if (!strcmp(key, "decay_mode"))
   {
-    uint32_t decay_mode;
-    if (!tic_name_to_code(tic_decay_mode_names, value, &decay_mode))
+    uint8_t decay_mode;
+    if (!tic_look_up_decay_mode_code(value, 0, TIC_NAME_SNAKE_CASE, &decay_mode))
     {
       return tic_error_create("Invalid decay_mode value.");
     }

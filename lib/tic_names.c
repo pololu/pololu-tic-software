@@ -40,25 +40,59 @@ const tic_name tic_error_names_ui[] =
   { NULL, 0 },
 };
 
-const tic_name tic_decay_mode_names[] =
-{
-  { "mixed", TIC_DECAY_MODE_MIXED },
-  { "slow", TIC_DECAY_MODE_SLOW },
-  { "fast", TIC_DECAY_MODE_FAST },
-  { "mixed25", TIC_DECAY_MODE_MIXED_25 },
-  { "mixed50", TIC_DECAY_MODE_MIXED_50 },
-  { "mixed75", TIC_DECAY_MODE_MIXED_75 },
-  { NULL, 0 },
-};
-
-const tic_name tic_decay_mode_names_ui[] =
+const tic_name tic_decay_mode_names_generic_ui[] =
 {
   { "Mixed", TIC_DECAY_MODE_MIXED },
   { "Slow", TIC_DECAY_MODE_SLOW },
   { "Fast", TIC_DECAY_MODE_FAST },
-  { "Mixed 25%", TIC_DECAY_MODE_MIXED_25 },
-  { "Mixed 50%", TIC_DECAY_MODE_MIXED_50 },
-  { "Mixed 75%", TIC_DECAY_MODE_MIXED_75 },
+  { "Mode 3", TIC_DECAY_MODE_MODE3 },
+  { "Mode 4", TIC_DECAY_MODE_MODE4 },
+  { NULL, 0 },
+};
+
+const tic_name tic_decay_mode_names_t825_ui[] =
+{
+  { "Mixed", TIC_DECAY_MODE_T825_MIXED },
+  { "Slow", TIC_DECAY_MODE_T825_SLOW },
+  { "Fast", TIC_DECAY_MODE_T825_FAST },
+  { NULL, 0 },
+};
+
+const tic_name tic_decay_mode_names_t834_ui[] =
+{
+  { "Slow", TIC_DECAY_MODE_T834_SLOW },
+  { "Mixed 25%", TIC_DECAY_MODE_T834_MIXED25 },
+  { "Mixed 50%", TIC_DECAY_MODE_T834_MIXED50 },
+  { "Mixed 75%", TIC_DECAY_MODE_T834_MIXED75 },
+  { "Fast", TIC_DECAY_MODE_T834_FAST },
+  { NULL, 0 },
+};
+
+const tic_name tic_decay_mode_names_generic_snake[] =
+{
+  { "mixed", TIC_DECAY_MODE_MIXED },
+  { "slow", TIC_DECAY_MODE_SLOW },
+  { "fast", TIC_DECAY_MODE_FAST },
+  { "mode3", TIC_DECAY_MODE_MODE3 },
+  { "mode4", TIC_DECAY_MODE_MODE4 },
+  { NULL, 0 },
+};
+
+const tic_name tic_decay_mode_names_t825_snake[] =
+{
+  { "mixed", TIC_DECAY_MODE_T825_MIXED },
+  { "slow", TIC_DECAY_MODE_T825_SLOW },
+  { "fast", TIC_DECAY_MODE_T825_FAST },
+  { NULL, 0 },
+};
+
+const tic_name tic_decay_mode_names_t834_snake[] =
+{
+  { "slow", TIC_DECAY_MODE_T834_SLOW },
+  { "mixed25", TIC_DECAY_MODE_T834_MIXED25 },
+  { "mixed50", TIC_DECAY_MODE_T834_MIXED50 },
+  { "mixed75", TIC_DECAY_MODE_T834_MIXED75 },
+  { "fast", TIC_DECAY_MODE_T834_FAST },
   { NULL, 0 },
 };
 
@@ -203,7 +237,7 @@ const char * tic_look_up_error_name_ui(uint32_t error)
 const char * tic_look_up_decay_mode_name_ui(uint8_t decay_mode)
 {
   const char * str = "(Unknown)";
-  tic_code_to_name(tic_decay_mode_names_ui, decay_mode, &str);
+  tic_code_to_name(tic_decay_mode_names_generic_ui, decay_mode, &str);
   return str;
 }
 
@@ -249,19 +283,115 @@ const char * tic_look_up_planning_mode_name_ui(uint8_t planning_mode)
   return str;
 }
 
+bool tic_look_up_decay_mode_name(uint8_t decay_mode,
+  uint8_t product, uint32_t flags, const char ** name)
+{
+  const tic_name * name_table = NULL;
+
+  if (flags & TIC_NAME_SNAKE_CASE)
+  {
+    if (name) { *name = ""; }
+
+    switch (product)
+    {
+    case 0: name_table = tic_decay_mode_names_generic_snake; break;
+    case TIC_PRODUCT_T825: name_table = tic_decay_mode_names_t825_snake; break;
+    case TIC_PRODUCT_T834: name_table = tic_decay_mode_names_t834_snake; break;
+    }
+  }
+  else
+  {
+    if (name) { *name = "(Unknown)"; }
+
+    switch (product)
+    {
+    case 0: name_table = tic_decay_mode_names_generic_ui; break;
+    case TIC_PRODUCT_T825: name_table = tic_decay_mode_names_t825_ui; break;
+    case TIC_PRODUCT_T834: name_table = tic_decay_mode_names_t834_ui; break;
+    }
+  }
+
+  return tic_code_to_name(name_table, decay_mode, name);
+}
+
+bool tic_look_up_decay_mode_code(const char * name,
+  uint8_t product, uint32_t flags, uint8_t * code)
+{
+  if (code) { *code = 0; }
+
+  if (!name) { return false; }
+
+  uint32_t result;
+
+  if (flags & TIC_NAME_SNAKE_CASE)
+  {
+    if (tic_name_to_code(tic_decay_mode_names_generic_snake, name, &result))
+    {
+      *code = result;
+      return true;
+    }
+
+    if (!product || product == TIC_PRODUCT_T825)
+    {
+      if (tic_name_to_code(tic_decay_mode_names_t825_snake, name, &result))
+      {
+        *code = result;
+        return true;
+      }
+    }
+
+    if (!product || product == TIC_PRODUCT_T834)
+    {
+      if (tic_name_to_code(tic_decay_mode_names_t834_snake, name, &result))
+      {
+        *code = result;
+        return true;
+      }
+    }
+  }
+
+  if (flags & TIC_NAME_UI)
+  {
+    if (tic_name_to_code(tic_decay_mode_names_generic_ui, name, &result))
+    {
+      *code = result;
+      return true;
+    }
+
+    if (!product || product == TIC_PRODUCT_T825)
+    {
+      if (tic_name_to_code(tic_decay_mode_names_t825_ui, name, &result))
+      {
+        *code = result;
+        return true;
+      }
+    }
+
+    if (!product || product == TIC_PRODUCT_T834)
+    {
+      if (tic_name_to_code(tic_decay_mode_names_t834_ui, name, &result))
+      {
+        *code = result;
+        return true;
+      }
+    }
+  }
+
+  return false;
+}
+
 bool tic_name_to_code(const tic_name * table, const char * name, uint32_t * code)
 {
-  assert(table != NULL);
-  assert(name != NULL);
-  assert(code != NULL);
+  if (code) { *code = 0; }
 
-  *code = 0;
+  if (!table) { return false; }
+  if (!name) { return false; }
 
   for (const tic_name * p = table; p->name; p++)
   {
     if (!strcmp(p->name, name))
     {
-      *code = p->code;
+      if (code) { *code = p->code; }
       return true;
     }
   }
@@ -271,14 +401,13 @@ bool tic_name_to_code(const tic_name * table, const char * name, uint32_t * code
 
 bool tic_code_to_name(const tic_name * table, uint32_t code, const char ** name)
 {
-  assert(name != NULL);
-  assert(table != NULL);
+  if (!table) { return false; }
 
   for (const tic_name * p = table; p->name; p++)
   {
     if (p->code == code)
     {
-      *name = p->name;
+      if (name) { *name = p->name; }
       return true;
     }
   }
