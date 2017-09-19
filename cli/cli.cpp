@@ -671,6 +671,20 @@ static void run(const arguments & args)
     handle(selector).set_max_decel(args.max_decel);
   }
 
+  // Should be before any commands that might start the motor moving again so
+  // the Tic does not mistakenly use an old target value for a few milliseconds.
+  if (args.set_target_position)
+  {
+    handle(selector).set_target_position(args.target_position);
+  }
+
+  // Should be before any commands that might start the motor moving again so
+  // the Tic does not mistakenly use an old target value for a few milliseconds.
+  if (args.set_target_velocity)
+  {
+    handle(selector).set_target_velocity(args.target_velocity);
+  }
+
   if (args.halt_and_hold)
   {
     handle(selector).halt_and_hold();
@@ -696,16 +710,6 @@ static void run(const arguments & args)
   if (args.enter_safe_start)
   {
     handle(selector).enter_safe_start();
-  }
-
-  if (args.set_target_position)
-  {
-    handle(selector).set_target_position(args.target_position);
-  }
-
-  if (args.set_target_velocity)
-  {
-    handle(selector).set_target_velocity(args.target_velocity);
   }
 
   if (args.halt_and_set_position)
