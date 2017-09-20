@@ -48,6 +48,7 @@ static void tic_settings_fix_enums(tic_settings * settings, tic_string * warning
     uint8_t scaling_degree = tic_settings_get_input_scaling_degree(settings);
     if (scaling_degree > TIC_SCALING_DEGREE_CUBIC)
     {
+      scaling_degree = TIC_SCALING_DEGREE_LINEAR;
       tic_sprintf(warnings,
         "Warning: The scaling degree was invalid "
         "so it will be changed to linear.\n");
