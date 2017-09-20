@@ -20,6 +20,8 @@ static bool enum_is_valid(uint8_t code, uint8_t * valid_codes, uint8_t code_coun
 // tic_get_settings, which knows how the firmware treats booleans.
 static void tic_settings_fix_enums(tic_settings * settings, tic_string * warnings)
 {
+  uint8_t product = tic_settings_get_product(settings);
+
   {
     uint8_t control_mode = tic_settings_get_control_mode(settings);
     if (control_mode > TIC_CONTROL_MODE_ENCODER_SPEED)
@@ -82,24 +84,20 @@ static void tic_settings_fix_enums(tic_settings * settings, tic_string * warning
   {
     uint8_t mode = tic_settings_get_decay_mode(settings);
 
-    uint8_t valid_decay_modes[6] = {
-      TIC_DECAY_MODE_MIXED,
-      TIC_DECAY_MODE_SLOW,
-      TIC_DECAY_MODE_FAST,
-      TIC_DECAY_MODE_MODE3,
-      TIC_DECAY_MODE_MODE4,
-    };
-
-    // TODO: the set of available decay modes should depend on the product.
-    // And for T834, mixed should get automatically changed to mixed75 so
-    // we don't have to show two different options in the GUI that are the same.
-
-    if (!enum_is_valid(mode, valid_decay_modes, 6))
+    // The name tables can tell us whether the selected decay mode is valid.
+    //
+    // If it was a valid decay mode for some other product, just silently change
+    // it to 0, like the firmware.  If it was a totally invalid decay mode,
+    // print a warning.
+    if (!tic_look_up_decay_mode_name(mode, product, 0, NULL))
     {
+      if (!tic_look_up_decay_mode_name(mode, 0, 0, NULL))
+      {
+        tic_sprintf(warnings,
+          "Warning: The decay mode is invalid "
+          "so it will be changed to the default.\n");
+      }
       mode = TIC_DECAY_MODE_MIXED;
-      tic_sprintf(warnings,
-        "Warning: The decay mode is invalid "
-        "so it will be changed to mixed.\n");
     }
     tic_settings_set_decay_mode(settings, mode);
   }

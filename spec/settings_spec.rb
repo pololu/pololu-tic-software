@@ -206,6 +206,10 @@ def test_cases_for_settings_fix(product)
       "Warning: The current limit during error is an invalid negative number " \
       "so it will be changed to be the same as the default current limit.\n"
     ],
+    [
+      { 'decay_mode' => 'mode4' },
+      { 'decay_mode' => 'mixed' },
+    ],
     [ { 'max_speed' => 70000_0000 },
       { 'max_speed' => 50000_0000 },
       "Warning: The maximum speed is too high " \
