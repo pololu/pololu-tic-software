@@ -1233,7 +1233,7 @@ void main_controller::apply_settings()
     std::string warnings;
     fixed_settings.fix(&warnings);
     if (warnings.empty() ||
-      window->confirm(warnings.append("\nAccept these changes and apply settings?")))
+      window->confirm(warnings + "\nAccept these changes and apply settings?"))
     {
       settings = fixed_settings;
       device_handle.set_settings(settings);
@@ -1269,7 +1269,7 @@ void main_controller::open_settings_from_file(std::string filename)
     std::string warnings;
     fixed_settings.fix(&warnings);
     if (warnings.empty() ||
-      window->confirm(warnings.append("\nAccept these changes and load settings?")))
+      window->confirm(warnings + "\nAccept these changes and load settings?"))
     {
       settings = fixed_settings;
       settings_modified = true;
@@ -1283,6 +1283,9 @@ void main_controller::open_settings_from_file(std::string filename)
   handle_settings_changed();
 }
 
+// TODO: Change this code to fix the settings and prompt the user about that
+// before prompting the user about where to save the settings; that seems more
+// intuitive.
 void main_controller::save_settings_to_file(std::string filename)
 {
   if (!connected()) { return; }
@@ -1296,7 +1299,7 @@ void main_controller::save_settings_to_file(std::string filename)
     fixed_settings.fix(&warnings);
     if (!warnings.empty())
     {
-      if (window->confirm(warnings.append("\nAccept these changes and save settings?")))
+      if (window->confirm(warnings + "\nAccept these changes and save settings?"))
       {
         settings = fixed_settings;
         settings_modified = true;
@@ -1306,7 +1309,12 @@ void main_controller::save_settings_to_file(std::string filename)
         return;
       }
     }
-    std::string settings_string = settings.to_string();
+
+    // Use fixed_settings instead of settings in case there were some small,
+    // minor modifications to the settings, not worthy of a warning or of
+    // changing the settings in the window.
+    std::string settings_string = fixed_settings.to_string();
+
     write_string_to_file(filename, settings_string);
   }
   catch (std::exception const & e)
