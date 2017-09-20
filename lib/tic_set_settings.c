@@ -297,11 +297,15 @@ tic_error * tic_set_settings(tic_handle * handle, const tic_settings * settings)
     error = tic_settings_copy(settings, &fixed_settings);
   }
 
-  // Fix the settings silently to make sure we don't apply invalid settings to
-  // the device.  A good app will call tic_settings_fix on its own before
-  // calling this function, so there should be nothing to fix here.
+  // Set the product code of the settings and fix the settings silently to make
+  // sure we don't apply invalid settings to the device.  A good app will set
+  // the product and call tic_settings_fix on its own before calling this
+  // function, so there should be nothing to fix here.
   if (error == NULL)
   {
+    uint8_t product = tic_device_get_product(tic_handle_get_device(handle));
+    tic_settings_set_product(fixed_settings, product);
+
     error = tic_settings_fix(fixed_settings, NULL);
   }
 

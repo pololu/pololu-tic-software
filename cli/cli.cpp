@@ -509,11 +509,17 @@ static void set_settings(device_selector & selector,
   std::string settings_string = read_string_from_file_or_pipe(filename);
   tic::settings settings = tic::settings::read_from_string(settings_string);
 
+  tic::device device = selector.select_device();
+
+  // Set the product of the settings object to match that of the device so we
+  // can fix it properly.
+  uint8_t product = device.get_product();
+  tic_settings_set_product(settings.get_pointer(), product);
+
   std::string warnings;
   settings.fix(&warnings);
   std::cerr << warnings;
 
-  tic::device device = selector.select_device();
   tic::handle handle(device);
   handle.set_settings(settings);
   handle.reinitialize();
