@@ -16,12 +16,20 @@ static std::string pretty_up_time(uint32_t up_time)
   return ss.str();
 }
 
-static std::string convert_mv_to_v_string(uint32_t mv)
+static std::string convert_mv_to_v_string(uint32_t mv, bool full_output)
 {
   std::ostringstream ss;
-  uint32_t dv = (mv + 50) / 100;
 
-  ss << (dv / 10) << "." << (dv % 10) << " V";
+  if (full_output)
+  {
+    ss << (mv / 1000) << "." << (mv / 100 % 10) << (mv / 10 % 10) << (mv % 10);
+  }
+  else
+  {
+    uint32_t dv = (mv + 50) / 100;
+    ss << (dv / 10) << "." << (dv % 10);
+  }
+  ss << " V";
   return ss.str();
 }
 
@@ -140,7 +148,7 @@ void print_status(const tic::variables & vars,
   std::cout << std::endl;
 
   std::cout << left_column << "VIN voltage: "
-    << convert_mv_to_v_string(vars.get_vin_voltage())
+    << convert_mv_to_v_string(vars.get_vin_voltage(), full_output)
     << std::endl;
 
   std::cout << left_column << "Operation state: "

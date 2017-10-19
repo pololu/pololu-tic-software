@@ -663,7 +663,7 @@ static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings
 
     // Finally, if one of the SCL/SDA pins is configured for I2C, make sure the other one
     // is configured that way too.  This should be last because other checks in this
-    // code might chnage SCL or SDA to be used for I2C.
+    // code might change SCL or SDA to be used for I2C.
     bool scl_is_i2c = (scl_func == TIC_PIN_FUNC_DEFAULT && !analog_control_mode) ||
       (scl_func == TIC_PIN_FUNC_SERIAL);
     bool sda_is_i2c = (sda_func == TIC_PIN_FUNC_DEFAULT && !analog_control_mode) ||
