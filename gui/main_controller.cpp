@@ -72,7 +72,7 @@ bool main_controller::disconnect_device()
   return true;
 }
 
-void main_controller::connect_device(tic::device const & device)
+void main_controller::connect_device(const tic::device & device)
 {
   assert(device);
 
@@ -87,7 +87,7 @@ void main_controller::connect_device(tic::device const & device)
     // Open a handle to the specified device.
     device_handle = tic::handle(device);
   }
-  catch (std::exception const & e)
+  catch (const std::exception & e)
   {
     set_connection_error("Failed to connect to device.");
     show_exception(e, "There was an error connecting to the device.");
@@ -100,7 +100,7 @@ void main_controller::connect_device(tic::device const & device)
     settings = device_handle.get_settings();
     handle_settings_applied();
   }
-  catch (std::exception const & e)
+  catch (const std::exception & e)
   {
     show_exception(e, "There was an error loading settings from the device.");
   }
@@ -114,7 +114,7 @@ void main_controller::connect_device(tic::device const & device)
     device_handle.reset_command_timeout();
     reload_variables();
   }
-  catch (std::exception const & e)
+  catch (const std::exception & e)
   {
     show_exception(e, "There was an error getting the status of the device.");
   }
@@ -122,7 +122,7 @@ void main_controller::connect_device(tic::device const & device)
   handle_model_changed();
 }
 
-void main_controller::disconnect_device_by_error(std::string const & error_message)
+void main_controller::disconnect_device_by_error(const std::string & error_message)
 {
   really_disconnect();
   disconnected_by_user = false;
@@ -135,7 +135,7 @@ void main_controller::really_disconnect()
   settings_modified = false;
 }
 
-void main_controller::set_connection_error(std::string const & error_message)
+void main_controller::set_connection_error(const std::string & error_message)
 {
   connection_error = true;
   connection_error_message = error_message;
@@ -158,7 +158,7 @@ void main_controller::reload_settings(bool ask)
     handle_settings_applied();
     settings_modified = false;
   }
-  catch (std::exception const & e)
+  catch (const std::exception & e)
   {
     settings_modified = true;
     show_exception(e, "There was an error loading the settings from the device.");
@@ -185,7 +185,7 @@ void main_controller::restore_default_settings()
     device_handle.restore_defaults();
     restore_success = true;
   }
-  catch (std::exception const & e)
+  catch (const std::exception & e)
   {
     show_exception(e);
   }
@@ -218,7 +218,7 @@ void main_controller::upgrade_firmware()
     {
       device_handle.start_bootloader();
     }
-    catch (std::exception const & e)
+    catch (const std::exception & e)
     {
       show_exception(e);
     }
@@ -234,8 +234,8 @@ void main_controller::upgrade_firmware()
 
 // Returns true if the device list includes the specified device.
 static bool device_list_includes(
-  std::vector<tic::device> const & device_list,
-  tic::device const & device)
+  const std::vector<tic::device> & device_list,
+  const tic::device & device)
 {
   return device_with_os_id(device_list, device.get_os_id());
 }
@@ -289,7 +289,7 @@ void main_controller::update()
         reload_variables();
         device_handle.reset_command_timeout();
       }
-      catch (std::exception const & e)
+      catch (const std::exception & e)
       {
         // Ignore the exception.  The model provides other ways to tell that
         // the variable update failed, and the exact message is probably
@@ -347,8 +347,9 @@ bool main_controller::exit()
   }
 }
 
-static bool device_lists_different(std::vector<tic::device> const & list1,
-  std::vector<tic::device> const & list2)
+static bool device_lists_different(
+  const std::vector<tic::device> & list1,
+  const std::vector<tic::device> & list2)
 {
   if (list1.size() != list2.size())
   {
@@ -383,7 +384,7 @@ bool main_controller::update_device_list()
     device_list = new_device_list;
     return true;
   }
-  catch (std::exception const & e)
+  catch (const std::exception & e)
   {
     set_connection_error("Failed to get the list of devices.");
     show_exception(e, "There was an error getting the list of devices.");
@@ -391,8 +392,8 @@ bool main_controller::update_device_list()
   }
 }
 
-void main_controller::show_exception(std::exception const & e,
-    std::string const & context)
+void main_controller::show_exception(const std::exception & e,
+    const std::string & context)
 {
     std::string message;
     if (context.size() > 0)
@@ -415,7 +416,7 @@ void main_controller::handle_device_changed()
 {
   if (connected())
   {
-    tic::device const & device = device_handle.get_device();
+    const tic::device & device = device_handle.get_device();
     window->set_device_name(device.get_name(), true);
     window->set_serial_number(device.get_serial_number());
     window->set_firmware_version(device_handle.get_firmware_version_string());
@@ -1095,7 +1096,7 @@ void main_controller::set_target_position(int32_t position)
 
     device_handle.set_target_position(position);
   }
-  catch (std::exception const & e)
+  catch (const std::exception & e)
   {
     show_exception(e);
   }
@@ -1111,7 +1112,7 @@ void main_controller::set_target_velocity(int32_t velocity)
 
     device_handle.set_target_velocity(velocity);
   }
-  catch (std::exception const & e)
+  catch (const std::exception & e)
   {
     show_exception(e);
   }
@@ -1127,7 +1128,7 @@ void main_controller::halt_and_set_position(int32_t position)
 
     device_handle.halt_and_set_position(position);
   }
-  catch (std::exception const & e)
+  catch (const std::exception & e)
   {
     show_exception(e);
   }
@@ -1143,7 +1144,7 @@ void main_controller::halt_and_hold()
 
     device_handle.halt_and_hold();
   }
-  catch (std::exception const & e)
+  catch (const std::exception & e)
   {
     show_exception(e);
   }
@@ -1159,7 +1160,7 @@ void main_controller::deenergize()
 
     device_handle.deenergize();
   }
-  catch (std::exception const & e)
+  catch (const std::exception & e)
   {
     show_exception(e);
   }
@@ -1178,7 +1179,7 @@ void main_controller::energize()
 
     device_handle.exit_safe_start();
   }
-  catch (std::exception const & e)
+  catch (const std::exception & e)
   {
     show_exception(e);
   }
@@ -1242,7 +1243,7 @@ void main_controller::apply_settings()
       settings_modified = false;  // this must be last in case exceptions are thrown
     }
   }
-  catch (std::exception const & e)
+  catch (const std::exception & e)
   {
     show_exception(e);
   }
@@ -1275,7 +1276,7 @@ void main_controller::open_settings_from_file(std::string filename)
       settings_modified = true;
     }
   }
-  catch (std::exception const & e)
+  catch (const std::exception & e)
   {
     show_exception(e);
   }
@@ -1317,7 +1318,7 @@ void main_controller::save_settings_to_file(std::string filename)
 
     write_string_to_file(filename, settings_string);
   }
-  catch (std::exception const & e)
+  catch (const std::exception & e)
   {
     show_exception(e);
   }
@@ -1341,7 +1342,7 @@ void main_controller::reload_variables()
   }
 }
 
-bool main_controller::control_mode_is_serial(tic::settings const & s) const
+bool main_controller::control_mode_is_serial(const tic::settings & s) const
 {
   uint8_t control_mode = tic_settings_get_control_mode(s.get_pointer());
   return (control_mode == TIC_CONTROL_MODE_SERIAL);

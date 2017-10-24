@@ -102,28 +102,28 @@ void main_window::start_update_timer()
   update_timer->start();
 }
 
-void main_window::show_error_message(std::string const & message)
+void main_window::show_error_message(const std::string & message)
 {
   QMessageBox mbox(QMessageBox::Critical, windowTitle(),
     QString::fromStdString(message), QMessageBox::NoButton, this);
   mbox.exec();
 }
 
-void main_window::show_warning_message(std::string const & message)
+void main_window::show_warning_message(const std::string & message)
 {
   QMessageBox mbox(QMessageBox::Warning, windowTitle(),
     QString::fromStdString(message), QMessageBox::NoButton, this);
   mbox.exec();
 }
 
-void main_window::show_info_message(std::string const & message)
+void main_window::show_info_message(const std::string & message)
 {
   QMessageBox mbox(QMessageBox::Information, windowTitle(),
     QString::fromStdString(message), QMessageBox::NoButton, this);
   mbox.exec();
 }
 
-bool main_window::confirm(std::string const & question)
+bool main_window::confirm(const std::string & question)
 {
   QMessageBox mbox(QMessageBox::Question, windowTitle(),
     QString::fromStdString(question), QMessageBox::Ok | QMessageBox::Cancel, this);
@@ -131,12 +131,12 @@ bool main_window::confirm(std::string const & question)
   return button == QMessageBox::Ok;
 }
 
-void main_window::set_device_list_contents(std::vector<tic::device> const & device_list)
+void main_window::set_device_list_contents(const std::vector<tic::device> & device_list)
 {
   suppress_events = true;
   device_list_value->clear();
   device_list_value->addItem(tr("Not connected"), QString()); // null value
-  for (tic::device const & device : device_list)
+  for (const tic::device & device : device_list)
   {
     device_list_value->addItem(
       QString::fromStdString(device.get_short_name() +
@@ -146,7 +146,7 @@ void main_window::set_device_list_contents(std::vector<tic::device> const & devi
   suppress_events = false;
 }
 
-void main_window::set_device_list_selected(tic::device const & device)
+void main_window::set_device_list_selected(const tic::device & device)
 {
   // TODO: show an error if we couldn't find the specified device
   // (findData returned -1)?
@@ -160,7 +160,7 @@ void main_window::set_device_list_selected(tic::device const & device)
   suppress_events = false;
 }
 
-void main_window::set_connection_status(std::string const & status, bool error)
+void main_window::set_connection_status(const std::string & status, bool error)
 {
   if (error)
   {
@@ -223,7 +223,7 @@ void main_window::set_restore_defaults_enabled(bool enabled)
   restore_defaults_action->setEnabled(enabled);
 }
 
-void main_window::set_device_name(std::string const & name, bool link_enabled)
+void main_window::set_device_name(const std::string & name, bool link_enabled)
 {
   QString text = QString::fromStdString(name);
   if (link_enabled)
@@ -233,17 +233,17 @@ void main_window::set_device_name(std::string const & name, bool link_enabled)
   device_name_value->setText(text);
 }
 
-void main_window::set_serial_number(std::string const & serial_number)
+void main_window::set_serial_number(const std::string & serial_number)
 {
   serial_number_value->setText(QString::fromStdString(serial_number));
 }
 
-void main_window::set_firmware_version(std::string const & firmware_version)
+void main_window::set_firmware_version(const std::string & firmware_version)
 {
   firmware_version_value->setText(QString::fromStdString(firmware_version));
 }
 
-void main_window::set_device_reset(std::string const & device_reset)
+void main_window::set_device_reset(const std::string & device_reset)
 {
   device_reset_value->setText(QString::fromStdString(device_reset));
 }
@@ -298,7 +298,7 @@ void main_window::set_input_before_scaling(uint16_t input_before_scaling, uint8_
   if (input_wizard->isVisible()) { input_wizard->handle_input(input_before_scaling); }
 }
 
-void main_window::set_input_state(std::string const & input_state, uint8_t input_state_raw)
+void main_window::set_input_state(const std::string & input_state, uint8_t input_state_raw)
 {
   input_state_value->setText(QString::fromStdString(input_state));
   cached_input_state = input_state_raw;
@@ -338,7 +338,7 @@ void main_window::set_vin_voltage(uint32_t vin_voltage)
     convert_mv_to_v_string(vin_voltage)));
 }
 
-void main_window::set_operation_state(std::string const & operation_state)
+void main_window::set_operation_state(const std::string & operation_state)
 {
   operation_state_value->setText(QString::fromStdString(operation_state));
 }
@@ -803,7 +803,7 @@ void main_window::set_pin_analog(uint8_t pin, bool analog, bool enabled)
   }
 }
 
-void main_window::set_motor_status_message(std::string const & message, bool stopped)
+void main_window::set_motor_status_message(const std::string & message, bool stopped)
 {
   // setStyleSheet() is expensive, so only call it if something actually
   // changed. Check if there's currently a stylesheet applied and decide

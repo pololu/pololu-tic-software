@@ -14,7 +14,7 @@ public:
   void start();
 
   // This is called when the user issues a connect command.
-  void connect_device_with_os_id(std::string const & id);
+  void connect_device_with_os_id(const std::string & id);
 
   // This is called when the user issues a disconnect command. Returns true
   // on completion or false if the user cancels when prompted about settings
@@ -46,10 +46,10 @@ public:
   void handle_model_changed();
 
 private:
-  void connect_device(tic::device const & device);
-  void disconnect_device_by_error(std::string const & error_message);
+  void connect_device(const tic::device & device);
+  void disconnect_device_by_error(const std::string & error_message);
   void really_disconnect();
-  void set_connection_error(std::string const & error_message);
+  void set_connection_error(const std::string & error_message);
 
   // Returns true for success, false for failure.
   bool update_device_list();
@@ -58,7 +58,7 @@ private:
   // called.
   bool device_list_changed;
 
-  void show_exception(std::exception const & e, std::string const & context = "");
+  void show_exception(const std::exception & e, const std::string & context = "");
 
 public:
   void set_target_position(int32_t position);
@@ -185,7 +185,7 @@ private:
   // Returns true if we are currently connected to a device.
   bool connected() const { return device_handle; }
 
-  bool control_mode_is_serial(tic::settings const & s) const;
+  bool control_mode_is_serial(const tic::settings & s) const;
 
   main_window * window;
 };

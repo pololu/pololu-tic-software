@@ -93,18 +93,18 @@ public:
   void set_update_timer_interval(uint32_t interval_ms);
   void start_update_timer();
 
-  void show_error_message(std::string const & message);
-  void show_warning_message(std::string const & message);
-  void show_info_message(std::string const & message);
+  void show_error_message(const std::string & message);
+  void show_warning_message(const std::string & message);
+  void show_info_message(const std::string & message);
 
   // Show an OK/Cancel dialog, return true if the user selects OK.
-  bool confirm(std::string const & question);
+  bool confirm(const std::string & question);
 
-  void set_device_list_contents(std::vector<tic::device> const & device_list);
-  void set_device_list_selected(tic::device const & device);
+  void set_device_list_contents(const std::vector<tic::device> & device_list);
+  void set_device_list_selected(const tic::device & device);
 
   // Sets the label that shows the connection status/error.
-  void set_connection_status(std::string const & status, bool error);
+  void set_connection_status(const std::string & status, bool error);
 
   // Controls whether the main controls of the application are enabled or
   // disabled.
@@ -131,21 +131,21 @@ public:
   // Controls whether the restore defaults option is enabled.
   void set_restore_defaults_enabled(bool enabled);
 
-  void set_device_name(std::string const & name, bool link_enabled);
-  void set_serial_number(std::string const & serial_number);
-  void set_firmware_version(std::string const & firmware_version);
-  void set_device_reset(std::string const & device_reset);
+  void set_device_name(const std::string & name, bool link_enabled);
+  void set_serial_number(const std::string & serial_number);
+  void set_firmware_version(const std::string & firmware_version);
+  void set_device_reset(const std::string & device_reset);
   void set_up_time(uint32_t up_time);
 
   void set_encoder_position(int32_t encoder_position);
-  void set_input_state(std::string const & input_state, uint8_t input_state_raw);
+  void set_input_state(const std::string & input_state, uint8_t input_state_raw);
   void set_input_after_averaging(uint16_t input_after_averaging);
   void set_input_after_hysteresis(uint16_t input_after_hysteresis);
   void set_input_before_scaling(uint16_t input_before_scaling, uint8_t control_mode);
   void set_input_after_scaling(int32_t input_after_scaling);
 
   void set_vin_voltage(uint32_t vin_voltage);
-  void set_operation_state(std::string const & operation_state);
+  void set_operation_state(const std::string & operation_state);
   void set_energized(bool energized);
   void set_target_position(int32_t target_position);
   void set_target_velocity(int32_t target_velocity);
@@ -218,7 +218,7 @@ public:
   void set_pin_polarity(uint8_t pin, bool polarity, bool enabled);
   void set_pin_analog(uint8_t pin, bool analog, bool enabled);
 
-  void set_motor_status_message(std::string const & message, bool stopped = true);
+  void set_motor_status_message(const std::string & message, bool stopped = true);
 
 private:
   // Helper method for setting the index of a combo box, given the desired
