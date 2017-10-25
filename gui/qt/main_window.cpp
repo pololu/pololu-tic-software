@@ -173,6 +173,29 @@ void main_window::set_connection_status(const std::string & status, bool error)
   connection_status_value->setText(QString::fromStdString(status));
 }
 
+void main_window::adjust_ui_for_product(uint8_t product)
+{
+  switch (product)
+  {
+  default:
+  case TIC_PRODUCT_T825:
+    set_combo_items(decay_mode_value,
+      { { "Slow", TIC_DECAY_MODE_T825_SLOW },
+        { "Mixed", TIC_DECAY_MODE_T825_MIXED },
+        { "Fast", TIC_DECAY_MODE_T825_FAST } });
+    break;
+
+  case TIC_PRODUCT_T834:
+    set_combo_items(decay_mode_value,
+      { { "Slow", TIC_DECAY_MODE_T834_SLOW },
+        { "Mixed 25%", TIC_DECAY_MODE_T834_MIXED25 },
+        { "Mixed 50%", TIC_DECAY_MODE_T834_MIXED50 },
+        { "Mixed 75%", TIC_DECAY_MODE_T834_MIXED75 },
+        { "Fast", TIC_DECAY_MODE_T834_FAST } });
+    break;
+  }
+}
+
 void main_window::set_tab_pages_enabled(bool enabled)
 {
   for (int i = 0; i < tab_widget->count(); i++)
@@ -445,7 +468,7 @@ void main_window::reset_error_counts()
 
 void main_window::set_control_mode(uint8_t control_mode)
 {
-  set_u8_combo_box(control_mode_value, control_mode);
+  set_combo(control_mode_value, control_mode);
 }
 
 void main_window::set_manual_target_position_mode()
@@ -623,7 +646,7 @@ void main_window::set_output_max(int32_t output_max)
 
 void main_window::set_input_scaling_degree(uint8_t input_scaling_degree)
 {
-  set_u8_combo_box(input_scaling_degree_value, input_scaling_degree);
+  set_combo(input_scaling_degree_value, input_scaling_degree);
 }
 
 void main_window::run_input_wizard(uint8_t control_mode)
@@ -686,7 +709,7 @@ void main_window::set_decel_max(uint32_t decel_max)
 
 void main_window::set_step_mode(uint8_t step_mode)
 {
-  set_u8_combo_box(step_mode_value, step_mode);
+  set_combo(step_mode_value, step_mode);
 }
 
 void main_window::set_current_limit(uint32_t current_limit)
@@ -696,7 +719,7 @@ void main_window::set_current_limit(uint32_t current_limit)
 
 void main_window::set_decay_mode(uint8_t decay_mode)
 {
-  set_u8_combo_box(decay_mode_value, decay_mode);
+  set_combo(decay_mode_value, decay_mode);
 }
 
 void main_window::set_soft_error_response(uint8_t soft_error_response)
@@ -770,7 +793,7 @@ void main_window::set_vin_calibration(int16_t vin_calibration)
 
 void main_window::set_pin_func(uint8_t pin, uint8_t func)
 {
-  set_u8_combo_box(pin_config_rows[pin]->func_value, func);
+  set_combo(pin_config_rows[pin]->func_value, func);
 }
 
 void main_window::set_pin_pullup(uint8_t pin, bool pullup, bool enabled)
@@ -821,7 +844,19 @@ void main_window::set_motor_status_message(const std::string & message, bool sto
   motor_status_value->setText(QString::fromStdString(message));
 }
 
-void main_window::set_u8_combo_box(QComboBox * combo, uint8_t value)
+void main_window::set_combo_items(QComboBox * combo,
+  std::vector<std::pair<const char *, uint32_t>> items)
+{
+  suppress_events = true;
+  while (combo->count()) { combo->removeItem(combo->count() - 1); }
+  for (const auto & item : items)
+  {
+    combo->addItem(item.first, item.second);
+  }
+  suppress_events = false;
+}
+
+void main_window::set_combo(QComboBox * combo, uint32_t value)
 {
   suppress_events = true;
   combo->setCurrentIndex(combo->findData(value));
@@ -2704,12 +2739,7 @@ QLayout * main_window::setup_motor_settings_layout()
   {
     decay_mode_value = new QComboBox();
     decay_mode_value->setObjectName("decay_mode_value");
-    decay_mode_value->addItem("Mixed", TIC_DECAY_MODE_MIXED);
-    decay_mode_value->addItem("Slow", TIC_DECAY_MODE_SLOW);
-    decay_mode_value->addItem("Fast", TIC_DECAY_MODE_FAST);
-    decay_mode_value->addItem("Mode 3", TIC_DECAY_MODE_MODE3);
-    decay_mode_value->addItem("Mode 4", TIC_DECAY_MODE_MODE4);
-    // TODO: the set of available decay modes needs to depend on the product
+    decay_mode_value->addItem("Mixed 75%", 0);  // reserve space
     decay_mode_label = new QLabel();
     decay_mode_label->setBuddy(decay_mode_value);
     layout->addWidget(decay_mode_label, row, 0, FIELD_LABEL_ALIGNMENT);

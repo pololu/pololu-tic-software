@@ -106,6 +106,10 @@ public:
   // Sets the label that shows the connection status/error.
   void set_connection_status(const std::string & status, bool error);
 
+  // Changes a few controls that need to be changed depending on what product
+  // (e.g. Tic T825, Tic T834) we are talking to.
+  void adjust_ui_for_product(uint8_t product);
+
   // Controls whether the main controls of the application are enabled or
   // disabled.
   void set_tab_pages_enabled(bool enabled);
@@ -221,10 +225,14 @@ public:
   void set_motor_status_message(const std::string & message, bool stopped = true);
 
 private:
+
+  void set_combo_items(QComboBox * combo,
+    std::vector<std::pair<const char *, uint32_t>> items);
+
   // Helper method for setting the index of a combo box, given the desired
   // uint8_t item value. Sets index of -1 for no selection if the specified
   // value is not found.
-  void set_u8_combo_box(QComboBox * combo, uint8_t value);
+  void set_combo(QComboBox * combo, uint32_t value);
   void set_spin_box(QSpinBox * box, int value);
   void set_double_spin_box(QDoubleSpinBox * spin, double value);
   void set_check_box(QCheckBox * check, bool value);

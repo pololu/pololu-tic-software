@@ -428,6 +428,8 @@ void main_controller::handle_device_changed()
 
     window->reset_error_counts();
 
+    window->adjust_ui_for_product(device.get_product());
+
     initialize_manual_target();
   }
   else

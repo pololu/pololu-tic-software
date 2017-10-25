@@ -736,7 +736,7 @@ void tic_settings_set_step_mode(tic_settings * settings, uint8_t step_mode)
 
 uint8_t tic_settings_get_step_mode(const tic_settings * settings)
 {
-  if (!settings) { return 1; }
+  if (!settings) { return 0; }
   return settings->step_mode;
 }
 
