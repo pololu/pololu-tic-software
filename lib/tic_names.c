@@ -42,8 +42,8 @@ const tic_name tic_error_names_ui[] =
 
 const tic_name tic_decay_mode_names_generic_ui[] =
 {
-  { "Mixed", TIC_DECAY_MODE_MIXED },
   { "Slow", TIC_DECAY_MODE_SLOW },
+  { "Mixed", TIC_DECAY_MODE_MIXED },
   { "Fast", TIC_DECAY_MODE_FAST },
   { "Mode 3", TIC_DECAY_MODE_MODE3 },
   { "Mode 4", TIC_DECAY_MODE_MODE4 },
@@ -52,8 +52,8 @@ const tic_name tic_decay_mode_names_generic_ui[] =
 
 const tic_name tic_decay_mode_names_t825_ui[] =
 {
-  { "Mixed", TIC_DECAY_MODE_T825_MIXED },
   { "Slow", TIC_DECAY_MODE_T825_SLOW },
+  { "Mixed", TIC_DECAY_MODE_T825_MIXED },
   { "Fast", TIC_DECAY_MODE_T825_FAST },
   { NULL, 0 },
 };
