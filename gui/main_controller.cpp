@@ -576,7 +576,9 @@ void main_controller::update_motor_status_message(bool prompt_to_resume)
 {
   std::string msg;
   bool stopped = true;
+  uint8_t product = device_handle.get_device().get_product();
   uint16_t error_status = variables.get_error_status();
+  uint32_t vin_voltage = variables.get_vin_voltage();
 
   if (!connected())
   {
@@ -587,13 +589,20 @@ void main_controller::update_motor_status_message(bool prompt_to_resume)
     msg = "Driving";
     stopped = false;
   }
-  else if (error_status & (1 << TIC_ERROR_MOTOR_DRIVER_ERROR))
-  {
-    msg = "Motor de-energized because of motor driver error.";
-  }
   else if (error_status & (1 << TIC_ERROR_LOW_VIN))
   {
     msg = "Motor de-energized because VIN is too low.";
+  }
+  else if (error_status & (1 << TIC_ERROR_MOTOR_DRIVER_ERROR))
+  {
+    if (product == TIC_PRODUCT_T834 && vin_voltage < 2500)
+    {
+      msg = "Motor de-energized because of motor driver error (probably low VIN).";
+    }
+    else
+    {
+      msg = "Motor de-energized because of motor driver error.";
+    }
   }
   else if (error_status & (1 << TIC_ERROR_INTENTIONALLY_DEENERGIZED))
   {

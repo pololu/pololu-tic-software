@@ -1959,9 +1959,9 @@ QWidget * main_window::setup_device_info_box()
   // This is important for making sure that the sizeHint of the overall main
   // window has a good width before we set the window to be a fixed size.
   {
-    QLabel tmpLabel;
-    tmpLabel.setText("Tic USB Stepper Motor Controller TXXXXX");
-    layout->setColumnMinimumWidth(1, tmpLabel.sizeHint().width());
+    QLabel tmp_label;
+    tmp_label.setText("Tic USB Stepper Motor Controller TXXXXX");
+    layout->setColumnMinimumWidth(1, tmp_label.sizeHint().width());
   }
 
   device_info_box->setLayout(layout);
@@ -2966,19 +2966,32 @@ QLayout * main_window::setup_footer()
   {
     deenergize_button = new QPushButton();
     deenergize_button->setObjectName("deenergize_button");
-    deenergize_button->setStyleSheet(":enabled { background-color: red; color: white; font-weight: bold; }");
+    deenergize_button->setStyleSheet(":enabled { background-color: red; "
+      "color: white; font-weight: bold; }");
     layout->addWidget(deenergize_button);
   }
 
   {
     resume_button = new QPushButton();
     resume_button->setObjectName("resume_button");
-    resume_button->setStyleSheet(":enabled { background-color: green; color: white; font-weight: bold; }");
+    resume_button->setStyleSheet(":enabled { background-color: green; "
+      "color: white; font-weight: bold; }");
     layout->addWidget(resume_button);
   }
 
   {
     motor_status_value = new QLabel();
+    {
+      QLabel tmp_label;
+      tmp_label.setText("Motor de-energized because of motor driver error "
+        "(probably low VIN).");
+      uint32_t width = tmp_label.sizeHint().width();
+      tmp_label.setText("Motor moving to error position because of "
+        "Safe Start Violation.  Center the input.");
+      uint32_t width2 = tmp_label.sizeHint().width();
+      if (width2 > width) { width = width2; }
+      motor_status_value->setMinimumWidth(width);
+    }
     layout->addWidget(motor_status_value);
   }
 
