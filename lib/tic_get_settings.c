@@ -195,7 +195,7 @@ static void write_buffer_to_settings(const uint8_t * buf, tic_settings * setting
   {
     const uint8_t * p = buf + TIC_SETTING_ENCODER_PRESCALER;
     uint32_t prescaler = p[0] + (p[1] << 8) + (p[2] << 16) + (p[3] << 24);
-    tic_settings_set_encoder_postscaler(settings, prescaler);
+    tic_settings_set_encoder_prescaler(settings, prescaler);
   }
 
   {
