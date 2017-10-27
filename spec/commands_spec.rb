@@ -224,15 +224,6 @@ end
 
 
 describe 'Set current limit command' do
-  it 'it prevents you from setting a current too high' do
-    stdout, stderr, result = run_ticcmd('-d x --current 10000')
-    expect(stderr).to eq \
-      "Warning: The current limit was too high so it will be lowered to 3968 mA.\n" \
-      "Error: No device was found with serial number 'x'.\n"
-    expect(stdout).to eq ''
-    expect(result).to eq EXIT_DEVICE_NOT_FOUND
-  end
-
   it 'it works', usb: true do
     # Note: This test can fail if the "current limit during error" setting is used.
     [32, 64]. each do |limit|
@@ -254,12 +245,30 @@ describe 'Set decay mode' do
   end
 
   it 'it works', usb: true do
-    ['Fast', 'Slow', 'Mixed']. each do |mode|
-      stdout, stderr, result = run_ticcmd("--decay #{mode}")
+    case tic_product
+    when :T825
+      decay_modes = {
+        'mixed' => 'Mixed',
+        'fast' => 'Fast',
+        'slow' => 'Slow',
+      }
+    when :T834
+      decay_modes = {
+        'mixed' => 'Mixed 50%',
+        'mixed50' => 'Mixed 50%',
+        'fast' => 'Fast',
+        'slow' => 'Slow',
+        'mixed25' => 'Mixed 25%',
+        'mixed75' => 'Mixed 75%',
+      }
+    end
+
+    decay_modes.each do |cli_name, ui_name|
+      stdout, stderr, result = run_ticcmd("--decay #{cli_name}")
       expect(stderr).to eq ''
       expect(stdout).to eq ''
       expect(result).to eq 0
-      expect(tic_get_status['Decay mode']).to eq mode
+      expect(tic_get_status['Decay mode']).to eq ui_name
     end
   end
 end

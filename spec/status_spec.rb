@@ -15,7 +15,7 @@ Input after averaging:        N/A
 Input after hysteresis:       N/A
 Input after scaling:          -1
 
-VIN voltage:                  65.5 V
+VIN voltage:                  65.535 V
 Operation state:              (Unknown)
 Energized:                    Yes
 

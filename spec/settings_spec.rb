@@ -1,7 +1,7 @@
 require_relative 'spec_helper'
 
 DefaultSettings = {
-  T825: <<END
+  T825: <<END,
 product: T825
 control_mode: serial
 never_sleep: false
@@ -44,10 +44,54 @@ max_accel: 40000
 max_decel: 0
 invert_motor_direction: false
 END
+
+  T834: <<END
+product: T834
+control_mode: serial
+never_sleep: false
+disable_safe_start: false
+ignore_err_line_high: false
+auto_clear_driver_error: true
+soft_error_response: decel_to_hold
+soft_error_position: 0
+serial_baud_rate: 9600
+serial_device_number: 14
+command_timeout: 1000
+serial_crc_enabled: false
+serial_response_delay: 0
+vin_calibration: 0
+input_averaging_enabled: true
+input_hysteresis: 0
+input_scaling_degree: linear
+input_invert: false
+input_min: 0
+input_neutral_min: 2015
+input_neutral_max: 2080
+input_max: 4095
+output_min: -200
+output_max: 200
+encoder_prescaler: 1
+encoder_postscaler: 1
+encoder_unlimited: false
+scl_config: default
+sda_config: default
+tx_config: default
+rx_config: default
+rc_config: default
+current_limit: 192
+current_limit_during_error: -1
+step_mode: 1
+decay_mode: mixed50
+max_speed: 2000000
+starting_speed: 0
+max_accel: 40000
+max_decel: 0
+invert_motor_direction: false
+END
 }
 
 TestSettings1 = {
-  T825: <<END
+  T825: <<END,
 product: T825
 control_mode: rc_position
 never_sleep: true
@@ -84,6 +128,50 @@ current_limit: 384
 current_limit_during_error: 96
 step_mode: 32
 decay_mode: fast
+max_speed: 234567890
+starting_speed: 10000
+max_accel: 934567820
+max_decel: 734567890
+invert_motor_direction: true
+END
+
+  T834: <<END
+product: T834
+control_mode: rc_position
+never_sleep: true
+disable_safe_start: true
+ignore_err_line_high: true
+auto_clear_driver_error: true
+soft_error_response: decel_to_hold
+soft_error_position: -234333890
+serial_baud_rate: 115385
+serial_device_number: 40
+command_timeout: 2020
+serial_crc_enabled: true
+serial_response_delay: 123
+vin_calibration: -345
+input_averaging_enabled: false
+input_hysteresis: 4455
+input_scaling_degree: cubic
+input_invert: true
+input_min: 404
+input_neutral_min: 505
+input_neutral_max: 606
+input_max: 3000
+output_min: -999
+output_max: 999
+encoder_prescaler: 5
+encoder_postscaler: 1000000000
+encoder_unlimited: true
+scl_config: user_input pullup active_high
+sda_config: kill_switch analog
+tx_config: kill_switch pullup analog
+rx_config: serial
+rc_config: rc pullup
+current_limit: 384
+current_limit_during_error: 96
+step_mode: 32
+decay_mode: mixed75
 max_speed: 234567890
 starting_speed: 10000
 max_accel: 934567820
@@ -189,9 +277,9 @@ def test_cases_for_settings_fix(product)
       { 'current_limit' => 192 },
     ],
     [ { 'current_limit' => 3969 },
-      { 'current_limit' => 3968 },
+      { 'current_limit' => tic_max_allowed_current(product) },
       "Warning: The current limit is too high " \
-      "so it will be lowered to 3968 mA.\n"
+      "so it will be lowered to #{tic_max_allowed_current(product)} mA.\n"
     ],
     [ { 'current_limit' => 320, 'current_limit_during_error' => 64 },
       { }
@@ -208,7 +296,11 @@ def test_cases_for_settings_fix(product)
     ],
     [
       { 'decay_mode' => 'mode4' },
-      { 'decay_mode' => 'mixed' },
+      { 'decay_mode' => case product
+                        when :T825 then 'mixed'
+                        when :T834 then 'mixed75'
+                        end
+      },
     ],
     [ { 'max_speed' => 70000_0000 },
       { 'max_speed' => 50000_0000 },
@@ -372,12 +464,10 @@ def test_cases_for_settings_fix(product)
 end
 
 describe 'settings' do
-  let (:product) { :T825 }
-
   specify 'settings test 1', usb: true do
     # Set the settings to something kind of random.
     stdout, stderr, result = run_ticcmd('--set-settings -',
-      input: TestSettings1[product])
+      input: TestSettings1.fetch(tic_product))
     expect(stderr).to eq ""
     expect(stdout).to eq ""
     expect(result).to eq 0
@@ -385,7 +475,7 @@ describe 'settings' do
     # Read the settings back and make sure they match.
     stdout, stderr, result = run_ticcmd('--get-settings -')
     expect(stderr).to eq ""
-    expect(YAML.load(stdout)).to eq YAML.load(TestSettings1[product])
+    expect(YAML.load(stdout)).to eq YAML.load(TestSettings1.fetch(tic_product))
     expect(result). to eq 0
 
     # Restore the device to its default settings.
@@ -398,21 +488,21 @@ describe 'settings' do
     # settings to be.
     stdout, stderr, result = run_ticcmd('--get-settings -')
     expect(stderr).to eq ""
-    expect(YAML.load(stdout)).to eq YAML.load(DefaultSettings[product])
+    expect(YAML.load(stdout)).to eq YAML.load(DefaultSettings.fetch(tic_product))
     expect(result).to eq 0
   end
 
   specify 'tic_settings_fill_with_defaults is correct' do
-    stdin = "product: #{product}"
+    stdin = "product: #{tic_product}"
     stdout, stderr, result = run_ticcmd('--fix-settings - -', input: stdin)
     expect(stderr).to eq ""
-    expect(YAML.load(stdout)).to eq YAML.load(DefaultSettings[product])
+    expect(YAML.load(stdout)).to eq YAML.load(DefaultSettings.fetch(tic_product))
     expect(result).to eq 0
   end
 
   specify 'tic_settings_fix is correct' do
-    defaults = YAML.load(DefaultSettings[product])
-    test_cases_for_settings_fix(product).each do |input_part, output_part, warnings|
+    defaults = YAML.load(DefaultSettings.fetch(tic_product))
+    test_cases_for_settings_fix(tic_product).each do |input_part, output_part, warnings|
       warnings ||= ""
       if !warnings.empty? && !warnings.end_with?("\n")
         raise "Warnings should end with newline: #{warnings.inspect}"

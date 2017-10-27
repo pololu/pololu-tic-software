@@ -39,3 +39,25 @@ def tic_get_status
   end
   YAML.load(stdout)
 end
+
+# Returns :T834 or :T825
+def tic_product
+  return @tic_product if @tic_product
+
+  lines = %x(ticcmd --list).strip.split("\n")
+
+  if lines.size == 0
+    raise "No Tics are connected."
+  end
+
+  if lines.size > 1
+    raise "Multiple Tics are connected."
+  end
+
+  md = lines.first.match(/Tic (T\d+)/)
+  return @tic_product = md[1].to_sym if md
+end
+
+def tic_max_allowed_current(product)
+  product == :T834 ? 3456 : 3968
+end
