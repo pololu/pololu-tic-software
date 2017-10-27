@@ -169,8 +169,13 @@ static void tic_write_settings_to_buffer(const tic_settings * settings, uint8_t 
     buf[TIC_SETTING_OUTPUT_MAX + 3] = output >> 24 & 0xFF;
   }
 
-  buf[TIC_SETTING_ENCODER_PRESCALER] =
-    tic_settings_get_encoder_prescaler(settings);
+  {
+    uint32_t prescaler = tic_settings_get_encoder_prescaler(settings);
+    buf[TIC_SETTING_ENCODER_PRESCALER + 0] = prescaler >> 0 & 0xFF;
+    buf[TIC_SETTING_ENCODER_PRESCALER + 1] = prescaler >> 8 & 0xFF;
+    buf[TIC_SETTING_ENCODER_PRESCALER + 2] = prescaler >> 16 & 0xFF;
+    buf[TIC_SETTING_ENCODER_PRESCALER + 3] = prescaler >> 24 & 0xFF;
+  }
 
   {
     uint32_t postscaler = tic_settings_get_encoder_postscaler(settings);
