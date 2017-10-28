@@ -1118,8 +1118,6 @@ void main_controller::set_target_position(int32_t position)
 
   try
   {
-    assert(connected());
-
     device_handle.set_target_position(position);
     send_reset_command_timeout = true;
   }
@@ -1135,8 +1133,6 @@ void main_controller::set_target_velocity(int32_t velocity)
 
   try
   {
-    assert(connected());
-
     device_handle.set_target_velocity(velocity);
     send_reset_command_timeout = true;
   }
@@ -1152,8 +1148,6 @@ void main_controller::halt_and_set_position(int32_t position)
 
   try
   {
-    assert(connected());
-
     device_handle.halt_and_set_position(position);
   }
   catch (const std::exception & e)
@@ -1168,8 +1162,6 @@ void main_controller::halt_and_hold()
 
   try
   {
-    assert(connected());
-
     device_handle.halt_and_hold();
   }
   catch (const std::exception & e)
@@ -1184,8 +1176,6 @@ void main_controller::deenergize()
 
   try
   {
-    assert(connected());
-
     device_handle.deenergize();
   }
   catch (const std::exception & e)
@@ -1201,10 +1191,7 @@ void main_controller::energize()
 
   try
   {
-    assert(connected());
-
     device_handle.energize();
-
     device_handle.exit_safe_start();
     send_reset_command_timeout = true;
   }
@@ -1257,8 +1244,6 @@ void main_controller::apply_settings()
 
   try
   {
-    assert(connected());
-
     tic::settings fixed_settings = settings;
     std::string warnings;
     fixed_settings.fix(&warnings);
@@ -1286,8 +1271,6 @@ void main_controller::open_settings_from_file(std::string filename)
 
   try
   {
-    assert(connected());
-
     std::string settings_string = read_string_from_file(filename);
     tic::settings fixed_settings = tic::settings::read_from_string(settings_string);
 
@@ -1322,8 +1305,6 @@ void main_controller::save_settings_to_file(std::string filename)
 
   try
   {
-    assert(connected());
-
     tic::settings fixed_settings = settings;
     std::string warnings;
     fixed_settings.fix(&warnings);
