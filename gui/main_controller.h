@@ -183,6 +183,10 @@ private:
   // device list again (saves CPU time).
   uint32_t update_device_list_counter = 1;
 
+  // True if we want to regularly send the "Reset command timeout" command to
+  // this device.
+  bool send_reset_command_timeout = false;
+
   void reload_variables();
 
   // Returns true if we are currently connected to a device.

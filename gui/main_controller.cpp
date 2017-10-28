@@ -97,6 +97,7 @@ void main_controller::connect_device(const tic::device & device)
 
     connection_error = false;
     disconnected_by_user = false;
+    send_reset_command_timeout = false;
 
     // Open a handle to the specified device.
     device_handle = tic::handle(device);
@@ -121,11 +122,6 @@ void main_controller::connect_device(const tic::device & device)
 
   try
   {
-    // Reset command timeout BEFORE loading variables for the first time so we
-    // only count one occurrence of the command timeout error. (Otherwise, the
-    // Tic would again set the command_timeout bit in errors_occurred after we
-    // load the variables but before we reset the command timeout.)
-    device_handle.reset_command_timeout();
     reload_variables();
   }
   catch (const std::exception & e)
@@ -297,11 +293,15 @@ void main_controller::update()
       // Reload the variables from the device.
       try
       {
-        // Reset command timeout AFTER reloading the variables so we can
-        // indicate an active error if the command timeout interval is shorter
-        // than the interval between calls to update().
         reload_variables();
-        device_handle.reset_command_timeout();
+
+        if (send_reset_command_timeout)
+        {
+          // Reset command timeout AFTER reloading the variables so we can
+          // indicate an active error if the command timeout interval is shorter
+          // than the interval between calls to update().
+          device_handle.reset_command_timeout();
+        }
       }
       catch (const std::exception & e)
       {
@@ -1121,6 +1121,7 @@ void main_controller::set_target_position(int32_t position)
     assert(connected());
 
     device_handle.set_target_position(position);
+    send_reset_command_timeout = true;
   }
   catch (const std::exception & e)
   {
@@ -1137,6 +1138,7 @@ void main_controller::set_target_velocity(int32_t velocity)
     assert(connected());
 
     device_handle.set_target_velocity(velocity);
+    send_reset_command_timeout = true;
   }
   catch (const std::exception & e)
   {
@@ -1204,6 +1206,7 @@ void main_controller::energize()
     device_handle.energize();
 
     device_handle.exit_safe_start();
+    send_reset_command_timeout = true;
   }
   catch (const std::exception & e)
   {
