@@ -1089,7 +1089,7 @@ void main_window::on_deenergize_button_clicked()
 
 void main_window::on_resume_button_clicked()
 {
-  controller->energize();
+  controller->resume();
 }
 
 void main_window::on_errors_reset_counts_button_clicked()

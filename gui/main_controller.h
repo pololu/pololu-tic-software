@@ -69,7 +69,7 @@ public:
   void halt_and_set_position(int32_t position);
   void halt_and_hold();
   void deenergize();
-  void energize();
+  void resume();
   void start_input_setup();
 
   // This is called when the user wants to apply the settings.

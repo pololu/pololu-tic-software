@@ -1184,8 +1184,7 @@ void main_controller::deenergize()
   }
 }
 
-// TODO: rename to resume to match the button name
-void main_controller::energize()
+void main_controller::resume()
 {
   if (!connected()) { return; }
 
