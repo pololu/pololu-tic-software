@@ -72,6 +72,20 @@ bool main_controller::disconnect_device()
   return true;
 }
 
+void main_controller::clear_driver_error()
+{
+  if (!connected()) { return; }
+
+  try
+  {
+    device_handle.clear_driver_error();
+  }
+  catch (const std::exception & e)
+  {
+    show_exception(e);
+  }
+}
+
 void main_controller::connect_device(const tic::device & device)
 {
   assert(device);
@@ -451,8 +465,9 @@ void main_controller::handle_device_changed()
     }
   }
 
-  window->set_disconnect_enabled(connected());
   window->set_open_save_settings_enabled(connected());
+  window->set_disconnect_enabled(connected());
+  window->set_clear_driver_error_enabled(connected());
   window->set_reload_settings_enabled(connected());
   window->set_restore_defaults_enabled(connected());
   window->set_tab_pages_enabled(connected());

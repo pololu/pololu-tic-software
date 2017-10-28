@@ -21,6 +21,9 @@ public:
   // that have not been applied.
   bool disconnect_device();
 
+  // This is called when the user wants to send the Clear Driver Error command.
+  void clear_driver_error();
+
   // This is called when the user issues a command to reload settings from the
   // device.
   void reload_settings(bool ask = true);

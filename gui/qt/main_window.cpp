@@ -246,6 +246,11 @@ void main_window::set_restore_defaults_enabled(bool enabled)
   restore_defaults_action->setEnabled(enabled);
 }
 
+void main_window::set_clear_driver_error_enabled(bool enabled)
+{
+  clear_driver_error_action->setEnabled(enabled);
+}
+
 void main_window::set_device_name(const std::string & name, bool link_enabled)
 {
   QString text = QString::fromStdString(name);
@@ -1014,6 +1019,11 @@ void main_window::on_save_settings_action_triggered()
 void main_window::on_disconnect_action_triggered()
 {
   controller->disconnect_device();
+}
+
+void main_window::on_clear_driver_error_action_triggered()
+{
+  controller->clear_driver_error();
 }
 
 void main_window::on_reload_settings_action_triggered()
@@ -1819,6 +1829,10 @@ void main_window::setup_menu_bar()
   disconnect_action->setObjectName("disconnect_action");
   disconnect_action->setShortcut(Qt::CTRL + Qt::Key_D);
   device_menu->addAction(disconnect_action);
+
+  clear_driver_error_action = new QAction(this);
+  clear_driver_error_action->setObjectName("clear_driver_error_action");
+  device_menu->addAction(clear_driver_error_action);
 
   device_menu->addSeparator();
 
@@ -3017,6 +3031,7 @@ void main_window::retranslate()
   exit_action->setText(tr("E&xit"));
   device_menu->setTitle(tr("&Device"));
   disconnect_action->setText(tr("&Disconnect"));
+  clear_driver_error_action->setText(tr("&Clear driver error"));
   reload_settings_action->setText(tr("Re&load settings from device"));
   restore_defaults_action->setText(tr("&Restore default settings"));
   apply_settings_action->setText(tr("&Apply settings"));

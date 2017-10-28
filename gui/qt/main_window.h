@@ -129,6 +129,9 @@ public:
   // Controls whether the disconnect action is enabled or disabled.
   void set_disconnect_enabled(bool enabled);
 
+  // Controls whether the clear driver error option is enabled.
+  void set_clear_driver_error_enabled(bool enabled);
+
   // Controls whether the reload settings from device action is enabled.
   void set_reload_settings_enabled(bool enabled);
 
@@ -254,6 +257,7 @@ private slots:
   void on_open_settings_action_triggered();
   void on_save_settings_action_triggered();
   void on_disconnect_action_triggered();
+  void on_clear_driver_error_action_triggered();
   void on_reload_settings_action_triggered();
   void on_restore_defaults_action_triggered();
   void on_update_timer_timeout();
@@ -398,6 +402,7 @@ private:
   QAction * exit_action;
   QMenu * device_menu;
   QAction * disconnect_action;
+  QAction * clear_driver_error_action;
   QAction * reload_settings_action;
   QAction * restore_defaults_action;
   QAction * apply_settings_action;
