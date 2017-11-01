@@ -1,14 +1,18 @@
 cmake_minimum_required (VERSION 2.8.11)
 
-# Don't use -rdynamic since it breaks causes musl static linking.
-cmake_policy(SET CMP0065 NEW)
-
 # Fix behavior of CMAKE_CXX_STANDARD when targeting macOS.
-cmake_policy(SET CMP0025 NEW)
+if (POLICY CMP0025)
+  cmake_policy(SET CMP0025 NEW)
+endif ()
 
 # Fix a warning on Mac OS X.
-if (NOT CMAKE_VERSION VERSION_LESS "3.0")
+if (POLICY CMP0042)
   cmake_policy(SET CMP0042 NEW)
+endif ()
+
+# Don't use -rdynamic since it breaks causes musl static linking.
+if (POLICY CMP0065)
+  cmake_policy(SET CMP0065 NEW)
 endif ()
 
 project (tic)
