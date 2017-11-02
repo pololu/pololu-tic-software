@@ -1,24 +1,41 @@
 # Tic Stepper Motor Controller software
 
-Version: 1.3.0<br>
-Release date: 2017-08-29<br>
+Version: 1.4.0<br>
+Release date: 2017-11-02<br>
 [www.pololu.com](https://www.pololu.com/)
 
 This repository contains the source code of the configuration and control software for
-the [Tic Stepper Motor Controller](https://www.pololu.com/category/212/tic-stepper-motor-controllers).
+the [Tic Stepper Motor Controller](https://www.pololu.com/tic).
 There are two programs: the Pololu Tic Command-line Utility
 (ticcmd) and the Pololu Tic Control Center (ticgui).
 
 ## Installation
 
-Installers will be available for download from the
+Installers for this software are available for download from the
 [Tic Stepper Motor Controller User's Guide](http://www.pololu.com/docs/0J67).
 
-See [BUILDING.md](BUILDING.md) for information about how to compile the code
+See [BUILDING.md](BUILDING.md) for information about how to compile the software
 from source.
 
 ## Version history
 
+- 1.4.0 (2017-11-02):
+  - Added support for the Tic T834.
+  - ticgui: To avoid unexpected motion when connecting to a Tic with safe start
+    is disabled, only start sending the "Reset command timeout" to the Tic after
+    the user clicks the Resume button or specifies a target position or
+    velocity.
+  - ticgui: Added a menu item for sending the "Clear driver error" command.
+  - Show all the digits of the VIN voltage reading in `ticcmd --status --full`.
+  - libpololu-tic: Added
+    `tic_look_up_product_name_short()`,
+    `tic_look_up_product_name_ui()`,
+    `tic_look_up_decay_mode_name()`,
+    `tic_look_up_decay_mode_code()`,
+    `tic_get_max_allowed_current()`,
+    `tic::device.get_product()`.
+  - Fixed a bug that prevented reading or writing encoder prescaler values greater than 255.
+  - Other minor bug fixes.
 - 1.3.0 (2017-09-11):
   - Added support for building installers for Linux.
   - ticgui: Added the compact layout.  Can be enabled with `TICGUI_COMPACT=Y`.
