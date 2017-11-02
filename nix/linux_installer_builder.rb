@@ -60,3 +60,5 @@ chmod 'u+x', StagingDir + 'install.sh'
 cd OutDir
 success = system("tar cJfv pololu-tic-#{Version}-#{EnvName}.tar.xz pololu-tic")
 raise "tar failed: error #{$?.exitstatus}" if !success
+
+rm_r 'pololu-tic'
