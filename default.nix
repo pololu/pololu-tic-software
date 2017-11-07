@@ -1,3 +1,5 @@
+# TODO: refactor this into two files like p-load does it
+
 rec {
   nixcrpkgs = import <nixcrpkgs>;
 

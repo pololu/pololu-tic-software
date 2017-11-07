@@ -1,3 +1,5 @@
+# TODO: make the directory name in the tarball match the full name of the tarball
+
 require 'fileutils'
 require 'pathname'
 include FileUtils
