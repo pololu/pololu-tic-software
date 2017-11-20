@@ -1,5 +1,3 @@
-# TODO: make the directory name in the tarball match the full name of the tarball
-
 require 'fileutils'
 require 'pathname'
 include FileUtils
@@ -11,8 +9,9 @@ OutDir = Pathname(ENV.fetch('out'))
 PayloadDir = Pathname(ENV.fetch('payload'))
 SrcDir = Pathname(ENV.fetch('src'))
 Version = File.read(PayloadDir + 'version.txt')
-
-StagingDir = OutDir + 'pololu-tic'
+TarName = "pololu-tic-#{Version}-#{ConfigName}"
+StagingDir = Pathname(TarName)
+OutTar = OutDir + "#{TarName}.tar.xz"
 
 mkdir_p StagingDir
 cp_r Dir.glob(PayloadDir + 'bin' + '*'), StagingDir
@@ -59,8 +58,6 @@ end
 chmod_R 'u+w', StagingDir
 chmod 'u+x', StagingDir + 'install.sh'
 
-cd OutDir
-success = system("tar cJfv pololu-tic-#{Version}-#{ConfigName}.tar.xz pololu-tic")
+mkdir_p OutDir
+success = system("tar cJfv #{OutTar} #{StagingDir}")
 raise "tar failed: error #{$?.exitstatus}" if !success
-
-rm_r 'pololu-tic'
