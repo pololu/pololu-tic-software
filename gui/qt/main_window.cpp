@@ -42,6 +42,9 @@ Q_IMPORT_PLUGIN (QWindowsIntegrationPlugin);
 Q_IMPORT_PLUGIN (QLinuxFbIntegrationPlugin);
 Q_IMPORT_PLUGIN (QXcbIntegrationPlugin);
 #endif
+#ifdef __APPLE__
+Q_IMPORT_PLUGIN (QCocoaIntegrationPlugin);
+#endif
 #endif
 
 #define UINT12_MAX 0xFFF // 4095
