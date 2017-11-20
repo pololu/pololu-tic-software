@@ -6,7 +6,7 @@ include FileUtils
 
 ENV['PATH'] = ENV.fetch('_PATH')
 
-EnvName = ENV.fetch('env_name')
+ConfigName = ENV.fetch('config_name')
 OutDir = Pathname(ENV.fetch('out'))
 PayloadDir = Pathname(ENV.fetch('payload'))
 SrcDir = Pathname(ENV.fetch('src'))
@@ -21,7 +21,7 @@ cp ENV.fetch('license'), StagingDir + 'LICENSE.html'
 
 File.open(StagingDir + 'README.txt', 'w') do |f|
   f.puts <<EOF
-Pololu Tic Stepper Motor Controller Software #{Version} for #{EnvName}
+Pololu Tic Stepper Motor Controller Software #{Version} for #{ConfigName}
 
 To install this software, we recommend starting a terminal, navigating to this
 directory using the "cd" command, and then running:
@@ -60,7 +60,7 @@ chmod_R 'u+w', StagingDir
 chmod 'u+x', StagingDir + 'install.sh'
 
 cd OutDir
-success = system("tar cJfv pololu-tic-#{Version}-#{EnvName}.tar.xz pololu-tic")
+success = system("tar cJfv pololu-tic-#{Version}-#{ConfigName}.tar.xz pololu-tic")
 raise "tar failed: error #{$?.exitstatus}" if !success
 
 rm_r 'pololu-tic'
