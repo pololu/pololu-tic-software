@@ -127,7 +127,7 @@ static tic_error * apply_string_pair(tic_settings * settings,
   else if (!strcmp(key, "soft_error_position"))
   {
     int64_t position;
-    if (!tic_string_to_i64(value, &position))
+    if (tic_string_to_i64(value, &position))
     {
       return tic_error_create("Invalid soft_error_position value.");
     }
@@ -141,7 +141,7 @@ static tic_error * apply_string_pair(tic_settings * settings,
   else if (!strcmp(key, "serial_baud_rate"))
   {
     int64_t baud;
-    if (!tic_string_to_i64(value, &baud))
+    if (tic_string_to_i64(value, &baud))
     {
       return tic_error_create("Invalid serial_baud_rate value.");
     }
@@ -154,7 +154,7 @@ static tic_error * apply_string_pair(tic_settings * settings,
   else if (!strcmp(key, "serial_device_number"))
   {
     int64_t num;
-    if (!tic_string_to_i64(value, &num))
+    if (tic_string_to_i64(value, &num))
     {
       return tic_error_create("Invalid serial_device_number value.");
     }
@@ -167,7 +167,7 @@ static tic_error * apply_string_pair(tic_settings * settings,
   else if (!strcmp(key, "command_timeout"))
   {
     int64_t command_timeout;
-    if (!tic_string_to_i64(value, &command_timeout))
+    if (tic_string_to_i64(value, &command_timeout))
     {
       return tic_error_create("Invalid command_timeout value.");
     }
@@ -189,7 +189,7 @@ static tic_error * apply_string_pair(tic_settings * settings,
   else if (!strcmp(key, "serial_response_delay"))
   {
     int64_t delay;
-    if (!tic_string_to_i64(value, &delay))
+    if (tic_string_to_i64(value, &delay))
     {
       return tic_error_create("Invalid serial_response_delay value.");
     }
@@ -202,7 +202,7 @@ static tic_error * apply_string_pair(tic_settings * settings,
   else if (!strcmp(key, "low_vin_timeout"))
   {
     int64_t low_vin_timeout;
-    if (!tic_string_to_i64(value, &low_vin_timeout))
+    if (tic_string_to_i64(value, &low_vin_timeout))
     {
       return tic_error_create("Invalid low_vin_timeout value.");
     }
@@ -215,7 +215,7 @@ static tic_error * apply_string_pair(tic_settings * settings,
   else if (!strcmp(key, "low_vin_shutoff_voltage"))
   {
     int64_t low_vin_shutoff_voltage;
-    if (!tic_string_to_i64(value, &low_vin_shutoff_voltage))
+    if (tic_string_to_i64(value, &low_vin_shutoff_voltage))
     {
       return tic_error_create("Invalid low_vin_shutoff_voltage value.");
     }
@@ -229,7 +229,7 @@ static tic_error * apply_string_pair(tic_settings * settings,
   else if (!strcmp(key, "low_vin_startup_voltage"))
   {
     int64_t low_vin_startup_voltage;
-    if (!tic_string_to_i64(value, &low_vin_startup_voltage))
+    if (tic_string_to_i64(value, &low_vin_startup_voltage))
     {
       return tic_error_create("Invalid low_vin_startup_voltage value.");
     }
@@ -243,7 +243,7 @@ static tic_error * apply_string_pair(tic_settings * settings,
   else if (!strcmp(key, "high_vin_shutoff_voltage"))
   {
     int64_t high_vin_shutoff_voltage;
-    if (!tic_string_to_i64(value, &high_vin_shutoff_voltage))
+    if (tic_string_to_i64(value, &high_vin_shutoff_voltage))
     {
       return tic_error_create("Invalid high_vin_shutoff_voltage value.");
     }
@@ -258,7 +258,7 @@ static tic_error * apply_string_pair(tic_settings * settings,
   else if (!strcmp(key, "vin_calibration"))
   {
     int64_t vin_calibration;
-    if (!tic_string_to_i64(value, &vin_calibration))
+    if (tic_string_to_i64(value, &vin_calibration))
     {
       return tic_error_create("Invalid vin_calibration value.");
     }
@@ -272,7 +272,7 @@ static tic_error * apply_string_pair(tic_settings * settings,
   else if (!strcmp(key, "rc_max_pulse_period"))
   {
     int64_t rc_max_pulse_period;
-    if (!tic_string_to_i64(value, &rc_max_pulse_period))
+    if (tic_string_to_i64(value, &rc_max_pulse_period))
     {
       return tic_error_create("Invalid rc_max_pulse_period value.");
     }
@@ -286,7 +286,7 @@ static tic_error * apply_string_pair(tic_settings * settings,
   else if (!strcmp(key, "rc_bad_signal_timeout"))
   {
     int64_t rc_bad_signal_timeout;
-    if (!tic_string_to_i64(value, &rc_bad_signal_timeout))
+    if (tic_string_to_i64(value, &rc_bad_signal_timeout))
     {
       return tic_error_create("Invalid rc_bad_signal_timeout value.");
     }
@@ -300,7 +300,7 @@ static tic_error * apply_string_pair(tic_settings * settings,
   else if (!strcmp(key, "rc_consecutive_good_pulses"))
   {
     int64_t rc_consecutive_good_pulses;
-    if (!tic_string_to_i64(value, &rc_consecutive_good_pulses))
+    if (tic_string_to_i64(value, &rc_consecutive_good_pulses))
     {
       return tic_error_create("Invalid rc_consecutive_good_pulses value.");
     }
@@ -324,7 +324,7 @@ static tic_error * apply_string_pair(tic_settings * settings,
   else if (!strcmp(key, "input_hysteresis"))
   {
     int64_t hysteresis;
-    if (!tic_string_to_i64(value, &hysteresis))
+    if (tic_string_to_i64(value, &hysteresis))
     {
       return tic_error_create("Invalid input_hysteresis value.");
     }
@@ -337,7 +337,7 @@ static tic_error * apply_string_pair(tic_settings * settings,
   else if (!strcmp(key, "input_error_min"))
   {
     int64_t input_error_min;
-    if (!tic_string_to_i64(value, &input_error_min))
+    if (tic_string_to_i64(value, &input_error_min))
     {
       return tic_error_create("Invalid input_error_min value.");
     }
@@ -350,7 +350,7 @@ static tic_error * apply_string_pair(tic_settings * settings,
   else if (!strcmp(key, "input_error_max"))
   {
     int64_t input_error_max;
-    if (!tic_string_to_i64(value, &input_error_max))
+    if (tic_string_to_i64(value, &input_error_max))
     {
       return tic_error_create("Invalid input_error_max value.");
     }
@@ -381,7 +381,7 @@ static tic_error * apply_string_pair(tic_settings * settings,
   else if (!strcmp(key, "input_min"))
   {
     int64_t input_min;
-    if (!tic_string_to_i64(value, &input_min))
+    if (tic_string_to_i64(value, &input_min))
     {
       return tic_error_create("Invalid input_min value.");
     }
@@ -394,7 +394,7 @@ static tic_error * apply_string_pair(tic_settings * settings,
   else if (!strcmp(key, "input_neutral_min"))
   {
     int64_t input_neutral_min;
-    if (!tic_string_to_i64(value, &input_neutral_min))
+    if (tic_string_to_i64(value, &input_neutral_min))
     {
       return tic_error_create("Invalid input_neutral_min value.");
     }
@@ -407,7 +407,7 @@ static tic_error * apply_string_pair(tic_settings * settings,
   else if (!strcmp(key, "input_neutral_max"))
   {
     int64_t input_neutral_max;
-    if (!tic_string_to_i64(value, &input_neutral_max))
+    if (tic_string_to_i64(value, &input_neutral_max))
     {
       return tic_error_create("Invalid input_neutral_max value.");
     }
@@ -420,7 +420,7 @@ static tic_error * apply_string_pair(tic_settings * settings,
   else if (!strcmp(key, "input_max"))
   {
     int64_t input_max;
-    if (!tic_string_to_i64(value, &input_max))
+    if (tic_string_to_i64(value, &input_max))
     {
       return tic_error_create("Invalid input_max value.");
     }
@@ -433,7 +433,7 @@ static tic_error * apply_string_pair(tic_settings * settings,
   else if (!strcmp(key, "output_min"))
   {
     int64_t output_min;
-    if (!tic_string_to_i64(value, &output_min))
+    if (tic_string_to_i64(value, &output_min))
     {
       return tic_error_create("Invalid output_min value.");
     }
@@ -446,7 +446,7 @@ static tic_error * apply_string_pair(tic_settings * settings,
   else if (!strcmp(key, "output_max"))
   {
     int64_t output_max;
-    if (!tic_string_to_i64(value, &output_max))
+    if (tic_string_to_i64(value, &output_max))
     {
       return tic_error_create("Invalid output_max value.");
     }
@@ -459,7 +459,7 @@ static tic_error * apply_string_pair(tic_settings * settings,
   else if (!strcmp(key, "encoder_prescaler"))
   {
     int64_t encoder_prescaler;
-    if (!tic_string_to_i64(value, &encoder_prescaler))
+    if (tic_string_to_i64(value, &encoder_prescaler))
     {
       return tic_error_create("Invalid encoder_prescaler value.");
     }
@@ -472,7 +472,7 @@ static tic_error * apply_string_pair(tic_settings * settings,
   else if (!strcmp(key, "encoder_postscaler"))
   {
     int64_t encoder_postscaler;
-    if (!tic_string_to_i64(value, &encoder_postscaler))
+    if (tic_string_to_i64(value, &encoder_postscaler))
     {
       return tic_error_create("Invalid encoder_postscaler value.");
     }
@@ -529,7 +529,7 @@ static tic_error * apply_string_pair(tic_settings * settings,
   else if (!strcmp(key, "current_limit"))
   {
     int64_t current_limit;
-    if (!tic_string_to_i64(value, &current_limit))
+    if (tic_string_to_i64(value, &current_limit))
     {
       return tic_error_create("Invalid current_limit value.");
     }
@@ -542,7 +542,7 @@ static tic_error * apply_string_pair(tic_settings * settings,
   else if (!strcmp(key, "current_limit_during_error"))
   {
     int64_t current_limit;
-    if (!tic_string_to_i64(value, &current_limit))
+    if (tic_string_to_i64(value, &current_limit))
     {
       return tic_error_create("Invalid current_limit_during_error value.");
     }
@@ -573,7 +573,7 @@ static tic_error * apply_string_pair(tic_settings * settings,
   else if (!strcmp(key, "max_speed"))
   {
     int64_t max_speed;
-    if (!tic_string_to_i64(value, &max_speed))
+    if (tic_string_to_i64(value, &max_speed))
     {
       return tic_error_create("Invalid max_speed value.");
     }
@@ -586,7 +586,7 @@ static tic_error * apply_string_pair(tic_settings * settings,
   else if (!strcmp(key, "starting_speed"))
   {
     int64_t starting_speed;
-    if (!tic_string_to_i64(value, &starting_speed))
+    if (tic_string_to_i64(value, &starting_speed))
     {
       return tic_error_create("Invalid starting_speed value.");
     }
@@ -599,7 +599,7 @@ static tic_error * apply_string_pair(tic_settings * settings,
   else if (!strcmp(key, "max_accel"))
   {
     int64_t max_accel;
-    if (!tic_string_to_i64(value, &max_accel))
+    if (tic_string_to_i64(value, &max_accel))
     {
       return tic_error_create("Invalid max_accel value.");
     }
@@ -612,7 +612,7 @@ static tic_error * apply_string_pair(tic_settings * settings,
   else if (!strcmp(key, "max_decel"))
   {
     int64_t max_decel;
-    if (!tic_string_to_i64(value, &max_decel))
+    if (tic_string_to_i64(value, &max_decel))
     {
       return tic_error_create("Invalid max_decel value.");
     }

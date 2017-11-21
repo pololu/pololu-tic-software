@@ -161,7 +161,7 @@ struct arguments
 
 // Note: This will not work correctly if T is uint64_t.
 template <typename T>
-static T parse_arg_int(arg_reader & arg_reader, int base = 10)
+static T parse_arg_int(arg_reader & arg_reader)
 {
   const char * value_c = arg_reader.next();
   if (value_c == NULL)
@@ -170,24 +170,22 @@ static T parse_arg_int(arg_reader & arg_reader, int base = 10)
       "Expected a number after '" + std::string(arg_reader.last()) + "'.");
   }
 
-  char * end;
-  int64_t result = strtoll(value_c, &end, base);
-  if (errno || *end)
-  {
-    throw exception_with_exit_code(EXIT_BAD_ARGS,
-      "The number after '" + std::string(arg_reader.last()) + "' is invalid.");
-  }
-
-  if (result < std::numeric_limits<T>::min())
+  T result;
+  uint8_t error = string_to_int(value_c, &result);
+  if (error == STRING_TO_INT_ERR_SMALL)
   {
     throw exception_with_exit_code(EXIT_BAD_ARGS,
       "The number after '" + std::string(arg_reader.last()) + "' is too small.");
   }
-
-  if (result > std::numeric_limits<T>::max())
+  if (error == STRING_TO_INT_ERR_LARGE)
   {
     throw exception_with_exit_code(EXIT_BAD_ARGS,
       "The number after '" + std::string(arg_reader.last()) + "' is too large.");
+  }
+  if (error)
+  {
+    throw exception_with_exit_code(EXIT_BAD_ARGS,
+      "The number after '" + std::string(arg_reader.last()) + "' is invalid.");
   }
 
   return result;

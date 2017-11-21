@@ -120,28 +120,74 @@ void tic_sprintf(tic_string * str, const char * format, ...)
   va_end(ap);
 }
 
-// Converts a string to an int64_t, returning an error if there is non-number
-// junk in the string or the number is out of range.
-bool tic_string_to_i64(const char * str, int64_t * out)
+// This is derived from cli/string_to_int.h
+uint8_t tic_string_to_i64(const char * str, int64_t * out)
 {
-  assert(str != NULL);
-  assert(out != NULL);
-  assert(sizeof(long long) == 8);
-
   *out = 0;
 
-  char * end;
-  int64_t result = strtoll(str, &end, 10);
-  if (errno)
+  const char * p = str;
+
+  // Process minus and plus signs.
+  bool negative = false;
+  if (*p == '-')
   {
-    return false;
+    negative = true;
+    p++;
   }
-  if (*end != 0)
+  if (*p == '+')
   {
-    // Non-number junk in the string.
-    return false;
+    p++;
+  }
+
+  // Reject numbers with no digits.
+  if (*p == 0)
+  {
+    return STRING_TO_INT_ERR_EMPTY;
+  }
+
+  int64_t result = 0;
+  while (*p)
+  {
+    bool is_digit = *p >= '0' && *p <= '9';
+    if (!is_digit)
+    {
+      return STRING_TO_INT_ERR_INVALID;  // Expected a digit, got something else.
+    }
+
+    uint8_t digit_value = *p - '0';
+
+    if (negative)
+    {
+      if (result < (-0x7FFFFFFFFFFFFFFF - 1) / 10)
+      {
+        return STRING_TO_INT_ERR_SMALL;  // Multiplication would underflow.
+      }
+      result *= 10;
+
+      if (result < (-0x7FFFFFFFFFFFFFFF - 1) + digit_value)
+      {
+        return STRING_TO_INT_ERR_SMALL;  // Subtraction would underflow.
+      }
+      result -= digit_value;
+    }
+    else
+    {
+      if (result > 0x7FFFFFFFFFFFFFFF / 10)
+      {
+        return STRING_TO_INT_ERR_LARGE;  // Multiplication would overflow.
+      }
+      result *= 10;
+
+      if (result > 0x7FFFFFFFFFFFFFFF - digit_value)
+      {
+        return STRING_TO_INT_ERR_LARGE;  // Addition would overflow.
+      }
+      result += digit_value;
+    }
+
+    p++;
   }
 
   *out = result;
-  return true;
+  return 0;
 }

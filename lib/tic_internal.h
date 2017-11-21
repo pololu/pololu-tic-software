@@ -41,7 +41,13 @@ void tic_string_setup(tic_string *);
 void tic_string_setup_dummy(tic_string *);
 TIC_PRINTF(2, 3)
 void tic_sprintf(tic_string *, const char * format, ...);
-bool tic_string_to_i64(const char *, int64_t *);
+
+#define STRING_TO_INT_ERR_SMALL 1
+#define STRING_TO_INT_ERR_LARGE 2
+#define STRING_TO_INT_ERR_EMPTY 3
+#define STRING_TO_INT_ERR_INVALID 4
+
+uint8_t tic_string_to_i64(const char *, int64_t *);
 
 
 // Internal name lookup library.
