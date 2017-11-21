@@ -185,9 +185,9 @@ def test_cases_for_settings_fix(product)
 
   [
     [ { 'control_mode' => 'rc_speed', 'soft_error_response' => 'go_to_position' },
-      { 'soft_error_response' => 'deenergize' },
+      { 'soft_error_response' => 'decel_to_hold' },
       "Warning: The soft error response cannot be \"Go to position\" in a " \
-      "speed control mode, so it will be changed to \"De-energize\".\n"
+      "speed control mode, so it will be changed to \"Decelerate to hold\".\n"
     ],
     [ { 'control_mode' => 'rc_position', 'soft_error_response' => 'go_to_position' },
       { },
@@ -492,29 +492,31 @@ describe 'settings' do
     expect(result).to eq 0
   end
 
-  specify 'tic_settings_fill_with_defaults is correct' do
-    stdin = "product: #{tic_product}"
-    stdout, stderr, result = run_ticcmd('--fix-settings - -', input: stdin)
-    expect(stderr).to eq ""
-    expect(YAML.load(stdout)).to eq YAML.load(DefaultSettings.fetch(tic_product))
-    expect(result).to eq 0
-  end
-
-  specify 'tic_settings_fix is correct' do
-    defaults = YAML.load(DefaultSettings.fetch(tic_product))
-    test_cases_for_settings_fix(tic_product).each do |input_part, output_part, warnings|
-      warnings ||= ""
-      if !warnings.empty? && !warnings.end_with?("\n")
-        raise "Warnings should end with newline: #{warnings.inspect}"
-      end
-      input = defaults.merge(input_part)
-      output = input.merge(output_part)
-
-      stdout, stderr, result = run_ticcmd('--fix-settings - -',
-        input: YAML.dump(input))
-      expect(stderr).to eq warnings
-      expect(YAML.load(stdout)).to eq output
+  TicProductSymbols.each do |product|
+    specify "tic_settings_fill_with_defaults is correct for #{product}" do
+      stdin = "product: #{product}"
+      stdout, stderr, result = run_ticcmd('--fix-settings - -', input: stdin)
+      expect(stderr).to eq ""
+      expect(YAML.load(stdout)).to eq YAML.load(DefaultSettings.fetch(product))
       expect(result).to eq 0
+    end
+
+    specify "tic_settings_fix is correct for #{product}" do
+      defaults = YAML.load(DefaultSettings.fetch(product))
+      test_cases_for_settings_fix(product).each do |input_part, output_part, warnings|
+        warnings ||= ""
+        if !warnings.empty? && !warnings.end_with?("\n")
+          raise "Warnings should end with newline: #{warnings.inspect}"
+        end
+        input = defaults.merge(input_part)
+        output = input.merge(output_part)
+
+        stdout, stderr, result = run_ticcmd('--fix-settings - -',
+          input: YAML.dump(input))
+        expect(stderr).to eq warnings
+        expect(YAML.load(stdout)).to eq output
+        expect(result).to eq 0
+      end
     end
   end
 

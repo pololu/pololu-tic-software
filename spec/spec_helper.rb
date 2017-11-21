@@ -61,3 +61,5 @@ end
 def tic_max_allowed_current(product)
   product == :T834 ? 3456 : 3968
 end
+
+TicProductSymbols = [:T825, :T834]
