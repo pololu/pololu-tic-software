@@ -141,10 +141,10 @@ static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings
     uint8_t response = tic_settings_get_soft_error_response(settings);
     if (response == TIC_RESPONSE_GO_TO_POSITION && speed_control_mode)
     {
-      response = TIC_RESPONSE_DEENERGIZE;
+      response = TIC_RESPONSE_DECEL_TO_HOLD;
       tic_sprintf(warnings,
         "Warning: The soft error response cannot be \"Go to position\" in a "
-        "speed control mode, so it will be changed to \"De-energize\".\n");
+        "speed control mode, so it will be changed to \"Decelerate to hold\".\n");
     }
     tic_settings_set_soft_error_response(settings, response);
   }
