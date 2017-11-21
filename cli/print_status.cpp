@@ -80,7 +80,7 @@ static void print_pin_info(const tic::variables & vars,
   // memory that is full of 0xFF bytes.  (This is a fragile fix that could break
   // in future versions of GCC, but it does no harm.)
   std::cout << left_column << "  Digital reading: "
-      << (vars.get_digital_reading(pin) ? 1 : 0) << std::endl;
+      << (vars.get_digital_reading(pin) ? '1' : '0') << std::endl;
 }
 
 void print_status(const tic::variables & vars,
