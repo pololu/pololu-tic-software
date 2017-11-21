@@ -87,21 +87,21 @@ Errors that occurred since last check:
 SCL pin:
   State:                      (Unknown)
   Analog reading:             N/A
-  Digital reading:            255
+  Digital reading:            1
 SDA pin:
   State:                      (Unknown)
   Analog reading:             N/A
-  Digital reading:            255
+  Digital reading:            1
 TX pin:
   State:                      (Unknown)
   Analog reading:             N/A
-  Digital reading:            255
+  Digital reading:            1
 RX pin:
   State:                      (Unknown)
   Analog reading:             N/A
-  Digital reading:            255
+  Digital reading:            1
 RC pin:
-  Digital reading:            255
+  Digital reading:            1
 END
 
 describe '--status' do

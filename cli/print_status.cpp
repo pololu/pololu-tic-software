@@ -74,8 +74,13 @@ static void print_pin_info(const tic::variables & vars,
     std::cout << left_column << "  Analog reading: "
       << input_format(vars.get_analog_reading(pin)) << std::endl;
   }
+
+  // Note: The ternary operator below prevents GCC from printing 255 when we are
+  // running our test that bends the rules of C/C++, withs 'vars' pointing to
+  // memory that is full of 0xFF bytes.  (This is a fragile fix that could break
+  // in future versions of GCC, but it does no harm.)
   std::cout << left_column << "  Digital reading: "
-    << vars.get_digital_reading(pin) << std::endl;
+      << (vars.get_digital_reading(pin) ? 1 : 0) << std::endl;
 }
 
 void print_status(const tic::variables & vars,
