@@ -1,4 +1,5 @@
 #include "bootloader.h"
+#include <string_to_int.h>
 #include "tinyxml2.h"
 #include <limits>
 #include <sstream>
@@ -25,32 +26,6 @@ static std::vector<std::string> split(const std::string & str, char delimiter)
   return r;
 }
 
-// Converts a string to an int64_t, returning an error if there is non-number
-// junk in the string or the number is out of range.
-static bool hex_string_to_i64(const char * str, int64_t * out)
-{
-  assert(str != NULL);
-  assert(out != NULL);
-  assert(sizeof(long long) == 8);
-
-  *out = 0;
-
-  char * end;
-  int64_t result = strtoll(str, &end, 16);
-  if (errno)
-  {
-    return false;
-  }
-  if (*end != 0)
-  {
-    // Non-number junk in the string.
-    return false;
-  }
-
-  *out = result;
-  return true;
-}
-
 static firmware_archive::block process_xml_block(
   const tinyxml2::XMLElement * element)
 {
@@ -65,16 +40,10 @@ static firmware_archive::block process_xml_block(
     throw std::runtime_error("A block is missing an address.");
   }
 
-  int64_t address;
-  if (!hex_string_to_i64(address_c_str, &address))
+  if (!hex_string_to_int(address_c_str, &block.address))
   {
     throw std::runtime_error("A block has an invalid address.");
   }
-  if (address < 0 || address > std::numeric_limits<typeof(block.address)>::max())
-  {
-    throw std::runtime_error("A block has an out of range address.");
-  }
-  block.address = address;
 
   // Get the contents.
   const char * contents_c_str = element->GetText();
@@ -124,16 +93,10 @@ static firmware_archive::image process_xml_firmware_image(
   {
     throw std::runtime_error("A firmware image is missing a product ID.");
   }
-  int64_t product_id;
-  if (!hex_string_to_i64(product_c_str, &product_id))
+  if (!hex_string_to_int(product_c_str, &image.usb_product_id))
   {
     throw std::runtime_error("A firmware image has an invalid product ID.");
   }
-  if (product_id < 0 || product_id > 0xffff)
-  {
-    throw std::runtime_error("A firmware image has an out of range product ID.");
-  }
-  image.usb_product_id = product_id;
 
   // FMI files don't store the vendor ID so we assume they are for Pololu
   // products.
