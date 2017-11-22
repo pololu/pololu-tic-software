@@ -14,6 +14,6 @@ rec {
     win32 = win32.installer;
     linux-x86 = linux-x86.installer;
     linux-rpi = linux-rpi.installer;
-    # TODO: macos = macos.installer;
+    macos = macos.installer;
   };
 }
