@@ -21,7 +21,9 @@ from source.
 
 - 1.5.0 (2017-11-22):
   - Added support for building installers for macOS.
-  - Fixed some bugs affecting the software on macOS.
+  - Fixed some bugs affecting the software on macOS (caused by `strtoll`).
+  - Made Qt's Fusion style be the default style on non-Windows systems.
+  - Fixed some styling issues.
   - Fixed the firmware upgrade code to work with the Tic T834.
 - 1.4.0 (2017-11-02):
   - Added support for the Tic T834.
