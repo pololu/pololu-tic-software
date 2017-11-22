@@ -40,7 +40,7 @@ static firmware_archive::block process_xml_block(
     throw std::runtime_error("A block is missing an address.");
   }
 
-  if (!hex_string_to_int(address_c_str, &block.address))
+  if (hex_string_to_int(address_c_str, &block.address))
   {
     throw std::runtime_error("A block has an invalid address.");
   }
@@ -93,7 +93,7 @@ static firmware_archive::image process_xml_firmware_image(
   {
     throw std::runtime_error("A firmware image is missing a product ID.");
   }
-  if (!hex_string_to_int(product_c_str, &image.usb_product_id))
+  if (hex_string_to_int(product_c_str, &image.usb_product_id))
   {
     throw std::runtime_error("A firmware image has an invalid product ID.");
   }
