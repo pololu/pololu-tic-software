@@ -86,7 +86,7 @@ bootloader_window * main_window::open_bootloader_window()
   bootloader_window * window = new bootloader_window(this);
   connect(window, &bootloader_window::upload_complete,
     this, &main_window::upload_complete);
-  window->setWindowModality(Qt::WindowModal);
+  window->setWindowModality(Qt::ApplicationModal);
   window->show();
   return window;
 }
