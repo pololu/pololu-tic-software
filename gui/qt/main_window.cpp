@@ -1774,6 +1774,14 @@ void main_window::setup_window()
   {
     stylesheet += "QPushButton { padding: 0.3em 1em; }\n";
   }
+
+  // By default, the fusion style makes the scroll bar look bad, having a border on the
+  // top but no borders on the bottom.  This line seems to make it use a totally different
+  // style which makes it look more like a normal Windows scrollbar, and thus better.
+  if (style_name == "fusion")
+  {
+    stylesheet += "QScrollBar#manual_target_scroll_bar { border: 0; }\n";
+  }
   
   setStyleSheet(stylesheet);
 
