@@ -1,7 +1,7 @@
 # Tic Stepper Motor Controller software
 
-Version: 1.4.0<br>
-Release date: 2017-11-02<br>
+Version: 1.5.0<br>
+Release date: 2017-11-22<br>
 [www.pololu.com](https://www.pololu.com/)
 
 This repository contains the source code of the configuration and control software for
@@ -19,6 +19,9 @@ from source.
 
 ## Version history
 
+- 1.5.0 (2017-11-22):
+  - Added support for building installers for macOS.
+  - Fixed some bugs affecting the software on macOS.
 - 1.4.0 (2017-11-02):
   - Added support for the Tic T834.
   - ticgui: To avoid unexpected motion when connecting to a Tic with safe start
