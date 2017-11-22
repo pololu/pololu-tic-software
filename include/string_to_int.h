@@ -143,11 +143,11 @@ static uint8_t hex_string_to_int(const char * str, T * out)
 
     if (negative)
     {
-      if (result < std::numeric_limits<T>::min() / 10)
+      if (result < std::numeric_limits<T>::min() / 0x10)
       {
         return STRING_TO_INT_ERR_SMALL;  // Multiplication would underflow.
       }
-      result *= 16;
+      result *= 0x10;
 
       if (result < std::numeric_limits<T>::min() + digit_value)
       {
@@ -157,11 +157,11 @@ static uint8_t hex_string_to_int(const char * str, T * out)
     }
     else
     {
-      if (result > std::numeric_limits<T>::max() / 10)
+      if (result > std::numeric_limits<T>::max() / 0x10)
       {
         return STRING_TO_INT_ERR_LARGE;  // Multiplication would overflow.
       }
-      result *= 16;
+      result *= 0x10;
 
       if (result > std::numeric_limits<T>::max() - digit_value)
       {
