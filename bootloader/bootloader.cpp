@@ -1,6 +1,11 @@
 // Code for talking to the device's bootloader and doing firmware upgrades.
-
-// TODO: fix code style of this file and related files
+//
+// This code was mostly copied from p-load:
+//
+//   https://github.com/pololu/p-load
+//
+// NOTE: It would be nice to fix the code style of this file and related files,
+// and remove features we don't need.
 
 #include "bootloader.h"
 #include <cstring>

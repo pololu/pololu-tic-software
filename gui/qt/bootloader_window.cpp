@@ -250,7 +250,6 @@ void bootloader_window::on_program_button_clicked()
     emit upload_complete();
     QThread::usleep(500000);
     close();
-    // TODO: do we need to do something to avoid a memory leak now?
   }
   catch (const std::exception & e)
   {
@@ -269,7 +268,9 @@ void bootloader_window::set_interface_enabled(bool enabled)
 }
 
 // This is how we get status updates from the bootloader library.
-// TODO: use a lambda instead so we don't have to inherit
+//
+// Note: Maybe it would be nicer to use a lambda instead so we don't have to
+// inherit.
 void bootloader_window::set_status(const char * status, uint32_t progress, uint32_t max_progress)
 {
   progress_label->setText(QString(status));

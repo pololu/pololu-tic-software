@@ -205,7 +205,7 @@ public:
 // Represents a high-level device type or device family that can be used in
 // communications with the user.  Each "user type" can correspond to multiple
 // specific app types and bootloader types.
-class PloaderUserType  // TODO: remove
+class PloaderUserType
 {
 public:
   // A lowercase name with no spaces that can be used for a command-line
@@ -322,7 +322,6 @@ private:
   libusbp::generic_handle handle;
 };
 
-// TODO: move everything above into this name space and make it use snake case
 namespace bootloader
 {
   std::vector<PloaderInstance> list_connected_devices();
