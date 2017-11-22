@@ -1764,9 +1764,18 @@ void main_window::setup_window()
     compact = true;
   }
 
-  // Make buttons a little bit bigger so they're easier to click.
-  // TODO: do we only want this on certain buttons?
-  setStyleSheet("QPushButton { padding: 0.3em 1em; }");
+  QString style_name = QApplication::style()->objectName();
+  QString stylesheet;
+
+  // Make buttons a little bit bigger so they're easier to click.  However, this
+  // causes problems with the native Macintosh style, making the buttons
+  // actually look narrower.
+  if (style_name != "macintosh")
+  {
+    stylesheet += "QPushButton { padding: 0.3em 1em; }\n";
+  }
+  
+  setStyleSheet(stylesheet);
 
   setup_menu_bar();
 
