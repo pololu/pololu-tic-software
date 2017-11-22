@@ -22,6 +22,7 @@ from source.
 - 1.5.0 (2017-11-22):
   - Added support for building installers for macOS.
   - Fixed some bugs affecting the software on macOS.
+  - Fixed the firmware upgrade code to work with the Tic T834.
 - 1.4.0 (2017-11-02):
   - Added support for the Tic T834.
   - ticgui: To avoid unexpected motion when connecting to a Tic with safe start
