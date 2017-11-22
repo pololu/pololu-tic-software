@@ -472,6 +472,8 @@ void PloaderHandle::writeFlash(const uint8_t * image)
 {
   assert(image != NULL);
 
+  const char * message = "Writing flash...";
+
   type.ensureFlashPlainWriting();
 
   uint32_t address = type.appAddress + type.appSize;
@@ -505,8 +507,15 @@ void PloaderHandle::writeFlash(const uint8_t * image)
       // These progress numbers aren't very good because they don't
       // account for how many blocks actually need to be written to flash.
       uint32_t progress = type.appSize - (address - type.appAddress);
-      listener->set_status("Writing flash...", progress, type.appSize);
+      listener->set_status(message, progress, type.appSize);
     }
+  }
+
+  // Make sure we report that writing to flash is done.  The loop above
+  // will not do that if the last few blocks are empty.
+  if (listener)
+  {
+    listener->set_status(message, type.appSize, type.appSize);
   }
 }
 
