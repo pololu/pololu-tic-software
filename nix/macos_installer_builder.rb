@@ -96,12 +96,14 @@ end
 File.open(OutDir + 'distribution.xml', 'w') do |f|
   f.puts <<EOF
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
-<installer-gui-script minSpecVersion="1">
+<installer-gui-script minSpecVersion="2">
   <title>#{AppName} #{Version}</title>
   <welcome file="welcome.html" />
   <pkg-ref id="app">app.pkg</pkg-ref>
   <pkg-ref id="path">path.pkg</pkg-ref>
   <options customize="allow" require-scripts="false" />
+  <domain enable_anywhere="false" enable_currentUserHome="false"
+    enable_localSystem="true" />
   <choices-outline>
     <line choice="app" />
     <line choice="path" />
