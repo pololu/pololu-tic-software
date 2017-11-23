@@ -1575,14 +1575,17 @@ void pin_config_row::on_analog_check_stateChanged(int state)
   window_controller()->handle_pin_analog_input(pin, state == Qt::Checked);
 }
 
-// On Mac OS X, field labels are usually right-aligned.
-#ifdef __APPLE__
-#define FIELD_LABEL_ALIGNMENT Qt::AlignRight
-#define INDENT(s) ((s) + QString("    "))
-#else
+// On Mac OS X, field labels are usually right-aligned, but we want to
+// use the fusion style so we will do left-alignment instead.
+//
+// Code we used to use for macOS:
+// #ifdef __APPLE__
+// #define FIELD_LABEL_ALIGNMENT Qt::AlignRight
+// #define INDENT(s) ((s) + QString("    "))
+// #endif
 #define FIELD_LABEL_ALIGNMENT Qt::AlignLeft
 #define INDENT(s) (QString("    ") + (s))
-#endif
+
 
 static void setup_read_only_text_field(QGridLayout * layout, int row, int from_col,
   int value_col_span, QLabel ** label, QLabel ** value)
@@ -1639,6 +1642,8 @@ static void setup_error_row(QGridLayout * layout, int row, error_row & er)
 
   if (row & 1)
   {
+    // TODO: The background color doesn't work with the fusion style on macOS,
+    // it seems to be the same gray as the normal background.
     er.background->setStyleSheet("background-color: palette(alternate-base);");
   }
 
@@ -1782,7 +1787,7 @@ void main_window::setup_window()
   {
     stylesheet += "QScrollBar#manual_target_scroll_bar { border: 0; }\n";
   }
-  
+
   setStyleSheet(stylesheet);
 
   setup_menu_bar();
