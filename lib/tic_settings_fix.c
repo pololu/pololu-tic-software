@@ -1,3 +1,5 @@
+// Functions for fixing settings to be valid.
+
 #include "tic_internal.h"
 
 static bool enum_is_valid(uint8_t code, uint8_t * valid_codes, uint8_t code_count)

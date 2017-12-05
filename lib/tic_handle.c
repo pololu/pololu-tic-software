@@ -1,3 +1,5 @@
+// Functions for communicating with Tic devices over USB.
+
 #include "tic_internal.h"
 
 struct tic_handle

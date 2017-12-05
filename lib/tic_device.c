@@ -1,4 +1,4 @@
-// Functions for listing and communicating with the Tic over USB.
+// Functions for getting info about Tic devices connected over USB.
 
 #include "tic_internal.h"
 

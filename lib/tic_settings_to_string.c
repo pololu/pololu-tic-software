@@ -1,3 +1,5 @@
+// Functions for converting settings to a settings file string.
+
 #include "tic_internal.h"
 
 static void print_pin_config_to_yaml(tic_string * str,

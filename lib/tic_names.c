@@ -1,3 +1,5 @@
+// Functions for converting between names and numeric codes.
+
 #include "tic_internal.h"
 
 const tic_name tic_bool_names[] =

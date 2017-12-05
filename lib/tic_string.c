@@ -120,7 +120,7 @@ void tic_sprintf(tic_string * str, const char * format, ...)
   va_end(ap);
 }
 
-// This is derived from cli/string_to_int.h
+// This is derived from string_to_int.h
 uint8_t tic_string_to_i64(const char * str, int64_t * out)
 {
   *out = 0;

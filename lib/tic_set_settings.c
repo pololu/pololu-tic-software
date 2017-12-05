@@ -1,3 +1,5 @@
+// Functions for writing settings to the device.
+
 #include "tic_internal.h"
 
 static void tic_write_settings_to_buffer(const tic_settings * settings, uint8_t * buf)

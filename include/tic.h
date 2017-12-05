@@ -332,11 +332,10 @@ void tic_settings_free(tic_settings *);
 /// Fixes the settings to have defaults.  Before calling this, you should
 /// specify what product the settings are for by calling
 /// tic_settings_set_product().  If the product is not set to a valid non-zero
-/// value, this function will do nothing (and you can later see a warning from
-/// tic_settings_fix()).
+/// value, this function will do nothing.
 void tic_settings_fill_with_defaults(tic_settings * settings);
 
-/// Fixes the settings to valid and consistent.
+/// Fixes the settings to be valid and consistent.
 ///
 /// The warnings parameters is an optional pointer to pointer to a string.  If
 /// you supply the warnings parameter, and this function is successful, this

@@ -1,3 +1,5 @@
+// Functions for reading settings from a settings file string into memory.
+
 #include "tic_internal.h"
 
 static bool tic_parse_pin_config(const char * input,
@@ -674,7 +676,7 @@ static yaml_node_t * map_lookup(yaml_document_t * doc,
 
 // Takes a key-value pair from the YAML file, does some basic checks, creates
 // proper null-terminated C strings, and then calls apply_string_pair to do the
-// actual logic of parsing strins and applying the settings.
+// actual logic of parsing strings and applying the settings.
 static tic_error * apply_yaml_pair(tic_settings * settings,
   const yaml_node_t * key, const yaml_node_t * value)
 {

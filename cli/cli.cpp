@@ -159,7 +159,6 @@ struct arguments
   }
 };
 
-// Note: This will not work correctly if T is uint64_t.
 template <typename T>
 static T parse_arg_int(arg_reader & arg_reader)
 {
@@ -426,8 +425,7 @@ static arguments parse_args(int argc, char ** argv)
     }
     else if (arg == "--test")
     {
-      // This option and the options below are unadvertised and helps us test
-      // the software.
+      // This option helps us test the software.
       args.test_procedure = parse_arg_int<uint32_t>(arg_reader);
     }
     else
@@ -591,7 +589,7 @@ static void test_procedure(device_selector & selector, uint32_t procedure)
 }
 
 // A note about ordering: We want to do all the setting stuff first because it
-// could affect subsequent options.  We want to shoe the status last, because it
+// could affect subsequent options.  We want to show the status last, because it
 // could be affected by options before it.
 static void run(const arguments & args)
 {

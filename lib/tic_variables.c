@@ -1,3 +1,5 @@
+// Functions for representing variables read from the device in memory.
+
 #include "tic_internal.h"
 
 #define PIN_COUNT 5

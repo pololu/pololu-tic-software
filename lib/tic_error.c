@@ -1,3 +1,5 @@
+// Functions for creating and using error objects.
+
 #include "tic_internal.h"
 
 #ifdef _WIN32

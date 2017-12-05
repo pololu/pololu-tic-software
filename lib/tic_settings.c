@@ -1,3 +1,5 @@
+// Functions for representing settings in memory.
+
 #include "tic_internal.h"
 
 struct tic_settings
