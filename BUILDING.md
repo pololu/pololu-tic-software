@@ -8,8 +8,7 @@ instructions.
 
 This software can be cross-compiled on a Linux machine using
 [Nixcrpkgs](https://github.com/pololu/nixcrpkgs), a collection of tools for
-cross-compiling.  This is how we build our binary releases for Windows and
-Linux.
+cross-compiling.  This is how we build our official installers.
 
 To get started, you should first install [Nix, the purely functional
 package manager](http://nixos.org/nix/), on a Linux machine by following the
@@ -35,6 +34,10 @@ defined in `default.nix`, which specifies that we want to build the software
 for a Linux machine running on an i686 processor.  You can specify `win32`
 instead to get a version for Windows, and you can look in `default.nix` to see
 the names of other supported platforms.
+
+Note: Building for macOS requires you to get a tarball of the macOS SDK
+and put it in the right place in nixcrpkgs.  See the `README.md` file in
+nixcrpkgs for details.
 
 The first time you build the software with this method, because it involves
 building a GCC cross-compiler and Qt from source, it will take a lot of time,
