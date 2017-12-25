@@ -141,11 +141,14 @@ download, install, and update your MSYS2 environment.  In particular, be sure to
 update your installed packages.
 
 Next, start a shell by selecting "MinGW-w64 Win32 Shell" from your Start menu or
-running `mingw32.exe`.
+by running `mingw32.exe`.  This is the right environment to use if you want to
+build 32-bit software that works on 32-bit or 64-bit Windows.  (If you want to
+build 64-bit software that only works on 64-bit versions of Windows, select
+"MinGW-w64 Win64 Shell" or `mingw64.exe`.)
 
 Run this command to install the required development tools:
 
-    pacman -S base-devel git mingw-w64-i686-{toolchain,cmake,tinyxml2,qt5}
+    pacman -S base-devel git $MINGW_PACKAGE_PREFIX-{toolchain,cmake,tinyxml2,qt5}
 
 If pacman prompts you to enter a selection of packages to install, just press
 enter to install all of the packages.
