@@ -60,7 +60,7 @@ struct tic_settings
 
 void tic_settings_fill_with_defaults(tic_settings * settings)
 {
-  assert(settings != NULL);
+  if (settings == NULL) { return; }
 
   uint32_t product = settings->product;
 
