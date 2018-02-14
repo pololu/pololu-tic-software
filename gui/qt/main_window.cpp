@@ -87,6 +87,7 @@ bootloader_window * main_window::open_bootloader_window()
   connect(window, &bootloader_window::upload_complete,
     this, &main_window::upload_complete);
   window->setWindowModality(Qt::ApplicationModal);
+  window->setAttribute(Qt::WA_DeleteOnClose);
   window->show();
   return window;
 }
