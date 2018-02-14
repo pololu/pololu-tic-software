@@ -495,7 +495,7 @@ namespace tic
     }
 
     /// Wrapper for tic_variables_get_pin_state().
-    uint16_t get_pin_state(uint8_t pin) const noexcept
+    uint8_t get_pin_state(uint8_t pin) const noexcept
     {
       return tic_variables_get_pin_state(pointer, pin);
     }
@@ -768,6 +768,5 @@ namespace tic
     /// \endcond
 
   };
-#ifdef __cplusplus
 }
-#endif
+
