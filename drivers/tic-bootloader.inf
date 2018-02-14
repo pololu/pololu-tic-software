@@ -1,4 +1,4 @@
-; Copyright (C) 2017 Pololu Corporation
+; Copyright (C) 2018 Pololu Corporation
 [Strings]
 DriverPackageDisplayName="Pololu Tic USB Bootloader Drivers"
 ManufacturerName="Pololu Corporation"
@@ -6,12 +6,13 @@ ClassName="Universal Serial Bus devices"
 DeviceInterfaceGUID="{82959cfa-7a2d-431f-a9a1-500b55d90950}"
 p00B2="Pololu Tic T825 Bootloader"
 p00B4="Pololu Tic T834 Bootloader"
+p00BC="Pololu Tic T500 Bootloader"
 
 [DefaultInstall]
 CopyINF=tic-bootloader.inf
 
 [Version]
-DriverVer=09/12/2017,1.1.0
+DriverVer=02/14/2018,1.2.0
 Signature=$Windows NT$
 Class=USBDevice
 ClassGuid={88BAE032-5A81-49F0-BC3D-A4FF138216D6}
@@ -36,14 +37,17 @@ HKR,,Configurable,,1
 [Models.NTx86]
 %p00B2%=DriverInstall, USB\VID_1FFB&PID_00B2
 %p00B4%=DriverInstall, USB\VID_1FFB&PID_00B4
+%p00BC%=DriverInstall, USB\VID_1FFB&PID_00BC
 
 [Models.NTamd64]
 %p00B2%=DriverInstall, USB\VID_1FFB&PID_00B2
 %p00B4%=DriverInstall, USB\VID_1FFB&PID_00B4
+%p00BC%=DriverInstall, USB\VID_1FFB&PID_00BC
 
 [Models.NTarm]
 %p00B2%=DriverInstall, USB\VID_1FFB&PID_00B2
 %p00B4%=DriverInstall, USB\VID_1FFB&PID_00B4
+%p00BC%=DriverInstall, USB\VID_1FFB&PID_00BC
 
 [DriverInstall]
 Include=Winusb.inf
