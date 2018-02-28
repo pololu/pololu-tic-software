@@ -204,14 +204,14 @@ describe 'Set max deceleration' do
 end
 
 describe 'Set step mode' do
-  it 'it complains if the step mode is invalid' do
+  it 'complains if the step mode is invalid' do
     stdout, stderr, result = run_ticcmd('-d x --step-mode foobar')
     expect(stderr).to eq "Error: The step mode specified is invalid.\n"
     expect(stdout).to eq ''
     expect(result).to eq EXIT_BAD_ARGS
   end
 
-  it 'it works', usb: true do
+  it 'works', usb: true do
     modes = ['Full step', '1/2 step', '1/32 step']
     if tic_product == :T500
       modes = ['Full step', '1/2 step', '1/8 step']
@@ -228,7 +228,7 @@ end
 
 
 describe 'Set current limit command' do
-  it 'it works', usb: true do
+  it 'works', usb: true do
     # Note: This test can fail if the "current limit during error" setting is used.
     [32, 64]. each do |limit|
       stdout, stderr, result = run_ticcmd("--current #{limit}")
@@ -241,14 +241,14 @@ describe 'Set current limit command' do
 end
 
 describe 'Set decay mode' do
-  it 'it complains if the decay mode is invalid' do
+  it 'complains if the decay mode is invalid' do
     stdout, stderr, result = run_ticcmd('-d x --decay foobar')
     expect(stderr).to eq "Error: The decay mode specified is invalid.\n"
     expect(stdout).to eq ''
     expect(result).to eq EXIT_BAD_ARGS
   end
 
-  it 'it works', usb: true do
+  it 'works', usb: true do
     case tic_product
     when :T825
       decay_modes = {
