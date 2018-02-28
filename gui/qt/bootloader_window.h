@@ -11,7 +11,7 @@ class QProgressBar;
 class QPushButton;
 class QTimer;
 
-class bootloader_window : public QMainWindow, PloaderStatusListener
+class bootloader_window : public QMainWindow, bootloder_status_listener
 {
   Q_OBJECT
 

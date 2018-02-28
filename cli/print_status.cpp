@@ -221,9 +221,13 @@ void print_status(const tic::variables & vars,
       << vars.get_current_limit() << " mA"
       << std::endl;
 
-    const char * decay_name;
-    tic_look_up_decay_mode_name(vars.get_decay_mode(), product, 0, &decay_name);
-    std::cout << left_column << "Decay mode: " << decay_name << std::endl;
+    // The decay mode is useless for the Tic T500.
+    if (product != TIC_PRODUCT_T500)
+    {
+      const char * decay_name;
+      tic_look_up_decay_mode_name(vars.get_decay_mode(), product, 0, &decay_name);
+      std::cout << left_column << "Decay mode: " << decay_name << std::endl;
+    }
   }
 
   std::cout << std::endl;

@@ -275,6 +275,9 @@ tic_error * tic_settings_to_string(const tic_settings * settings, char ** string
     tic_sprintf(&str, "step_mode: %s\n", name);
   }
 
+  // The decay mode setting for the Tic T500 is useless because there is only
+  // one allowed value, so we don't want to write it to the settings file.
+  if (product != TIC_PRODUCT_T500)
   {
     uint8_t mode = tic_settings_get_decay_mode(settings);
     const char * name;

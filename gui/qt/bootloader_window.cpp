@@ -35,7 +35,7 @@ static void update_device_combo_box(QComboBox & box, bool & device_was_selected)
 
   // tmphax: show all USB devices
   // auto device_list = libusbp::list_connected_devices();
-  auto device_list = bootloader::list_connected_devices();
+  auto device_list = bootloader_list_connected_devices();
   box.clear();
   for (const auto & device : device_list)
   {
@@ -208,8 +208,8 @@ void bootloader_window::on_program_button_clicked()
   }
 
   // Make sure the bootloader is still connected and get its details.
-  auto device_list = bootloader::list_connected_devices();
-  PloaderInstance device;
+  auto device_list = bootloader_list_connected_devices();
+  bootloader_instance device;
   for (const auto & candidate : device_list)
   {
     if (candidate.get_os_id() == bootloader_id)
@@ -241,10 +241,10 @@ void bootloader_window::on_program_button_clicked()
   try
   {
     {
-      PloaderHandle handle(device);
-      handle.setStatusListener(this);
-      handle.applyImage(*image);
-      handle.restartDevice();
+      bootloader_handle handle(device);
+      handle.set_status_listener(this);
+      handle.apply_image(*image);
+      handle.restart_device();
     }
     set_status("Upload complete.", 100, 100);
     emit upload_complete();

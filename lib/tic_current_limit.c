@@ -6,6 +6,7 @@ uint32_t tic_get_max_allowed_current(uint8_t product)
   {
   case TIC_PRODUCT_T834:
     return TIC_MAX_ALLOWED_CURRENT_T834;
+  // TODO: case TIC_PRODUCT_T500:
   default:
     return TIC_MAX_ALLOWED_CURRENT;
   }

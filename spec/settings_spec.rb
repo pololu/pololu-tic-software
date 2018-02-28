@@ -45,7 +45,7 @@ max_decel: 0
 invert_motor_direction: false
 END
 
-  T834: <<END
+  T834: <<END,
 product: T834
 control_mode: serial
 never_sleep: false
@@ -82,6 +82,49 @@ current_limit: 192
 current_limit_during_error: -1
 step_mode: 1
 decay_mode: mixed50
+max_speed: 2000000
+starting_speed: 0
+max_accel: 40000
+max_decel: 0
+invert_motor_direction: false
+END
+
+  T500: <<END,
+product: T500
+control_mode: serial
+never_sleep: false
+disable_safe_start: false
+ignore_err_line_high: false
+auto_clear_driver_error: true
+soft_error_response: decel_to_hold
+soft_error_position: 0
+serial_baud_rate: 9600
+serial_device_number: 14
+command_timeout: 1000
+serial_crc_enabled: false
+serial_response_delay: 0
+vin_calibration: 0
+input_averaging_enabled: true
+input_hysteresis: 0
+input_scaling_degree: linear
+input_invert: false
+input_min: 0
+input_neutral_min: 2015
+input_neutral_max: 2080
+input_max: 4095
+output_min: -200
+output_max: 200
+encoder_prescaler: 1
+encoder_postscaler: 1
+encoder_unlimited: false
+scl_config: default
+sda_config: default
+tx_config: default
+rx_config: default
+rc_config: default
+current_limit: 192
+current_limit_during_error: -1
+step_mode: 1
 max_speed: 2000000
 starting_speed: 0
 max_accel: 40000
@@ -135,7 +178,7 @@ max_decel: 734567890
 invert_motor_direction: true
 END
 
-  T834: <<END
+  T834: <<END,
 product: T834
 control_mode: rc_position
 never_sleep: true
@@ -172,6 +215,49 @@ current_limit: 384
 current_limit_during_error: 96
 step_mode: 32
 decay_mode: mixed75
+max_speed: 234567890
+starting_speed: 10000
+max_accel: 934567820
+max_decel: 734567890
+invert_motor_direction: true
+END
+
+  T500: <<END,
+product: T500
+control_mode: rc_position
+never_sleep: true
+disable_safe_start: true
+ignore_err_line_high: true
+auto_clear_driver_error: true
+soft_error_response: decel_to_hold
+soft_error_position: -234333890
+serial_baud_rate: 115385
+serial_device_number: 40
+command_timeout: 2020
+serial_crc_enabled: true
+serial_response_delay: 123
+vin_calibration: -345
+input_averaging_enabled: false
+input_hysteresis: 4455
+input_scaling_degree: cubic
+input_invert: true
+input_min: 404
+input_neutral_min: 505
+input_neutral_max: 606
+input_max: 3000
+output_min: -999
+output_max: 999
+encoder_prescaler: 5
+encoder_postscaler: 1000000000
+encoder_unlimited: true
+scl_config: user_input pullup active_high
+sda_config: kill_switch analog
+tx_config: kill_switch pullup analog
+rx_config: serial
+rc_config: rc pullup
+current_limit: 384
+current_limit_during_error: 96
+step_mode: 8
 max_speed: 234567890
 starting_speed: 10000
 max_accel: 934567820

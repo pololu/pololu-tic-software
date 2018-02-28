@@ -13,6 +13,7 @@ const tic_name tic_product_names_short[] =
 {
   { "T825", TIC_PRODUCT_T825 },
   { "T834", TIC_PRODUCT_T834 },
+  { "T500", TIC_PRODUCT_T500 },
   { NULL, 0 },
 };
 
@@ -20,6 +21,7 @@ const tic_name tic_product_names_ui[] =
 {
   { "Tic T825 Stepper Motor Controller", TIC_PRODUCT_T825 },
   { "Tic T834 Stepper Motor Controller", TIC_PRODUCT_T834 },
+  { "Tic T500 Stepper Motor Controller", TIC_PRODUCT_T500 },
   { NULL, 0 },
 };
 
@@ -70,6 +72,12 @@ const tic_name tic_decay_mode_names_t834_ui[] =
   { NULL, 0 },
 };
 
+const tic_name tic_decay_mode_names_t500_ui[] =
+{
+  { "Auto", TIC_DECAY_MODE_T500_AUTO },
+  { NULL, 0 },
+};
+
 const tic_name tic_decay_mode_names_generic_snake[] =
 {
   { "mixed", TIC_DECAY_MODE_MIXED },
@@ -95,6 +103,12 @@ const tic_name tic_decay_mode_names_t834_snake[] =
   { "mixed50", TIC_DECAY_MODE_T834_MIXED50 },
   { "mixed75", TIC_DECAY_MODE_T834_MIXED75 },
   { "fast", TIC_DECAY_MODE_T834_FAST },
+  { NULL, 0 },
+};
+
+const tic_name tic_decay_mode_names_t500_snake[] =
+{
+  { "auto", TIC_DECAY_MODE_T500_AUTO },
   { NULL, 0 },
 };
 
@@ -299,6 +313,7 @@ bool tic_look_up_decay_mode_name(uint8_t decay_mode,
     case 0: name_table = tic_decay_mode_names_generic_snake; break;
     case TIC_PRODUCT_T825: name_table = tic_decay_mode_names_t825_snake; break;
     case TIC_PRODUCT_T834: name_table = tic_decay_mode_names_t834_snake; break;
+    case TIC_PRODUCT_T500: name_table = tic_decay_mode_names_t500_snake; break;
     }
   }
   else
@@ -310,6 +325,7 @@ bool tic_look_up_decay_mode_name(uint8_t decay_mode,
     case 0: name_table = tic_decay_mode_names_generic_ui; break;
     case TIC_PRODUCT_T825: name_table = tic_decay_mode_names_t825_ui; break;
     case TIC_PRODUCT_T834: name_table = tic_decay_mode_names_t834_ui; break;
+    case TIC_PRODUCT_T500: name_table = tic_decay_mode_names_t500_ui; break;
     }
   }
 
@@ -350,6 +366,15 @@ bool tic_look_up_decay_mode_code(const char * name,
         return true;
       }
     }
+
+    if (!product || product == TIC_PRODUCT_T500)
+    {
+      if (tic_name_to_code(tic_decay_mode_names_t500_snake, name, &result))
+      {
+        *code = result;
+        return true;
+      }
+    }
   }
 
   if (flags & TIC_NAME_UI)
@@ -372,6 +397,15 @@ bool tic_look_up_decay_mode_code(const char * name,
     if (!product || product == TIC_PRODUCT_T834)
     {
       if (tic_name_to_code(tic_decay_mode_names_t834_ui, name, &result))
+      {
+        *code = result;
+        return true;
+      }
+    }
+
+    if (!product || product == TIC_PRODUCT_T500)
+    {
+      if (tic_name_to_code(tic_decay_mode_names_t500_ui, name, &result))
       {
         *code = result;
         return true;

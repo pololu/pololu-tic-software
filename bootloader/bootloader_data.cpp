@@ -1,79 +1,53 @@
 #include "bootloader.h"
 
-enum PloaderTypeIds
+// TODO: real jrk names in this file
+
+enum bootloader_type_ids
 {
   ID_NONE = 0,
   ID_TIC_T825_BOOTLOADER,
-  ID_TIC_T825_APP,
   ID_TIC_T834_BOOTLOADER,
-  ID_TIC_T834_APP,
+  ID_TIC_T500_BOOTLOADER,
 };
 
-const std::vector<PloaderAppType> ploaderAppTypes = {
-  {
-    /* id */ ID_TIC_T825_APP,
-    /* usbVendorId */ 0x1FFB,
-    /* usbProductId */ 0x00B3,
-    /* name */ "Tic T825 Stepper Motor Controller",
-    /* composite */ false,
-    /* interfaceNumber */ 0,
-  },
-  {
-    /* id */ ID_TIC_T834_APP,
-    /* usbVendorId */ 0x1FFB,
-    /* usbProductId */ 0x00B5,
-    /* name */ "Tic T834 Stepper Motor Controller",
-    /* composite */ false,
-    /* interfaceNumber */ 0,
-  },
-};
-
-const std::vector<PloaderType> ploaderTypes = {
+const std::vector<bootloader_type> bootloader_types = {
   {
     /* id */ ID_TIC_T825_BOOTLOADER,
-    /* usbVendorId */ 0x1FFB,
-    /* usbProductId */ 0x00B2,
+    /* usb_vendor_id */ 0x1FFB,
+    /* usb_product_id */ 0x00B2,
     /* name */ "Tic T825 Bootloader",
-    /* short_name */ "T825 bootloader",
-    /* appAddress */ 0x2000,
-    /* appSize */ 0x6000,
-    /* writeBlockSize */ 0x40,
-    /* erasingFlashAffectsEeprom */ true,
-    /* supportsFlashPlainWriting */ false,
-    /* supportsFlashReading */ false,
-    /* eepromAddress */ 0,
-    /* eepromAddressHexFile */ 0xF00000,
-    /* eepromSize */ 0x100,
-    /* supportsEepromAccess */ true,
-    /* deviceCode */ NULL,
-    /* matchingAppTypes */ { ID_TIC_T825_APP },
+    /* short_name */ "T825",
+    /* app_address */ 0x2000,
+    /* app_size */ 0x6000,
+    /* write_block_size */ 0x40,
+    /* eeprom_address */ 0,
+    /* eeprom_address_hex_file */ 0xF00000,
+    /* eeprom_size */ 0x100,
   },
   {
     /* id */ ID_TIC_T834_BOOTLOADER,
-    /* usbVendorId */ 0x1FFB,
-    /* usbProductId */ 0x00B4,
+    /* usb_vendor_id */ 0x1FFB,
+    /* usb_product_id */ 0x00B4,
     /* name */ "Tic T834 Bootloader",
-    /* short_name */ "T834 bootloader",
-    /* appAddress */ 0x2000,
-    /* appSize */ 0x6000,
-    /* writeBlockSize */ 0x40,
-    /* erasingFlashAffectsEeprom */ true,
-    /* supportsFlashPlainWriting */ false,
-    /* supportsFlashReading */ false,
-    /* eepromAddress */ 0,
-    /* eepromAddressHexFile */ 0xF00000,
-    /* eepromSize */ 0x100,
-    /* supportsEepromAccess */ true,
-    /* deviceCode */ NULL,
-    /* matchingAppTypes */ { ID_TIC_T834_APP },
+    /* short_name */ "T834",
+    /* app_address */ 0x2000,
+    /* app_size */ 0x6000,
+    /* write_block_size */ 0x40,
+    /* eeprom_address */ 0,
+    /* eeprom_address_hex_file */ 0xF00000,
+    /* eeprom_size */ 0x100,
   },
-};
-
-const std::vector<PloaderUserType> ploaderUserTypes = {
   {
-    /* codeName */ "tic",
-    /* name */ "Tic Stepper Motor Controller",
-    /* memberIds */ { ID_TIC_T825_BOOTLOADER, ID_TIC_T825_APP,
-                      ID_TIC_T825_BOOTLOADER, ID_TIC_T825_APP, },
+    /* id */ ID_TIC_T500_BOOTLOADER,
+    /* usb_vendor_id */ 0x1FFB,
+    /* usb_product_id */ 0x00BC,
+    /* name */ "Tic T500 Bootloader",
+    /* short_name */ "T500",
+    /* app_address */ 0x2000,
+    /* app_size */ 0x6000,
+    /* write_block_size */ 0x40,
+    /* eeprom_address */ 0,
+    /* eeprom_address_hex_file */ 0xF00000,
+    /* eeprom_size */ 0x100,
   },
 };

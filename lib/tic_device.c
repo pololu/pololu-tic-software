@@ -61,7 +61,9 @@ tic_error * tic_list_connected_devices(
     uint16_t product_id;
     error = tic_usb_error(libusbp_device_get_product_id(usb_device, &product_id));
     if (error) { break; }
-    if (product_id != TIC_PRODUCT_ID_T825 && product_id != TIC_PRODUCT_ID_T834)
+    if (product_id != TIC_PRODUCT_ID_T825 &&
+      product_id != TIC_PRODUCT_ID_T834 &&
+      product_id != TIC_PRODUCT_ID_T500)
     {
       continue;
     }
@@ -122,6 +124,9 @@ tic_error * tic_list_connected_devices(
       break;
     case TIC_PRODUCT_ID_T834:
       new_device->product = TIC_PRODUCT_T834;
+      break;
+    case TIC_PRODUCT_ID_T500:
+      new_device->product = TIC_PRODUCT_T500;
       break;
     }
     if (new_device->product == 0)

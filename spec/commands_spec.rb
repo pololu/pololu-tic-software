@@ -261,6 +261,9 @@ describe 'Set decay mode' do
         'mixed25' => 'Mixed 25%',
         'mixed75' => 'Mixed 75%',
       }
+    when :T500
+      # The T500 only has one decay mode, so skip this test.
+      next
     end
 
     decay_modes.each do |cli_name, ui_name|

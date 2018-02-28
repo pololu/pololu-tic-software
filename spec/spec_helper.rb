@@ -40,7 +40,7 @@ def tic_get_status
   YAML.load(stdout)
 end
 
-# Returns :T834 or :T825
+# Returns :T834, :T825, or :T500
 def tic_product
   return @tic_product if @tic_product
 

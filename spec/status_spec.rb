@@ -135,6 +135,7 @@ describe '--status' do
     expect(unexpected_keys).to eq []
 
     missing_keys = expected_keys - actual_keys - unreliable_keys
+    missing_keys.delete("Decay mode") if tic_product == :T500
     expect(missing_keys).to eq []
   end
 end
