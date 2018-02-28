@@ -212,7 +212,11 @@ describe 'Set step mode' do
   end
 
   it 'it works', usb: true do
-    ['Full step', '1/2 step', '1/32 step']. each do |mode|
+    modes = ['Full step', '1/2 step', '1/32 step']
+    if tic_product == :T500
+      modes = ['Full step', '1/2 step', '1/8 step']
+    end
+    modes.each do |mode|
       stdout, stderr, result = run_ticcmd("--step-mode \"#{mode}\"")
       expect(stderr).to eq ''
       expect(stdout).to eq ''
