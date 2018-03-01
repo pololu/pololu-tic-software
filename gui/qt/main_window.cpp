@@ -186,6 +186,8 @@ void main_window::adjust_ui_for_product(uint8_t product)
       { { "Slow", TIC_DECAY_MODE_T825_SLOW },
         { "Mixed", TIC_DECAY_MODE_T825_MIXED },
         { "Fast", TIC_DECAY_MODE_T825_FAST } });
+    decay_mode_label->setVisible(true);
+    decay_mode_value->setVisible(true);
     break;
 
   case TIC_PRODUCT_T834:
@@ -195,6 +197,15 @@ void main_window::adjust_ui_for_product(uint8_t product)
         { "Mixed 50%", TIC_DECAY_MODE_T834_MIXED50 },
         { "Mixed 75%", TIC_DECAY_MODE_T834_MIXED75 },
         { "Fast", TIC_DECAY_MODE_T834_FAST } });
+    decay_mode_label->setVisible(true);
+    decay_mode_value->setVisible(true);
+    break;
+
+  case TIC_PRODUCT_T500:
+    set_combo_items(decay_mode_value,
+      { { "Auto", TIC_DECAY_MODE_T500_AUTO } });
+    decay_mode_label->setVisible(false);
+    decay_mode_value->setVisible(false);
     break;
   }
 }
