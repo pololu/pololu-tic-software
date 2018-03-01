@@ -269,7 +269,7 @@ END
 def test_cases_for_settings_fix(product)
   defaults = YAML.load(DefaultSettings.fetch(product))
 
-  [
+  cases = [
     [ { 'control_mode' => 'rc_speed', 'soft_error_response' => 'go_to_position' },
       { 'soft_error_response' => 'decel_to_hold' },
       "Warning: The soft error response cannot be \"Go to position\" in a " \
@@ -379,14 +379,6 @@ def test_cases_for_settings_fix(product)
       { 'current_limit_during_error' => -1 },
       "Warning: The current limit during error is an invalid negative number " \
       "so it will be changed to be the same as the default current limit.\n"
-    ],
-    [
-      { 'decay_mode' => 'mode4' },
-      { 'decay_mode' => case product
-                        when :T825 then 'mixed'
-                        when :T834 then 'mixed75'
-                        end
-      },
     ],
     [ { 'max_speed' => 70000_0000 },
       { 'max_speed' => 50000_0000 },
@@ -547,6 +539,24 @@ def test_cases_for_settings_fix(product)
       { }
     ],
   ]
+
+  if product == :T500
+    cases << [ { 'step_mode' => 16 },
+               { 'step_mode' => 1 },
+               "Warning: The step mode is invalid " \
+               "so it will be changed to 1 (full step).\n"
+             ]
+  else
+    cases << [ { 'decay_mode' => 'mode4' },
+               { 'decay_mode' => case product
+                                 when :T825 then 'mixed'
+                                 when :T834 then 'mixed75'
+                                 end
+               },
+             ]
+  end
+
+  cases
 end
 
 describe 'settings' do
