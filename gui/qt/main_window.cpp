@@ -182,6 +182,14 @@ void main_window::adjust_ui_for_product(uint8_t product)
   {
   default:
   case TIC_PRODUCT_T825:
+    set_combo_items(step_mode_value,
+      { { "Full step", TIC_STEP_MODE_MICROSTEP1 },
+        { "1/2 step", TIC_STEP_MODE_MICROSTEP2 },
+        { "1/4 step", TIC_STEP_MODE_MICROSTEP4 },
+        { "1/8 step", TIC_STEP_MODE_MICROSTEP8 },
+        { "1/16 step", TIC_STEP_MODE_MICROSTEP16 },
+        { "1/32 step", TIC_STEP_MODE_MICROSTEP32 } });
+
     set_combo_items(decay_mode_value,
       { { "Slow", TIC_DECAY_MODE_T825_SLOW },
         { "Mixed", TIC_DECAY_MODE_T825_MIXED },
@@ -191,6 +199,14 @@ void main_window::adjust_ui_for_product(uint8_t product)
     break;
 
   case TIC_PRODUCT_T834:
+    set_combo_items(step_mode_value,
+      { { "Full step", TIC_STEP_MODE_MICROSTEP1 },
+        { "1/2 step", TIC_STEP_MODE_MICROSTEP2 },
+        { "1/4 step", TIC_STEP_MODE_MICROSTEP4 },
+        { "1/8 step", TIC_STEP_MODE_MICROSTEP8 },
+        { "1/16 step", TIC_STEP_MODE_MICROSTEP16 },
+        { "1/32 step", TIC_STEP_MODE_MICROSTEP32 } });
+
     set_combo_items(decay_mode_value,
       { { "Slow", TIC_DECAY_MODE_T834_SLOW },
         { "Mixed 25%", TIC_DECAY_MODE_T834_MIXED25 },
@@ -202,6 +218,12 @@ void main_window::adjust_ui_for_product(uint8_t product)
     break;
 
   case TIC_PRODUCT_T500:
+    set_combo_items(step_mode_value,
+      { { "Full step", TIC_STEP_MODE_MICROSTEP1 },
+        { "1/2 step", TIC_STEP_MODE_MICROSTEP2 },
+        { "1/4 step", TIC_STEP_MODE_MICROSTEP4 },
+        { "1/8 step", TIC_STEP_MODE_MICROSTEP8 } });
+
     set_combo_items(decay_mode_value,
       { { "Auto", TIC_DECAY_MODE_T500_AUTO } });
     decay_mode_label->setVisible(false);
@@ -2761,12 +2783,6 @@ QLayout * main_window::setup_motor_settings_layout()
   {
     step_mode_value = new QComboBox();
     step_mode_value->setObjectName("step_mode_value");
-    step_mode_value->addItem("Full step", TIC_STEP_MODE_MICROSTEP1);
-    step_mode_value->addItem("1/2 step", TIC_STEP_MODE_MICROSTEP2);
-    step_mode_value->addItem("1/4 step", TIC_STEP_MODE_MICROSTEP4);
-    step_mode_value->addItem("1/8 step", TIC_STEP_MODE_MICROSTEP8);
-    step_mode_value->addItem("1/16 step", TIC_STEP_MODE_MICROSTEP16);
-    step_mode_value->addItem("1/32 step", TIC_STEP_MODE_MICROSTEP32);
     step_mode_label = new QLabel();
     step_mode_label->setBuddy(step_mode_value);
     layout->addWidget(step_mode_label, row, 0, FIELD_LABEL_ALIGNMENT);
