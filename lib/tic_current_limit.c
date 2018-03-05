@@ -100,7 +100,7 @@ uint16_t tic_current_limit_to_code(uint8_t product, uint32_t current_limit)
     uint8_t code = 0;
     for (uint8_t i = 0; i <= TIC_MAX_ALLOWED_CURRENT_CODE_T500; i++)
     {
-      if (tic03a_current_table[i] < current_limit) { code = i; }
+      if (tic03a_current_table[i] <= current_limit) { code = i; }
     }
     return code;
   }
