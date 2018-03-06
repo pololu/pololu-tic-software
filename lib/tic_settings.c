@@ -65,21 +65,19 @@ void tic_settings_fill_with_defaults(tic_settings * settings)
 {
   if (settings == NULL) { return; }
 
-  uint32_t product = settings->product;
+  uint8_t product = tic_settings_get_product(settings);
 
-  // The product should be set beforehand, and if it is not then we should do
-  // nothing.
+  // Reset all fields to zero and then restore the product.
+  memset(settings, 0, sizeof(tic_settings));
+  tic_settings_set_product(settings, product);
+
+  // The product should be set beforehand, and if it is not then quit.
   if (product != TIC_PRODUCT_T825 &&
     product != TIC_PRODUCT_T834 &&
     product != TIC_PRODUCT_T500)
   {
     return;
   }
-
-  // Reset all fields to zero.
-  memset(settings, 0, sizeof(tic_settings));
-
-  tic_settings_set_product(settings, product);
 
   tic_settings_set_auto_clear_driver_error(settings, true);
   tic_settings_set_soft_error_response(settings, TIC_RESPONSE_DECEL_TO_HOLD);
@@ -92,14 +90,20 @@ void tic_settings_fill_with_defaults(tic_settings * settings)
     tic_settings_set_low_vin_shutoff_voltage(settings, 6000);
     tic_settings_set_low_vin_startup_voltage(settings, 6500);
     tic_settings_set_high_vin_shutoff_voltage(settings, 35000);
+    tic_settings_set_current_limit(settings, 192); // TODO: set by code instead
   }
   else if (product == TIC_PRODUCT_T834)
   {
     tic_settings_set_low_vin_shutoff_voltage(settings, 1900);
     tic_settings_set_low_vin_startup_voltage(settings, 2100);
     tic_settings_set_high_vin_shutoff_voltage(settings, 13000);
+    tic_settings_set_current_limit(settings, 192); // TODO: set by code instead
   }
-  // TODO: set the default settings for the Tic T500 here
+  else if (product == TIC_PRODUCT_T500)
+  {
+    // TODO: set the other default settings for the Tic T500 here
+    tic_settings_set_current_limit(settings, 275); // TODO: set by code instead
+  }
   tic_settings_set_rc_max_pulse_period(settings, 100);
   tic_settings_set_rc_bad_signal_timeout(settings, 500);
   tic_settings_set_rc_consecutive_good_pulses(settings, 2);
@@ -112,8 +116,7 @@ void tic_settings_fill_with_defaults(tic_settings * settings)
   tic_settings_set_output_max(settings, 200);
   tic_settings_set_encoder_prescaler(settings, 1);
   tic_settings_set_encoder_postscaler(settings, 1);
-  tic_settings_set_current_limit(settings, 192);
-  tic_settings_set_current_limit_during_error(settings, -1);
+  tic_settings_set_current_limit_during_error(settings, -1);  // TODO: set by code instead
   tic_settings_set_max_speed(settings, 2000000);
   tic_settings_set_max_accel(settings, 40000);
 }

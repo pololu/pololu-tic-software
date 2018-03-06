@@ -122,7 +122,7 @@ sda_config: default
 tx_config: default
 rx_config: default
 rc_config: default
-current_limit: 192
+current_limit: 275
 current_limit_during_error: -1
 step_mode: 1
 max_speed: 2000000
@@ -255,8 +255,8 @@ sda_config: kill_switch analog
 tx_config: kill_switch pullup analog
 rx_config: serial
 rc_config: rc pullup
-current_limit: 384
-current_limit_during_error: 96
+current_limit: 1455
+current_limit_during_error: 847
 step_mode: 8
 max_speed: 234567890
 starting_speed: 10000
@@ -268,6 +268,22 @@ END
 
 def test_cases_for_settings_fix(product)
   defaults = YAML.load(DefaultSettings.fetch(product))
+
+  if product == :T500
+    lowest_current = 19
+    low_current = 152
+    default_current = 275
+    medium_current = 589
+    high_current = 2036
+  else
+    lowest_current = 0
+    low_current = 64
+    default_current = 192
+    medium_current = 320
+    high_current = 2048
+  end
+
+  max_current = tic_max_allowed_current(product)
 
   cases = [
     [ { 'control_mode' => 'rc_speed', 'soft_error_response' => 'go_to_position' },
@@ -356,26 +372,26 @@ def test_cases_for_settings_fix(product)
       "Warning: The encoder postscaler is too high " \
       "so it will be lowered to 2147483647.\n"
     ],
-    [ { 'current_limit' => 0 },
+    [ { 'current_limit' => lowest_current },
       { }
     ],
-    [ { 'current_limit' => 209 },
-      { 'current_limit' => 192 },
+    [ { 'current_limit' => default_current + 16 },
+      { 'current_limit' => default_current },
     ],
-    [ { 'current_limit' => 3969 },
-      { 'current_limit' => tic_max_allowed_current(product) },
+    [ { 'current_limit' => max_current + 1 },
+      { 'current_limit' => max_current },
       "Warning: The current limit is too high " \
-      "so it will be lowered to #{tic_max_allowed_current(product)} mA.\n"
+      "so it will be lowered to #{max_current} mA.\n"
     ],
-    [ { 'current_limit' => 320, 'current_limit_during_error' => 64 },
+    [ { 'current_limit' => medium_current, 'current_limit_during_error' => low_current },
       { }
     ],
-    [ { 'current_limit' => 320, 'current_limit_during_error' => 640 },
+    [ { 'current_limit' => medium_current, 'current_limit_during_error' => high_current },
       { 'current_limit_during_error' => -1 },
       "Warning: The current limit during error is higher than the default " \
       "current limit so it will be changed to be the same.\n"
     ],
-    [ { 'current_limit' => 320, 'current_limit_during_error' => -2 },
+    [ { 'current_limit' => medium_current, 'current_limit_during_error' => -2 },
       { 'current_limit_during_error' => -1 },
       "Warning: The current limit during error is an invalid negative number " \
       "so it will be changed to be the same as the default current limit.\n"

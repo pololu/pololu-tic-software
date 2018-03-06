@@ -230,7 +230,11 @@ end
 describe 'Set current limit command' do
   it 'works', usb: true do
     # Note: This test can fail if the "current limit during error" setting is used.
-    [32, 64]. each do |limit|
+    currents = [32, 64]
+    if tic_product == :T500
+      currents = [19, 152]
+    end
+    currents.each do |limit|
       stdout, stderr, result = run_ticcmd("--current #{limit}")
       expect(stderr).to eq ''
       expect(stdout).to eq ''

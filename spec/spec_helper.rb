@@ -59,7 +59,11 @@ def tic_product
 end
 
 def tic_max_allowed_current(product)
-  product == :T834 ? 3456 : 3968
+  {
+    T834: 3456,
+    T500: 2463,
+    T825: 3968
+  }.fetch(product)
 end
 
 TicProductSymbols = [:T825, :T834, :T500]
