@@ -217,8 +217,10 @@ void print_status(const tic::variables & vars,
       << tic_look_up_step_mode_name_ui(vars.get_step_mode())
       << std::endl;
 
+    uint32_t current_ma = tic::current_limit_code_to_ma(settings,
+      vars.get_current_limit_code());
     std::cout << left_column << "Current limit: "
-      << vars.get_current_limit() << " mA"
+      << current_ma << " mA"
       << std::endl;
 
     // The decay mode is useless for the Tic T500.

@@ -1048,14 +1048,22 @@ uint16_t tic_variables_get_rc_pulse_width(const tic_variables *);
 TIC_API
 uint8_t tic_variables_get_step_mode(const tic_variables *);
 
-/// Gets the stepper motor coil current limit in milliamps.
-///
-/// This is the value being used now, which could differ from the value in the
-/// Tic's settings.
-///
-/// See also tic_settings_set_current_limit(), tic_set_current_limit().
+/// WARNING: This gives incorrect results for the Tic T500, so we do not
+/// recommend using it.  It is only here for backwards compatibility.
 TIC_API
 uint32_t tic_variables_get_current_limit(const tic_variables *);
+
+/// Gets the current limit code.
+///
+/// This is the value being used now, whcih could differ from the value in the
+/// Tic' settings.
+///
+/// To convert this to milliamps, use tic_current_limit_code_to_ma().
+///
+/// See also tic_settings_set_current_limit_code(),
+/// tic_settings_get_current_limit_code(), tic_set_current_limit().
+TIC_API
+uint8_t tic_variables_get_current_limit_code(const tic_variables *);
 
 /// Gets the current decay mode of the Tic.
 ///

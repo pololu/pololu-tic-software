@@ -28,7 +28,7 @@ struct tic_variables
   int32_t encoder_position;
   uint16_t rc_pulse_width;
   uint8_t step_mode;
-  uint32_t current_limit;
+  uint8_t current_limit_code;
   uint8_t decay_mode;
   uint8_t input_state;
   uint16_t input_after_averaging;
@@ -143,7 +143,7 @@ static void write_buffer_to_variables(const uint8_t * buf, tic_variables * vars)
   vars->encoder_position = read_i32(buf + TIC_VAR_ENCODER_POSITION);
   vars->rc_pulse_width = read_u16(buf + TIC_VAR_RC_PULSE_WIDTH);
   vars->step_mode = buf[TIC_VAR_STEP_MODE];
-  vars->current_limit = TIC_CURRENT_LIMIT_UNITS_MA * buf[TIC_VAR_CURRENT_LIMIT];
+  vars->current_limit_code = buf[TIC_VAR_CURRENT_LIMIT];
   vars->decay_mode = buf[TIC_VAR_DECAY_MODE];
   vars->input_state = buf[TIC_VAR_INPUT_STATE];
   vars->input_after_averaging = read_u16(buf + TIC_VAR_INPUT_AFTER_AVERAGING);
@@ -371,10 +371,18 @@ uint8_t tic_variables_get_step_mode(const tic_variables * variables)
   return variables->step_mode;
 }
 
+/// WARNING: This does not work for the Tic T500, so we do not recommend using
+/// it.  It is only here for backwards compatibility.
 uint32_t tic_variables_get_current_limit(const tic_variables * variables)
 {
   if (variables == NULL) { return 0; }
-  return variables->current_limit;
+  return variables->current_limit_code * TIC_CURRENT_LIMIT_UNITS_MA;
+}
+
+uint8_t tic_variables_get_current_limit_code(const tic_variables * variables)
+{
+  if (variables == NULL) { return 0; }
+  return variables->current_limit_code;
 }
 
 uint8_t tic_variables_get_decay_mode(const tic_variables * variables)

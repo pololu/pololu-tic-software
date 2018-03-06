@@ -467,9 +467,17 @@ namespace tic
     }
 
     /// Wrapper for tic_variables_get_current_limit().
+    ///
+    /// WARNING: This gives incorrect results for the Tic T500, so we do not
+    /// recommend using it.  It is only here for backwards compatibility.
     uint32_t get_current_limit() const noexcept
     {
       return tic_variables_get_current_limit(pointer);
+    }
+
+    uint8_t get_current_limit_code() const noexcept
+    {
+      return tic_variables_get_current_limit_code(pointer);
     }
 
     /// Wrapper for tic_variables_get_decay_mode().
