@@ -301,6 +301,18 @@ namespace tic
           settings_string.c_str(), r.get_pointer_to_pointer()));
       return r;
     }
+
+    /// Wrapper for tic_settings_set_product().
+    void set_product(uint8_t product)
+    {
+      tic_settings_set_product(pointer, product);
+    }
+
+    /// Wrapper for tic_settings_get_product().
+    uint8_t get_product() const
+    {
+      return tic_settings_get_product(pointer);
+    }
   };
 
   /// Represents the variables read from a Tic.  This object just stores plain
