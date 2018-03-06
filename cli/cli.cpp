@@ -582,6 +582,62 @@ static void test_procedure(device_selector & selector, uint32_t procedure)
                 << std::endl;
     }
   }
+  else if (procedure == 3)
+  {
+    // Test the current limit features.
+
+    std::vector<uint8_t> products = {
+      TIC_PRODUCT_T825,
+      TIC_PRODUCT_T834,
+      TIC_PRODUCT_T500
+    };
+
+    for (uint8_t product : products)
+    {
+      tic::settings settings = tic::settings::create();
+      settings.set_product(product);
+      settings.fill_with_defaults();
+      std::vector<uint8_t> codes = tic::get_recommended_current_limit_codes(settings);
+      uint32_t max_current = tic_get_max_allowed_current(product);
+      std::cout << tic_look_up_product_name_short(product) << std::endl;
+      uint32_t last_ma = 0;
+      uint32_t last_code = 0;
+      for (uint8_t code : codes)
+      {
+        uint32_t ma = tic::current_limit_code_to_ma(settings, code);
+        std::cout << (uint32_t)code << "," << ma << std::endl;
+        if (ma > max_current)
+        {
+          throw std::runtime_error("Recommended current code with default settings "
+            "gives current limit that is too large.");
+        }
+        if (ma < last_ma)
+        {
+          throw std::runtime_error("Recommend currents are not in ascending order.");
+        }
+        for (uint32_t i = last_ma; i < ma; i++)
+        {
+          if (tic::current_limit_ma_to_code(settings, i) != last_code)
+          {
+            throw std::runtime_error("current_limit_ma_to_code returned wrong value");
+          }
+        }
+        last_ma = ma;
+        last_code = code;
+      }
+      for (uint32_t i = last_ma; i < last_ma + 1000; i++)
+      {
+        if (tic::current_limit_ma_to_code(settings, i) != last_code)
+        {
+          throw std::runtime_error("current_limit_ma_to_code returned wrong value");
+        }
+      }
+      if (last_ma != max_current)
+      {
+        throw std::runtime_error("Last recommended current code is not the max current.");
+      }
+    }
+  }
   else
   {
     throw std::runtime_error("Unknown test procedure.");

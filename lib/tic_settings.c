@@ -47,8 +47,11 @@ struct tic_settings
     bool analog;
     bool polarity;
   } pin_settings[TIC_CONTROL_PIN_COUNT];
-  uint32_t current_limit;
-  int32_t current_limit_during_error;
+
+  uint32_t current_limit;  // TODO: remove
+  int32_t current_limit_during_error;  // TODO: remove
+  // TODO: uint8_t current_limit_code;
+  // TODO: uint8_t current_limit_code_during_error;
   uint8_t step_mode;
   uint8_t decay_mode;
   uint32_t starting_speed;
@@ -200,9 +203,8 @@ uint32_t tic_settings_achievable_current_limit(const tic_settings * settings,
   uint32_t current_limit)
 {
   if (settings == NULL) { return 0; }
-  uint8_t product = tic_settings_get_product(settings);
-  uint8_t code = tic_current_limit_to_code(product, current_limit);
-  return tic_current_limit_from_code(product, code);
+  uint8_t code = tic_current_limit_ma_to_code(settings, current_limit);
+  return tic_current_limit_code_to_ma(settings, code);
 }
 
 void tic_settings_set_product(tic_settings * settings, uint8_t product)

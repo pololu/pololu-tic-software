@@ -794,5 +794,27 @@ namespace tic
     /// \endcond
 
   };
+
+  /// Wrapper for tic_get_recommended_current_limit_codes().
+  inline const std::vector<uint8_t> get_recommended_current_limit_codes(
+    const settings & settings)
+  {
+    size_t count;
+    const uint8_t * table = tic_get_recommended_current_limit_codes(
+      settings.get_pointer(), &count);
+    return std::vector<uint8_t>(table, table + count);
+  }
+
+  // Wrapper for tic_current_limit_code_to_ma().
+  inline uint32_t current_limit_code_to_ma(const settings & settings, uint8_t code)
+  {
+    return tic_current_limit_code_to_ma(settings.get_pointer(), code);
+  }
+
+  // Wrapper for tic_current_limit_ma_to_code().
+  inline uint8_t current_limit_ma_to_code(const settings & settings, uint32_t ma)
+  {
+    return tic_current_limit_ma_to_code(settings.get_pointer(), ma);
+  }
 }
 
