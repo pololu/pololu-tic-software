@@ -4,8 +4,6 @@
 
 static void write_buffer_to_settings(const uint8_t * buf, tic_settings * settings)
 {
-  uint8_t product = tic_settings_get_product(settings);
-
   {
     uint8_t control_mode = buf[TIC_SETTING_CONTROL_MODE];
     tic_settings_set_control_mode(settings, control_mode);
@@ -246,22 +244,13 @@ static void write_buffer_to_settings(const uint8_t * buf, tic_settings * setting
   }
 
   {
-    uint32_t current_limit = tic_current_limit_from_code(product, buf[TIC_SETTING_CURRENT_LIMIT]);
-    tic_settings_set_current_limit(settings, current_limit);
+    uint8_t code = buf[TIC_SETTING_CURRENT_LIMIT];
+    tic_settings_set_current_limit_code(settings, code);
   }
 
   {
     uint8_t code = buf[TIC_SETTING_CURRENT_LIMIT_DURING_ERROR];
-    int32_t current_limit;
-    if (code == 0xFF)
-    {
-      current_limit = -1;
-    }
-    else
-    {
-      current_limit = tic_current_limit_from_code(product, code);
-    }
-    tic_settings_set_current_limit_during_error(settings, current_limit);
+    tic_settings_set_current_limit_code_during_error(settings, code);
   }
 
   {

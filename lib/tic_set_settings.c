@@ -223,22 +223,10 @@ static void tic_write_settings_to_buffer(const tic_settings * settings, uint8_t 
     }
   }
 
-  buf[TIC_SETTING_CURRENT_LIMIT] =
-    tic_current_limit_to_code(product, tic_settings_get_current_limit(settings));
+  buf[TIC_SETTING_CURRENT_LIMIT] = tic_settings_get_current_limit_code(settings);
 
-  {
-    int32_t current = tic_settings_get_current_limit_during_error(settings);
-    uint8_t code;
-    if (current == -1)
-    {
-      code = 0xFF;
-    }
-    else
-    {
-      code = tic_current_limit_to_code(product, current);
-    }
-    buf[TIC_SETTING_CURRENT_LIMIT_DURING_ERROR] = code;
-  }
+  buf[TIC_SETTING_CURRENT_LIMIT_DURING_ERROR] =
+    tic_settings_get_current_limit_code_during_error(settings);
 
   buf[TIC_SETTING_STEP_MODE] =
     tic_settings_get_step_mode(settings);

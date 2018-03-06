@@ -79,8 +79,6 @@ void tic_variables_set_from_device(tic_variables *, const uint8_t * buffer);
 
 uint32_t tic_baud_rate_from_brg(uint16_t brg);
 uint16_t tic_baud_rate_to_brg(uint32_t baud_rate);
-uint32_t tic_current_limit_from_code(uint8_t product, uint8_t code);
-uint16_t tic_current_limit_to_code(uint8_t product, uint32_t current_limit);
 
 
 // Internal tic_device functions.

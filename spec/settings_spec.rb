@@ -378,11 +378,13 @@ def test_cases_for_settings_fix(product)
     [ { 'current_limit' => default_current + 16 },
       { 'current_limit' => default_current },
     ],
-    [ { 'current_limit' => max_current + 1 },
-      { 'current_limit' => max_current },
-      "Warning: The current limit is too high " \
-      "so it will be lowered to #{max_current} mA.\n"
-    ],
+    # This warning is not possible any more now that the tic_settings object
+    # just stores codes and not milliamps.
+    #[ { 'current_limit' => max_current + 1 },
+    #  { 'current_limit' => max_current },
+    #  "Warning: The current limit is too high " \
+    #  "so it will be lowered to #{max_current} mA.\n"
+    #],
     [ { 'current_limit' => medium_current, 'current_limit_during_error' => low_current },
       { }
     ],
@@ -393,8 +395,6 @@ def test_cases_for_settings_fix(product)
     ],
     [ { 'current_limit' => medium_current, 'current_limit_during_error' => -2 },
       { 'current_limit_during_error' => -1 },
-      "Warning: The current limit during error is an invalid negative number " \
-      "so it will be changed to be the same as the default current limit.\n"
     ],
     [ { 'max_speed' => 70000_0000 },
       { 'max_speed' => 50000_0000 },

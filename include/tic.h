@@ -764,6 +764,20 @@ void tic_settings_set_current_limit(tic_settings *, uint32_t);
 TIC_API
 uint32_t tic_settings_get_current_limit(const tic_settings *);
 
+/// Sets the default stepper motor coil current code.
+///
+/// To calculate the code from milliamps, see tic_current_limit_ma_to_code().
+/// To convert the code to milliamps, see tic_current_limit_code_to_ma().
+///
+/// See also tic_settings_set_current_limit().
+TIC_API
+void tic_settings_set_current_limit_code(tic_settings *, uint8_t);
+
+/// Gets the default stepper motor coil current code, as described in
+/// tic_settings_set_current_limit_code().
+TIC_API
+uint8_t tic_settings_get_current_limit_code(const tic_settings *);
+
 /// Sets the stepper motor coil current limit in milliamps when there is an
 /// error.
 ///
@@ -775,6 +789,24 @@ void tic_settings_set_current_limit_during_error(tic_settings *, int32_t);
 /// tic_settings_set_current_limit_during_error().
 TIC_API
 int32_t tic_settings_get_current_limit_during_error(const tic_settings *);
+
+/// Sets the stepper motor coil current code when there is an error.
+///
+/// A value of 0xFF means to use the default current limit.
+///
+/// Otherwise, to calculate the code from milliamps, see
+/// tic_current_limit_ma_to_code().
+///
+/// To convert the code to milliamps, see tic_current_limit_code_to_ma().
+///
+/// See also tic_settings_set_current_limit_during_error().
+TIC_API
+void tic_settings_set_current_limit_code_during_error(tic_settings *, uint8_t);
+
+/// Gets the stepper motor coil current code when there is an error, as
+/// described in tic_settings_set_current_limit_code_during_error().
+TIC_API
+uint8_t tic_settings_get_current_limit_code_during_error(const tic_settings *);
 
 /// Returns the highest achievable current limit that is less than the given
 /// current limit.  Does not modify the settings object.
