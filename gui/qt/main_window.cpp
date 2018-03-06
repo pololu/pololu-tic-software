@@ -2793,12 +2793,8 @@ QLayout * main_window::setup_motor_settings_layout()
   {
     current_limit_value = new QSpinBox();
     current_limit_value->setObjectName("current_limit_value");
-    current_limit_value->setKeyboardTracking(false);
     current_limit_value->setRange(0, 4000);
     current_limit_value->setSuffix(" mA");
-    // TODO: want to make 'Apply Settings' available while the user is in the
-    // middle of typing a current limit (both here and for
-    // current_limit_during_error_value)
     current_limit_label = new QLabel();
     current_limit_label->setBuddy(current_limit_value);
     layout->addWidget(current_limit_label, row, 0, FIELD_LABEL_ALIGNMENT);
