@@ -266,6 +266,14 @@ namespace tic
     {
     }
 
+    /// Wrapper for tic_settings_create().
+    static settings create()
+    {
+      tic_settings * p;
+      throw_if_needed(tic_settings_create(&p));
+      return settings(p);
+    }
+
     /// Wrapper for tic_settings_fill_with_defaults().
     void fill_with_defaults()
     {
