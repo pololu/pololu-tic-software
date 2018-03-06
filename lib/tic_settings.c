@@ -204,8 +204,9 @@ uint32_t tic_settings_achievable_current_limit(const tic_settings * settings,
   uint32_t current_limit)
 {
   if (settings == NULL) { return 0; }
-  uint8_t code = tic_current_limit_ma_to_code(settings, current_limit);
-  return tic_current_limit_code_to_ma(settings, code);
+  uint8_t product = tic_settings_get_product(settings);
+  uint8_t code = tic_current_limit_ma_to_code(product, current_limit);
+  return tic_current_limit_code_to_ma(product, code);
 }
 
 void tic_settings_set_product(tic_settings * settings, uint8_t product)
@@ -735,13 +736,15 @@ uint32_t tic_settings_get_current_limit(const tic_settings * settings)
 void tic_settings_set_current_limit_code(tic_settings * settings, uint8_t code)
 {
   if (!settings) { return; }
-  settings->current_limit = tic_current_limit_code_to_ma(settings, code);
+  uint8_t product = tic_settings_get_product(settings);
+  settings->current_limit = tic_current_limit_code_to_ma(product, code);
 }
 
 uint8_t tic_settings_get_current_limit_code(const tic_settings * settings)
 {
   if (!settings) { return 0; }
-  return tic_current_limit_ma_to_code(settings, settings->current_limit);
+  uint8_t product = tic_settings_get_product(settings);
+  return tic_current_limit_ma_to_code(product, settings->current_limit);
 }
 
 void tic_settings_set_current_limit_during_error(tic_settings * settings,
@@ -760,13 +763,16 @@ int32_t tic_settings_get_current_limit_during_error(const tic_settings * setting
 void tic_settings_set_current_limit_code_during_error(tic_settings * settings, uint8_t code)
 {
   if (!settings) { return; }
-  settings->current_limit_during_error = tic_current_limit_code_to_ma(settings, code);
+  uint8_t product = tic_settings_get_product(settings);
+  settings->current_limit_during_error =
+    tic_current_limit_code_to_ma(product, code);
 }
 
 uint8_t tic_settings_get_current_limit_code_during_error(const tic_settings * settings)
 {
   if (!settings) { return 0; }
-  return tic_current_limit_code_to_ma(settings, settings->current_limit_during_error);
+  uint8_t product = tic_settings_get_product(settings);
+  return tic_current_limit_code_to_ma(product, settings->current_limit_during_error);
 }
 
 void tic_settings_set_step_mode(tic_settings * settings, uint8_t step_mode)

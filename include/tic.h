@@ -1559,7 +1559,7 @@ tic_error * tic_get_debug_data(tic_handle *, uint8_t * data, size_t * size);
 /// \endcond
 
 
-//// Miscellaneous
+//// Current limits
 
 /// Gets the maximum allowed current limit setting for the specified Tic
 /// product (one the TIC_PRODUCT_* macros), in milliamps.
@@ -1569,11 +1569,11 @@ tic_error * tic_get_debug_data(tic_handle *, uint8_t * data, size_t * size);
 TIC_API
 uint32_t tic_get_max_allowed_current(uint8_t product);
 
-/// Gets a list of the recommended current limit codes.  They will be in
-/// ascending order by current limit in milliamps.
+/// Gets a list of the recommended current limit codes for the specified
+/// product.  They will be in ascending order by current limit in milliamps.
 TIC_API
 const uint8_t * tic_get_recommended_current_limit_codes(
-  const tic_settings *, size_t * code_count);
+  uint8_t product, size_t * code_count);
 
 // Converts current limit codes to milliamps for the specified product.
 //
@@ -1582,7 +1582,7 @@ const uint8_t * tic_get_recommended_current_limit_codes(
 //
 // See also tic_current_limit_ma_to_code().
 TIC_API
-uint32_t tic_current_limit_code_to_ma(const tic_settings *, uint8_t code);
+uint32_t tic_current_limit_code_to_ma(uint8_t product, uint8_t code);
 
 // Converts a current limit value in milliamps into a recommended max current
 // code.
@@ -1594,7 +1594,7 @@ uint32_t tic_current_limit_code_to_ma(const tic_settings *, uint8_t code);
 //
 // See also tic_current_limit_code_to_ma().
 TIC_API
-uint8_t tic_current_limit_ma_to_code(const tic_settings *, uint32_t ma);
+uint8_t tic_current_limit_ma_to_code(uint8_t product, uint32_t ma);
 
 #ifdef __cplusplus
 }

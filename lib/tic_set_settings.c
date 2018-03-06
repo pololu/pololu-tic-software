@@ -7,8 +7,6 @@ static void tic_write_settings_to_buffer(const tic_settings * settings, uint8_t 
   assert(settings != NULL);
   assert(buf != NULL);
 
-  uint8_t product = tic_settings_get_product(settings);
-
   buf[TIC_SETTING_CONTROL_MODE] =
     tic_settings_get_control_mode(settings);
 

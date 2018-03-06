@@ -73,12 +73,12 @@ uint32_t tic_get_max_allowed_current(uint8_t product)
 }
 
 const uint8_t * tic_get_recommended_current_limit_codes(
-  const tic_settings * settings, size_t * code_count)
+  uint8_t product, size_t * code_count)
 {
   size_t count = 0;
   const uint8_t * table = 0;
 
-  switch (tic_settings_get_product(settings))
+  switch (product)
   {
   case TIC_PRODUCT_T500:
     table = tic03a_recommended_codes;
@@ -108,15 +108,8 @@ const uint8_t * tic_get_recommended_current_limit_codes(
   return table;
 }
 
-uint32_t tic_current_limit_code_to_ma(const tic_settings * settings, uint8_t code)
+uint32_t tic_current_limit_code_to_ma(uint8_t product, uint8_t code)
 {
-  // Important note: If we ever change this function to depend on any setting
-  // other than "product", we must remember to change the ticcmd implementation
-  // of "--current" (it needs to fetch settings first) and change the
-  // implementation of tic_settings_read_from_string (it must ensure calibration
-  // settings are loaded first before calculating the code).
-  uint8_t product = tic_settings_get_product(settings);
-
   if (product == TIC_PRODUCT_T500)
   {
     if (code > TIC_MAX_ALLOWED_CURRENT_CODE_T500)
@@ -138,10 +131,10 @@ uint32_t tic_current_limit_code_to_ma(const tic_settings * settings, uint8_t cod
   }
 }
 
-uint8_t tic_current_limit_ma_to_code(const tic_settings * settings, uint32_t ma)
+uint8_t tic_current_limit_ma_to_code(uint8_t product, uint32_t ma)
 {
   size_t count;
-  const uint8_t * table = tic_get_recommended_current_limit_codes(settings, &count);
+  const uint8_t * table = tic_get_recommended_current_limit_codes(product, &count);
 
   // Assumption: The table is an ascending order, so we want to return the last
   // one that is less than or equal to the desired current.
@@ -149,7 +142,7 @@ uint8_t tic_current_limit_ma_to_code(const tic_settings * settings, uint32_t ma)
   uint8_t code = 0;
   for (size_t i = 0; i < count; i++)
   {
-    if (tic_current_limit_code_to_ma(settings, table[i]) <= ma)
+    if (tic_current_limit_code_to_ma(product, table[i]) <= ma)
     {
       code = table[i];
     }

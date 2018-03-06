@@ -605,17 +605,14 @@ static void test_procedure(device_selector & selector, uint32_t procedure)
 
     for (uint8_t product : products)
     {
-      tic::settings settings = tic::settings::create();
-      settings.set_product(product);
-      settings.fill_with_defaults();
-      std::vector<uint8_t> codes = tic::get_recommended_current_limit_codes(settings);
+      std::vector<uint8_t> codes = tic::get_recommended_current_limit_codes(product);
       uint32_t max_current = tic_get_max_allowed_current(product);
       std::cout << tic_look_up_product_name_short(product) << std::endl;
       uint32_t last_ma = 0;
       uint32_t last_code = 0;
       for (uint8_t code : codes)
       {
-        uint32_t ma = tic::current_limit_code_to_ma(settings, code);
+        uint32_t ma = tic::current_limit_code_to_ma(product, code);
         std::cout << (uint32_t)code << "," << ma << std::endl;
         if (ma > max_current)
         {
@@ -628,7 +625,7 @@ static void test_procedure(device_selector & selector, uint32_t procedure)
         }
         for (uint32_t i = last_ma; i < ma; i++)
         {
-          if (tic::current_limit_ma_to_code(settings, i) != last_code)
+          if (tic::current_limit_ma_to_code(product, i) != last_code)
           {
             throw std::runtime_error("current_limit_ma_to_code returned wrong value");
           }
@@ -638,7 +635,7 @@ static void test_procedure(device_selector & selector, uint32_t procedure)
       }
       for (uint32_t i = last_ma; i < last_ma + 1000; i++)
       {
-        if (tic::current_limit_ma_to_code(settings, i) != last_code)
+        if (tic::current_limit_ma_to_code(product, i) != last_code)
         {
           throw std::runtime_error("current_limit_ma_to_code returned wrong value");
         }
