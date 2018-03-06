@@ -764,8 +764,15 @@ void tic_settings_set_current_limit_code_during_error(tic_settings * settings, u
 {
   if (!settings) { return; }
   uint8_t product = tic_settings_get_product(settings);
-  settings->current_limit_during_error =
-    tic_current_limit_code_to_ma(product, code);
+  if (code == 0xFF)
+  {
+    settings->current_limit_during_error = -1;
+  }
+  else
+  {
+    settings->current_limit_during_error =
+      tic_current_limit_code_to_ma(product, code);
+  }
 }
 
 uint8_t tic_settings_get_current_limit_code_during_error(const tic_settings * settings)
