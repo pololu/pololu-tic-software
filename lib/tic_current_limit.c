@@ -131,6 +131,7 @@ uint32_t tic_current_limit_code_to_ma(uint8_t product, uint8_t code)
   }
 }
 
+// TODO: why is this actually called 9 times during "ticcmd --set-settings settings.txt" ?
 uint8_t tic_current_limit_ma_to_code(uint8_t product, uint32_t ma)
 {
   size_t count;

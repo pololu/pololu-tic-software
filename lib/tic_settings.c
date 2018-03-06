@@ -771,8 +771,16 @@ void tic_settings_set_current_limit_code_during_error(tic_settings * settings, u
 uint8_t tic_settings_get_current_limit_code_during_error(const tic_settings * settings)
 {
   if (!settings) { return 0; }
-  uint8_t product = tic_settings_get_product(settings);
-  return tic_current_limit_code_to_ma(product, settings->current_limit_during_error);
+  if (settings->current_limit_during_error < 0)
+  {
+    return 0xFF;
+  }
+  else
+  {
+    uint8_t product = tic_settings_get_product(settings);
+    return tic_current_limit_ma_to_code(product,
+      settings->current_limit_during_error);
+  }
 }
 
 void tic_settings_set_step_mode(tic_settings * settings, uint8_t step_mode)
