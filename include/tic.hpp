@@ -733,9 +733,18 @@ namespace tic
     }
 
     /// Wrapper for tic_set_current_limit().
+    ///
+    /// WARNING: This does not work for the Tic T500, so we do not recommend
+    /// using it.  It is only here for backwards compatibility.
     void set_current_limit(uint32_t current_limit)
     {
       throw_if_needed(tic_set_current_limit(pointer, current_limit));
+    }
+
+    /// Wrapper for tic_set_current_limit_code().
+    void set_current_limit_code(uint8_t code)
+    {
+      throw_if_needed(tic_set_current_limit_code(pointer, code));
     }
 
     /// Wrapper for tic_set_decay_mode().

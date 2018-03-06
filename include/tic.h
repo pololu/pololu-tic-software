@@ -1420,14 +1420,21 @@ tic_error * tic_set_max_decel(tic_handle *, uint32_t max_decel);
 TIC_API TIC_WARN_UNUSED
 tic_error * tic_set_step_mode(tic_handle *, uint8_t step_mode);
 
-/// Temporarily sets the stepper motor coil current limit in milliamps.
+/// WARNING: This does not work for the Tic T500, so we do not recommend using
+/// it.  It is only here for backwards compatibility.
+TIC_API TIC_WARN_UNUSED
+tic_error * tic_set_current_limit(tic_handle *, uint32_t current_limit);
+
+/// Temporarily sets the stepper motor coil current limit.
 ///
 /// This function sends a set current limit command to the Tic.  For more
 /// information, see the Tic user's guide.
 ///
-/// To set the current limit permanently, see tic_settings_set_current_limit().
+/// To calculate what code to use, see tic_current_limit_ma_to_code().
+///
+/// To set the current limit permanently, see tic_settings_set_current_limit_code().
 TIC_API TIC_WARN_UNUSED
-tic_error * tic_set_current_limit(tic_handle *, uint32_t current_limit);
+tic_error * tic_set_current_limit_code(tic_handle *, uint8_t current_limit);
 
 /// Temporarily sets the stepper motor decay mode.
 ///

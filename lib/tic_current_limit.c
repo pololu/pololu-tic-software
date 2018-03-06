@@ -110,7 +110,13 @@ const uint8_t * tic_get_recommended_current_limit_codes(
 
 uint32_t tic_current_limit_code_to_ma(const tic_settings * settings, uint8_t code)
 {
+  // Important note: If we ever change this function to depend on any setting
+  // other than "product", we must remember to change the ticcmd implementation
+  // of "--current" (it needs to fetch settings first) and change the
+  // implementation of tic_settings_read_from_string (it must ensure calibration
+  // settings are loaded first before calculating the code).
   uint8_t product = tic_settings_get_product(settings);
+
   if (product == TIC_PRODUCT_T500)
   {
     if (code > TIC_MAX_ALLOWED_CURRENT_CODE_T500)

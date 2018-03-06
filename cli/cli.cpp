@@ -457,8 +457,9 @@ static void print_list(device_selector & selector)
 static void set_current_limit_after_warning(device_selector & selector, uint32_t current_limit)
 {
   tic::handle handle = ::handle(selector);
+  uint8_t product = handle.get_device().get_product();
 
-  uint32_t max_current = tic_get_max_allowed_current(handle.get_device().get_product());
+  uint32_t max_current = tic_get_max_allowed_current(product);
   if (current_limit > max_current)
   {
     current_limit = max_current;
@@ -467,7 +468,17 @@ static void set_current_limit_after_warning(device_selector & selector, uint32_t
       << "so it will be lowered to " << current_limit << " mA." << std::endl;
   }
 
-  handle.set_current_limit(current_limit);
+  // In general, you should fetch the settings using handle.get_settings(), but
+  // we happen to know that the default settings will work fine because there
+  // are no settings that actually affect the conversion from milliamps to
+  // current limit codes, so we save some time by just using default settings.
+  tic::settings settings = tic::settings::create();
+  settings.set_product(product);
+  settings.fill_with_defaults();
+
+  uint8_t code = tic::current_limit_ma_to_code(settings, current_limit);
+
+  handle.set_current_limit_code(code);
 }
 
 static void get_status(device_selector & selector, bool full_output)

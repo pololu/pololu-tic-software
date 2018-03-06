@@ -721,12 +721,12 @@ void main_controller::handle_settings_changed()
   window->set_accel_max(tic_settings_get_max_accel(settings.get_pointer()));
   window->set_decel_max(tic_settings_get_max_decel(settings.get_pointer()));
   window->set_step_mode(tic_settings_get_step_mode(settings.get_pointer()));
-  window->set_current_limit(tic_settings_get_current_limit(settings.get_pointer()));
+  window->set_current_limit(tic_settings_get_current_limit(settings.get_pointer())); // TODO: use codes
   window->set_decay_mode(tic_settings_get_decay_mode(settings.get_pointer()));
 
   window->set_soft_error_response(tic_settings_get_soft_error_response(settings.get_pointer()));
   window->set_soft_error_position(tic_settings_get_soft_error_position(settings.get_pointer()));
-  window->set_current_limit_during_error(tic_settings_get_current_limit_during_error(settings.get_pointer()));
+  window->set_current_limit_during_error(tic_settings_get_current_limit_during_error(settings.get_pointer())); // TODO: use codes
 
   window->set_disable_safe_start(tic_settings_get_disable_safe_start(settings.get_pointer()));
   window->set_ignore_err_line_high(tic_settings_get_ignore_err_line_high(settings.get_pointer()));
