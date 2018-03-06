@@ -123,6 +123,10 @@ namespace tic
 
     /// Implicit conversion to bool.  Returns true if the underlying pointer is
     /// not NULL.
+    ///
+    /// NOTE: This kind of implicit conversion is dangerous and should not be
+    /// defined in future libraries.  The type-checker will not catch code like
+    /// "int x = some_object();" so it makes refactoring harder.
     operator bool() const noexcept
     {
       return pointer != NULL;
