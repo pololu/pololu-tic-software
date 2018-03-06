@@ -334,6 +334,7 @@ void tic_settings_free(tic_settings *);
 /// specify what product the settings are for by calling
 /// tic_settings_set_product().  If the product is not set to a valid non-zero
 /// value, this function will do nothing.
+TIC_API
 void tic_settings_fill_with_defaults(tic_settings * settings);
 
 /// Fixes the settings to be valid and consistent.

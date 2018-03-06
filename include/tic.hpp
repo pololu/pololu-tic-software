@@ -266,6 +266,12 @@ namespace tic
     {
     }
 
+    /// Wrapper for tic_settings_fill_with_defaults().
+    void fill_with_defaults()
+    {
+      tic_settings_fill_with_defaults(pointer);
+    }
+
     /// Wrapper for tic_settings_fix().
     ///
     /// If a non-NULL warnings pointer is provided, and this function does not
