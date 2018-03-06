@@ -6,6 +6,7 @@
 
 struct tic_variables
 {
+  uint8_t product;
   uint8_t operation_state;
   bool energized;
   bool position_uncertain;
@@ -218,6 +219,7 @@ tic_error * tic_get_variables(tic_handle * handle, tic_variables ** variables,
   // Store the variables in the new variables object.
   if (error == NULL)
   {
+    new_variables->product = tic_device_get_product(tic_handle_get_device(handle));
     write_buffer_to_variables(buf, new_variables);
   }
 
@@ -371,12 +373,10 @@ uint8_t tic_variables_get_step_mode(const tic_variables * variables)
   return variables->step_mode;
 }
 
-/// WARNING: This does not work for the Tic T500, so we do not recommend using
-/// it.  It is only here for backwards compatibility.
 uint32_t tic_variables_get_current_limit(const tic_variables * variables)
 {
   if (variables == NULL) { return 0; }
-  return variables->current_limit_code * TIC_CURRENT_LIMIT_UNITS_MA;
+  return tic_current_limit_code_to_ma(variables->product, variables->current_limit_code);
 }
 
 uint8_t tic_variables_get_current_limit_code(const tic_variables * variables)

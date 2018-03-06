@@ -467,19 +467,9 @@ namespace tic
     }
 
     /// Wrapper for tic_variables_get_current_limit().
-    ///
-    /// WARNING: This gives incorrect results for the Tic T500, so we do not
-    /// recommend using it.  It is only here for backwards compatibility.
-    uint32_t get_current_limit() const noexcept TIC_DEPRECATED
+    uint32_t get_current_limit() const noexcept
     {
-#ifdef TIC_DEPRECATED
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-#endif
       return tic_variables_get_current_limit(pointer);
-#ifdef TIC_DEPRECATED
-#pragma GCC diagnostic pop
-#endif
     }
 
     uint8_t get_current_limit_code() const noexcept
@@ -748,19 +738,9 @@ namespace tic
     }
 
     /// Wrapper for tic_set_current_limit().
-    ///
-    /// WARNING: This does not work for the Tic T500, so we do not recommend
-    /// using it.  It is only here for backwards compatibility.
-    void set_current_limit(uint32_t current_limit) TIC_DEPRECATED
+    void set_current_limit(uint32_t current_limit)
     {
-#ifdef TIC_DEPRECATED
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-#endif
       throw_if_needed(tic_set_current_limit(pointer, current_limit));
-#ifdef TIC_DEPRECATED
-#pragma GCC diagnostic pop
-#endif
     }
 
     /// Wrapper for tic_set_current_limit_code().

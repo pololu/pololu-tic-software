@@ -518,8 +518,6 @@ tic_error * tic_set_step_mode(tic_handle * handle, uint8_t step_mode)
   return error;
 }
 
-/// WARNING: This does not work for the Tic T500, so we do not recomment using
-/// it.  It is only here for backwards compatibility.
 tic_error * tic_set_current_limit(tic_handle * handle, uint32_t current_limit)
 {
   if (handle == NULL)
@@ -529,13 +527,9 @@ tic_error * tic_set_current_limit(tic_handle * handle, uint32_t current_limit)
 
   const tic_device * device = tic_handle_get_device(handle);
   uint8_t product = tic_device_get_product(device);
-  if (product != TIC_PRODUCT_T825 && product != TIC_PRODUCT_T834)
-  {
-    return tic_error_create(
-      "The tic_set_current_limit function does not support this product.");
-  }
+  uint8_t code = tic_current_limit_ma_to_code(product, current_limit);
 
-  return tic_set_current_limit_code(handle, current_limit / TIC_CURRENT_LIMIT_UNITS_MA);
+  return tic_set_current_limit_code(handle, code);
 }
 
 tic_error * tic_set_current_limit_code(tic_handle * handle, uint8_t code)

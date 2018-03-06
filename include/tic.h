@@ -90,12 +90,6 @@ extern "C" {
 #  endif
 #endif
 
-#ifdef __GNUC__
-#define TIC_DEPRECATED __attribute__((deprecated))
-#else
-#define TIC_DEPRECATED
-#endif
-
 /// Certain functions in the library return a newly-created string and require
 /// the caller to call this function to free the string.  Passing a NULL pointer
 /// to this function is OK.  Do not free the same non-NULL string twice.
@@ -1086,9 +1080,13 @@ uint16_t tic_variables_get_rc_pulse_width(const tic_variables *);
 TIC_API
 uint8_t tic_variables_get_step_mode(const tic_variables *);
 
-/// WARNING: This gives incorrect results for the Tic T500, so we do not
-/// recommend using it.  It is only here for backwards compatibility.
-TIC_API TIC_DEPRECATED
+/// Gets the stepper motor coil current limit in milliamps.
+///
+/// This is the value being used now, which could differ from the value in the
+/// Tic's settings.
+///
+/// See also tic_settings_set_current_limit(), tic_set_current_limit().
+TIC_API
 uint32_t tic_variables_get_current_limit(const tic_variables *);
 
 /// Gets the current limit code.
@@ -1466,12 +1464,16 @@ tic_error * tic_set_max_decel(tic_handle *, uint32_t max_decel);
 TIC_API TIC_WARN_UNUSED
 tic_error * tic_set_step_mode(tic_handle *, uint8_t step_mode);
 
-/// WARNING: This does not work for the Tic T500, so we do not recommend using
-/// it.  It is only here for backwards compatibility.
-TIC_API TIC_WARN_UNUSED TIC_DEPRECATED
+/// Temporarily sets the stepper motor coil current limit in milliamps.
+///
+/// This function sends a set current limit command to the Tic.  For more
+/// information, see the Tic user's guide.
+///
+/// To set the current limit permanently, see tic_settings_set_current_limit().
+TIC_API TIC_WARN_UNUSED
 tic_error * tic_set_current_limit(tic_handle *, uint32_t current_limit);
 
-/// Temporarily sets the stepper motor coil current limit.
+/// Temporarily sets the stepper motor coil current limit code.
 ///
 /// This function sends a set current limit command to the Tic.  For more
 /// information, see the Tic user's guide.
