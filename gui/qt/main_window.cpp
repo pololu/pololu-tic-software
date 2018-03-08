@@ -245,7 +245,7 @@ void main_window::update_current_limit_table(uint8_t product)
   {
     uint8_t code = code_table[i];
     uint32_t current = tic_current_limit_code_to_ma(product, code);
-    current_limit_reverse_mapping.insert((double)current / 1000, code);
+    current_limit_reverse_mapping.insert(current, code);
   }
 
   current_limit_value->mapping = &current_limit_reverse_mapping;
@@ -776,8 +776,7 @@ void main_window::set_step_mode(uint8_t step_mode)
 
 void main_window::set_current_limit(uint32_t current_limit)
 {
-  // TODO: change this when we convert back to showing current in mA
-  set_double_spin_box(current_limit_value, (double)current_limit / 1000);
+  set_double_spin_box(current_limit_value, current_limit);
 }
 
 void main_window::set_decay_mode(uint8_t decay_mode)
@@ -819,7 +818,7 @@ void main_window::set_current_limit_during_error(int32_t current_limit_during_er
   {
     set_check_box(current_limit_during_error_check, false);
     current_limit_during_error_value->setEnabled(false);
-    current_limit_during_error = current_limit_value->value() * 1000;
+    current_limit_during_error = current_limit_value->value();
   }
   else
   {

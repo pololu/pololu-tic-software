@@ -98,13 +98,9 @@ QDoubleSpinBox::StepEnabled current_spin_box::stepEnabled()
 double current_spin_box::valueFromText(const QString& text) const
 {
   QString copy = text.toUpper();
-  if (copy.contains("M"))
-  {
-    copy.remove(QRegExp("(M|MA)"));
-    double temp_num = copy.toDouble();
-    temp_num /=1000;
-    return temp_num;
-  }
+
+  // TODO: if they entered it in A, convert to mA
+
   return copy.toDouble();
 }
 
@@ -115,7 +111,7 @@ QString current_spin_box::textFromValue(double val) const
 
 QValidator::State current_spin_box::validate(QString& input, int& pos) const
 {
-  // TODO: allow it to end with just "M"
+  // TODO: allow it to end with just "M" or "A"
   QRegExp r = QRegExp("(\\d{0,6})(\\.\\d{0,4})?(\\s*)(m|ma|Ma|mA|MA)?");
 
   if (r.exactMatch(input))
