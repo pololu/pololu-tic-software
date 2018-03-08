@@ -1,5 +1,4 @@
-#include "nice_spin_box.h"
-#include "main_controller.h"
+#include "current_spin_box.h"
 
 #include <QLineEdit>
 #include <QSpinBox>

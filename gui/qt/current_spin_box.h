@@ -2,9 +2,6 @@
 
 #include <QDoubleSpinBox>
 
-#include "main_controller.h"
-
-
 class nice_spin_box : public QDoubleSpinBox
 {
   Q_OBJECT
@@ -24,7 +21,6 @@ private slots:
   void set_display_value();
 
 private:
-  main_controller * controller;
   QMultiMap<int, double> step_map;
   int step_index = 0;
   int current_index = 0;
