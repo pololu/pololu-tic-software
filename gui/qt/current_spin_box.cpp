@@ -10,7 +10,8 @@
 current_spin_box::current_spin_box(QWidget* parent)
   : QDoubleSpinBox(parent)
 {
-  connect(this, QOverload<double>::of(&QDoubleSpinBox::valueChanged), this, &editing_finished);
+  connect(this, QOverload<double>::of(&QDoubleSpinBox::valueChanged),
+    this, &editing_finished);
 
   setRange(-1, 10000);
   setKeyboardTracking(false);
@@ -51,7 +52,7 @@ void current_spin_box::set_display_value()
 void current_spin_box::set_possible_values(uint16_t value)
 {
   step_map.clear();
-  for (int i = 0; i < 96; i++)
+  for (int i = 0; i < mapping->size(); i++)
   {
     step_map.insert(i, mapping->keys().at(i));
   }
