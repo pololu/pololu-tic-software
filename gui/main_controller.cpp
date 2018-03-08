@@ -113,6 +113,8 @@ void main_controller::connect_device(const tic::device & device)
   try
   {
     settings = device_handle.get_settings();
+    // Note: for future products, consider running settings.fix() here and showing
+    // all the warnings, instead of just letting GUI controls silently fix some things.
     handle_settings_applied();
   }
   catch (const std::exception & e)
@@ -165,6 +167,8 @@ void main_controller::reload_settings(bool ask)
   try
   {
     settings = device_handle.get_settings();
+    // Note: for future products, consider running settings.fix() here and showing
+    // all the warnings, instead of just letting GUI controls silently fix some things.
     handle_settings_applied();
     settings_modified = false;
   }
