@@ -10,18 +10,20 @@
 current_spin_box::current_spin_box(QWidget* parent)
   : QDoubleSpinBox(parent)
 {
-  connect(this, QOverload<double>::of(&QDoubleSpinBox::valueChanged),
+  connect(this, &QDoubleSpinBox::editingFinished,
     this, &editing_finished);
 
   setRange(-1, 10000);
-  setKeyboardTracking(false);
   setDecimals(3);
 
   mapping = new QMultiMap<double, int>();
 }
 
-void current_spin_box::editing_finished(double entered_value)
+void current_spin_box::editing_finished()
 {
+  double entered_value = value();
+  std::cout << "editing finished start " << entered_value << std::endl;
+
   if (entered_value != 0)
     for (int i = 1; i < step_map.size() - 1; ++i)
     {

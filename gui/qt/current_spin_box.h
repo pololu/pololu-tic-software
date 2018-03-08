@@ -17,7 +17,7 @@ signals:
   void send_code(uint16_t index);
 
 private slots:
-  void editing_finished(double entered_value);
+  void editing_finished();
   void set_display_value();
 
 private:
