@@ -1996,6 +1996,10 @@ QWidget * main_window::setup_tab_widget()
       tr("Advanced settings"));
   }
 
+  // Let the user specify which tab to start on.  Handy for development.
+  auto env = QProcessEnvironment::systemEnvironment();
+  tab_widget->setCurrentIndex(env.value("TICGUI_TAB").toInt());
+
   return tab_widget;
 }
 
