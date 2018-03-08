@@ -1,4 +1,4 @@
-#include "current_spin_box.h"
+#include "nice_spin_box.h"
 #include "main_controller.h"
 
 #include <QLineEdit>
@@ -8,100 +8,89 @@
 #include <QDebug>
 #include <iostream> //tmphax
 
-nice_spin_box::nice_spin_box(int index, QWidget* parent)
-  : index(index), QDoubleSpinBox(parent)
+nice_spin_box::nice_spin_box(QWidget* parent)
+  : QDoubleSpinBox(parent)
 {
   connect(this, QOverload<double>::of(&QDoubleSpinBox::valueChanged), this, &editing_finished);
 
   setRange(-1, 10000);
   setKeyboardTracking(false);
   setDecimals(3);
+
+  mapping = new QMultiMap<double, int>();
 }
 
 void nice_spin_box::editing_finished(double entered_value)
 {
-  if (suppress_events) { return; }
-
   if (entered_value != 0)
-    for (int i = 1; i < map_values.size() - 1; ++i)
+    for (int i = 1; i < step_map.size() - 1; ++i)
     {
-      if (entered_value >= map_values.at(i) && entered_value < map_values.at(i + 1))
+      if (entered_value >= step_map.values().at(i) && entered_value < step_map.values().at(i + 1))
       {
-        current_index = mapping.key(map_values.at(i));
+        current_index = mapping->value(step_map.values().at(i));
       }
     }
 
   if (entered_value == 0)
   {
-    while (mapping.value(current_index) != 0)
-      current_index--;
+    current_index = 0;
   }
 
-  if (entered_value > mapping.values().last())
+  if (entered_value > step_map.values().last())
   {
-    current_index = mapping.size() - 1;
+    current_index = mapping->size() - 1;
   }
 
-  set_code();
+  emit send_code(current_index);
 }
 
 void nice_spin_box::set_display_value()
 {
-  suppress_events = true;
-  setValue(mapping[current_index]);
-  suppress_events = false;
+  setValue(mapping->key(current_index));
 }
 
-void nice_spin_box::set_mapping(const QMap<int, double> & mapping)
+void nice_spin_box::set_possible_values(uint16_t value)
 {
-  this->mapping = mapping;
+  step_map.clear();
+  for (int i = 0; i < 96; i++)
+  {
+    step_map.insert(i, mapping->keys().at(i));
+  }
 
-  map_values = mapping.values();
+  current_index = value;
 
-  std::sort(map_values.begin(), map_values.end());
-
-  // TODO: having a thing named current_index seems wrong.  We should have a
-  // thing named current_code and it should only need to change here if that
-  // code is no longer valid.  And that won't happen in our intended uses of
-  // this class so it's not that important to handle it.
-  current_index = 0;
+  step_index = step_map.key(mapping->key(current_index));
 
   set_display_value();
 }
 
 void nice_spin_box::stepBy(int step_value)
 {
-  if (mapping.values().at(qBound(0, (current_index + step_value),
-    mapping.size() - 1)) == value())
+  if (step_map.values().at(qBound(0, (step_index + step_value),
+    step_map.size() - 1)) == value())
   {
-    current_index += (step_value * 2);
+    step_index += (step_value * 2);
   }
   else
-    current_index += step_value;
+    step_index += step_value;
 
-  current_index = qBound(0, current_index, mapping.size() - 1);
+  current_index = mapping->value(step_map.value(step_index));
 
-  setValue(mapping[current_index]);
+  set_display_value();
 }
 
 QDoubleSpinBox::StepEnabled nice_spin_box::stepEnabled()
 {
   StepEnabled enabled = StepUpEnabled | StepDownEnabled;
-  if (qBound(0, current_index, mapping.size() - 1) == 0)
+  if (qBound(0, current_index, mapping->size() - 1) == 0)
   {
     enabled ^= StepDownEnabled;
   }
-  if (qBound(0, current_index, mapping.size() - 1) == mapping.size() - 1)
+  if (qBound(0, current_index, mapping->size() - 1) == step_map.size() - 1)
   {
     enabled ^= StepUpEnabled;
   }
   return enabled;
-}
-
-void nice_spin_box::set_code()
-{
-  if (suppress_events) { return; }
-  // TODO: emit an event?
 }
 
 double nice_spin_box::valueFromText(const QString& text) const

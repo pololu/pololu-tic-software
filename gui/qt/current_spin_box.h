@@ -1,24 +1,32 @@
 #pragma once
 
 #include <QDoubleSpinBox>
-#include <QMap>
+
+#include "main_controller.h"
+
 
 class nice_spin_box : public QDoubleSpinBox
 {
   Q_OBJECT
 
 public:
-  nice_spin_box(int index = -1, QWidget* parent = Q_NULLPTR);
+  nice_spin_box(QWidget* parent = Q_NULLPTR);
 
-  void set_mapping(const QMap<int, double> &);
+  void set_possible_values(uint16_t value);
+
+  QMap<double, int> * mapping;
+
+signals:
+  void send_code(uint16_t index);
 
 private slots:
   void editing_finished(double entered_value);
   void set_display_value();
-  void set_code();
 
 private:
-  QMap<int, double> mapping;
+  main_controller * controller;
+  QMultiMap<int, double> step_map;
+  int step_index = 0;
   int current_index = 0;
   int index;
   bool suppress_events = false;
