@@ -10,11 +10,7 @@
 current_spin_box::current_spin_box(QWidget* parent)
   : QDoubleSpinBox(parent)
 {
-  connect(this, &QDoubleSpinBox::editingFinished,
-    this, &editing_finished);
-
-  setRange(-1, 10000);
-  setDecimals(3);
+  connect(this, &editingFinished, this, &editing_finished);
 
   mapping = new QMultiMap<double, int>();
 }
