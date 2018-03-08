@@ -67,7 +67,7 @@ void current_spin_box::set_possible_values(uint16_t value)
 
 void current_spin_box::stepBy(int step_value)
 {
-  if (step_map.values().at(qBound(0, (step_index + step_value),
+  if (step_map.values().at(qBound(0, step_index + step_value,
     step_map.size() - 1)) == value())
   {
     step_index += (step_value * 2);
