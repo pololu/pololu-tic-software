@@ -41,6 +41,8 @@ void current_spin_box::editing_finished(double entered_value)
     current_index = mapping->size() - 1;
   }
 
+  set_display_value();
+
   emit send_code(current_index);
 }
 

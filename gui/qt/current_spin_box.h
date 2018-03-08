@@ -21,7 +21,7 @@ private slots:
   void set_display_value();
 
 private:
-  QMultiMap<int, double> step_map;
+  QMultiMap<int, double> step_map;  // TODO: QList<double> current_levels;
   int step_index = 0;
   int current_index = 0;
   int index;
