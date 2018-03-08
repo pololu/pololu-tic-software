@@ -7,7 +7,7 @@
 #include <QDebug>
 #include <iostream> //tmphax
 
-current_spin_box::current_spin_box(QWidget* parent)
+current_spin_box::current_spin_box(QWidget * parent)
   : QDoubleSpinBox(parent)
 {
   connect(this, &editingFinished, this, &editing_finished);
@@ -23,7 +23,8 @@ void current_spin_box::editing_finished()
   if (entered_value != 0)
     for (int i = 1; i < step_map.size() - 1; ++i)
     {
-      if (entered_value >= step_map.values().at(i) && entered_value < step_map.values().at(i + 1))
+      if (entered_value >= step_map.values().at(i) &&
+        entered_value < step_map.values().at(i + 1))
       {
         current_index = mapping->value(step_map.values().at(i));
       }
@@ -93,7 +94,7 @@ QDoubleSpinBox::StepEnabled current_spin_box::stepEnabled()
   return enabled;
 }
 
-double current_spin_box::valueFromText(const QString& text) const
+double current_spin_box::valueFromText(const QString & text) const
 {
   QString copy = text.toUpper();
 
@@ -102,7 +103,7 @@ double current_spin_box::valueFromText(const QString& text) const
   return copy.toDouble();
 }
 
-QValidator::State current_spin_box::validate(QString& input, int& pos) const
+QValidator::State current_spin_box::validate(QString & input, int & pos) const
 {
   // TODO: allow it to end with just "M" or "A"
   QRegExp r = QRegExp("(\\d{0,6})(\\.\\d{0,4})?(\\s*)(m|ma|Ma|mA|MA)?");
