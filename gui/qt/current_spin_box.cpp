@@ -102,11 +102,6 @@ double current_spin_box::valueFromText(const QString& text) const
   return copy.toDouble();
 }
 
-QString current_spin_box::textFromValue(double val) const
-{
-  return QString::number(val, 'f', 2);
-}
-
 QValidator::State current_spin_box::validate(QString& input, int& pos) const
 {
   // TODO: allow it to end with just "M" or "A"

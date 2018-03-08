@@ -2814,6 +2814,7 @@ QLayout * main_window::setup_motor_settings_layout()
     current_limit_value = new current_spin_box();
     current_limit_value->setObjectName("current_limit_value");
     current_limit_value->setRange(0, 10000);
+    current_limit_value->setDecimals(0);
     current_limit_label = new QLabel();
     current_limit_label->setBuddy(current_limit_value);
     layout->addWidget(current_limit_label, row, 0, FIELD_LABEL_ALIGNMENT);

@@ -7,7 +7,7 @@ class current_spin_box : public QDoubleSpinBox
   Q_OBJECT
 
 public:
-  current_spin_box(QWidget* parent = Q_NULLPTR);
+  current_spin_box(QWidget * parent = Q_NULLPTR);
 
   void set_possible_values(uint16_t value);
 
@@ -30,11 +30,9 @@ private:
   QList<double> map_values;
 
 protected:
-  // Reimplemented QDoubleSpinBox functions
   virtual void stepBy(int step_value);
   virtual StepEnabled stepEnabled();
-  double valueFromText(const QString& text) const;
-  QString textFromValue(double val) const;
-  QValidator::State validate(QString& input, int& pos) const;
+  double valueFromText(const QString & text) const;
+  QValidator::State validate(QString & input, int & pos) const;
 };
 
