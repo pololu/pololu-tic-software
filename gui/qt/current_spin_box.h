@@ -2,12 +2,12 @@
 
 #include <QDoubleSpinBox>
 
-class nice_spin_box : public QDoubleSpinBox
+class current_spin_box : public QDoubleSpinBox
 {
   Q_OBJECT
 
 public:
-  nice_spin_box(QWidget* parent = Q_NULLPTR);
+  current_spin_box(QWidget* parent = Q_NULLPTR);
 
   void set_possible_values(uint16_t value);
 
