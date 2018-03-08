@@ -985,15 +985,6 @@ void main_controller::handle_current_limit_input(uint32_t current_limit)
   handle_settings_changed();
 }
 
-void main_controller::handle_current_limit_input_finished()
-{
-  if (!connected()) { return; }
-  uint32_t current_limit = tic_settings_get_current_limit(settings.get_pointer());
-  current_limit = tic_settings_achievable_current_limit(settings.get_pointer(), current_limit);
-  tic_settings_set_current_limit(settings.get_pointer(), current_limit);
-  handle_settings_changed();
-}
-
 void main_controller::handle_decay_mode_input(uint8_t decay_mode)
 {
   if (!connected()) { return; }

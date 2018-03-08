@@ -250,6 +250,7 @@ void main_window::update_current_limit_table(uint8_t product)
 
   current_limit_value->mapping = &current_limit_reverse_mapping;
   uint16_t value = 0;  // TODO: get rid of this annoying thing
+  QSignalBlocker blocker(current_limit_value);
   current_limit_value->set_possible_values(value);
 }
 
@@ -1511,16 +1512,10 @@ void main_window::on_step_mode_value_currentIndexChanged(int index)
   controller->handle_step_mode_input(step_mode);
 }
 
-void main_window::on_current_limit_value_valueChanged(int value)
+void main_window::on_current_limit_value_valueChanged(double value)
 {
   if (suppress_events) { return; }
   controller->handle_current_limit_input(value);
-}
-
-void main_window::on_current_limit_value_editingFinished()
-{
-  if (suppress_events) { return; }
-  controller->handle_current_limit_input_finished();
 }
 
 void main_window::on_decay_mode_value_currentIndexChanged(int index)

@@ -113,13 +113,12 @@ public:
   void handle_decel_max_input(uint32_t decel_max);
   void handle_step_mode_input(uint8_t step_mode);
   void handle_current_limit_input(uint32_t current_limit);
-  void handle_current_limit_input_finished();
   void handle_decay_mode_input(uint8_t decay_mode);
 
   void handle_soft_error_response_input(uint8_t soft_error_response);
   void handle_soft_error_position_input(int32_t soft_error_position);
   void handle_current_limit_during_error_input(int32_t current_limit_during_error);
-  void handle_current_limit_during_error_input_finished();
+  void handle_current_limit_during_error_input_finished();  // TODO: will be redundant eventually
 
   void handle_disable_safe_start_input(bool disable_safe_start);
   void handle_ignore_err_line_high_input(bool ignore_err_line_high);
