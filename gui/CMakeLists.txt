@@ -31,6 +31,7 @@ add_executable (gui
   qt/main_window.cpp
   qt/BallScrollBar.cpp
   qt/InputWizard.cpp
+  qt/current_spin_box.cpp
   to_string.cpp
   ${CMAKE_CURRENT_BINARY_DIR}/gui_info.rc
   ${ICON_QRC}

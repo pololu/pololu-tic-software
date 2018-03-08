@@ -1,9 +1,7 @@
 #pragma once
 
 #include <QDoubleSpinBox>
-
-#include "main_controller.h"
-
+#include <QMap>
 
 class nice_spin_box : public QDoubleSpinBox
 {
@@ -12,9 +10,7 @@ class nice_spin_box : public QDoubleSpinBox
 public:
   nice_spin_box(int index = -1, QWidget* parent = Q_NULLPTR);
 
-  void set_controller(main_controller * controller = NULL);
-
-  void set_possible_values(uint16_t value);
+  void set_mapping(const QMap<int, double> &);
 
 private slots:
   void editing_finished(double entered_value);
@@ -22,7 +18,6 @@ private slots:
   void set_code();
 
 private:
-  main_controller * controller;
   QMap<int, double> mapping;
   int current_index = 0;
   int index;

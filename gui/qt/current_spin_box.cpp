@@ -1,4 +1,4 @@
-#include "nice_spin_box.h"
+#include "current_spin_box.h"
 #include "main_controller.h"
 
 #include <QLineEdit>
@@ -16,11 +16,6 @@ nice_spin_box::nice_spin_box(int index, QWidget* parent)
   setRange(-1, 10000);
   setKeyboardTracking(false);
   setDecimals(3);
-}
-
-void nice_spin_box::set_controller(main_controller * controller)
-{
-  this->controller = controller;
 }
 
 void nice_spin_box::editing_finished(double entered_value)
@@ -57,23 +52,19 @@ void nice_spin_box::set_display_value()
   suppress_events = false;
 }
 
-void nice_spin_box::set_possible_values(uint16_t value)
+void nice_spin_box::set_mapping(const QMap<int, double> & mapping)
 {
-  mapping.clear();
-  mapping.insert(0, (controller->get_current_limit_value(0)/1000));
-
-  for (int i = 1; i < 96; i++)
-  {
-    double display_value = (controller->get_current_limit_value(i)/1000);
-
-    mapping.insert(i, display_value);
-  }
+  this->mapping = mapping;
 
   map_values = mapping.values();
 
   std::sort(map_values.begin(), map_values.end());
 
-  current_index = value;
+  // TODO: having a thing named current_index seems wrong.  We should have a
+  // thing named current_code and it should only need to change here if that
+  // code is no longer valid.  And that won't happen in our intended uses of
+  // this class so it's not that important to handle it.
+  current_index = 0;
 
   set_display_value();
 }
@@ -110,7 +101,7 @@ QDoubleSpinBox::StepEnabled nice_spin_box::stepEnabled()
 void nice_spin_box::set_code()
 {
   if (suppress_events) { return; }
-  controller->handle_current_limit_amps_spinbox_input(index, current_index);
+  // TODO: emit an event?
 }
 
 double nice_spin_box::valueFromText(const QString& text) const
