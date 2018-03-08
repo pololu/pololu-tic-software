@@ -8,6 +8,7 @@
 #include "InputWizard.h"
 
 #include <QMainWindow>
+#include <QMap>  // TODO: remove after improving current_spin_box
 
 class BallScrollBar;
 class QButtonGroup;
@@ -26,6 +27,7 @@ class QSpinBox;
 class QTabWidget;
 class QVBoxLayout;
 
+class current_spin_box;
 class main_controller;
 
 struct error_row
@@ -109,6 +111,8 @@ public:
   // Changes a few controls that need to be changed depending on what product
   // (e.g. Tic T825, Tic T834) we are talking to.
   void adjust_ui_for_product(uint8_t product);
+
+  void update_current_limit_table(uint8_t product);
 
   // Controls whether the main controls of the application are enabled or
   // disabled.
@@ -595,7 +599,8 @@ private:
   QLabel * step_mode_label;
   QComboBox * step_mode_value;
   QLabel * current_limit_label;
-  QSpinBox * current_limit_value;
+  current_spin_box * current_limit_value;
+  QMap<double, int> current_limit_reverse_mapping;  // TODO: should be stored in current_spin_box
   QLabel * decay_mode_label;
   QComboBox * decay_mode_value;
 
@@ -613,7 +618,7 @@ private:
   QButtonGroup * soft_error_response_radio_group;
   QSpinBox * soft_error_position_value;
   QCheckBox * current_limit_during_error_check;
-  QSpinBox * current_limit_during_error_value;
+  QSpinBox * current_limit_during_error_value; // TODO: current_spin_box
 
   QGroupBox * misc_settings_box;
   QGridLayout * misc_settings_box_layout;

@@ -4,6 +4,7 @@
 #include "to_string.h"
 
 #include "BallScrollBar.h"
+#include "current_spin_box.h"
 
 #include <QApplication>
 #include <QButtonGroup>
@@ -230,6 +231,26 @@ void main_window::adjust_ui_for_product(uint8_t product)
     decay_mode_value->setVisible(false);
     break;
   }
+
+  update_current_limit_table(product);
+}
+
+void main_window::update_current_limit_table(uint8_t product)
+{
+  size_t code_count;
+  const uint8_t * code_table =
+    tic_get_recommended_current_limit_codes(product, &code_count);
+
+  for (size_t i = 0; i < code_count; i++)
+  {
+    uint8_t code = code_table[i];
+    uint32_t current = tic_current_limit_code_to_ma(product, code);
+    current_limit_reverse_mapping.insert(current, code);
+  }
+
+  current_limit_value->mapping = &current_limit_reverse_mapping;
+  uint16_t value = 0;  // TODO: get rid of this annoying thing
+  current_limit_value->set_possible_values(value);
 }
 
 void main_window::set_tab_pages_enabled(bool enabled)
@@ -755,7 +776,8 @@ void main_window::set_step_mode(uint8_t step_mode)
 
 void main_window::set_current_limit(uint32_t current_limit)
 {
-  set_spin_box(current_limit_value, current_limit);
+  // TODO: change this when we convert back to showing current in mA
+  set_double_spin_box(current_limit_value, (double)current_limit / 1000);
 }
 
 void main_window::set_decay_mode(uint8_t decay_mode)
@@ -2791,10 +2813,8 @@ QLayout * main_window::setup_motor_settings_layout()
   }
 
   {
-    current_limit_value = new QSpinBox();
+    current_limit_value = new current_spin_box();
     current_limit_value->setObjectName("current_limit_value");
-    current_limit_value->setRange(0, 4000);
-    current_limit_value->setSuffix(" mA");
     current_limit_label = new QLabel();
     current_limit_label->setBuddy(current_limit_value);
     layout->addWidget(current_limit_label, row, 0, FIELD_LABEL_ALIGNMENT);
