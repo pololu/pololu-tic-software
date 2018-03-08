@@ -1,7 +1,5 @@
 #include "bootloader.h"
 
-// TODO: real jrk names in this file
-
 enum bootloader_type_ids
 {
   ID_NONE = 0,
