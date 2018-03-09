@@ -10,91 +10,136 @@
 current_spin_box::current_spin_box(QWidget * parent)
   : QDoubleSpinBox(parent)
 {
+  connect(this, QOverload<double>::of(&valueChanged),
+    this, &set_code_from_value);
   connect(this, &editingFinished, this, &editing_finished);
+}
 
-  mapping = new QMultiMap<double, int>();
+void current_spin_box::set_mapping(const QMap<int, int> & mapping)
+{
+  this->mapping = mapping;
+  fix_code_if_not_allowed();
+  set_value_from_code();
+}
+
+// Ensures that 'code' is one of the allowed codes, or -1 if there are no
+// allowed codes.  Note that this is not as smart as it could be because it
+// doesn't take into account the value corresponding to a code that is now
+// disallowed, but in our applications we anticipate the caller settings the
+// value explcitly to something if that ever happens.
+void current_spin_box::fix_code_if_not_allowed()
+{
+  if (mapping.contains(code))
+  {
+    return;
+  }
+
+  if (mapping.size() == 0)
+  {
+    code = -1;
+    return;
+  }
+
+  // Find the code corresponding to the minimum current and use that.
+  int best_code = -1;
+  int best_current = std::numeric_limits<int>::max();
+  for(int candidate_code : mapping.keys())
+  {
+    int current = mapping.value(candidate_code);
+    if (current < best_current)
+    {
+      best_code = candidate_code;
+      best_current = current;
+    }
+  }
+  code = best_code;
+}
+
+// Finds the code for the highest current less than the current currently
+// displayed in the box, and set 'code' to that.  Sets 'code' to -1 if the
+// mapping is empty.
+void current_spin_box::set_code_from_value()
+{
+  int current_from_value = qRound(value());
+
+  int best_code = -1;
+  int best_current = -1;
+  for(int candidate_code : mapping.keys())
+  {
+    int current = mapping.value(candidate_code);
+    if (best_code == -1 || (current <= current_from_value && current > best_current))
+    {
+      best_code = candidate_code;
+      best_current = current;
+    }
+  }
+  code = best_code;
+}
+
+void current_spin_box::set_value_from_code()
+{
+  setValue(mapping.value(code, 0));
 }
 
 void current_spin_box::editing_finished()
 {
-  double entered_value = value();
-  std::cout << "editing finished start " << entered_value << std::endl;
-
-  if (entered_value == 0)
-  {
-    current_index = 0;
-  }
-  else
-  {
-    for (int i = 1; i < step_map.size() - 1; ++i)
-    {
-      if (entered_value >= step_map.values().at(i) &&
-        entered_value < step_map.values().at(i + 1))
-      {
-        current_index = mapping->value(step_map.values().at(i));
-      }
-    }
-  }
-
-  if (entered_value > step_map.values().last())
-  {
-    current_index = mapping->size() - 1;
-  }
-
-  set_display_value();
-
-  emit send_code(current_index);
-}
-
-void current_spin_box::set_display_value()
-{
-  setValue(mapping->key(current_index));
-}
-
-void current_spin_box::set_possible_values(uint16_t value)
-{
-  step_map.clear();
-  for (int i = 0; i < mapping->size(); i++)
-  {
-    step_map.insert(i, mapping->keys().at(i));
-  }
-
-  current_index = value;
-
-  step_index = step_map.key(mapping->key(current_index));
-
-  set_display_value();
+  set_code_from_value();
+  set_value_from_code();
 }
 
 void current_spin_box::stepBy(int step_value)
 {
-  if (step_map.values().at(qBound(0, step_index + step_value,
-    step_map.size() - 1)) == value())
+  int current = qRound(value());
+
+  while (step_value > 0)
   {
-    step_index += step_value * 2;
-  }
-  else
-  {
-    step_index += step_value;
+    // Select the smallest code/current where the current is greater.
+    int best_code = -1;
+    int best_current = std::numeric_limits<int>::max();
+    for(int candidate_code : mapping.keys())
+    {
+      int candidate_current = mapping.value(candidate_code);
+      if (candidate_current > current && candidate_current < best_current)
+      {
+        best_code = candidate_code;
+        best_current = candidate_current;
+      }
+    }
+    if (best_code == -1)
+    {
+      // We can't step up any more, we reached the top.
+      break;
+    }
+    code = best_code;
+    step_value--;
   }
 
-  current_index = mapping->value(step_map.value(step_index));
-
-  set_display_value();
-}
-
-QDoubleSpinBox::StepEnabled current_spin_box::stepEnabled()
-{
-  StepEnabled enabled = StepUpEnabled | StepDownEnabled;
-  if (qBound(0, current_index, mapping->size() - 1) == 0)
+  while (step_value < 0)
   {
-    enabled ^= StepDownEnabled;
+    // Select the greatest code/current where the current is smaller.
+    int best_code = -1;
+    int best_current = -1;
+    for(int candidate_code : mapping.keys())
+    {
+      int candidate_current = mapping.value(candidate_code);
+      if (candidate_current < current && candidate_current > best_current)
+      {
+        best_code = candidate_code;
+        best_current = candidate_current;
+      }
+    }
+    if (best_code == -1)
+    {
+      // We can't step down down any more, we reached the bottom.
+      break;
+    }
+    code = best_code;
+    step_value++;
   }
-  if (qBound(0, current_index, mapping->size() - 1) == step_map.size() - 1)
-  {
-    enabled ^= StepUpEnabled;
-  }
-  return enabled;
+
+  set_value_from_code();
+
+  selectAll();
 }
 
 double current_spin_box::valueFromText(const QString & text) const

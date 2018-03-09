@@ -241,17 +241,16 @@ void main_window::update_current_limit_table(uint8_t product)
   const uint8_t * code_table =
     tic_get_recommended_current_limit_codes(product, &code_count);
 
+  QMap<int, int> mapping;
   for (size_t i = 0; i < code_count; i++)
   {
     uint8_t code = code_table[i];
     uint32_t current = tic_current_limit_code_to_ma(product, code);
-    current_limit_reverse_mapping.insert(current, code);
+    mapping.insert(code, current);
   }
 
-  current_limit_value->mapping = &current_limit_reverse_mapping;
-  uint16_t value = 0;  // TODO: get rid of this annoying thing
   QSignalBlocker blocker(current_limit_value);
-  current_limit_value->set_possible_values(value);
+  current_limit_value->set_mapping(mapping);
 }
 
 void main_window::set_tab_pages_enabled(bool enabled)

@@ -599,7 +599,6 @@ private:
   QComboBox * step_mode_value;
   QLabel * current_limit_label;
   current_spin_box * current_limit_value;
-  QMap<double, int> current_limit_reverse_mapping;  // TODO: should be stored in current_spin_box
   QLabel * decay_mode_label;
   QComboBox * decay_mode_value;
 
