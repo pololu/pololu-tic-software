@@ -8,11 +8,7 @@
 
 #include "current_spin_box.h"
 
-#include <QLineEdit>
 #include <QSpinBox>
-#include <QtMath>
-#include <QRegExpValidator>
-#include <QDebug>
 
 current_spin_box::current_spin_box(QWidget * parent)
   : QSpinBox(parent)
