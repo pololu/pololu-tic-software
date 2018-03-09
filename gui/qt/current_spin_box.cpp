@@ -50,13 +50,7 @@ void current_spin_box::fix_code_if_not_allowed()
     return;
   }
 
-  if (mapping.size() == 0)
-  {
-    code = -1;
-    return;
-  }
-
-  // Find the minimum current.
+  // Find the minimum current, or -1 if the mapping is empty.
   int best_code = -1;
   int best_current = std::numeric_limits<int>::max();
   for(int candidate_code : mapping.keys())
