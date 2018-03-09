@@ -1,9 +1,8 @@
 #pragma once
 
-#include <QDoubleSpinBox>
+#include <QSpinBox>
 
-// TODO: switch from QDoubleSpinBox to QSpinBox
-class current_spin_box : public QDoubleSpinBox
+class current_spin_box : public QSpinBox
 {
   Q_OBJECT
 

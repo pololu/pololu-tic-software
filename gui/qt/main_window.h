@@ -326,13 +326,13 @@ private slots:
   void on_decel_max_value_valueChanged(int value);
   void on_decel_accel_max_same_check_stateChanged(int state);
   void on_step_mode_value_currentIndexChanged(int index);
-  void on_current_limit_value_valueChanged(double value);
+  void on_current_limit_value_valueChanged(int value);
   void on_decay_mode_value_currentIndexChanged(int index);
 
   void on_soft_error_response_radio_group_buttonToggled(int id, bool checked);
   void on_soft_error_position_value_valueChanged(int value);
   void on_current_limit_during_error_check_stateChanged(int state);
-  void on_current_limit_during_error_value_valueChanged(double value);
+  void on_current_limit_during_error_value_valueChanged(int value);
 
   void on_disable_safe_start_check_stateChanged(int state);
   void on_ignore_err_line_high_check_stateChanged(int state);

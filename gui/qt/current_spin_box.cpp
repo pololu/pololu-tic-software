@@ -8,13 +8,11 @@
 #include <iostream> //tmphax
 
 current_spin_box::current_spin_box(QWidget * parent)
-  : QDoubleSpinBox(parent)
+  : QSpinBox(parent)
 {
-  connect(this, QOverload<double>::of(&valueChanged),
+  connect(this, QOverload<int>::of(&valueChanged),
     this, &set_code_from_value);
   connect(this, &editingFinished, this, &editing_finished);
-
-  setDecimals(0);
 }
 
 void current_spin_box::set_mapping(const QMap<int, int> & mapping)
@@ -62,7 +60,7 @@ void current_spin_box::fix_code_if_not_allowed()
 // mapping is empty.
 void current_spin_box::set_code_from_value()
 {
-  int current_from_value = qRound(value());
+  int current_from_value = value();
 
   int best_code = -1;
   int best_current = -1;
@@ -91,7 +89,7 @@ void current_spin_box::editing_finished()
 
 void current_spin_box::stepBy(int step_value)
 {
-  int current = qRound(value());
+  int current = value();
 
   while (step_value > 0)
   {

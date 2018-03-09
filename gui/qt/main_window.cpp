@@ -783,7 +783,7 @@ void main_window::set_step_mode(uint8_t step_mode)
 
 void main_window::set_current_limit(uint32_t current_limit)
 {
-  set_double_spin_box(current_limit_value, current_limit);
+  set_spin_box(current_limit_value, current_limit);
 }
 
 void main_window::set_decay_mode(uint8_t decay_mode)
@@ -832,7 +832,7 @@ void main_window::set_current_limit_during_error(int32_t current_limit_during_er
     set_check_box(current_limit_during_error_check, true);
     current_limit_during_error_value->setEnabled(true);
   }
-  set_double_spin_box(current_limit_during_error_value, current_limit_during_error);
+  set_spin_box(current_limit_during_error_value, current_limit_during_error);
 }
 
 void main_window::set_disable_safe_start(bool disable_safe_start)
@@ -1518,10 +1518,10 @@ void main_window::on_step_mode_value_currentIndexChanged(int index)
   controller->handle_step_mode_input(step_mode);
 }
 
-void main_window::on_current_limit_value_valueChanged(double value)
+void main_window::on_current_limit_value_valueChanged(int value)
 {
   if (suppress_events) { return; }
-  controller->handle_current_limit_input(qRound(value));
+  controller->handle_current_limit_input(value);
 }
 
 void main_window::on_decay_mode_value_currentIndexChanged(int index)
@@ -1559,10 +1559,10 @@ void main_window::on_current_limit_during_error_check_stateChanged(int state)
   }
 }
 
-void main_window::on_current_limit_during_error_value_valueChanged(double value)
+void main_window::on_current_limit_during_error_value_valueChanged(int value)
 {
   if (suppress_events) { return; }
-  controller->handle_current_limit_during_error_input(qRound(value));
+  controller->handle_current_limit_during_error_input(value);
 }
 
 void main_window::on_disable_safe_start_check_stateChanged(int state)
