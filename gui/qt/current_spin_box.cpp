@@ -56,7 +56,7 @@ void current_spin_box::fix_code_if_not_allowed()
     return;
   }
 
-  // Find the code corresponding to the minimum current and use that.
+  // Find the minimum current.
   int best_code = -1;
   int best_current = std::numeric_limits<int>::max();
   for(int candidate_code : mapping.keys())
@@ -111,7 +111,6 @@ void current_spin_box::stepBy(int step_value)
 
   while (step_value > 0)
   {
-    // Select the smallest code/current where the current is greater.
     int best_code = -1;
     int best_current = std::numeric_limits<int>::max();
     for(int candidate_code : mapping.keys())
@@ -125,8 +124,7 @@ void current_spin_box::stepBy(int step_value)
     }
     if (best_code == -1)
     {
-      // We can't step up any more, we reached the top.
-      break;
+      break;  // Reached the max current.
     }
     code = best_code;
     step_value--;
@@ -134,7 +132,6 @@ void current_spin_box::stepBy(int step_value)
 
   while (step_value < 0)
   {
-    // Select the greatest code/current where the current is smaller.
     int best_code = -1;
     int best_current = -1;
     for(int candidate_code : mapping.keys())
@@ -148,8 +145,7 @@ void current_spin_box::stepBy(int step_value)
     }
     if (best_code == -1)
     {
-      // We can't step down down any more, we reached the bottom.
-      break;
+      break;  // Reached the min current.
     }
     code = best_code;
     step_value++;
