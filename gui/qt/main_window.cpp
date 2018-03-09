@@ -1514,7 +1514,7 @@ void main_window::on_step_mode_value_currentIndexChanged(int index)
 void main_window::on_current_limit_value_valueChanged(double value)
 {
   if (suppress_events) { return; }
-  controller->handle_current_limit_input(value);
+  controller->handle_current_limit_input(qRound(value));
 }
 
 void main_window::on_decay_mode_value_currentIndexChanged(int index)
@@ -2812,8 +2812,7 @@ QLayout * main_window::setup_motor_settings_layout()
   {
     current_limit_value = new current_spin_box();
     current_limit_value->setObjectName("current_limit_value");
-    current_limit_value->setRange(0, 10000);
-    current_limit_value->setDecimals(0);
+    current_limit_value->setRange(0, 9999);
     current_limit_value->setSuffix(" mA");
     current_limit_label = new QLabel();
     current_limit_label->setBuddy(current_limit_value);

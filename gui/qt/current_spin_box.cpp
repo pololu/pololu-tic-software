@@ -13,6 +13,8 @@ current_spin_box::current_spin_box(QWidget * parent)
   connect(this, QOverload<double>::of(&valueChanged),
     this, &set_code_from_value);
   connect(this, &editingFinished, this, &editing_finished);
+
+  setDecimals(0);
 }
 
 void current_spin_box::set_mapping(const QMap<int, int> & mapping)

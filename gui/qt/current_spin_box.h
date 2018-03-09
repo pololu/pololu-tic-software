@@ -2,6 +2,7 @@
 
 #include <QDoubleSpinBox>
 
+// TODO: switch from QDoubleSpinBox to QSpinBox
 class current_spin_box : public QDoubleSpinBox
 {
   Q_OBJECT
