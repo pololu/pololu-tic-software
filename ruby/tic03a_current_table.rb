@@ -1,10 +1,8 @@
-# TODO: account for latest changes to current limiting hardware
-
 def compute_ilim(dac_level)
   v_iset = 0.9
   v_dac_top = 4.096
-  r_top = 137000.0
-  r_bot = 41200.0
+  r_top = 115000.0
+  r_bot = 33000.0
 
   r_dac_top = (32 - dac_level) * 5000
   r_dac_bot = dac_level * 5000
