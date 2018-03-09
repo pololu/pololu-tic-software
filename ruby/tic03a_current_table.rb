@@ -22,6 +22,7 @@ def compute_ilim(dac_level)
   iset_current_sourced * 86666
 end
 
+puts "  0,"
 31.downto(0) do |dac_level|
   puts "  %d," % [(compute_ilim(dac_level) * 1000).round]
 end
