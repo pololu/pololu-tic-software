@@ -1,3 +1,11 @@
+// NOTE: One thing missing from this is better handling of what code will
+// be selected when multiple codes map to the same current (selecting the
+// smallest would be good).
+//
+// NOTE: Another big thing missing from this is an option to use units of amps
+// instead of milliamps, and to allow the user to enter a current limit in
+// either units even if we have a suffix like " mA" or " A" set.
+
 #pragma once
 
 #include <QSpinBox>
