@@ -27,7 +27,5 @@ private:
 
 protected:
   virtual void stepBy(int step_value);
-  double valueFromText(const QString & text) const;
-  QValidator::State validate(QString & input, int & pos) const;
 };
 
