@@ -1,3 +1,11 @@
+// NOTE: One thing missing from this is better handling of what code will
+// be selected when multiple codes map to the same current (selecting the
+// smallest would be good).
+//
+// NOTE: Another big thing missing from this is an option to use units of amps
+// instead of milliamps, and to allow the user to enter a current limit in
+// either units even if we have a suffix like " mA" or " A" set.
+
 #include "current_spin_box.h"
 
 #include <QLineEdit>
@@ -5,13 +13,25 @@
 #include <QtMath>
 #include <QRegExpValidator>
 #include <QDebug>
-#include <iostream> //tmphax
 
 current_spin_box::current_spin_box(QWidget * parent)
   : QSpinBox(parent)
 {
+  // We make this connection so that as the user types, the code member gets
+  // updated.  So higher-level code using this object can listen to the
+  // valueChanged event and then call either 'get_code' or 'getValue' depending
+  // on what type of number they want.
+  //
+  // We rely on Qt's documented behavior that if multiple slots are connected to
+  // one signal, they are called in the order they were connected.
+  //
+  // TODO: Would a QSignalBlocker succeed in blocking this signal even though it
+  // goes from this object to this object?  Do we need to provide our own
+  // setValue function so that the code member gets updated when the user wants
+  // to set the value while using a QSignalBlocker?
   connect(this, QOverload<int>::of(&valueChanged),
     this, &set_code_from_value);
+
   connect(this, &editingFinished, this, &editing_finished);
 }
 
@@ -81,6 +101,8 @@ void current_spin_box::set_value_from_code()
   setValue(mapping.value(code, 0));
 }
 
+// When the user is done editing, we want to figure out the right code to
+// use and update the spinbox to show the corresponding current.
 void current_spin_box::editing_finished()
 {
   set_code_from_value();
