@@ -249,8 +249,15 @@ void main_window::update_current_limit_table(uint8_t product)
     mapping.insert(code, current);
   }
 
-  QSignalBlocker blocker(current_limit_value);
-  current_limit_value->set_mapping(mapping);
+  {
+    QSignalBlocker blocker(current_limit_value);
+    current_limit_value->set_mapping(mapping);
+  }
+
+  {
+    QSignalBlocker blocker(current_limit_during_error_value);
+    current_limit_during_error_value->set_mapping(mapping);
+  }
 }
 
 void main_window::set_tab_pages_enabled(bool enabled)
@@ -825,7 +832,7 @@ void main_window::set_current_limit_during_error(int32_t current_limit_during_er
     set_check_box(current_limit_during_error_check, true);
     current_limit_during_error_value->setEnabled(true);
   }
-  set_spin_box(current_limit_during_error_value, current_limit_during_error);
+  set_double_spin_box(current_limit_during_error_value, current_limit_during_error);
 }
 
 void main_window::set_disable_safe_start(bool disable_safe_start)
@@ -1552,16 +1559,10 @@ void main_window::on_current_limit_during_error_check_stateChanged(int state)
   }
 }
 
-void main_window::on_current_limit_during_error_value_valueChanged(int value)
+void main_window::on_current_limit_during_error_value_valueChanged(double value)
 {
   if (suppress_events) { return; }
-  controller->handle_current_limit_during_error_input(value);
-}
-
-void main_window::on_current_limit_during_error_value_editingFinished()
-{
-  if (suppress_events) { return; }
-  controller->handle_current_limit_during_error_input_finished();
+  controller->handle_current_limit_during_error_input(qRound(value));
 }
 
 void main_window::on_disable_safe_start_check_stateChanged(int state)
@@ -2974,10 +2975,9 @@ QWidget * main_window::setup_error_settings_box()
   }
 
   {
-    current_limit_during_error_value = new QSpinBox();
+    current_limit_during_error_value = new current_spin_box();
     current_limit_during_error_value->setObjectName("current_limit_during_error_value");
-    current_limit_during_error_value->setKeyboardTracking(false);
-    current_limit_during_error_value->setRange(0, 4000);
+    current_limit_during_error_value->setRange(0, 9999);
     current_limit_during_error_value->setSuffix(" mA");
     layout->addWidget(current_limit_during_error_value, row, 1, Qt::AlignLeft);
   }

@@ -332,8 +332,7 @@ private slots:
   void on_soft_error_response_radio_group_buttonToggled(int id, bool checked);
   void on_soft_error_position_value_valueChanged(int value);
   void on_current_limit_during_error_check_stateChanged(int state);
-  void on_current_limit_during_error_value_valueChanged(int value);
-  void on_current_limit_during_error_value_editingFinished();
+  void on_current_limit_during_error_value_valueChanged(double value);
 
   void on_disable_safe_start_check_stateChanged(int state);
   void on_ignore_err_line_high_check_stateChanged(int state);
@@ -616,7 +615,7 @@ private:
   QButtonGroup * soft_error_response_radio_group;
   QSpinBox * soft_error_position_value;
   QCheckBox * current_limit_during_error_check;
-  QSpinBox * current_limit_during_error_value; // TODO: current_spin_box
+  current_spin_box * current_limit_during_error_value;
 
   QGroupBox * misc_settings_box;
   QGridLayout * misc_settings_box_layout;

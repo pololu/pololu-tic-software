@@ -1017,17 +1017,6 @@ void main_controller::handle_current_limit_during_error_input(int32_t current_li
   handle_settings_changed();
 }
 
-void main_controller::handle_current_limit_during_error_input_finished()
-{
-  if (!connected()) { return; }
-  uint32_t current_limit_during_error =
-    tic_settings_get_current_limit_during_error(settings.get_pointer());
-  current_limit_during_error = tic_settings_achievable_current_limit(
-    settings.get_pointer(), current_limit_during_error);
-  tic_settings_set_current_limit_during_error(settings.get_pointer(), current_limit_during_error);
-  handle_settings_changed();
-}
-
 void main_controller::handle_disable_safe_start_input(bool disable_safe_start)
 {
   if (!connected()) { return; }
