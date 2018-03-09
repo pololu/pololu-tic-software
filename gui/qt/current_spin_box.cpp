@@ -20,7 +20,12 @@ void current_spin_box::editing_finished()
   double entered_value = value();
   std::cout << "editing finished start " << entered_value << std::endl;
 
-  if (entered_value != 0)
+  if (entered_value == 0)
+  {
+    current_index = 0;
+  }
+  else
+  {
     for (int i = 1; i < step_map.size() - 1; ++i)
     {
       if (entered_value >= step_map.values().at(i) &&
@@ -29,10 +34,6 @@ void current_spin_box::editing_finished()
         current_index = mapping->value(step_map.values().at(i));
       }
     }
-
-  if (entered_value == 0)
-  {
-    current_index = 0;
   }
 
   if (entered_value > step_map.values().last())
@@ -70,10 +71,12 @@ void current_spin_box::stepBy(int step_value)
   if (step_map.values().at(qBound(0, step_index + step_value,
     step_map.size() - 1)) == value())
   {
-    step_index += (step_value * 2);
+    step_index += step_value * 2;
   }
   else
+  {
     step_index += step_value;
+  }
 
   current_index = mapping->value(step_map.value(step_index));
 
