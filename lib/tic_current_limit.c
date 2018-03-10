@@ -136,7 +136,8 @@ uint32_t tic_current_limit_code_to_ma(uint8_t product, uint8_t code)
 uint8_t tic_current_limit_ma_to_code(uint8_t product, uint32_t ma)
 {
   size_t count;
-  const uint8_t * table = tic_get_recommended_current_limit_codes(product, &count);
+  const uint8_t * table = tic_get_recommended_current_limit_codes(
+    product, &count);
 
   // Assumption: The table is an ascending order, so we want to return the last
   // one that is less than or equal to the desired current.
@@ -147,6 +148,10 @@ uint8_t tic_current_limit_ma_to_code(uint8_t product, uint32_t ma)
     if (tic_current_limit_code_to_ma(product, table[i]) <= ma)
     {
       code = table[i];
+    }
+    else
+    {
+      break;
     }
   }
   return code;
