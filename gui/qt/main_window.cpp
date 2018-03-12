@@ -3136,7 +3136,7 @@ void main_window::retranslate()
   vin_voltage_label->setText(tr("VIN voltage:"));
   operation_state_label->setText(tr("Operation state:"));
   energized_label->setText(tr("Energized:"));
-  set_target_none(); // TODO: display correct target mode if we retranslate on the fly
+  set_target_none();
   current_position_label->setText(tr("Current position:"));
   position_uncertain_label->setText(tr("Uncertain:"));
   current_velocity_label->setText(tr("Current velocity:"));

@@ -8,7 +8,6 @@
 #include "InputWizard.h"
 
 #include <QMainWindow>
-#include <QMap>  // TODO: remove after improving current_spin_box
 
 class BallScrollBar;
 class QButtonGroup;
