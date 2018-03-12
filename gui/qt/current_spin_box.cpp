@@ -21,10 +21,8 @@ current_spin_box::current_spin_box(QWidget * parent)
   // We rely on Qt's documented behavior that if multiple slots are connected to
   // one signal, they are called in the order they were connected.
   //
-  // TODO: Would a QSignalBlocker succeed in blocking this signal even though it
-  // goes from this object to this object?  Do we need to provide our own
-  // setValue function so that the code member gets updated when the user wants
-  // to set the value while using a QSignalBlocker?
+  // Warning: Don't use a QSignalBlocker with this class unless you really know
+  // what you're doing, since you'll block this signal.
   connect(this, QOverload<int>::of(&valueChanged),
     this, &set_code_from_value);
 

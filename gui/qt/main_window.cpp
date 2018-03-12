@@ -249,15 +249,10 @@ void main_window::update_current_limit_table(uint8_t product)
     mapping.insert(code, current);
   }
 
-  {
-    QSignalBlocker blocker(current_limit_value);
-    current_limit_value->set_mapping(mapping);
-  }
-
-  {
-    QSignalBlocker blocker(current_limit_during_error_value);
-    current_limit_during_error_value->set_mapping(mapping);
-  }
+  suppress_events = true;
+  current_limit_value->set_mapping(mapping);
+  current_limit_during_error_value->set_mapping(mapping);
+  suppress_events = false;
 }
 
 void main_window::set_tab_pages_enabled(bool enabled)
