@@ -51,7 +51,7 @@ void current_spin_box::fix_code_if_not_allowed()
   // Find the minimum current, or -1 if the mapping is empty.
   int best_code = -1;
   int best_current = std::numeric_limits<int>::max();
-  for(int candidate_code : mapping.keys())
+  for (int candidate_code : mapping.keys())
   {
     int current = mapping.value(candidate_code);
     if (current < best_current)
@@ -72,7 +72,7 @@ void current_spin_box::set_code_from_value()
 
   int best_code = -1;
   int best_current = -1;
-  for(int candidate_code : mapping.keys())
+  for (int candidate_code : mapping.keys())
   {
     int current = mapping.value(candidate_code);
     if (best_code == -1 || (current <= current_from_value && current > best_current))
@@ -105,7 +105,7 @@ void current_spin_box::stepBy(int step_value)
   {
     int best_code = -1;
     int best_current = std::numeric_limits<int>::max();
-    for(int candidate_code : mapping.keys())
+    for (int candidate_code : mapping.keys())
     {
       int candidate_current = mapping.value(candidate_code);
       if (candidate_current > current && candidate_current < best_current)
@@ -126,7 +126,7 @@ void current_spin_box::stepBy(int step_value)
   {
     int best_code = -1;
     int best_current = -1;
-    for(int candidate_code : mapping.keys())
+    for (int candidate_code : mapping.keys())
     {
       int candidate_current = mapping.value(candidate_code);
       if (candidate_current < current && candidate_current > best_current)
