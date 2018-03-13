@@ -23,10 +23,11 @@ current_spin_box::current_spin_box(QWidget * parent)
   //
   // Warning: Don't use a QSignalBlocker with this class unless you really know
   // what you're doing, since you'll block this signal.
-  connect(this, QOverload<int>::of(&valueChanged),
-    this, &set_code_from_value);
+  connect(this, QOverload<int>::of(&QSpinBox::valueChanged),
+    this, &current_spin_box::set_code_from_value);
 
-  connect(this, &editingFinished, this, &editing_finished);
+  connect(this, &QSpinBox::editingFinished,
+    this, &current_spin_box::editing_finished);
 }
 
 void current_spin_box::set_mapping(const QMap<int, int> & mapping)
