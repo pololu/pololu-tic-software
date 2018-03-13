@@ -1,7 +1,7 @@
 # Tic Stepper Motor Controller software
 
-Version: 1.5.0<br>
-Release date: 2017-11-22<br>
+Version: 1.6.0<br>
+Release date: 2018-03-14<br>
 [www.pololu.com](https://www.pololu.com/)
 
 This repository contains the source code of the configuration and control software for
@@ -19,6 +19,10 @@ from source.
 
 ## Version history
 
+- 1.6.0 (2018-03-14):
+  - Added support for the Tic T500.
+  - Improved the controls for setting the current limits: the up and down arrows
+    only step to current limits that are exactly achievable.
 - 1.5.0 (2017-11-22):
   - Added support for building installers for macOS.
   - Fixed some bugs affecting the software on macOS (caused by `strtoll`).
