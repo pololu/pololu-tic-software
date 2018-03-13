@@ -606,6 +606,10 @@ static void test_procedure(device_selector & selector, uint32_t procedure)
         std::cout << (uint32_t)code << "," << ma << std::endl;
         if (ma > max_current)
         {
+          std::cerr << "Product = " << (int)product << std::endl;
+          std::cerr << "Bad code = " << (int)code << std::endl;
+          std::cerr << "Current = " << ma << std::endl;
+          std::cerr << "Max current = " << max_current << std::endl;
           throw std::runtime_error("Recommended current code with default settings "
             "gives current limit that is too large.");
         }

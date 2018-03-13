@@ -102,7 +102,7 @@ void tic_settings_fill_with_defaults(tic_settings * settings)
     tic_settings_set_low_vin_shutoff_voltage(settings, 2800);
     tic_settings_set_low_vin_startup_voltage(settings, 3000);
     tic_settings_set_high_vin_shutoff_voltage(settings, 30000);
-    tic_settings_set_current_limit(settings, 275);
+    tic_settings_set_current_limit(settings, 174);
   }
   tic_settings_set_rc_max_pulse_period(settings, 100);
   tic_settings_set_rc_bad_signal_timeout(settings, 500);

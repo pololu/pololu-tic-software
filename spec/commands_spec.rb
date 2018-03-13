@@ -232,7 +232,7 @@ describe 'Set current limit command' do
     # Note: This test can fail if the "current limit during error" setting is used.
     currents = [32, 64]
     if tic_product == :T500
-      currents = [19, 152]
+      currents = [1, 174]
     end
     currents.each do |limit|
       stdout, stderr, result = run_ticcmd("--current #{limit}")

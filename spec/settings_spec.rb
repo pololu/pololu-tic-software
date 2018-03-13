@@ -122,7 +122,7 @@ sda_config: default
 tx_config: default
 rx_config: default
 rc_config: default
-current_limit: 275
+current_limit: 174
 current_limit_during_error: -1
 step_mode: 1
 max_speed: 2000000
@@ -255,8 +255,8 @@ sda_config: kill_switch analog
 tx_config: kill_switch pullup analog
 rx_config: serial
 rc_config: rc pullup
-current_limit: 1455
-current_limit_during_error: 847
+current_limit: 1452
+current_limit_during_error: 880
 step_mode: 8
 max_speed: 234567890
 starting_speed: 10000
@@ -270,11 +270,11 @@ def test_cases_for_settings_fix(product)
   defaults = YAML.load(DefaultSettings.fetch(product))
 
   if product == :T500
-    lowest_current = 19
-    low_current = 152
-    default_current = 275
-    medium_current = 589
-    high_current = 2036
+    lowest_current = 0
+    low_current = 1
+    default_current = 174
+    medium_current = 762
+    high_current = 2056
   else
     lowest_current = 0
     low_current = 64
