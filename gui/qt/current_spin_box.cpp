@@ -5,9 +5,15 @@
 // NOTE: Another big thing missing from this is an option to use units of amps
 // instead of milliamps, and to allow the user to enter a current limit in
 // either units even if we have a suffix like " mA" or " A" set.
+//
+// NOTE: It's also kind of lame that setValue could set a non-recommended
+// current and we wouldn't correct it right away, but the Tic software will not
+// be doing that.  We'd probably need a new function for setting the value if we
+// want to fix that.
 
 #include "current_spin_box.h"
 
+#include <QLineEdit>
 #include <QSpinBox>
 
 current_spin_box::current_spin_box(QWidget * parent)
@@ -88,6 +94,16 @@ void current_spin_box::set_code_from_value()
 void current_spin_box::set_value_from_code()
 {
   setValue(mapping.value(code, 0));
+
+  // This ensures the number will get selected when the user steps up or down.
+  //
+  // This also fixes a bug where the user might type "123", press enter, then
+  // QAbstractSpinBox selects the "123", then we change the value to "1", which
+  // means now we have "1 mA" displayed and the selected text is "1 m", and the
+  // user cannot press backspace or delete.  The hasFocus condition is necessary
+  // or or else you see the text selected at weird times when the control
+  // doesn't have focus.
+  if (hasFocus()) { selectAll(); }
 }
 
 // When the user is done editing, we want to figure out the right code to
@@ -145,6 +161,4 @@ void current_spin_box::stepBy(int step_value)
   }
 
   set_value_from_code();
-
-  selectAll();
 }
