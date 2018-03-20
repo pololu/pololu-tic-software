@@ -41,6 +41,7 @@ Q_IMPORT_PLUGIN (QWindowsIntegrationPlugin);
 #endif
 #ifdef __linux__
 Q_IMPORT_PLUGIN (QXcbIntegrationPlugin);
+Q_IMPORT_PLUGIN (QLinuxFbIntegrationPlugin);
 #endif
 #ifdef __APPLE__
 Q_IMPORT_PLUGIN (QCocoaIntegrationPlugin);
@@ -1031,11 +1032,10 @@ void main_window::center_at_startup_if_needed()
 
 void main_window::showEvent(QShowEvent * event)
 {
-  center_at_startup_if_needed();
-
   if (!start_event_reported)
   {
     start_event_reported = true;
+    center_at_startup_if_needed();
     controller->start();
   }
 }
