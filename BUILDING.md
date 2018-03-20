@@ -4,10 +4,10 @@ If you want to build this software from its source code, you can follow these
 instructions.
 
 
-## Building from source on Linux with Nixcrpkgs
+## Building from source on Linux with nixcrpkgs
 
 This software can be cross-compiled on a Linux machine using
-[Nixcrpkgs](https://github.com/pololu/nixcrpkgs), a collection of tools for
+[nixcrpkgs](https://github.com/pololu/nixcrpkgs), a collection of tools for
 cross-compiling.  This is how we build our official installers.
 
 To get started, you should first install [Nix, the purely functional
@@ -15,7 +15,7 @@ package manager](http://nixos.org/nix/), on a Linux machine by following the
 instructions on the Nix website.
 
 Next, run the comamnds below to download the latest version of
-[Nixcrpkgs](https://github.com/pololu/nixcrpkgs), a collection of tools for
+[nixcrpkgs](https://github.com/pololu/nixcrpkgs), a collection of tools for
 cross-compiling, and add nixcrpkgs to your `NIX_PATH` environment variable.  You
 will need to have [git](https://git-scm.com/) installed.  (If you don't want to
 install git, you can download Nixcrpkgs as a ZIP file from GitHub instead.)
@@ -148,7 +148,7 @@ build 64-bit software that only works on 64-bit versions of Windows, select
 
 Run this command to install the required development tools:
 
-    pacman -S base-devel git $MINGW_PACKAGE_PREFIX-{toolchain,cmake,tinyxml2,qt5}
+    pacman -S base-devel git $MINGW_PACKAGE_PREFIX-{toolchain,cmake,qt5}
 
 If pacman prompts you to enter a selection of packages to install, just press
 enter to install all of the packages.
@@ -193,7 +193,7 @@ First, install [Homebrew](http://brew.sh/).
 
 Then use brew to install the dependencies:
 
-    brew install pkg-config cmake tinyxml2 qt5
+    brew install pkg-config cmake qt5
 
 This software depends on the Pololu USB Library version 1.x.x (libusbp-1).  Run
 the commands below to download, compile, and install the latest version of that
