@@ -15,6 +15,11 @@ if (POLICY CMP0065)
   cmake_policy(SET CMP0065 NEW)
 endif ()
 
+# Fix a warning in later versions of CMake.
+if (POLICY CMP0071)
+  cmake_policy(SET CMP0071 OLD)
+endif ()
+
 project (tic)
 
 set (CLI_NAME "ticcmd")
