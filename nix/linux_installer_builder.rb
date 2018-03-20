@@ -32,7 +32,7 @@ locations on your system:
 
   /usr/local/bin/ticcmd
   /usr/local/bin/ticgui
-  /usr/local/bin/pololu-tic/
+  /usr/local/share/pololu-tic/
   /etc/udev/rules.d/99-pololu.rules
 
 For more information, see the Tic Stepper Motor Controller User's Guide:
