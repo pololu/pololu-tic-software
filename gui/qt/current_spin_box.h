@@ -16,10 +16,10 @@ public:
 
 private slots:
   void editing_finished();
+  void set_code_from_value();
 
 private:
   void fix_code_if_not_allowed();
-  void set_code_from_value();
   void set_value_from_code();
 
   QMap<int, int> mapping;

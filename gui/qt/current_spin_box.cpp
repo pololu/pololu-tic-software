@@ -27,10 +27,12 @@ current_spin_box::current_spin_box(QWidget * parent)
   // We rely on Qt's documented behavior that if multiple slots are connected to
   // one signal, they are called in the order they were connected.
   //
+  // Note: We don't use QOverload so we can support Qt 5.5 in Ubuntu 16.04.
+  //
   // Warning: Don't use a QSignalBlocker with this class unless you really know
   // what you're doing, since you'll block this signal.
-  connect(this, QOverload<int>::of(&QSpinBox::valueChanged),
-    this, &current_spin_box::set_code_from_value);
+  connect(this, SIGNAL(valueChanged(int)),
+    this, SLOT(set_code_from_value()));
 
   connect(this, &QSpinBox::editingFinished,
     this, &current_spin_box::editing_finished);
