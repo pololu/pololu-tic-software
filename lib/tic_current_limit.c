@@ -140,7 +140,7 @@ uint8_t tic_current_limit_ma_to_code(uint8_t product, uint32_t ma)
   const uint8_t * table = tic_get_recommended_current_limit_codes(
     product, &count);
 
-  // Assumption: The table is an ascending order, so we want to return the last
+  // Assumption: The table is in ascending order, so we want to return the last
   // one that is less than or equal to the desired current.
   // Assumption: 0 is a valid code and a good default to use.
   uint8_t code = 0;
