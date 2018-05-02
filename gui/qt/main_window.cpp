@@ -629,6 +629,11 @@ void main_window::set_serial_crc_enabled(bool serial_crc_enabled)
   set_check_box(serial_crc_enabled_check, serial_crc_enabled);
 }
 
+void main_window::set_serial_7bit_responses(bool enabled)
+{
+  set_check_box(serial_7bit_responses_check, enabled);
+}
+
 void main_window::set_serial_response_delay(uint8_t delay)
 {
   set_spin_box(serial_response_delay_value, delay);
@@ -1347,6 +1352,12 @@ void main_window::on_serial_crc_enabled_check_stateChanged(int state)
 {
   if (suppress_events) { return; }
   controller->handle_serial_crc_enabled_input(state == Qt::Checked);
+}
+
+void main_window::on_serial_7bit_responses_check_stateChanged(int state)
+{
+  if (suppress_events) { return; }
+  controller->handle_serial_7bit_responses_input(state == Qt::Checked);
 }
 
 void main_window::on_serial_response_delay_value_valueChanged(int state)
@@ -2520,6 +2531,12 @@ QWidget * main_window::setup_serial_settings_box()
   }
 
   {
+    serial_7bit_responses_check = new QCheckBox();
+    serial_7bit_responses_check->setObjectName("serial_7bit_responses_check");
+    layout->addWidget(serial_7bit_responses_check, 2, 3, Qt::AlignLeft);
+  }
+
+  {
     command_timeout_check = new QCheckBox();
     command_timeout_check->setObjectName("command_timeout_check");
     command_timeout_value = new QDoubleSpinBox();
@@ -3182,6 +3199,7 @@ void main_window::retranslate()
   serial_baud_rate_label->setText(tr("Baud rate:"));
   serial_device_number_label->setText(tr("Device number:"));
   serial_crc_enabled_check->setText(tr("Enable CRC"));
+  serial_7bit_responses_check->setText(tr("7-bit responses"));
   serial_response_delay_label->setText(tr("Response delay:"));
   serial_response_delay_value->setToolTip(tr(
       "The minimum time the Tic delays before replying to a serial command and "

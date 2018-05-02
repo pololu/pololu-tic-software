@@ -63,6 +63,12 @@ static void write_buffer_to_settings(const uint8_t * buf, tic_settings * setting
   }
 
   {
+    bool enabled = buf[TIC_SETTING_OPTIONS_BYTE1] >>
+      TIC_OPTIONS_BYTE1_SERIAL_7BIT_RESPONSES & 1;
+    tic_settings_set_serial_7bit_responses(settings, enabled);
+  }
+
+  {
     uint8_t delay = buf[TIC_SETTING_SERIAL_RESPONSE_DELAY];
     tic_settings_set_serial_response_delay(settings, delay);
   }

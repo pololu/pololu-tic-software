@@ -504,6 +504,18 @@ void tic_settings_set_serial_crc_enabled(tic_settings *, bool);
 TIC_API
 bool tic_settings_get_serial_crc_enabled(const tic_settings *);
 
+/// Sets the serial 7-bit responses setting.  If true, the device will only
+/// send bytes between 0 and 127 in response to serial commands, and serial
+/// responses can contain at most 8 bytes (7 payload bytes, 1 byte with the
+/// most-significant bits of the previous bytes).
+TIC_API
+void tic_settings_set_serial_7bit_responses(tic_settings *, bool);
+
+/// Gets the serial 7-bit responses setting described in
+/// tic_settings_get_serial_7bit_responses().
+TIC_API
+bool tic_settings_get_serial_7bit_responses(const tic_settings *);
+
 /// Sets the serial response delay setting.  This specifies how long, in
 /// microseconds, to delay before processing an I2C byte or sending a serial
 /// response.  This delay is in addition to the time taken by normal processing.

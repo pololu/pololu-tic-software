@@ -700,6 +700,7 @@ void main_controller::handle_settings_changed()
   window->set_serial_baud_rate(tic_settings_get_serial_baud_rate(settings.get_pointer()));
   window->set_serial_device_number(tic_settings_get_serial_device_number(settings.get_pointer()));
   window->set_serial_crc_enabled(tic_settings_get_serial_crc_enabled(settings.get_pointer()));
+  window->set_serial_7bit_responses(tic_settings_get_serial_7bit_responses(settings.get_pointer()));
   window->set_serial_response_delay(tic_settings_get_serial_response_delay(settings.get_pointer()));
   window->set_command_timeout(tic_settings_get_command_timeout(settings.get_pointer()));
 
@@ -805,6 +806,14 @@ void main_controller::handle_serial_crc_enabled_input(bool serial_crc_enabled)
 {
   if (!connected()) { return; }
   tic_settings_set_serial_crc_enabled(settings.get_pointer(), serial_crc_enabled);
+  settings_modified = true;
+  handle_settings_changed();
+}
+
+void main_controller::handle_serial_7bit_responses_input(bool enabled)
+{
+  if (!connected()) { return; }
+  tic_settings_set_serial_7bit_responses(settings.get_pointer(), enabled);
   settings_modified = true;
   handle_settings_changed();
 }

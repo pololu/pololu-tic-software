@@ -17,6 +17,7 @@ struct tic_settings
   uint8_t serial_device_number;
   uint16_t command_timeout;
   bool serial_crc_enabled;
+  bool serial_7bit_responses;
   uint8_t serial_response_delay;
   uint16_t low_vin_timeout;
   uint16_t low_vin_shutoff_voltage;
@@ -73,6 +74,11 @@ void tic_settings_fill_with_defaults(tic_settings * settings)
   if (!product)
   {
     return;
+  }
+
+  if (product == TIC_PRODUCT_N825)
+  {
+    tic_settings_set_serial_7bit_responses(settings, true);
   }
 
   tic_settings_set_auto_clear_driver_error(settings, true);
@@ -360,6 +366,19 @@ bool tic_settings_get_serial_crc_enabled(const tic_settings * settings)
 {
   if (!settings) { return 0; }
   return settings->serial_crc_enabled;
+}
+
+void tic_settings_set_serial_7bit_responses(tic_settings * settings,
+  bool enabled)
+{
+  if (!settings) { return; }
+  settings->serial_7bit_responses = enabled;
+}
+
+bool tic_settings_get_serial_7bit_responses(const tic_settings * settings)
+{
+  if (!settings) { return 0; }
+  return settings->serial_7bit_responses;
 }
 
 void tic_settings_set_serial_response_delay(tic_settings * settings,

@@ -188,6 +188,15 @@ static tic_error * apply_string_pair(tic_settings * settings,
     }
     tic_settings_set_serial_crc_enabled(settings, serial_crc_enabled);
   }
+  else if (!strcmp(key, "serial_7bit_responses"))
+  {
+    uint32_t enabled;
+    if (!tic_name_to_code(tic_bool_names, value, &enabled))
+    {
+      return tic_error_create("Unrecognized serial_7bit_responses value.");
+    }
+    tic_settings_set_serial_7bit_responses(settings, enabled);
+  }
   else if (!strcmp(key, "serial_response_delay"))
   {
     int64_t delay;
