@@ -10,7 +10,8 @@ static void write_buffer_to_settings(const uint8_t * buf, tic_settings * setting
   }
 
   {
-    bool never_sleep = buf[TIC_SETTING_NEVER_SLEEP] & 1;
+    bool never_sleep = buf[TIC_SETTING_OPTIONS_BYTE1] >>
+      TIC_OPTIONS_BYTE1_NEVER_SLEEP & 1;
     tic_settings_set_never_sleep(settings, never_sleep);
   }
 

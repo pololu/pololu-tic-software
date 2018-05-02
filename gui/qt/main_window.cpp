@@ -184,6 +184,7 @@ void main_window::adjust_ui_for_product(uint8_t product)
   {
   default:
   case TIC_PRODUCT_T825:
+  case TIC_PRODUCT_N825:
     set_combo_items(step_mode_value,
       { { "Full step", TIC_STEP_MODE_MICROSTEP1 },
         { "1/2 step", TIC_STEP_MODE_MICROSTEP2 },

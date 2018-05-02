@@ -70,8 +70,11 @@ uint32_t tic_get_max_allowed_current(uint8_t product)
     return TIC_MAX_ALLOWED_CURRENT_T500;
   case TIC_PRODUCT_T834:
     return TIC_MAX_ALLOWED_CURRENT_T834;
-  default:
+  case TIC_PRODUCT_T825:
+  case TIC_PRODUCT_N825:
     return TIC_MAX_ALLOWED_CURRENT_T825;
+  default:
+    return 0;
   }
 }
 
@@ -97,6 +100,7 @@ const uint8_t * tic_get_recommended_current_limit_codes(
     break;
 
   case TIC_PRODUCT_T825:
+  case TIC_PRODUCT_N825:
     table = tic01a_recommended_codes;
     count = sizeof(tic01a_recommended_codes);
     break;

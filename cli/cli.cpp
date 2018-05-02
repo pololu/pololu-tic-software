@@ -36,7 +36,7 @@ static const char help[] =
   "  --step-mode MODE             Set step mode: full, half, 1, 2, 4, 8, 16, 32.\n"
   "  --current NUM                Set the current limit in mA.\n"
   "  --decay MODE                 Set decay mode:\n"
-  "                               Tic T825: mixed, slow, or fast\n"
+  "                               Tic T825/N825: mixed, slow, or fast\n"
   "                               T834: slow, mixed25, mixed50, mixed75, or fast\n"
   "\n"
   "Permanent settings:\n"
@@ -590,7 +590,8 @@ static void test_procedure(device_selector & selector, uint32_t procedure)
     std::vector<uint8_t> products = {
       TIC_PRODUCT_T825,
       TIC_PRODUCT_T834,
-      TIC_PRODUCT_T500
+      TIC_PRODUCT_T500,
+      TIC_PRODUCT_N825
     };
 
     for (uint8_t product : products)

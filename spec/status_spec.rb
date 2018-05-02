@@ -30,7 +30,7 @@ Max deceleration:             4294967295
 Acting target position:       -1
 Time since last step:         4294967295
 Step mode:                    (Unknown)
-Current limit:                3968 mA
+Current limit:                0 mA
 Decay mode:                   (Unknown)
 
 Errors currently stopping the motor:

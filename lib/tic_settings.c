@@ -70,9 +70,7 @@ void tic_settings_fill_with_defaults(tic_settings * settings)
   tic_settings_set_product(settings, product);
 
   // The product should be set beforehand, and if it is not then quit.
-  if (product != TIC_PRODUCT_T825 &&
-    product != TIC_PRODUCT_T834 &&
-    product != TIC_PRODUCT_T500)
+  if (!product)
   {
     return;
   }
@@ -83,7 +81,7 @@ void tic_settings_fill_with_defaults(tic_settings * settings)
   tic_settings_set_serial_device_number(settings, 14);
   tic_settings_set_command_timeout(settings, 1000);
   tic_settings_set_low_vin_timeout(settings, 250);
-  if (product == TIC_PRODUCT_T825)
+  if (product == TIC_PRODUCT_T825 || product == TIC_PRODUCT_N825)
   {
     tic_settings_set_low_vin_shutoff_voltage(settings, 6000);
     tic_settings_set_low_vin_startup_voltage(settings, 6500);

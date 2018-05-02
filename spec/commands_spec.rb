@@ -254,7 +254,7 @@ describe 'Set decay mode' do
 
   it 'works', usb: true do
     case tic_product
-    when :T825
+    when :T825, :N825
       decay_modes = {
         'mixed' => 'Mixed',
         'fast' => 'Fast',

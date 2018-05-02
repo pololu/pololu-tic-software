@@ -40,7 +40,7 @@ def tic_get_status
   YAML.load(stdout)
 end
 
-# Returns :T834, :T825, or :T500
+# Returns :T825, :T834, :T500, or :N825
 def tic_product
   return @tic_product if @tic_product
 
@@ -54,7 +54,7 @@ def tic_product
     raise "Multiple Tics are connected."
   end
 
-  md = lines.first.match(/Tic (T\d+)/)
+  md = lines.first.match(/Tic (\w\d+)/)
   return @tic_product = md[1].to_sym if md
 end
 
@@ -63,7 +63,8 @@ def tic_max_allowed_current(product)
     T825: 3968,
     T834: 3456,
     T500: 3093,
+    N825: 3968,
   }.fetch(product)
 end
 
-TicProductSymbols = [:T825, :T834, :T500]
+TicProductSymbols = [:T825, :T834, :T500, :N825]

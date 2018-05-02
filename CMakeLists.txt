@@ -27,8 +27,8 @@ set (GUI_NAME "ticgui")
 set (DOCUMENTATION_URL "https://www.pololu.com/docs/0J71")
 
 set (SOFTWARE_VERSION_MAJOR 1)
-set (SOFTWARE_VERSION_MINOR 6)
-set (SOFTWARE_VERSION_PATCH 2)
+set (SOFTWARE_VERSION_MINOR 7)
+set (SOFTWARE_VERSION_PATCH 0)
 
 option (BUILD_SHARED_LIBS "Build a shared library" TRUE)
 if (NOT BUILD_SHARED_LIBS)
