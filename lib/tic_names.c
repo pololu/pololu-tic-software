@@ -228,6 +228,8 @@ const tic_name tic_pin_func_names[] =
   { "rc", TIC_PIN_FUNC_RC },
   { "encoder", TIC_PIN_FUNC_ENCODER },
   { "kill_switch", TIC_PIN_FUNC_KILL_SWITCH },
+  { "limit_switch_forward", TIC_PIN_FUNC_LIMIT_SWITCH_FORWARD },
+  { "limit_switch_reverse", TIC_PIN_FUNC_LIMIT_SWITCH_REVERSE },
   { NULL, 0 },
 };
 

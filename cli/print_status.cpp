@@ -164,6 +164,14 @@ void print_status(const tic::variables & vars,
     << (vars.get_energized() ? "Yes" : "No")
     << std::endl;
 
+  std::cout << left_column << "Forward limit active: "
+    << (vars.get_forward_limit_active() ? "Yes" : "No")
+    << std::endl;
+
+  std::cout << left_column << "Reverse limit active: "
+    << (vars.get_reverse_limit_active() ? "Yes" : "No")
+    << std::endl;
+
   std::cout << std::endl;
 
   uint8_t planning_mode = vars.get_planning_mode();

@@ -950,6 +950,18 @@ bool tic_variables_get_energized(const tic_variables *);
 TIC_API
 bool tic_variables_get_position_uncertain(const tic_variables *);
 
+/// Returns true if a forward limit switch is active.  This is just a function
+/// of the digital inputs, not whether the limit switch is currently having an
+/// effect on the motor.
+TIC_API
+bool tic_variables_get_forward_limit_active(const tic_variables *);
+
+/// Returns true if a reverse limit switch is active.  This is just a function
+/// of the digital inputs, not whether the limit switch is currently having an
+/// effect on the motor.
+TIC_API
+bool tic_variables_get_reverse_limit_active(const tic_variables *);
+
 /// Gets the errors that are currently stopping the motor.
 ///
 /// This is a bitmask, and the bits are defined by the TIC_ERROR_* macros.

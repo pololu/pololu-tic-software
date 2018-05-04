@@ -214,9 +214,18 @@ static void tic_write_settings_to_buffer(const tic_settings * settings, uint8_t 
 
     for (uint8_t i = 0; i < TIC_CONTROL_PIN_COUNT; i++)
     {
-      if (tic_settings_get_pin_func(settings, i) == TIC_PIN_FUNC_KILL_SWITCH)
+      uint8_t func = tic_settings_get_pin_func(settings, i);
+      if (func == TIC_PIN_FUNC_KILL_SWITCH)
       {
         buf[TIC_SETTING_KILL_SWITCH_MAP] |= (1 << i);
+      }
+      if (func == TIC_PIN_FUNC_LIMIT_SWITCH_FORWARD)
+      {
+        buf[TIC_SETTING_LIMIT_SWITCH_FORWARD_MAP] |= (1 << i);
+      }
+      if (func == TIC_PIN_FUNC_LIMIT_SWITCH_REVERSE)
+      {
+        buf[TIC_SETTING_LIMIT_SWITCH_REVERSE_MAP] |= (1 << i);
       }
       if (tic_settings_get_pin_polarity(settings, i))
       {

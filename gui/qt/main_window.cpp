@@ -437,6 +437,22 @@ void main_window::set_energized(bool energized)
   energized_value->setText(energized ? tr("Yes") : tr("No"));
 }
 
+void main_window::set_limit_active(bool forward_limit_active, bool reverse_limit_active)
+{
+  if (forward_limit_active && reverse_limit_active) {
+    limit_active_value->setText(tr("Forward and Reverse"));
+  }
+  else if (forward_limit_active) {
+    limit_active_value->setText(tr("Forward"));
+  }
+  else if (reverse_limit_active) {
+    limit_active_value->setText(tr("Reverse"));
+  }
+  else {
+    limit_active_value->setText(tr("None"));
+  }
+}
+
 void main_window::set_target_position(int32_t target_position)
 {
   target_label->setText(tr("Target position:"));
@@ -1788,7 +1804,7 @@ void pin_config_row::setup(QGridLayout * layout, int row,
   }
 }
 
-static const std::array<const char *, 8> pin_func_names =
+static const std::array<const char *, 10> pin_func_names =
 {
   "Default",
   "User I/O",
@@ -1798,6 +1814,8 @@ static const std::array<const char *, 8> pin_func_names =
   "RC input",
   "Encoder input",
   "Kill switch",
+  "Limit switch forward",
+  "Limit switch reverse",
 };
 
 void pin_config_row::add_funcs(uint16_t funcs)
@@ -2118,9 +2136,10 @@ QWidget * main_window::setup_operation_status_box()
   layout->setColumnStretch(3, 1);
   int row = 0;
 
-  setup_read_only_text_field(layout, row++, &vin_voltage_label, &vin_voltage_value);
+  setup_read_only_text_field(layout, row++, 0, 3, &vin_voltage_label, &vin_voltage_value);
   setup_read_only_text_field(layout, row++, 0, 3, &operation_state_label, &operation_state_value);
-  setup_read_only_text_field(layout, row++, &energized_label, &energized_value);
+  setup_read_only_text_field(layout, row++, 0, 3, &energized_label, &energized_value);
+  setup_read_only_text_field(layout, row++, 0, 3, &limit_active_label, &limit_active_value);
   layout->addItem(new QSpacerItem(1, fontMetrics().height()), row++, 0);
 
   {
@@ -2890,47 +2909,44 @@ QWidget * main_window::setup_pin_config_box()
   QGridLayout * layout = pin_config_box_layout = new QGridLayout();
   int row = 0;
 
+  const uint32_t universal_funcs =
+    (1 << TIC_PIN_FUNC_DEFAULT) |
+    (1 << TIC_PIN_FUNC_USER_INPUT) |
+    (1 << TIC_PIN_FUNC_KILL_SWITCH) |
+    (1 << TIC_PIN_FUNC_LIMIT_SWITCH_FORWARD) |
+    (1 << TIC_PIN_FUNC_LIMIT_SWITCH_REVERSE);
+
   pin_config_rows[TIC_PIN_NUM_SCL] = new pin_config_row(TIC_PIN_NUM_SCL, this);
   pin_config_rows[TIC_PIN_NUM_SCL]->setup(layout, row++);
-  pin_config_rows[TIC_PIN_NUM_SCL]->add_funcs((1 << TIC_PIN_FUNC_DEFAULT) |
-                                              (1 << TIC_PIN_FUNC_USER_IO) |
-                                              (1 << TIC_PIN_FUNC_USER_INPUT) |
-                                              (1 << TIC_PIN_FUNC_POT_POWER) |
-                                              (1 << TIC_PIN_FUNC_SERIAL) |
-                                              (1 << TIC_PIN_FUNC_KILL_SWITCH));
+  pin_config_rows[TIC_PIN_NUM_SCL]->add_funcs(universal_funcs |
+    (1 << TIC_PIN_FUNC_USER_IO) |
+    (1 << TIC_PIN_FUNC_POT_POWER) |
+    (1 << TIC_PIN_FUNC_SERIAL));
 
   pin_config_rows[TIC_PIN_NUM_SDA] = new pin_config_row(TIC_PIN_NUM_SDA, this);
   pin_config_rows[TIC_PIN_NUM_SDA]->setup(layout, row++);
-  pin_config_rows[TIC_PIN_NUM_SDA]->add_funcs((1 << TIC_PIN_FUNC_DEFAULT) |
-                                              (1 << TIC_PIN_FUNC_USER_IO) |
-                                              (1 << TIC_PIN_FUNC_USER_INPUT) |
-                                              (1 << TIC_PIN_FUNC_SERIAL) |
-                                              (1 << TIC_PIN_FUNC_KILL_SWITCH));
+  pin_config_rows[TIC_PIN_NUM_SDA]->add_funcs(universal_funcs |
+    (1 << TIC_PIN_FUNC_USER_IO) |
+    (1 << TIC_PIN_FUNC_SERIAL));
 
   pin_config_rows[TIC_PIN_NUM_TX] = new pin_config_row(TIC_PIN_NUM_TX, this);
   pin_config_rows[TIC_PIN_NUM_TX]->setup(layout, row++, "(always pulled up)");
-  pin_config_rows[TIC_PIN_NUM_TX]->add_funcs((1 << TIC_PIN_FUNC_DEFAULT) |
-                                             (1 << TIC_PIN_FUNC_USER_IO) |
-                                             (1 << TIC_PIN_FUNC_USER_INPUT) |
-                                             (1 << TIC_PIN_FUNC_SERIAL) |
-                                             (1 << TIC_PIN_FUNC_ENCODER) |
-                                             (1 << TIC_PIN_FUNC_KILL_SWITCH));
+  pin_config_rows[TIC_PIN_NUM_TX]->add_funcs(universal_funcs |
+    (1 << TIC_PIN_FUNC_USER_IO) |
+    (1 << TIC_PIN_FUNC_SERIAL) |
+    (1 << TIC_PIN_FUNC_ENCODER));
 
   pin_config_rows[TIC_PIN_NUM_RX] = new pin_config_row(TIC_PIN_NUM_RX, this);
   pin_config_rows[TIC_PIN_NUM_RX]->setup(layout, row++, "(always pulled up)");
-  pin_config_rows[TIC_PIN_NUM_RX]->add_funcs((1 << TIC_PIN_FUNC_DEFAULT) |
-                                             (1 << TIC_PIN_FUNC_USER_IO) |
-                                             (1 << TIC_PIN_FUNC_USER_INPUT) |
-                                             (1 << TIC_PIN_FUNC_SERIAL) |
-                                             (1 << TIC_PIN_FUNC_ENCODER) |
-                                             (1 << TIC_PIN_FUNC_KILL_SWITCH));
+  pin_config_rows[TIC_PIN_NUM_RX]->add_funcs(universal_funcs |
+    (1 << TIC_PIN_FUNC_USER_IO) |
+    (1 << TIC_PIN_FUNC_SERIAL) |
+    (1 << TIC_PIN_FUNC_ENCODER));
 
   pin_config_rows[TIC_PIN_NUM_RC] = new pin_config_row(TIC_PIN_NUM_RC, this);
   pin_config_rows[TIC_PIN_NUM_RC]->setup(layout, row++, "(always pulled down)", true);
-  pin_config_rows[TIC_PIN_NUM_RC]->add_funcs((1 << TIC_PIN_FUNC_DEFAULT) |
-                                             (1 << TIC_PIN_FUNC_USER_INPUT) |
-                                             (1 << TIC_PIN_FUNC_RC) |
-                                             (1 << TIC_PIN_FUNC_KILL_SWITCH));
+  pin_config_rows[TIC_PIN_NUM_RC]->add_funcs(universal_funcs |
+    (1 << TIC_PIN_FUNC_RC));
 
   layout->setColumnStretch(5, 1);
   layout->setRowStretch(row, 1);
@@ -3149,6 +3165,7 @@ void main_window::retranslate()
   vin_voltage_label->setText(tr("VIN voltage:"));
   operation_state_label->setText(tr("Operation state:"));
   energized_label->setText(tr("Energized:"));
+  limit_active_label->setText(tr("Limits active:"));
   set_target_none();
   current_position_label->setText(tr("Current position:"));
   position_uncertain_label->setText(tr("Uncertain:"));

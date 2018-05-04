@@ -356,6 +356,18 @@ namespace tic
       return tic_variables_get_position_uncertain(pointer);
     }
 
+    /// Wrapper for tic_variables_get_forward_limit_active().
+    bool get_forward_limit_active() const noexcept
+    {
+      return tic_variables_get_forward_limit_active(pointer);
+    }
+
+    /// Wrapper for tic_variables_get_reverse_limit_active().
+    bool get_reverse_limit_active() const noexcept
+    {
+      return tic_variables_get_reverse_limit_active(pointer);
+    }
+
     /// Wrapper for tic_variables_get_error_status().
     uint16_t get_error_status() const noexcept
     {

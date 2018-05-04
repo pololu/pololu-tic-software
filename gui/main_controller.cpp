@@ -518,6 +518,8 @@ void main_controller::handle_variables_changed()
 
   window->set_vin_voltage(variables.get_vin_voltage());
   window->set_energized(variables.get_energized());
+  window->set_limit_active(variables.get_forward_limit_active(),
+    variables.get_reverse_limit_active());
   window->set_operation_state(
     tic_look_up_operation_state_name_ui(variables.get_operation_state()));
 
@@ -605,8 +607,28 @@ void main_controller::update_motor_status_message(bool prompt_to_resume)
   }
   else if (!error_status)
   {
-    msg = "Driving";
-    stopped = false;
+    if (variables.get_forward_limit_active() && variables.get_reverse_limit_active())
+    {
+      msg = "Limit switches active.";
+    }
+    else if (variables.get_forward_limit_active())
+    {
+      msg = "Forward limit switch active.";
+    }
+    else if (variables.get_reverse_limit_active())
+    {
+      msg = "Reverse limit switch active.";
+    }
+    else if (!variables.get_energized())
+    {
+      // This should not happen: when you de-energize it is always an error.
+      msg = "Motor de-energized.";
+    }
+    else
+    {
+      msg = "Driving.";
+      stopped = false;
+    }
   }
   else if (error_status & (1 << TIC_ERROR_LOW_VIN))
   {
@@ -648,6 +670,10 @@ void main_controller::update_motor_status_message(bool prompt_to_resume)
       msg += "moving to error position ";
     }
 
+    // Note: The "because" stuff below isn't strictly accurate because if a
+    // limit switch and a soft error happen at the same time, the limit switch
+    // could cause an immediate stop.
+
     if (error_status & (1 << TIC_ERROR_KILL_SWITCH))
     {
       msg += "because kill switch is active.";
@@ -681,6 +707,11 @@ void main_controller::update_motor_status_message(bool prompt_to_resume)
     else if (error_status & (1 << TIC_ERROR_ERR_LINE_HIGH))
     {
       msg += "because ERR line is high.";
+    }
+    else
+    {
+      // Should not happen.
+      msg += "due to an error.";
     }
   }
 
@@ -748,7 +779,10 @@ void main_controller::handle_settings_changed()
 
     bool enabled = func != TIC_PIN_FUNC_DEFAULT;
     bool pullup_enabled = enabled && func != TIC_PIN_FUNC_POT_POWER;
-    bool polarity_enabled = func == TIC_PIN_FUNC_KILL_SWITCH;
+    bool polarity_enabled =
+      func == TIC_PIN_FUNC_KILL_SWITCH ||
+      func == TIC_PIN_FUNC_LIMIT_SWITCH_FORWARD ||
+      func == TIC_PIN_FUNC_LIMIT_SWITCH_REVERSE;
     bool analog_enabled = enabled;
 
     window->set_pin_func(i, func);
