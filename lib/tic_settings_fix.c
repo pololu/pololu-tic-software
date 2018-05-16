@@ -110,6 +110,12 @@ static void tic_settings_fix_enums(tic_settings * settings, tic_string * warning
   }
 }
 
+static bool is_limit_switch(uint8_t pin_func)
+{
+  return pin_func == TIC_PIN_FUNC_LIMIT_SWITCH_FORWARD ||
+    pin_func == TIC_PIN_FUNC_LIMIT_SWITCH_REVERSE;
+}
+
 static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings)
 {
   tic_settings_fix_enums(settings, warnings);
@@ -577,7 +583,7 @@ static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings
     }
 
     // Next, we make sure no pin is configured to do something that it cannot
-    // do.  These checks are in order by pin.
+    // do.  These checks are in order by pin function.
 
     if (rc_func == TIC_PIN_FUNC_USER_IO)
     {
@@ -681,6 +687,44 @@ static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings
       tic_sprintf(warnings,
         "Warning: The RC pin cannot be used as an encoder input "
         "so its function will be changed to the default.\n");
+    }
+
+    if (firmware_version && firmware_version < 0x0105)
+    {
+      bool warn = false;
+      if (is_limit_switch(scl_func))
+      {
+        warn = true;
+        scl_func = TIC_PIN_FUNC_DEFAULT;
+      }
+      if (is_limit_switch(sda_func))
+      {
+        warn = true;
+        sda_func = TIC_PIN_FUNC_DEFAULT;
+      }
+      if (is_limit_switch(tx_func))
+      {
+        warn = true;
+        tx_func = TIC_PIN_FUNC_DEFAULT;
+      }
+      if (is_limit_switch(rx_func))
+      {
+        warn = true;
+        rx_func = TIC_PIN_FUNC_DEFAULT;
+      }
+      if (is_limit_switch(rc_func))
+      {
+        warn = true;
+        rc_func = TIC_PIN_FUNC_DEFAULT;
+      }
+      if (warn)
+      {
+        tic_sprintf(warnings,
+          "Warning: The firmware version on your device does not support "
+          "limit switches, so any pin configured as a limit switch "
+          "will be changed to its default function.  "
+          "See " DOCUMENTATION_URL " for firmware upgrade instructions.\n");
+      }
     }
 
     // Next, enforce proper values for pin booleans.
