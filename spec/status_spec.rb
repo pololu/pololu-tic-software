@@ -18,6 +18,8 @@ Input after scaling:          -1
 VIN voltage:                  65.535 V
 Operation state:              (Unknown)
 Energized:                    Yes
+Forward limit active:         Yes
+Reverse limit active:         Yes
 
 Target:                       No target
 Current position:             -1

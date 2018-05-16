@@ -10,8 +10,7 @@ static void write_buffer_to_settings(const uint8_t * buf, tic_settings * setting
   }
 
   {
-    bool never_sleep = buf[TIC_SETTING_OPTIONS_BYTE1] >>
-      TIC_OPTIONS_BYTE1_NEVER_SLEEP & 1;
+    bool never_sleep = buf[TIC_SETTING_NEVER_SLEEP] & 1;
     tic_settings_set_never_sleep(settings, never_sleep);
   }
 
@@ -58,13 +57,20 @@ static void write_buffer_to_settings(const uint8_t * buf, tic_settings * setting
   }
 
   {
-    bool serial_crc_enabled = buf[TIC_SETTING_SERIAL_CRC_ENABLED] & 1;
-    tic_settings_set_serial_crc_enabled(settings, serial_crc_enabled);
+    bool enabled = buf[TIC_SETTING_SERIAL_OPTIONS_BYTE] >>
+      TIC_SERIAL_OPTIONS_BYTE_ENABLE_CRC_FOR_COMMANDS & 1;
+    tic_settings_set_serial_crc_enabled(settings, enabled);
   }
 
   {
-    bool enabled = buf[TIC_SETTING_OPTIONS_BYTE1] >>
-      TIC_OPTIONS_BYTE1_SERIAL_7BIT_RESPONSES & 1;
+    bool enabled = buf[TIC_SETTING_SERIAL_OPTIONS_BYTE] >>
+      TIC_SERIAL_OPTIONS_BYTE_ENABLE_CRC_FOR_RESPONSES & 1;
+    tic_settings_set_serial_crc_for_responses_enabled(settings, enabled);
+  }
+
+  {
+    bool enabled = buf[TIC_SETTING_SERIAL_OPTIONS_BYTE] >>
+      TIC_SERIAL_OPTIONS_BYTE_ENABLE_7BIT_RESPONSES & 1;
     tic_settings_set_serial_7bit_responses(settings, enabled);
   }
 

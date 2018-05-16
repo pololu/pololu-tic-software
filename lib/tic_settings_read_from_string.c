@@ -181,12 +181,21 @@ static tic_error * apply_string_pair(tic_settings * settings,
   }
   else if (!strcmp(key, "serial_crc_enabled"))
   {
-    uint32_t serial_crc_enabled;
-    if (!tic_name_to_code(tic_bool_names, value, &serial_crc_enabled))
+    uint32_t enabled;
+    if (!tic_name_to_code(tic_bool_names, value, &enabled))
     {
       return tic_error_create("Unrecognized serial_crc_enabled value.");
     }
-    tic_settings_set_serial_crc_enabled(settings, serial_crc_enabled);
+    tic_settings_set_serial_crc_enabled(settings, enabled);
+  }
+  else if (!strcmp(key, "serial_crc_for_responses_enabled"))
+  {
+    uint32_t enabled;
+    if (!tic_name_to_code(tic_bool_names, value, &enabled))
+    {
+      return tic_error_create("Unrecognized serial_crc_for_responses_enabled value.");
+    }
+    tic_settings_set_serial_crc_for_responses_enabled(settings, enabled);
   }
   else if (!strcmp(key, "serial_7bit_responses"))
   {

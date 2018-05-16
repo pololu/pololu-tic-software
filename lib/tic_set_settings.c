@@ -10,8 +10,7 @@ static void tic_write_settings_to_buffer(const tic_settings * settings, uint8_t 
   buf[TIC_SETTING_CONTROL_MODE] =
     tic_settings_get_control_mode(settings);
 
-  buf[TIC_SETTING_OPTIONS_BYTE1] |=
-    (tic_settings_get_never_sleep(settings) & 1) << TIC_OPTIONS_BYTE1_NEVER_SLEEP;
+  buf[TIC_SETTING_NEVER_SLEEP] = tic_settings_get_never_sleep(settings) & 1;
 
   buf[TIC_SETTING_DISABLE_SAFE_START] =
     tic_settings_get_disable_safe_start(settings);
@@ -49,12 +48,17 @@ static void tic_write_settings_to_buffer(const tic_settings * settings, uint8_t 
     buf[TIC_SETTING_COMMAND_TIMEOUT + 1] = command_timeout >> 8 & 0xFF;
   }
 
-  buf[TIC_SETTING_SERIAL_CRC_ENABLED] =
-    tic_settings_get_serial_crc_enabled(settings);
+  buf[TIC_SETTING_SERIAL_OPTIONS_BYTE] |=
+    (tic_settings_get_serial_crc_enabled(settings) & 1) <<
+    TIC_SERIAL_OPTIONS_BYTE_ENABLE_CRC_FOR_COMMANDS;
 
-  buf[TIC_SETTING_OPTIONS_BYTE1] |=
+  buf[TIC_SETTING_SERIAL_OPTIONS_BYTE] |=
+    (tic_settings_get_serial_crc_for_responses_enabled(settings) & 1) <<
+    TIC_SERIAL_OPTIONS_BYTE_ENABLE_CRC_FOR_RESPONSES;
+
+  buf[TIC_SETTING_SERIAL_OPTIONS_BYTE] |=
     (tic_settings_get_serial_7bit_responses(settings) & 1) <<
-    TIC_OPTIONS_BYTE1_SERIAL_7BIT_RESPONSES;
+    TIC_SERIAL_OPTIONS_BYTE_ENABLE_7BIT_RESPONSES;
 
   buf[TIC_SETTING_SERIAL_RESPONSE_DELAY] =
     tic_settings_get_serial_response_delay(settings);
