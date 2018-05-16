@@ -120,11 +120,6 @@ static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings
 {
   tic_settings_fix_enums(settings, warnings);
 
-  // Note: We don't enforce the fact the the RC pin cannot have a pull-up and
-  // the TX and RX pins always have pull-ups.  The firmware's default settings
-  // for TX and RX don't set the pull-up bit, so it would be bad to complain to
-  // the user about that.
-
   uint8_t product = tic_settings_get_product(settings);
   uint16_t firmware_version = tic_settings_get_firmware_version(settings);
 
@@ -739,6 +734,8 @@ static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings
     // Note: aren't enforcing proper values for the "pullup" boolean yet.  That
     // setting is more of a suggestion from the firmware; the RC line cannot
     // have a pull-up and the TX and RX lines always do if they are inputs.
+    // The firmware's default settings for TX and RX don't set the pull-up bit,
+    // so it would be bad to complain to the user about that.
 
     // Finally, if one of the SCL/SDA pins is configured for I2C, make sure the other one
     // is configured that way too.  This should be last because other checks in this
