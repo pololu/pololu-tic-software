@@ -510,10 +510,10 @@ static void set_settings(device_selector & selector,
 
   tic::device device = selector.select_device();
 
-  // Set the product of the settings object to match that of the device so we
-  // can fix it properly.
-  uint8_t product = device.get_product();
-  tic_settings_set_product(settings.get_pointer(), product);
+  tic_settings_set_product(settings.get_pointer(),
+    device.get_product());
+  tic_settings_set_firmware_version(settings.get_pointer(),
+    device.get_firmware_version());
 
   std::string warnings;
   settings.fix(&warnings);

@@ -1311,10 +1311,11 @@ void main_controller::open_settings_from_file(std::string filename)
     std::string settings_string = read_string_from_file(filename);
     tic::settings fixed_settings = tic::settings::read_from_string(settings_string);
 
-    // Set the product of the settings so they can be fixed properly for this
-    // device.
-    uint8_t product = device_handle.get_device().get_product();
-    tic_settings_set_product(fixed_settings.get_pointer(), product);
+    tic::device device = device_handle.get_device();
+    tic_settings_set_product(fixed_settings.get_pointer(),
+      device.get_product());
+    tic_settings_set_firmware_version(fixed_settings.get_pointer(),
+      device.get_firmware_version());
 
     std::string warnings;
     fixed_settings.fix(&warnings);

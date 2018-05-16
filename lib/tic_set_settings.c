@@ -313,9 +313,10 @@ tic_error * tic_set_settings(tic_handle * handle, const tic_settings * settings)
   // function, so there should be nothing to fix here.
   if (error == NULL)
   {
-    uint8_t product = tic_device_get_product(tic_handle_get_device(handle));
-    tic_settings_set_product(fixed_settings, product);
-
+    const tic_device * device = tic_handle_get_device(handle);
+    tic_settings_set_product(fixed_settings, tic_device_get_product(device));
+    tic_settings_set_firmware_version(fixed_settings,
+      tic_device_get_firmware_version(device));
     error = tic_settings_fix(fixed_settings, NULL);
   }
 

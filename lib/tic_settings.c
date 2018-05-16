@@ -5,6 +5,7 @@
 struct tic_settings
 {
   uint8_t product;
+  uint16_t firmware_version;
 
   uint8_t control_mode;
   bool never_sleep;
@@ -227,6 +228,19 @@ uint8_t tic_settings_get_product(const tic_settings * settings)
 {
   if (!settings) { return 0; }
   return settings->product;
+}
+
+void tic_settings_set_firmware_version(tic_settings * settings,
+  uint16_t version)
+{
+  if (!settings) { return; }
+  settings->firmware_version = version;
+}
+
+uint16_t tic_settings_get_firmware_version(const tic_settings * settings)
+{
+  if (!settings) { return 0; }
+  return settings->firmware_version;
 }
 
 void tic_settings_set_control_mode(tic_settings * settings,

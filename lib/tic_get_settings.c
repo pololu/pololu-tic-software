@@ -322,8 +322,6 @@ tic_error * tic_get_settings(tic_handle * handle, tic_settings ** settings)
 
   tic_error * error = NULL;
 
-  uint8_t product = tic_device_get_product(tic_handle_get_device(handle));
-
   // Allocate the new settings object.
   tic_settings * new_settings = NULL;
   if (error == NULL)
@@ -331,10 +329,13 @@ tic_error * tic_get_settings(tic_handle * handle, tic_settings ** settings)
     error = tic_settings_create(&new_settings);
   }
 
-  // Specify what product these settings are for.
+  // Specify what type of device these settings are for.
   if (error == NULL)
   {
-    tic_settings_set_product(new_settings, product);
+    const tic_device * device = tic_handle_get_device(handle);
+    tic_settings_set_product(new_settings, tic_device_get_product(device));
+    tic_settings_set_firmware_version(new_settings,
+      tic_device_get_firmware_version(device));
   }
 
   // Read all the settings from the device into a buffer.

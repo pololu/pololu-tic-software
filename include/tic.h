@@ -358,7 +358,7 @@ tic_error * tic_settings_to_string(const tic_settings *, char ** string);
 
 /// Parses an YAML settings string, also known as a settings file, and returns
 /// the corresponding settings object.  The settings returned might be invalid,
-/// so it is recommend to call tic_settings_fix() to fix the settings and warn
+/// so it is recommended to call tic_settings_fix() to fix the settings and warn
 /// the user.
 ///
 /// The settings parameter should be a non-null pointer to a tic_settings
@@ -377,6 +377,22 @@ void tic_settings_set_product(tic_settings *, uint8_t product);
 /// Gets the product described in tic_settings_set_product().
 TIC_API
 uint8_t tic_settings_get_product(const tic_settings *);
+
+/// Sets the firmware version associated with these settings.
+///
+/// The version number should be 0 to indicate the version is unknown, or
+/// should come from tic_device_get_firmware_version().
+///
+/// Setting the firmware version allows tic_settings_fix() to disable features
+/// that are not supported.
+TIC_API
+void tic_settings_set_firmware_version(tic_settings * settings,
+  uint16_t version);
+
+/// Gets the firmware version number described in
+/// tic_settings_get_firmware_version().
+TIC_API
+uint16_t tic_settings_get_firmware_version(const tic_settings * settings);
 
 /// Sets the control mode, which should be one of the TIC_CONTROL_MODE_* macros.
 /// Silently obeys if the input is invalid so that you can see a warning later
