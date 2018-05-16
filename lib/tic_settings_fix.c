@@ -120,6 +120,7 @@ static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings
   // the user about that.
 
   uint8_t product = tic_settings_get_product(settings);
+  uint16_t firmware_version = tic_settings_get_firmware_version(settings);
 
   uint8_t control_mode = tic_settings_get_control_mode(settings);
 
@@ -200,6 +201,33 @@ static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings
         "so it will be changed to %u ms.\n", command_timeout);
     }
     tic_settings_set_command_timeout(settings, command_timeout);
+  }
+
+  {
+    bool enabled = tic_settings_get_serial_crc_for_responses_enabled(settings);
+    if (enabled && firmware_version && firmware_version < 0x0105)
+    {
+      enabled = false;
+      tic_sprintf(warnings,
+        "Warning: The firmware version on your device does not support "
+        "sending CRC bytes for serial responses, "
+        "so that option will be disabled.  "
+        "See " DOCUMENTATION_URL " for firmware upgrade instructions.\n");
+    }
+    tic_settings_set_serial_crc_for_responses_enabled(settings, enabled);
+  }
+
+  {
+    bool enabled = tic_settings_get_serial_7bit_responses(settings);
+    if (enabled && firmware_version && firmware_version < 0x0105)
+    {
+      enabled = false;
+      tic_sprintf(warnings,
+        "Warning: The firmware version on your device does not support "
+        "7-bit serial responses, so that option will be disabled.  "
+        "See " DOCUMENTATION_URL " for firmware upgrade instructions.\n");
+    }
+    tic_settings_set_serial_7bit_responses(settings, enabled);
   }
 
   {
