@@ -8,7 +8,8 @@
 require 'pathname'
 
 if ARGV.empty?
-  $stderr.puts "usage: build_installer.rb <win32|linux32|rpi|macos>.installer"
+  $stderr.puts "usage: #{$PROGRAM_NAME} ATTRPATH"
+  $stderr.puts "where ATTRPTH is one of installers, win32.installer, linux-x86.installer, etc."
   exit 1
 end
 

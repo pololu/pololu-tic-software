@@ -1,4 +1,4 @@
-This is the license for the code in lib/libyml:
+This is the license for the code in lib/libyaml:
 
 Copyright (c) 2006 Kirill Simonov
 

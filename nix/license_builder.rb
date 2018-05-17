@@ -9,6 +9,7 @@ license_names = ENV.fetch('license_names').split(' ')
 license_files = ENV.fetch('licenses').split(' ')
 
 # TODO: also need a license fragment for pololu-tic-software, like libusbp
+# TODO: need to mention libyaml, tinyxml2 too
 
 File.open(ENV.fetch('out'), 'w') do |f|
   f.puts <<EOF
