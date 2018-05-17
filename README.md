@@ -1,7 +1,7 @@
 # Tic Stepper Motor Controller software
 
-Version: 1.6.2<br>
-Release date: 2018-03-14<br>
+Version: 1.7.0<br>
+Release date: (unreleased)<br>
 [www.pololu.com](https://www.pololu.com/)
 
 This repository contains the source code of the configuration and control software for
@@ -19,6 +19,7 @@ from source.
 
 ## Version history
 
+- 1.7.0 (unreleased)
 - 1.6.2 (2018-03-14):
   - Call `SetProcessDPIAware()` to fix issues on Windows caused by dragging the
     application between monitors with different DPIs.
