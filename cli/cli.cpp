@@ -19,6 +19,7 @@ static const char help[] =
   "  -y, --velocity NUM           Set target velocity in microsteps / 10000 s.\n"
   "  --halt-and-set-position NUM  Set where the controller thinks it currently is.\n"
   "  --halt-and-hold              Abruptly stop the motor.\n"
+  "  --home DIR                   Drive to limit switch; DIR is 'fwd' or 'rev'.\n"
   "  --reset-command-timeout      Clears the command timeout error.\n"
   "  --deenergize                 Disable the motor driver.\n"
   "  --energize                   Stop disabling the driver.\n"
@@ -75,6 +76,9 @@ struct arguments
   int32_t position;
 
   bool halt_and_hold = false;
+
+  bool go_home = false;
+  uint8_t homing_direction;
 
   bool reset_command_timeout = false;
 
@@ -136,6 +140,7 @@ struct arguments
       set_target_velocity ||
       halt_and_set_position ||
       halt_and_hold ||
+      go_home ||
       reset_command_timeout ||
       deenergize ||
       energize ||
@@ -259,6 +264,24 @@ static uint8_t parse_arg_decay_mode(arg_reader & arg_reader)
   return code;
 }
 
+static uint8_t parse_arg_homing_direction(arg_reader & arg_reader)
+{
+  std::string str = parse_arg_string(arg_reader);
+  if (str == "fwd" || str == "forward")
+  {
+    return 1;
+  }
+  else if (str == "rev" || str == "reverse")
+  {
+    return 0;
+  }
+  else
+  {
+    throw exception_with_exit_code(EXIT_BAD_ARGS,
+      "The homing direction specified is invalid.");
+  }
+}
+
 static arguments parse_args(int argc, char ** argv)
 {
   arg_reader arg_reader(argc, argv);
@@ -329,6 +352,11 @@ static arguments parse_args(int argc, char ** argv)
     else if (arg == "--halt-and-hold")
     {
       args.halt_and_hold = true;
+    }
+    else if (arg == "--home" || arg == "--go-home")
+    {
+      args.go_home = true;
+      args.homing_direction = parse_arg_homing_direction(arg_reader);
     }
     else if (arg == "--reset-command-timeout")
     {
@@ -733,6 +761,11 @@ static void run(const arguments & args)
   if (args.halt_and_hold)
   {
     handle(selector).halt_and_hold();
+  }
+
+  if (args.go_home)
+  {
+    handle(selector).go_home(args.homing_direction);
   }
 
   if (args.reset_command_timeout)

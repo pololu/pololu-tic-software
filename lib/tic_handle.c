@@ -257,6 +257,27 @@ tic_error * tic_halt_and_hold(tic_handle * handle)
   return error;
 }
 
+tic_error * tic_go_home(tic_handle * handle, uint8_t direction)
+{
+  if (handle == NULL)
+  {
+    return tic_error_create("Handle is null.");
+  }
+
+  tic_error * error = NULL;
+
+  error = tic_usb_error(libusbp_control_transfer(handle->usb_handle,
+    0x40, TIC_CMD_GO_HOME, direction, 0, NULL, 0, NULL));
+
+  if (error != NULL)
+  {
+    error = tic_error_add(error,
+      "There was an error sending the 'Go home' command.");
+  }
+
+  return error;
+}
+
 tic_error * tic_reset_command_timeout(tic_handle * handle)
 {
   if (handle == NULL)

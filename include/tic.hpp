@@ -368,6 +368,12 @@ namespace tic
       return tic_variables_get_reverse_limit_active(pointer);
     }
 
+    /// Wrapper for tic_variables_get_homing_active().
+    bool get_homing_active() const noexcept
+    {
+      return tic_variables_get_homing_active(pointer);
+    }
+
     /// Wrapper for tic_variables_get_error_status().
     uint16_t get_error_status() const noexcept
     {
@@ -679,6 +685,12 @@ namespace tic
     void halt_and_hold()
     {
       throw_if_needed(tic_halt_and_hold(pointer));
+    }
+
+    /// Wrapper for tic_go_home().
+    void go_home(uint8_t direction)
+    {
+      throw_if_needed(tic_go_home(pointer, direction));
     }
 
     /// Wrapper for tic_reset_command_timeout().

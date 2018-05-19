@@ -172,6 +172,10 @@ void print_status(const tic::variables & vars,
     << (vars.get_reverse_limit_active() ? "Yes" : "No")
     << std::endl;
 
+  std::cout << left_column << "Homing active: "
+    << (vars.get_homing_active() ? "Yes" : "No")
+    << std::endl;
+
   std::cout << std::endl;
 
   uint8_t planning_mode = vars.get_planning_mode();

@@ -20,6 +20,7 @@ Operation state:              (Unknown)
 Energized:                    Yes
 Forward limit active:         Yes
 Reverse limit active:         Yes
+Homing active:                Yes
 
 Target:                       No target
 Current position:             -1

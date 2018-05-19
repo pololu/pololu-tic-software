@@ -988,6 +988,12 @@ bool tic_variables_get_forward_limit_active(const tic_variables *);
 TIC_API
 bool tic_variables_get_reverse_limit_active(const tic_variables *);
 
+/// Returns true if the Tic's homing system is currently active.
+///
+/// See tic_go_home().
+TIC_API
+bool tic_variables_get_homing_active(const tic_variables * variables);
+
 /// Gets the errors that are currently stopping the motor.
 ///
 /// This is a bitmask, and the bits are defined by the TIC_ERROR_* macros.
@@ -1386,6 +1392,12 @@ tic_error * tic_halt_and_set_position(tic_handle *, int32_t position);
 /// See also tic_deenergize().
 TIC_API TIC_WARN_UNUSED
 tic_error * tic_halt_and_hold(tic_handle *);
+
+/// Sends a 'Go Home' command, starting the Tic's homing procedure.
+///
+/// The direcition argument should be 1 for forward or 0 for reverse.
+TIC_API TIC_WARN_UNUSED
+tic_error * tic_go_home(tic_handle *, uint8_t direction);
 
 /// Prevents the "Command timeout" error from happening for some time.
 ///

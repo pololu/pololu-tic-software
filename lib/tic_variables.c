@@ -12,6 +12,7 @@ struct tic_variables
   bool position_uncertain;
   bool forward_limit_active;
   bool reverse_limit_active;
+  bool homing_active;
   uint16_t error_status;
   uint32_t errors_occurred;
   uint8_t planning_mode;
@@ -129,6 +130,7 @@ static void write_buffer_to_variables(const uint8_t * buf, tic_variables * vars)
   vars->position_uncertain = misc_flags1 >> TIC_MISC_FLAGS1_POSITION_UNCERTAIN & 1;
   vars->forward_limit_active = misc_flags1 >> TIC_MISC_FLAGS1_FORWARD_LIMIT_ACTIVE & 1;
   vars->reverse_limit_active = misc_flags1 >> TIC_MISC_FLAGS1_REVERSE_LIMIT_ACTIVE & 1;
+  vars->homing_active = misc_flags1 >> TIC_MISC_FLAGS1_HOMING_ACTIVE & 1;
   vars->error_status = read_u16(buf + TIC_VAR_ERROR_STATUS);
   vars->errors_occurred = read_u32(buf + TIC_VAR_ERRORS_OCCURRED);
   vars->planning_mode = buf[TIC_VAR_PLANNING_MODE];
@@ -273,6 +275,12 @@ bool tic_variables_get_reverse_limit_active(const tic_variables * variables)
 {
   if (variables == NULL) { return 0; }
   return variables->reverse_limit_active;
+}
+
+bool tic_variables_get_homing_active(const tic_variables * variables)
+{
+  if (variables == NULL) { return 0; }
+  return variables->homing_active;
 }
 
 uint16_t tic_variables_get_error_status(const tic_variables * variables)
