@@ -454,6 +454,8 @@ static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings
   {
     uint32_t max_speed = tic_settings_get_max_speed(settings);
     uint32_t starting_speed = tic_settings_get_starting_speed(settings);
+    uint32_t homing_speed_towards = tic_settings_get_homing_speed_towards(settings);
+    uint32_t homing_speed_away = tic_settings_get_homing_speed_away(settings);
 
     if (max_speed > TIC_MAX_ALLOWED_SPEED)
     {
@@ -473,30 +475,31 @@ static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings
         "so it will be lowered to %u.\n", starting_speed);
     }
 
+    // We'll let the homing speed be higher than the max speed because I think
+    // people will be annoyed if they are playing around with low max_speeds and
+    // they get warnings about the homing speeds, which they probably do not
+    // care about.
+
+    if (homing_speed_towards > TIC_MAX_ALLOWED_SPEED)
+    {
+      homing_speed_towards = TIC_MAX_ALLOWED_SPEED;
+      tic_sprintf(warnings,
+        "Warning: The homing speed towards is too high "
+        "so it will be lowered to %u.\n", homing_speed_towards);
+    }
+
+    if (homing_speed_away > TIC_MAX_ALLOWED_SPEED)
+    {
+      homing_speed_away = TIC_MAX_ALLOWED_SPEED;
+      tic_sprintf(warnings,
+        "Warning: The homing speed away is too high "
+        "so it will be lowered to %u.\n", homing_speed_away);
+    }
+
     tic_settings_set_max_speed(settings, max_speed);
     tic_settings_set_starting_speed(settings, starting_speed);
-  }
-
-  {
-    uint32_t max_decel = tic_settings_get_max_decel(settings);
-
-    if (max_decel > TIC_MAX_ALLOWED_ACCEL)
-    {
-      max_decel = TIC_MAX_ALLOWED_ACCEL;
-      tic_sprintf(warnings,
-        "Warning: The maximum deceleration is too high "
-        "so it will be lowered to %u.\n", max_decel);
-    }
-
-    if (max_decel != 0 && max_decel < TIC_MIN_ALLOWED_ACCEL)
-    {
-      max_decel = TIC_MIN_ALLOWED_ACCEL;
-      tic_sprintf(warnings,
-        "Warning: The maximum deceleration is too low "
-        "so it will be raised to %u.\n", max_decel);
-    }
-
-    tic_settings_set_max_decel(settings, max_decel);
+    tic_settings_set_homing_speed_towards(settings, homing_speed_towards);
+    tic_settings_set_homing_speed_away(settings, homing_speed_away);
   }
 
   {
@@ -519,6 +522,28 @@ static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings
     }
 
     tic_settings_set_max_accel(settings, max_accel);
+  }
+
+  {
+    uint32_t max_decel = tic_settings_get_max_decel(settings);
+
+    if (max_decel > TIC_MAX_ALLOWED_ACCEL)
+    {
+      max_decel = TIC_MAX_ALLOWED_ACCEL;
+      tic_sprintf(warnings,
+        "Warning: The maximum deceleration is too high "
+        "so it will be lowered to %u.\n", max_decel);
+    }
+
+    if (max_decel != 0 && max_decel < TIC_MIN_ALLOWED_ACCEL)
+    {
+      max_decel = TIC_MIN_ALLOWED_ACCEL;
+      tic_sprintf(warnings,
+        "Warning: The maximum deceleration is too low "
+        "so it will be raised to %u.\n", max_decel);
+    }
+
+    tic_settings_set_max_decel(settings, max_decel);
   }
 
   {

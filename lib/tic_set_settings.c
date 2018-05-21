@@ -265,6 +265,14 @@ static void tic_write_settings_to_buffer(const tic_settings * settings, uint8_t 
   }
 
   {
+    uint32_t accel = tic_settings_get_max_accel(settings);
+    buf[TIC_SETTING_MAX_ACCEL + 0] = accel >> 0 & 0xFF;
+    buf[TIC_SETTING_MAX_ACCEL + 1] = accel >> 8 & 0xFF;
+    buf[TIC_SETTING_MAX_ACCEL + 2] = accel >> 16 & 0xFF;
+    buf[TIC_SETTING_MAX_ACCEL + 3] = accel >> 24 & 0xFF;
+  }
+
+  {
     uint32_t decel = tic_settings_get_max_decel(settings);
     buf[TIC_SETTING_MAX_DECEL + 0] = decel >> 0 & 0xFF;
     buf[TIC_SETTING_MAX_DECEL + 1] = decel >> 8 & 0xFF;
@@ -273,11 +281,19 @@ static void tic_write_settings_to_buffer(const tic_settings * settings, uint8_t 
   }
 
   {
-    uint32_t accel = tic_settings_get_max_accel(settings);
-    buf[TIC_SETTING_MAX_ACCEL + 0] = accel >> 0 & 0xFF;
-    buf[TIC_SETTING_MAX_ACCEL + 1] = accel >> 8 & 0xFF;
-    buf[TIC_SETTING_MAX_ACCEL + 2] = accel >> 16 & 0xFF;
-    buf[TIC_SETTING_MAX_ACCEL + 3] = accel >> 24 & 0xFF;
+    uint32_t speed = tic_settings_get_homing_speed_towards(settings);
+    buf[TIC_SETTING_HOMING_SPEED_TOWARDS + 0] = speed >> 0 & 0xFF;
+    buf[TIC_SETTING_HOMING_SPEED_TOWARDS + 1] = speed >> 8 & 0xFF;
+    buf[TIC_SETTING_HOMING_SPEED_TOWARDS + 2] = speed >> 16 & 0xFF;
+    buf[TIC_SETTING_HOMING_SPEED_TOWARDS + 3] = speed >> 24 & 0xFF;
+  }
+
+  {
+    uint32_t speed = tic_settings_get_homing_speed_away(settings);
+    buf[TIC_SETTING_HOMING_SPEED_AWAY + 0] = speed >> 0 & 0xFF;
+    buf[TIC_SETTING_HOMING_SPEED_AWAY + 1] = speed >> 8 & 0xFF;
+    buf[TIC_SETTING_HOMING_SPEED_AWAY + 2] = speed >> 16 & 0xFF;
+    buf[TIC_SETTING_HOMING_SPEED_AWAY + 3] = speed >> 24 & 0xFF;
   }
 
   buf[TIC_SETTING_INVERT_MOTOR_DIRECTION] =

@@ -927,6 +927,26 @@ void tic_settings_set_max_decel(tic_settings *, uint32_t);
 TIC_API
 uint32_t tic_settings_get_max_decel(const tic_settings *);
 
+/// Sets the speed to use while moving towards a limit switch during homing,
+/// in microsteps per 10000 seconds.
+TIC_API
+void tic_settings_set_homing_speed_towards(tic_settings *, uint32_t);
+
+/// Sets the speed to use while moving towards a limit switch during homing,
+/// in microsteps per 10000 seconds.
+TIC_API
+uint32_t tic_settings_get_homing_speed_towards(const tic_settings *);
+
+/// Sets the speed to use while moving away from a limit switch during homing,
+/// in microsteps per 10000 seconds.
+TIC_API
+void tic_settings_set_homing_speed_away(tic_settings *, uint32_t);
+
+/// Sets the speed to use while moving away from a limit switch during homing,
+/// in microsteps per 10000 seconds.
+TIC_API
+uint32_t tic_settings_get_homing_speed_away(const tic_settings *);
+
 /// Sets the Invert motor direction setting.
 ///
 /// If true, then forward/positive motion corresponds to the DIR pin being low.

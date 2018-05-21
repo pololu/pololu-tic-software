@@ -289,15 +289,27 @@ static void write_buffer_to_settings(const uint8_t * buf, tic_settings * setting
   }
 
   {
+    const uint8_t * p = buf + TIC_SETTING_MAX_ACCEL;
+    uint32_t max_accel = p[0] + (p[1] << 8) + (p[2] << 16) + (p[3] << 24);
+    tic_settings_set_max_accel(settings, max_accel);
+  }
+
+  {
     const uint8_t * p = buf + TIC_SETTING_MAX_DECEL;
     uint32_t max_decel = p[0] + (p[1] << 8) + (p[2] << 16) + (p[3] << 24);
     tic_settings_set_max_decel(settings, max_decel);
   }
 
   {
-    const uint8_t * p = buf + TIC_SETTING_MAX_ACCEL;
-    uint32_t max_accel = p[0] + (p[1] << 8) + (p[2] << 16) + (p[3] << 24);
-    tic_settings_set_max_accel(settings, max_accel);
+    const uint8_t * p = buf + TIC_SETTING_HOMING_SPEED_TOWARDS;
+    uint32_t speed = p[0] + (p[1] << 8) + (p[2] << 16) + (p[3] << 24);
+    tic_settings_set_homing_speed_towards(settings, speed);
+  }
+
+  {
+    const uint8_t * p = buf + TIC_SETTING_HOMING_SPEED_AWAY;
+    uint32_t speed = p[0] + (p[1] << 8) + (p[2] << 16) + (p[3] << 24);
+    tic_settings_set_homing_speed_away(settings, speed);
   }
 
   {

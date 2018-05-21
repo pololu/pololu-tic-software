@@ -57,8 +57,10 @@ struct tic_settings
   uint8_t decay_mode;
   uint32_t starting_speed;
   uint32_t max_speed;
-  uint32_t max_decel;
   uint32_t max_accel;
+  uint32_t max_decel;
+  uint32_t homing_speed_towards;
+  uint32_t homing_speed_away;
   bool invert_motor_direction;
 };
 
@@ -126,6 +128,8 @@ void tic_settings_fill_with_defaults(tic_settings * settings)
   tic_settings_set_current_limit_during_error(settings, -1);
   tic_settings_set_max_speed(settings, 2000000);
   tic_settings_set_max_accel(settings, 40000);
+  tic_settings_set_homing_speed_towards(settings, 1000000);
+  tic_settings_set_homing_speed_away(settings, 500000);
 }
 
 tic_error * tic_settings_create(tic_settings ** settings)
@@ -895,6 +899,30 @@ uint32_t tic_settings_get_max_decel(const tic_settings * settings)
 {
   if (!settings) { return 0; }
   return settings->max_decel;
+}
+
+void tic_settings_set_homing_speed_towards(tic_settings * settings, uint32_t speed)
+{
+  if (!settings) { return; }
+  settings->homing_speed_towards = speed;
+}
+
+uint32_t tic_settings_get_homing_speed_towards(const tic_settings * settings)
+{
+  if (!settings) { return 0; }
+  return settings->homing_speed_towards;
+}
+
+void tic_settings_set_homing_speed_away(tic_settings * settings, uint32_t speed)
+{
+  if (!settings) { return; }
+  settings->homing_speed_away = speed;
+}
+
+uint32_t tic_settings_get_homing_speed_away(const tic_settings * settings)
+{
+  if (!settings) { return 0; }
+  return settings->homing_speed_away;
 }
 
 void tic_settings_set_max_accel(tic_settings * settings, uint32_t max_accel)

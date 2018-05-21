@@ -642,6 +642,33 @@ static tic_error * apply_string_pair(tic_settings * settings,
     }
     tic_settings_set_max_decel(settings, max_decel);
   }
+  else if (!strcmp(key, "homing_speed_towards"))
+  {
+    int64_t speed;
+    if (tic_string_to_i64(value, &speed))
+    {
+      return tic_error_create("Invalid homing_speed_towards value.");
+    }
+    if (speed < 0 || speed > UINT32_MAX)
+    {
+      return tic_error_create(
+        "The homing_speed_towards value is out of range.");
+    }
+    tic_settings_set_homing_speed_towards(settings, speed);
+  }
+  else if (!strcmp(key, "homing_speed_away"))
+  {
+    int64_t speed;
+    if (tic_string_to_i64(value, &speed))
+    {
+      return tic_error_create("Invalid homing_speed_away value.");
+    }
+    if (speed < 0 || speed > UINT32_MAX)
+    {
+      return tic_error_create("The homing_speed_away value is out of range.");
+    }
+    tic_settings_set_homing_speed_away(settings, speed);
+  }
   else if (!strcmp(key, "invert_motor_direction"))
   {
     uint32_t invert;

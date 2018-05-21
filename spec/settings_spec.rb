@@ -44,6 +44,8 @@ max_speed: 2000000
 starting_speed: 0
 max_accel: 40000
 max_decel: 0
+homing_speed_towards: 1000000
+homing_speed_away: 500000
 invert_motor_direction: false
 END
 
@@ -90,6 +92,8 @@ max_speed: 2000000
 starting_speed: 0
 max_accel: 40000
 max_decel: 0
+homing_speed_towards: 1000000
+homing_speed_away: 500000
 invert_motor_direction: false
 END
 
@@ -135,6 +139,8 @@ max_speed: 2000000
 starting_speed: 0
 max_accel: 40000
 max_decel: 0
+homing_speed_towards: 1000000
+homing_speed_away: 500000
 invert_motor_direction: false
 END
 
@@ -181,6 +187,8 @@ max_speed: 2000000
 starting_speed: 0
 max_accel: 40000
 max_decel: 0
+homing_speed_towards: 1000000
+homing_speed_away: 500000
 invert_motor_direction: false
 END
 }
@@ -229,6 +237,8 @@ max_speed: 234567890
 starting_speed: 10000
 max_accel: 934567820
 max_decel: 734567890
+homing_speed_towards: 123456789
+homing_speed_away: 90876722
 invert_motor_direction: true
 END
 
@@ -275,6 +285,8 @@ max_speed: 234567890
 starting_speed: 10000
 max_accel: 934567820
 max_decel: 734567890
+homing_speed_towards: 123456789
+homing_speed_away: 90876722
 invert_motor_direction: true
 END
 
@@ -320,6 +332,8 @@ max_speed: 234567890
 starting_speed: 10000
 max_accel: 934567820
 max_decel: 734567890
+homing_speed_towards: 123456789
+homing_speed_away: 90876722
 invert_motor_direction: true
 END
 
@@ -366,6 +380,8 @@ max_speed: 234567890
 starting_speed: 10000
 max_accel: 934567820
 max_decel: 734567890
+homing_speed_towards: 123456789
+homing_speed_away: 90876722
 invert_motor_direction: true
 END
 }

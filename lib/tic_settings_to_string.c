@@ -318,6 +318,16 @@ tic_error * tic_settings_to_string(const tic_settings * settings, char ** string
   }
 
   {
+    uint32_t speed = tic_settings_get_homing_speed_towards(settings);
+    tic_sprintf(&str, "homing_speed_towards: %u\n", speed);
+  }
+
+  {
+    uint32_t speed = tic_settings_get_homing_speed_away(settings);
+    tic_sprintf(&str, "homing_speed_away: %u\n", speed);
+  }
+
+  {
     bool invert = tic_settings_get_invert_motor_direction(settings);
     tic_sprintf(&str, "invert_motor_direction: %s\n",
       invert ? "true" : "false");
