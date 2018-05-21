@@ -158,6 +158,7 @@ public:
   void set_operation_state(const std::string & operation_state);
   void set_energized(bool energized);
   void set_limit_active(bool forward, bool reverse);
+  void set_homing_active(bool active);
   void set_target_position(int32_t target_position);
   void set_target_velocity(int32_t target_velocity);
   void set_target_none();
@@ -474,6 +475,8 @@ private:
   QLabel * energized_value;
   QLabel * limit_active_label;
   QLabel * limit_active_value;
+  QLabel * homing_active_label;
+  QLabel * homing_active_value;
   QLabel * target_label;
   QLabel * target_value;
   QLabel * target_velocity_pretty;

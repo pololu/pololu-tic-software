@@ -437,7 +437,8 @@ void main_window::set_energized(bool energized)
   energized_value->setText(energized ? tr("Yes") : tr("No"));
 }
 
-void main_window::set_limit_active(bool forward_limit_active, bool reverse_limit_active)
+void main_window::set_limit_active(bool forward_limit_active,
+  bool reverse_limit_active)
 {
   if (forward_limit_active && reverse_limit_active) {
     limit_active_value->setText(tr("Forward and Reverse"));
@@ -451,6 +452,11 @@ void main_window::set_limit_active(bool forward_limit_active, bool reverse_limit
   else {
     limit_active_value->setText(tr("None"));
   }
+}
+
+void main_window::set_homing_active(bool active)
+{
+  homing_active_value->setText(active ? tr("Yes") : tr("No"));
 }
 
 void main_window::set_target_position(int32_t target_position)
@@ -2153,6 +2159,7 @@ QWidget * main_window::setup_operation_status_box()
   setup_read_only_text_field(layout, row++, 0, 3, &operation_state_label, &operation_state_value);
   setup_read_only_text_field(layout, row++, 0, 3, &energized_label, &energized_value);
   setup_read_only_text_field(layout, row++, 0, 3, &limit_active_label, &limit_active_value);
+  setup_read_only_text_field(layout, row++, 0, 3, &homing_active_label, &homing_active_value);
   layout->addItem(new QSpacerItem(1, fontMetrics().height()), row++, 0);
 
   {
@@ -3186,6 +3193,7 @@ void main_window::retranslate()
   operation_state_label->setText(tr("Operation state:"));
   energized_label->setText(tr("Energized:"));
   limit_active_label->setText(tr("Limits active:"));
+  homing_active_label->setText(tr("Homing active:"));
   set_target_none();
   current_position_label->setText(tr("Current position:"));
   position_uncertain_label->setText(tr("Uncertain:"));

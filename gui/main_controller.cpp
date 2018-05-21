@@ -520,6 +520,7 @@ void main_controller::handle_variables_changed()
   window->set_energized(variables.get_energized());
   window->set_limit_active(variables.get_forward_limit_active(),
     variables.get_reverse_limit_active());
+  window->set_homing_active(variables.get_homing_active());
   window->set_operation_state(
     tic_look_up_operation_state_name_ui(variables.get_operation_state()));
 
@@ -623,6 +624,11 @@ void main_controller::update_motor_status_message(bool prompt_to_resume)
     {
       // This should not happen: when you de-energize it is always an error.
       msg = "Motor de-energized.";
+    }
+    else if (variables.get_homing_active())
+    {
+      msg = "Homing.";
+      stopped = false;
     }
     else
     {
