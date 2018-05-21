@@ -230,6 +230,9 @@ public:
   void set_never_sleep(bool never_sleep);
   void set_vin_calibration(int16_t vin_calibration);
 
+  void set_homing_speed_towards(uint32_t speed);
+  void set_homing_speed_away(uint32_t speed);
+
   void set_pin_func(uint8_t pin, uint8_t func);
   void set_pin_pullup(uint8_t pin, bool pullup, bool enabled);
   void set_pin_polarity(uint8_t pin, bool polarity, bool enabled);
@@ -350,6 +353,9 @@ private slots:
   void on_never_sleep_check_stateChanged(int state);
   void on_vin_calibration_value_valueChanged(int value);
 
+  void on_homing_speed_towards_value_valueChanged(int);
+  void on_homing_speed_away_value_valueChanged(int);
+
   void upload_complete();
 
 private:
@@ -397,6 +403,7 @@ private:
   QWidget * setup_pin_config_box();
   QWidget * setup_error_settings_box();
   QWidget * setup_misc_settings_box();
+  QWidget * setup_homing_settings_box();
 
   QLayout * setup_footer();
 
@@ -636,13 +643,18 @@ private:
   current_spin_box * current_limit_during_error_value;
 
   QGroupBox * misc_settings_box;
-  QGridLayout * misc_settings_box_layout;
   QCheckBox * disable_safe_start_check;
   QCheckBox * ignore_err_line_high_check;
   QCheckBox * auto_clear_driver_error_check;
   QCheckBox * never_sleep_check;
   QLabel * vin_calibration_label;
   QSpinBox * vin_calibration_value;
+
+  QGroupBox * homing_settings_box;
+  QLabel * homing_speed_towards_label;
+  QSpinBox * homing_speed_towards_value;
+  QLabel * homing_speed_away_label;
+  QSpinBox * homing_speed_away_value;
 
   //// end of pages
 

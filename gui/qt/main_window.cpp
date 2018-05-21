@@ -582,7 +582,6 @@ void main_window::set_manual_target_velocity_mode()
   update_manual_target_controls();
 }
 
-
 void main_window::set_manual_target_range(int32_t target_min, int32_t target_max)
 {
   suppress_events = true;
@@ -894,6 +893,16 @@ void main_window::set_never_sleep(bool never_sleep)
 void main_window::set_vin_calibration(int16_t vin_calibration)
 {
   set_spin_box(vin_calibration_value, vin_calibration);
+}
+
+void main_window::set_homing_speed_towards(uint32_t speed)
+{
+  set_spin_box(homing_speed_towards_value, speed);
+}
+
+void main_window::set_homing_speed_away(uint32_t speed)
+{
+  set_spin_box(homing_speed_away_value, speed);
 }
 
 void main_window::set_pin_func(uint8_t pin, uint8_t func)
@@ -1654,9 +1663,16 @@ void main_window::on_vin_calibration_value_valueChanged(int value)
   controller->handle_vin_calibration_input(value);
 }
 
-void main_window::upload_complete()
+void main_window::on_homing_speed_towards_value_valueChanged(int value)
 {
-  controller->handle_upload_complete();
+  if (suppress_events) { return; }
+  controller->handle_homing_speed_towards_input(value);
+}
+
+void main_window::on_homing_speed_away_value_valueChanged(int value)
+{
+  if (suppress_events) { return; }
+  controller->handle_homing_speed_away_input(value);
 }
 
 void pin_config_row::on_func_value_currentIndexChanged(int index)
@@ -1682,6 +1698,11 @@ void pin_config_row::on_analog_check_stateChanged(int state)
 {
   if (window_suppress_events()) { return; }
   window_controller()->handle_pin_analog_input(pin, state == Qt::Checked);
+}
+
+void main_window::upload_complete()
+{
+  controller->handle_upload_complete();
 }
 
 // On Mac OS X, field labels are usually right-aligned, but we want to
@@ -2947,9 +2968,10 @@ QWidget * main_window::setup_advanced_settings_page_widget()
   layout->addWidget(setup_pin_config_box(), 0, 0, 1, 2);
   layout->addWidget(setup_error_settings_box(), 1, 0);
   layout->addWidget(setup_misc_settings_box(), 1, 1);
+  layout->addWidget(setup_homing_settings_box(), 2, 0);
 
   layout->setColumnStretch(2, 1);
-  layout->setRowStretch(2, 1);
+  layout->setRowStretch(3, 1);
 
   advanced_settings_page_widget->setLayout(layout);
   return advanced_settings_page_widget;
@@ -3073,7 +3095,7 @@ QWidget * main_window::setup_error_settings_box()
 QWidget * main_window::setup_misc_settings_box()
 {
   misc_settings_box = new QGroupBox();
-  QGridLayout * layout = misc_settings_box_layout = new QGridLayout();
+  QGridLayout * layout = new QGridLayout();
   int row = 0;
 
   {
@@ -3122,6 +3144,40 @@ QWidget * main_window::setup_misc_settings_box()
 
   misc_settings_box->setLayout(layout);
   return misc_settings_box;
+}
+
+QWidget * main_window::setup_homing_settings_box()
+{
+  homing_settings_box = new QGroupBox();
+  QGridLayout * layout = new QGridLayout();
+  int row = 0;
+
+  {
+    homing_speed_towards_value = new QSpinBox();
+    homing_speed_towards_value->setObjectName("homing_speed_towards_value");
+    homing_speed_towards_value->setRange(0, TIC_MAX_ALLOWED_SPEED);
+    homing_speed_towards_label = new QLabel();
+    homing_speed_towards_label->setBuddy(homing_speed_towards_value);
+    layout->addWidget(homing_speed_towards_label, row, 0, FIELD_LABEL_ALIGNMENT);
+    layout->addWidget(homing_speed_towards_value, row, 1, Qt::AlignLeft);
+    row++;
+  }
+
+  {
+    homing_speed_away_value = new QSpinBox();
+    homing_speed_away_value->setObjectName("homing_speed_away_value");
+    homing_speed_away_value->setRange(0, TIC_MAX_ALLOWED_SPEED);
+    homing_speed_away_label = new QLabel();
+    homing_speed_away_label->setBuddy(homing_speed_towards_value);
+    layout->addWidget(homing_speed_away_label, row, 0, FIELD_LABEL_ALIGNMENT);
+    layout->addWidget(homing_speed_away_value, row, 1, Qt::AlignLeft);
+    row++;
+  }
+
+  layout->setColumnStretch(1, 1);
+  layout->setRowStretch(row, 1);
+  homing_settings_box->setLayout(layout);
+  return homing_settings_box;
 }
 
 //// end of pages
@@ -3352,6 +3408,10 @@ void main_window::retranslate()
   auto_clear_driver_error_check->setText(tr("Automatically clear driver errors"));
   never_sleep_check->setText(tr("Never sleep (ignore USB suspend)"));
   vin_calibration_label->setText(tr("VIN measurement calibration:"));
+
+  homing_settings_box->setTitle(tr("Homing"));
+  homing_speed_towards_label->setText(tr("Homing speed towards:"));
+  homing_speed_away_label->setText(tr("Homing speed away:"));
 
   //// end pages
 

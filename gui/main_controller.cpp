@@ -786,6 +786,11 @@ void main_controller::handle_settings_changed()
   window->set_never_sleep(tic_settings_get_never_sleep(settings.get_pointer()));
   window->set_vin_calibration(tic_settings_get_vin_calibration(settings.get_pointer()));
 
+  window->set_homing_speed_towards(
+    tic_settings_get_homing_speed_towards(settings.get_pointer()));
+  window->set_homing_speed_away(
+    tic_settings_get_homing_speed_away(settings.get_pointer()));
+
   for (int i = 0; i < 5; i++)
   {
     uint8_t func = tic_settings_get_pin_func(settings.get_pointer(), i);
@@ -1149,11 +1154,20 @@ void main_controller::handle_vin_calibration_input(int16_t vin_calibration)
   handle_settings_changed();
 }
 
-void main_controller::handle_upload_complete()
+void main_controller::handle_homing_speed_towards_input(uint32_t speed)
 {
-  // After a firmware upgrade is complete, allow the GUI to reconnect to the
-  // device automatically.
-  disconnected_by_user = false;
+  if (!connected()) { return; }
+  tic_settings_set_homing_speed_towards(settings.get_pointer(), speed);
+  settings_modified = true;
+  handle_settings_changed();
+}
+
+void main_controller::handle_homing_speed_away_input(uint32_t speed)
+{
+  if (!connected()) { return; }
+  tic_settings_set_homing_speed_away(settings.get_pointer(), speed);
+  settings_modified = true;
+  handle_settings_changed();
 }
 
 void main_controller::handle_pin_func_input(uint8_t pin, uint8_t func)
@@ -1186,6 +1200,13 @@ void main_controller::handle_pin_analog_input(uint8_t pin, bool analog)
   tic_settings_set_pin_analog(settings.get_pointer(), pin, analog);
   settings_modified = true;
   handle_settings_changed();
+}
+
+void main_controller::handle_upload_complete()
+{
+  // After a firmware upgrade is complete, allow the GUI to reconnect to the
+  // device automatically.
+  disconnected_by_user = false;
 }
 
 void main_controller::set_target_position(int32_t position)
