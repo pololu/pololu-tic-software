@@ -269,11 +269,11 @@ static uint8_t parse_arg_homing_direction(arg_reader & arg_reader)
   std::string str = parse_arg_string(arg_reader);
   if (str == "fwd" || str == "forward")
   {
-    return 1;
+    return TIC_GO_HOME_FORWARD;
   }
   else if (str == "rev" || str == "reverse")
   {
-    return 0;
+    return TIC_GO_HOME_REVERSE;
   }
   else
   {

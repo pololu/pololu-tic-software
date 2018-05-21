@@ -86,6 +86,19 @@ void main_controller::clear_driver_error()
   }
 }
 
+void main_controller::go_home(uint8_t direction)
+{
+  if (!connected()) { return; }
+  try
+  {
+    device_handle.go_home(direction);
+  }
+  catch (const std::exception & e)
+  {
+    show_exception(e);
+  }
+}
+
 void main_controller::connect_device(const tic::device & device)
 {
   assert(device);
@@ -469,12 +482,7 @@ void main_controller::handle_device_changed()
     }
   }
 
-  window->set_open_save_settings_enabled(connected());
-  window->set_disconnect_enabled(connected());
-  window->set_clear_driver_error_enabled(connected());
-  window->set_reload_settings_enabled(connected());
-  window->set_restore_defaults_enabled(connected());
-  window->set_tab_pages_enabled(connected());
+  update_menu_enables();
 }
 
 void main_controller::initialize_manual_target()
@@ -806,8 +814,32 @@ void main_controller::handle_settings_applied()
 {
   window->set_manual_target_enabled(control_mode_is_serial(settings));
 
+  update_menu_enables();
+
   // this must be last so the preceding code can compare old and new settings
   cached_settings = settings;
+}
+
+void main_controller::update_menu_enables()
+{
+  bool connected = this->connected();
+  window->set_open_save_settings_enabled(connected);
+  window->set_disconnect_enabled(connected);
+  window->set_clear_driver_error_enabled(connected);
+  window->set_reload_settings_enabled(connected);
+  window->set_restore_defaults_enabled(connected);
+  window->set_tab_pages_enabled(connected);
+
+  if (connected)
+  {
+    window->set_go_home_enabled(
+      uses_pin_func(settings, TIC_PIN_FUNC_LIMIT_SWITCH_REVERSE),
+      uses_pin_func(settings, TIC_PIN_FUNC_LIMIT_SWITCH_FORWARD));
+  }
+  else
+  {
+    window->set_go_home_enabled(false, false);
+  }
 }
 
 void main_controller::handle_control_mode_input(uint8_t control_mode)
@@ -1396,8 +1428,20 @@ void main_controller::reload_variables()
   }
 }
 
-bool main_controller::control_mode_is_serial(const tic::settings & s) const
+bool main_controller::control_mode_is_serial(const tic::settings & s)
 {
   uint8_t control_mode = tic_settings_get_control_mode(s.get_pointer());
-  return (control_mode == TIC_CONTROL_MODE_SERIAL);
+  return control_mode == TIC_CONTROL_MODE_SERIAL;
+}
+
+bool main_controller::uses_pin_func(const tic::settings & s, uint8_t func)
+{
+  for (uint8_t i = 0; i < TIC_CONTROL_PIN_COUNT; i++)
+  {
+    if (tic_settings_get_pin_func(s.get_pointer(), i) == func)
+    {
+      return true;
+    }
+  }
+  return false;
 }

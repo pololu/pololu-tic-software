@@ -312,6 +312,13 @@ void main_window::set_clear_driver_error_enabled(bool enabled)
   clear_driver_error_action->setEnabled(enabled);
 }
 
+void main_window::set_go_home_enabled(bool reverse_enabled,
+  bool forward_enabled)
+{
+  go_home_reverse_action->setEnabled(reverse_enabled);
+  go_home_forward_action->setEnabled(forward_enabled);
+}
+
 void main_window::set_device_name(const std::string & name, bool link_enabled)
 {
   QString text = QString::fromStdString(name);
@@ -1116,6 +1123,16 @@ void main_window::on_disconnect_action_triggered()
 void main_window::on_clear_driver_error_action_triggered()
 {
   controller->clear_driver_error();
+}
+
+void main_window::on_go_home_reverse_action_triggered()
+{
+  controller->go_home(TIC_GO_HOME_REVERSE);
+}
+
+void main_window::on_go_home_forward_action_triggered()
+{
+  controller->go_home(TIC_GO_HOME_FORWARD);
 }
 
 void main_window::on_reload_settings_action_triggered()
@@ -1951,6 +1968,14 @@ void main_window::setup_menu_bar()
   clear_driver_error_action = new QAction(this);
   clear_driver_error_action->setObjectName("clear_driver_error_action");
   device_menu->addAction(clear_driver_error_action);
+
+  go_home_reverse_action = new QAction(this);
+  go_home_reverse_action->setObjectName("go_home_reverse_action");
+  device_menu->addAction(go_home_reverse_action);
+
+  go_home_forward_action = new QAction(this);
+  go_home_forward_action->setObjectName("go_home_forward_action");
+  device_menu->addAction(go_home_forward_action);
 
   device_menu->addSeparator();
 
@@ -3160,6 +3185,8 @@ void main_window::retranslate()
   device_menu->setTitle(tr("&Device"));
   disconnect_action->setText(tr("&Disconnect"));
   clear_driver_error_action->setText(tr("&Clear driver error"));
+  go_home_reverse_action->setText(tr("Go &home reverse"));
+  go_home_forward_action->setText(tr("Go h&ome forward"));
   reload_settings_action->setText(tr("Re&load settings from device"));
   restore_defaults_action->setText(tr("&Restore default settings"));
   apply_settings_action->setText(tr("&Apply settings"));

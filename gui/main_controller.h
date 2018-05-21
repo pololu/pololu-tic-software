@@ -24,6 +24,9 @@ public:
   // This is called when the user wants to send the Clear Driver Error command.
   void clear_driver_error();
 
+  // This is called when the user wants to send a 'Go home' command.
+  void go_home(uint8_t direction);
+
   // This is called when the user issues a command to reload settings from the
   // device.
   void reload_settings(bool ask = true);
@@ -142,6 +145,7 @@ private:
   void handle_variables_changed();
   void handle_settings_changed();
   void handle_settings_applied();
+  void update_menu_enables();
 
   void initialize_manual_target();
   void update_motor_status_message(bool prompt_to_resume);
@@ -193,7 +197,8 @@ private:
   // Returns true if we are currently connected to a device.
   bool connected() const { return device_handle; }
 
-  bool control_mode_is_serial(const tic::settings & s) const;
+  static bool control_mode_is_serial(const tic::settings & s);
+  static bool uses_pin_func(const tic::settings & s, uint8_t func);
 
   main_window * window;
 };

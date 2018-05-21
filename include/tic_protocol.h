@@ -289,6 +289,9 @@
 
 #define TIC_INPUT_NULL 0xFFFF
 
+#define TIC_GO_HOME_REVERSE 0
+#define TIC_GO_HOME_FORWARD 1
+
 #define TIC_CONTROL_PIN_COUNT 5
 
 #endif
