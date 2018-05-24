@@ -653,8 +653,10 @@ private:
   QGroupBox * homing_settings_box;
   QLabel * homing_speed_towards_label;
   QSpinBox * homing_speed_towards_value;
+  QLabel * homing_speed_towards_value_pretty;
   QLabel * homing_speed_away_label;
   QSpinBox * homing_speed_away_value;
+  QLabel * homing_speed_away_value_pretty;
 
   //// end of pages
 

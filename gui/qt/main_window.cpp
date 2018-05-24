@@ -898,11 +898,15 @@ void main_window::set_vin_calibration(int16_t vin_calibration)
 void main_window::set_homing_speed_towards(uint32_t speed)
 {
   set_spin_box(homing_speed_towards_value, speed);
+  homing_speed_towards_value_pretty->setText(QString::fromStdString(
+    convert_speed_to_pps_string(speed)));
 }
 
 void main_window::set_homing_speed_away(uint32_t speed)
 {
   set_spin_box(homing_speed_away_value, speed);
+  homing_speed_away_value_pretty->setText(QString::fromStdString(
+    convert_speed_to_pps_string(speed)));
 }
 
 void main_window::set_pin_func(uint8_t pin, uint8_t func)
@@ -2968,7 +2972,7 @@ QWidget * main_window::setup_advanced_settings_page_widget()
   layout->addWidget(setup_pin_config_box(), 0, 0, 1, 2);
   layout->addWidget(setup_error_settings_box(), 1, 0);
   layout->addWidget(setup_misc_settings_box(), 1, 1);
-  layout->addWidget(setup_homing_settings_box(), 2, 0);
+  layout->addWidget(setup_homing_settings_box(), 2, 0, 1, 2);
 
   layout->setColumnStretch(2, 1);
   layout->setRowStretch(3, 1);
@@ -3139,7 +3143,7 @@ QWidget * main_window::setup_misc_settings_box()
     row++;
   }
 
-  layout->setColumnStretch(1, 1);
+  layout->setColumnStretch(2, 1);
   layout->setRowStretch(row, 1);
 
   misc_settings_box->setLayout(layout);
@@ -3158,8 +3162,10 @@ QWidget * main_window::setup_homing_settings_box()
     homing_speed_towards_value->setRange(0, TIC_MAX_ALLOWED_SPEED);
     homing_speed_towards_label = new QLabel();
     homing_speed_towards_label->setBuddy(homing_speed_towards_value);
+    homing_speed_towards_value_pretty = new QLabel();
     layout->addWidget(homing_speed_towards_label, row, 0, FIELD_LABEL_ALIGNMENT);
     layout->addWidget(homing_speed_towards_value, row, 1, Qt::AlignLeft);
+    layout->addWidget(homing_speed_towards_value_pretty, row, 2, Qt::AlignLeft);
     row++;
   }
 
@@ -3169,12 +3175,14 @@ QWidget * main_window::setup_homing_settings_box()
     homing_speed_away_value->setRange(0, TIC_MAX_ALLOWED_SPEED);
     homing_speed_away_label = new QLabel();
     homing_speed_away_label->setBuddy(homing_speed_towards_value);
+    homing_speed_away_value_pretty = new QLabel();
     layout->addWidget(homing_speed_away_label, row, 0, FIELD_LABEL_ALIGNMENT);
     layout->addWidget(homing_speed_away_value, row, 1, Qt::AlignLeft);
+    layout->addWidget(homing_speed_away_value_pretty, row, 2, Qt::AlignLeft);
     row++;
   }
 
-  layout->setColumnStretch(1, 1);
+  layout->setColumnStretch(3, 1);
   layout->setRowStretch(row, 1);
   homing_settings_box->setLayout(layout);
   return homing_settings_box;
