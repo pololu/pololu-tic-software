@@ -1415,8 +1415,7 @@ void main_window::on_serial_crc_for_responses_check_stateChanged(
   int state)
 {
   if (suppress_events) { return; }
-  controller->handle_serial_crc_for_responses_input(
-    state == Qt::Checked);
+  controller->handle_serial_crc_for_responses_input(state == Qt::Checked);
 }
 
 void main_window::on_serial_7bit_responses_check_stateChanged(int state)

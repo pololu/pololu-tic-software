@@ -521,11 +521,11 @@ TIC_API
 bool tic_settings_get_serial_crc_for_commands(const tic_settings *);
 
 /// Deprecated.  Equivalent to tic_settings_set_serial_crc_for_commands().
-TIC_API
+TIC_API __attribute__((deprecated))
 void tic_settings_set_serial_crc_enabled(tic_settings *, bool);
 
 /// Deprecated.  Equivalent to tic_settings_get_serial_crc_for_commands().
-TIC_API
+TIC_API __attribute__((deprecated))
 bool tic_settings_get_serial_crc_enabled(const tic_settings *);
 
 /// Sets the "Serial CRC for responses" setting.  If true, the device adds
