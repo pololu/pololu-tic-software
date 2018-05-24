@@ -17,8 +17,8 @@ struct tic_settings
   uint32_t serial_baud_rate;
   uint8_t serial_device_number;
   uint16_t command_timeout;
-  bool serial_crc_enabled;
-  bool serial_crc_for_responses_enabled;
+  bool serial_crc_for_commands;
+  bool serial_crc_for_responses;
   bool serial_7bit_responses;
   uint8_t serial_response_delay;
   uint16_t low_vin_timeout;
@@ -377,27 +377,37 @@ uint16_t tic_settings_get_command_timeout(const tic_settings * settings)
 
 void tic_settings_set_serial_crc_enabled(tic_settings * settings, bool enabled)
 {
-  if (!settings) { return; }
-  settings->serial_crc_enabled = enabled;
+  tic_settings_set_serial_crc_for_commands(settings, enabled);
 }
 
 bool tic_settings_get_serial_crc_enabled(const tic_settings * settings)
 {
-  if (!settings) { return 0; }
-  return settings->serial_crc_enabled;
+  return tic_settings_get_serial_crc_for_commands(settings);
 }
 
-void tic_settings_set_serial_crc_for_responses_enabled(tic_settings * settings,
+void tic_settings_set_serial_crc_for_commands(tic_settings * settings, bool enabled)
+{
+  if (!settings) { return; }
+  settings->serial_crc_for_commands = enabled;
+}
+
+bool tic_settings_get_serial_crc_for_commands(const tic_settings * settings)
+{
+  if (!settings) { return 0; }
+  return settings->serial_crc_for_commands;
+}
+
+void tic_settings_set_serial_crc_for_responses(tic_settings * settings,
   bool enabled)
 {
   if (!settings) { return; }
-  settings->serial_crc_for_responses_enabled = enabled;
+  settings->serial_crc_for_responses = enabled;
 }
 
-bool tic_settings_get_serial_crc_for_responses_enabled(const tic_settings * settings)
+bool tic_settings_get_serial_crc_for_responses(const tic_settings * settings)
 {
   if (!settings) { return 0; }
-  return settings->serial_crc_for_responses_enabled;
+  return settings->serial_crc_for_responses;
 }
 
 void tic_settings_set_serial_7bit_responses(tic_settings * settings,

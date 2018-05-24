@@ -46,7 +46,7 @@ static void write_buffer_to_settings(const uint8_t * buf, tic_settings * setting
   }
 
   {
-    uint8_t serial_device_number = buf[TIC_SETTING_SERIAL_DEVICE_NUMBER];
+    uint8_t serial_device_number = buf[TIC_SETTING_SERIAL_DEVICE_NUMBER_LOW];
     tic_settings_set_serial_device_number(settings, serial_device_number);
   }
 
@@ -58,19 +58,19 @@ static void write_buffer_to_settings(const uint8_t * buf, tic_settings * setting
 
   {
     bool enabled = buf[TIC_SETTING_SERIAL_OPTIONS_BYTE] >>
-      TIC_SERIAL_OPTIONS_BYTE_ENABLE_CRC_FOR_COMMANDS & 1;
-    tic_settings_set_serial_crc_enabled(settings, enabled);
+      TIC_SERIAL_OPTIONS_BYTE_CRC_FOR_COMMANDS & 1;
+    tic_settings_set_serial_crc_for_commands(settings, enabled);
   }
 
   {
     bool enabled = buf[TIC_SETTING_SERIAL_OPTIONS_BYTE] >>
-      TIC_SERIAL_OPTIONS_BYTE_ENABLE_CRC_FOR_RESPONSES & 1;
-    tic_settings_set_serial_crc_for_responses_enabled(settings, enabled);
+      TIC_SERIAL_OPTIONS_BYTE_CRC_FOR_RESPONSES & 1;
+    tic_settings_set_serial_crc_for_responses(settings, enabled);
   }
 
   {
     bool enabled = buf[TIC_SETTING_SERIAL_OPTIONS_BYTE] >>
-      TIC_SERIAL_OPTIONS_BYTE_ENABLE_7BIT_RESPONSES & 1;
+      TIC_SERIAL_OPTIONS_BYTE_7BIT_RESPONSES & 1;
     tic_settings_set_serial_7bit_responses(settings, enabled);
   }
 

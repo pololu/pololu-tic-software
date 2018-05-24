@@ -113,14 +113,14 @@ tic_error * tic_settings_to_string(const tic_settings * settings, char ** string
   }
 
   {
-    bool enabled = tic_settings_get_serial_crc_enabled(settings);
-    tic_sprintf(&str, "serial_crc_enabled: %s\n",
+    bool enabled = tic_settings_get_serial_crc_for_commands(settings);
+    tic_sprintf(&str, "serial_crc_for_commands: %s\n",
       enabled ? "true" : "false");
   }
 
   {
-    bool enabled = tic_settings_get_serial_crc_for_responses_enabled(settings);
-    tic_sprintf(&str, "serial_crc_for_responses_enabled: %s\n",
+    bool enabled = tic_settings_get_serial_crc_for_responses(settings);
+    tic_sprintf(&str, "serial_crc_for_responses: %s\n",
       enabled ? "true" : "false");
   }
 

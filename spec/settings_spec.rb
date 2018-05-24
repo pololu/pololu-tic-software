@@ -13,8 +13,8 @@ soft_error_position: 0
 serial_baud_rate: 9600
 serial_device_number: 14
 command_timeout: 1000
-serial_crc_enabled: false
-serial_crc_for_responses_enabled: false
+serial_crc_for_commands: false
+serial_crc_for_responses: false
 serial_7bit_responses: false
 serial_response_delay: 0
 vin_calibration: 0
@@ -61,8 +61,8 @@ soft_error_position: 0
 serial_baud_rate: 9600
 serial_device_number: 14
 command_timeout: 1000
-serial_crc_enabled: false
-serial_crc_for_responses_enabled: false
+serial_crc_for_commands: false
+serial_crc_for_responses: false
 serial_7bit_responses: false
 serial_response_delay: 0
 vin_calibration: 0
@@ -109,8 +109,8 @@ soft_error_position: 0
 serial_baud_rate: 9600
 serial_device_number: 14
 command_timeout: 1000
-serial_crc_enabled: false
-serial_crc_for_responses_enabled: false
+serial_crc_for_commands: false
+serial_crc_for_responses: false
 serial_7bit_responses: false
 serial_response_delay: 0
 vin_calibration: 0
@@ -156,8 +156,8 @@ soft_error_position: 0
 serial_baud_rate: 9600
 serial_device_number: 14
 command_timeout: 1000
-serial_crc_enabled: false
-serial_crc_for_responses_enabled: false
+serial_crc_for_commands: false
+serial_crc_for_responses: false
 serial_7bit_responses: true
 serial_response_delay: 100
 vin_calibration: 0
@@ -206,8 +206,8 @@ soft_error_position: -234333890
 serial_baud_rate: 115385
 serial_device_number: 40
 command_timeout: 2020
-serial_crc_enabled: true
-serial_crc_for_responses_enabled: false
+serial_crc_for_commands: true
+serial_crc_for_responses: false
 serial_7bit_responses: true
 serial_response_delay: 123
 vin_calibration: -345
@@ -254,8 +254,8 @@ soft_error_position: -234333890
 serial_baud_rate: 115385
 serial_device_number: 40
 command_timeout: 2020
-serial_crc_enabled: true
-serial_crc_for_responses_enabled: false
+serial_crc_for_commands: true
+serial_crc_for_responses: false
 serial_7bit_responses: true
 serial_response_delay: 123
 vin_calibration: -345
@@ -302,8 +302,8 @@ soft_error_position: -234333890
 serial_baud_rate: 115385
 serial_device_number: 40
 command_timeout: 2020
-serial_crc_enabled: true
-serial_crc_for_responses_enabled: false
+serial_crc_for_commands: true
+serial_crc_for_responses: false
 serial_7bit_responses: true
 serial_response_delay: 123
 vin_calibration: -345
@@ -349,8 +349,8 @@ soft_error_position: -234333890
 serial_baud_rate: 115385
 serial_device_number: 40
 command_timeout: 2020
-serial_crc_enabled: true
-serial_crc_for_responses_enabled: false
+serial_crc_for_commands: true
+serial_crc_for_responses: false
 serial_7bit_responses: true
 serial_response_delay: 123
 vin_calibration: -345

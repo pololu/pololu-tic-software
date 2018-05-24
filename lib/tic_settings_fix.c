@@ -205,17 +205,16 @@ static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings
   }
 
   {
-    bool enabled = tic_settings_get_serial_crc_for_responses_enabled(settings);
+    bool enabled = tic_settings_get_serial_crc_for_responses(settings);
     if (enabled && firmware_version && firmware_version < 0x0105)
     {
       enabled = false;
       tic_sprintf(warnings,
         "Warning: The firmware version on your device does not support "
-        "sending CRC bytes for serial responses, "
-        "so that option will be disabled.  "
+        "CRC for serial responses, so that option will be disabled.  "
         "See " DOCUMENTATION_URL " for firmware upgrade instructions.\n");
     }
-    tic_settings_set_serial_crc_for_responses_enabled(settings, enabled);
+    tic_settings_set_serial_crc_for_responses(settings, enabled);
   }
 
   {

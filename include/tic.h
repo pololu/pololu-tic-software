@@ -510,27 +510,35 @@ void tic_settings_set_command_timeout(tic_settings *, uint16_t);
 TIC_API
 uint16_t tic_settings_get_command_timeout(const tic_settings *);
 
-/// Sets the "Enable CRC for commands" setting.  If true, the device requires
+/// Sets the "Serial CRC for commands" setting.  If true, the device requires
 /// 7-bit CRC bytes on all serial commands.
+TIC_API
+void tic_settings_set_serial_crc_for_commands(tic_settings *, bool);
+
+/// Gets the "Serial CRC for commands" setting described in
+/// tic_settings_set_serial_crc_enabled().
+TIC_API
+bool tic_settings_get_serial_crc_for_commands(const tic_settings *);
+
+/// Deprecated.  Equivalent to tic_settings_set_serial_crc_for_commands().
 TIC_API
 void tic_settings_set_serial_crc_enabled(tic_settings *, bool);
 
-/// Gets the "Enable CRC for commands" setting described in
-/// tic_settings_set_serial_crc_enabled().
+/// Deprecated.  Equivalent to tic_settings_get_serial_crc_for_commands().
 TIC_API
 bool tic_settings_get_serial_crc_enabled(const tic_settings *);
 
-/// Sets the "Enable CRC for responses" setting.  If true, the device adds
+/// Sets the "Serial CRC for responses" setting.  If true, the device adds
 /// 7-bit CRC bytes for all serial responses less than 14 bytes in length.
 TIC_API
-void tic_settings_set_serial_crc_for_responses_enabled(tic_settings *, bool);
+void tic_settings_set_serial_crc_for_responses(tic_settings *, bool);
 
-/// Gets the "Enable CRC for responses" setting described in
-/// tic_settings_set_serial_crc_for_responses_enabled().
+/// Gets the "Serial CRC for responses" setting described in
+/// tic_settings_set_serial_crc_for_responses().
 TIC_API
-bool tic_settings_get_serial_crc_for_responses_enabled(const tic_settings *);
+bool tic_settings_get_serial_crc_for_responses(const tic_settings *);
 
-/// Sets the "Enable 7-bit responses" setting.  If true, the device will only
+/// Sets the "Serial 7-bit responses" setting.  If true, the device will only
 /// send bytes between 0 and 127 in response to serial commands, and serial
 /// responses can contain at most 8 bytes (7 payload bytes, 1 byte with the
 /// most-significant bits of the previous bytes).

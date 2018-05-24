@@ -39,7 +39,7 @@ static void tic_write_settings_to_buffer(const tic_settings * settings, uint8_t 
     buf[TIC_SETTING_SERIAL_BAUD_RATE_GENERATOR + 1] = brg >> 8 & 0xFF;
   }
 
-  buf[TIC_SETTING_SERIAL_DEVICE_NUMBER] =
+  buf[TIC_SETTING_SERIAL_DEVICE_NUMBER_LOW] =
     tic_settings_get_serial_device_number(settings);
 
   {
@@ -49,16 +49,16 @@ static void tic_write_settings_to_buffer(const tic_settings * settings, uint8_t 
   }
 
   buf[TIC_SETTING_SERIAL_OPTIONS_BYTE] |=
-    (tic_settings_get_serial_crc_enabled(settings) & 1) <<
-    TIC_SERIAL_OPTIONS_BYTE_ENABLE_CRC_FOR_COMMANDS;
+    (tic_settings_get_serial_crc_for_commands(settings) & 1) <<
+    TIC_SERIAL_OPTIONS_BYTE_CRC_FOR_COMMANDS;
 
   buf[TIC_SETTING_SERIAL_OPTIONS_BYTE] |=
-    (tic_settings_get_serial_crc_for_responses_enabled(settings) & 1) <<
-    TIC_SERIAL_OPTIONS_BYTE_ENABLE_CRC_FOR_RESPONSES;
+    (tic_settings_get_serial_crc_for_responses(settings) & 1) <<
+    TIC_SERIAL_OPTIONS_BYTE_CRC_FOR_RESPONSES;
 
   buf[TIC_SETTING_SERIAL_OPTIONS_BYTE] |=
     (tic_settings_get_serial_7bit_responses(settings) & 1) <<
-    TIC_SERIAL_OPTIONS_BYTE_ENABLE_7BIT_RESPONSES;
+    TIC_SERIAL_OPTIONS_BYTE_7BIT_RESPONSES;
 
   buf[TIC_SETTING_SERIAL_RESPONSE_DELAY] =
     tic_settings_get_serial_response_delay(settings);

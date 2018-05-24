@@ -652,14 +652,14 @@ void main_window::set_serial_device_number(uint8_t serial_device_number)
   set_spin_box(serial_device_number_value, serial_device_number);
 }
 
-void main_window::set_serial_crc_enabled(bool enabled)
+void main_window::set_serial_crc_for_commands(bool enabled)
 {
-  set_check_box(serial_crc_enabled_check, enabled);
+  set_check_box(serial_crc_for_commands_check, enabled);
 }
 
-void main_window::set_serial_crc_for_responses_enabled(bool enabled)
+void main_window::set_serial_crc_for_responses(bool enabled)
 {
-  set_check_box(serial_crc_for_responses_enabled_check, enabled);
+  set_check_box(serial_crc_for_responses_check, enabled);
 }
 
 void main_window::set_serial_7bit_responses(bool enabled)
@@ -1405,17 +1405,17 @@ void main_window::on_serial_device_number_value_valueChanged(int value)
   controller->handle_serial_device_number_input(value);
 }
 
-void main_window::on_serial_crc_enabled_check_stateChanged(int state)
+void main_window::on_serial_crc_for_commands_check_stateChanged(int state)
 {
   if (suppress_events) { return; }
-  controller->handle_serial_crc_enabled_input(state == Qt::Checked);
+  controller->handle_serial_crc_for_commands_input(state == Qt::Checked);
 }
 
-void main_window::on_serial_crc_for_responses_enabled_check_stateChanged(
+void main_window::on_serial_crc_for_responses_check_stateChanged(
   int state)
 {
   if (suppress_events) { return; }
-  controller->handle_serial_crc_for_responses_enabled_input(
+  controller->handle_serial_crc_for_responses_input(
     state == Qt::Checked);
 }
 
@@ -2626,16 +2626,17 @@ QWidget * main_window::setup_serial_settings_box()
   }
 
   {
-    serial_crc_enabled_check = new QCheckBox();
-    serial_crc_enabled_check->setObjectName("serial_crc_enabled_check");
-    layout->addWidget(serial_crc_enabled_check, 1, 3, 1, 2, Qt::AlignLeft);
+    serial_crc_for_commands_check = new QCheckBox();
+    serial_crc_for_commands_check->setObjectName("serial_crc_for_commands_check");
+    layout->addWidget(serial_crc_for_commands_check, 1, 3, 1, 2, Qt::AlignLeft);
   }
 
   {
-    serial_crc_for_responses_enabled_check = new QCheckBox();
-    serial_crc_for_responses_enabled_check->setObjectName(
-      "serial_crc_for_responses_enabled_check");
-    layout->addWidget(serial_crc_for_responses_enabled_check, 2, 3, 1, 2, Qt::AlignLeft);
+    serial_crc_for_responses_check = new QCheckBox();
+    serial_crc_for_responses_check->setObjectName(
+      "serial_crc_for_responses_check");
+    layout->addWidget(serial_crc_for_responses_check, 2, 3, 1, 2,
+      Qt::AlignLeft);
   }
 
   {
@@ -3334,8 +3335,8 @@ void main_window::retranslate()
   serial_settings_box->setTitle(tr("Serial"));
   serial_baud_rate_label->setText(tr("Baud rate:"));
   serial_device_number_label->setText(tr("Device number:"));
-  serial_crc_enabled_check->setText(tr("Enable CRC for commands"));
-  serial_crc_for_responses_enabled_check->setText(tr("Enable CRC for responses"));
+  serial_crc_for_commands_check->setText(tr("Enable CRC for commands"));
+  serial_crc_for_responses_check->setText(tr("Enable CRC for responses"));
   serial_7bit_responses_check->setText(tr("Enable 7-bit responses"));
   serial_response_delay_label->setText(tr("Response delay:"));
   serial_response_delay_value->setToolTip(tr(
