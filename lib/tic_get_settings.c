@@ -46,8 +46,23 @@ static void write_buffer_to_settings(const uint8_t * buf, tic_settings * setting
   }
 
   {
-    uint8_t serial_device_number = buf[TIC_SETTING_SERIAL_DEVICE_NUMBER_LOW];
-    tic_settings_set_serial_device_number(settings, serial_device_number);
+    uint16_t number =
+      (buf[TIC_SETTING_SERIAL_DEVICE_NUMBER_LOW] & 0x7F) |
+      ((buf[TIC_SETTING_SERIAL_DEVICE_NUMBER_HIGH] & 0x7F) << 7);
+    tic_settings_set_serial_device_number_u16(settings, number);
+  }
+
+  {
+    uint16_t number =
+      (buf[TIC_SETTING_SERIAL_ALT_DEVICE_NUMBER] & 0x7F) |
+      ((buf[TIC_SETTING_SERIAL_ALT_DEVICE_NUMBER + 1] & 0x7F) << 7);
+    tic_settings_set_serial_alt_device_number(settings, number);
+  }
+
+  {
+    bool enabled = buf[TIC_SETTING_SERIAL_OPTIONS_BYTE] >>
+      TIC_SERIAL_OPTIONS_BYTE_14BIT_DEVICE_NUMBER & 1;
+    tic_settings_set_serial_14bit_device_number(settings, enabled);
   }
 
   {

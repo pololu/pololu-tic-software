@@ -39,8 +39,21 @@ static void tic_write_settings_to_buffer(const tic_settings * settings, uint8_t 
     buf[TIC_SETTING_SERIAL_BAUD_RATE_GENERATOR + 1] = brg >> 8 & 0xFF;
   }
 
-  buf[TIC_SETTING_SERIAL_DEVICE_NUMBER_LOW] =
-    tic_settings_get_serial_device_number(settings);
+  {
+    uint16_t number = tic_settings_get_serial_device_number_u16(settings);
+    buf[TIC_SETTING_SERIAL_DEVICE_NUMBER_LOW] = number & 0x7F;
+    buf[TIC_SETTING_SERIAL_DEVICE_NUMBER_HIGH] = number >> 7 & 0x7F;
+  }
+
+  {
+    uint16_t number = tic_settings_get_serial_alt_device_number(settings);
+    buf[TIC_SETTING_SERIAL_ALT_DEVICE_NUMBER + 0] = number & 0x7F;
+    buf[TIC_SETTING_SERIAL_ALT_DEVICE_NUMBER + 1] = number >> 7 & 0x7F;
+  }
+
+  buf[TIC_SETTING_SERIAL_OPTIONS_BYTE] |=
+    (tic_settings_get_serial_14bit_device_number(settings) & 1) <<
+    TIC_SERIAL_OPTIONS_BYTE_14BIT_DEVICE_NUMBER;
 
   {
     uint16_t command_timeout = tic_settings_get_command_timeout(settings);

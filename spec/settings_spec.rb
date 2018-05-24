@@ -12,6 +12,8 @@ soft_error_response: decel_to_hold
 soft_error_position: 0
 serial_baud_rate: 9600
 serial_device_number: 14
+serial_alt_device_number: 0
+serial_14bit_device_number: false
 command_timeout: 1000
 serial_crc_for_commands: false
 serial_crc_for_responses: false
@@ -60,6 +62,8 @@ soft_error_response: decel_to_hold
 soft_error_position: 0
 serial_baud_rate: 9600
 serial_device_number: 14
+serial_alt_device_number: 0
+serial_14bit_device_number: false
 command_timeout: 1000
 serial_crc_for_commands: false
 serial_crc_for_responses: false
@@ -108,6 +112,8 @@ soft_error_response: decel_to_hold
 soft_error_position: 0
 serial_baud_rate: 9600
 serial_device_number: 14
+serial_alt_device_number: 0
+serial_14bit_device_number: false
 command_timeout: 1000
 serial_crc_for_commands: false
 serial_crc_for_responses: false
@@ -155,6 +161,8 @@ soft_error_response: decel_to_hold
 soft_error_position: 0
 serial_baud_rate: 9600
 serial_device_number: 14
+serial_alt_device_number: 0
+serial_14bit_device_number: false
 command_timeout: 1000
 serial_crc_for_commands: false
 serial_crc_for_responses: false
@@ -204,7 +212,9 @@ auto_clear_driver_error: true
 soft_error_response: decel_to_hold
 soft_error_position: -234333890
 serial_baud_rate: 115385
-serial_device_number: 40
+serial_device_number: 9441
+serial_alt_device_number: 8385
+serial_14bit_device_number: true
 command_timeout: 2020
 serial_crc_for_commands: true
 serial_crc_for_responses: false
@@ -252,7 +262,9 @@ auto_clear_driver_error: true
 soft_error_response: decel_to_hold
 soft_error_position: -234333890
 serial_baud_rate: 115385
-serial_device_number: 40
+serial_device_number: 9441
+serial_alt_device_number: 8385
+serial_14bit_device_number: true
 command_timeout: 2020
 serial_crc_for_commands: true
 serial_crc_for_responses: false
@@ -300,7 +312,9 @@ auto_clear_driver_error: true
 soft_error_response: decel_to_hold
 soft_error_position: -234333890
 serial_baud_rate: 115385
-serial_device_number: 40
+serial_device_number: 9441
+serial_alt_device_number: 8385
+serial_14bit_device_number: true
 command_timeout: 2020
 serial_crc_for_commands: true
 serial_crc_for_responses: false
@@ -347,7 +361,9 @@ auto_clear_driver_error: true
 soft_error_response: decel_to_hold
 soft_error_position: -234333890
 serial_baud_rate: 115385
-serial_device_number: 40
+serial_device_number: 9441
+serial_alt_device_number: 8385
+serial_14bit_device_number: true
 command_timeout: 2020
 serial_crc_for_commands: true
 serial_crc_for_responses: false
@@ -426,8 +442,14 @@ def test_cases_for_settings_fix(product)
       "Warning: The serial baud rate is too high so it will be changed to 115385.\n"
     ],
     [ { 'serial_device_number' => 128 },
-      { 'serial_device_number' => 127 },
-      "Warning: The serial device number is too high so it will be changed to 127.\n"
+      { 'serial_device_number' => 0 },
+      "Warning: The device number is higher than 127 " \
+      "so it will be changed to 0.\n"
+    ],
+    [ { 'serial_alt_device_number' => 129 },
+      { 'serial_alt_device_number' => 1 },
+      "Warning: The alternative device number is higher than 127 " \
+      "so it will be changed to 1.\n"
     ],
     [ { 'command_timeout' => 60001 },
       { 'command_timeout' => 60000 },
@@ -435,11 +457,11 @@ def test_cases_for_settings_fix(product)
     ],
     [ { 'vin_calibration' => -501 },
       { 'vin_calibration' => -500 },
-      "Warning: The VIN calibration was too low so it will be raised to -500.\n"
+      "Warning: The VIN calibration is too low so it will be raised to -500.\n"
     ],
     [ { 'vin_calibration' => 501 },
       { 'vin_calibration' => 500 },
-      "Warning: The VIN calibration was too high so it will be lowered to 500.\n"
+      "Warning: The VIN calibration is too high so it will be lowered to 500.\n"
     ],
     #[ { 'low_vin_shutoff_voltage' => 9001, 'low_vin_startup_voltage' => 9000,
     #    'high_vin_shutoff_voltage' => 8999 },

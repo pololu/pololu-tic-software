@@ -743,7 +743,14 @@ void main_controller::handle_settings_changed()
 
   window->set_control_mode(tic_settings_get_control_mode(settings.get_pointer()));
   window->set_serial_baud_rate(tic_settings_get_serial_baud_rate(settings.get_pointer()));
-  window->set_serial_device_number(tic_settings_get_serial_device_number(settings.get_pointer()));
+  window->set_serial_device_number(
+    tic_settings_get_serial_device_number_u16(settings.get_pointer()));
+  window->set_serial_alt_device_number(
+    tic_settings_get_serial_alt_device_number(settings.get_pointer()));
+  window->set_serial_14bit_device_number(
+    tic_settings_get_serial_14bit_device_number(settings.get_pointer()));
+  window->set_command_timeout(
+    tic_settings_get_command_timeout(settings.get_pointer()));
   window->set_serial_crc_for_commands(
     tic_settings_get_serial_crc_for_commands(settings.get_pointer()));
   window->set_serial_crc_for_responses(
@@ -752,8 +759,6 @@ void main_controller::handle_settings_changed()
     tic_settings_get_serial_7bit_responses(settings.get_pointer()));
   window->set_serial_response_delay(
     tic_settings_get_serial_response_delay(settings.get_pointer()));
-  window->set_command_timeout(
-    tic_settings_get_command_timeout(settings.get_pointer()));
 
   window->set_encoder_prescaler(tic_settings_get_encoder_prescaler(settings.get_pointer()));
   window->set_encoder_postscaler(tic_settings_get_encoder_postscaler(settings.get_pointer()));
@@ -877,10 +882,34 @@ void main_controller::handle_serial_baud_rate_input_finished()
   handle_settings_changed();
 }
 
-void main_controller::handle_serial_device_number_input(uint8_t serial_device_number)
+void main_controller::handle_serial_device_number_input(uint16_t number)
 {
   if (!connected()) { return; }
-  tic_settings_set_serial_device_number(settings.get_pointer(), serial_device_number);
+  tic_settings_set_serial_device_number_u16(settings.get_pointer(), number);
+  settings_modified = true;
+  handle_settings_changed();
+}
+
+void main_controller::handle_serial_alt_device_number_input(uint16_t number)
+{
+  if (!connected()) { return; }
+  tic_settings_set_serial_alt_device_number(settings.get_pointer(), number);
+  settings_modified = true;
+  handle_settings_changed();
+}
+
+void main_controller::handle_serial_14bit_device_number_input(bool enabled)
+{
+  if (!connected()) { return; }
+  tic_settings_set_serial_14bit_device_number(settings.get_pointer(), enabled);
+  settings_modified = true;
+  handle_settings_changed();
+}
+
+void main_controller::handle_command_timeout_input(uint16_t command_timeout)
+{
+  if (!connected()) { return; }
+  tic_settings_set_command_timeout(settings.get_pointer(), command_timeout);
   settings_modified = true;
   handle_settings_changed();
 }
@@ -914,14 +943,6 @@ void main_controller::handle_serial_response_delay_input(uint8_t delay)
 {
   if (!connected()) { return; }
   tic_settings_set_serial_response_delay(settings.get_pointer(), delay);
-  settings_modified = true;
-  handle_settings_changed();
-}
-
-void main_controller::handle_command_timeout_input(uint16_t command_timeout)
-{
-  if (!connected()) { return; }
-  tic_settings_set_command_timeout(settings.get_pointer(), command_timeout);
   settings_modified = true;
   handle_settings_changed();
 }

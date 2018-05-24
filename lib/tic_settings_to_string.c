@@ -103,8 +103,19 @@ tic_error * tic_settings_to_string(const tic_settings * settings, char ** string
   }
 
   {
-    uint8_t device_number = tic_settings_get_serial_device_number(settings);
-    tic_sprintf(&str, "serial_device_number: %u\n", device_number);
+    uint16_t number = tic_settings_get_serial_device_number_u16(settings);
+    tic_sprintf(&str, "serial_device_number: %u\n", number);
+  }
+
+  {
+    uint16_t number = tic_settings_get_serial_alt_device_number(settings);
+    tic_sprintf(&str, "serial_alt_device_number: %u\n", number);
+  }
+
+  {
+    bool enabled = tic_settings_get_serial_14bit_device_number(settings);
+    tic_sprintf(&str, "serial_14bit_device_number: %s\n",
+      enabled ? "true" : "false");
   }
 
   {

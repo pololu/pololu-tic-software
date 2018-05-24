@@ -647,9 +647,35 @@ void main_window::set_serial_baud_rate(uint32_t serial_baud_rate)
   set_spin_box(serial_baud_rate_value, serial_baud_rate);
 }
 
-void main_window::set_serial_device_number(uint8_t serial_device_number)
+void main_window::set_serial_device_number(uint16_t number)
 {
-  set_spin_box(serial_device_number_value, serial_device_number);
+  set_spin_box(serial_device_number_value, number);
+}
+
+void main_window::set_serial_alt_device_number(uint16_t number)
+{
+  set_spin_box(serial_alt_device_number_value, number);
+}
+
+void main_window::set_serial_14bit_device_number(bool enabled)
+{
+  set_check_box(serial_14bit_device_number_check, enabled);
+}
+
+void main_window::set_command_timeout(uint16_t command_timeout)
+{
+  if (command_timeout == 0)
+  {
+    set_check_box(command_timeout_check, false);
+    command_timeout_value->setEnabled(false);
+    command_timeout = TIC_DEFAULT_COMMAND_TIMEOUT;
+  }
+  else
+  {
+    set_check_box(command_timeout_check, true);
+    command_timeout_value->setEnabled(true);
+  }
+  set_double_spin_box(command_timeout_value, command_timeout / 1000.);
 }
 
 void main_window::set_serial_crc_for_commands(bool enabled)
@@ -670,22 +696,6 @@ void main_window::set_serial_7bit_responses(bool enabled)
 void main_window::set_serial_response_delay(uint8_t delay)
 {
   set_spin_box(serial_response_delay_value, delay);
-}
-
-void main_window::set_command_timeout(uint16_t command_timeout)
-{
-  if (command_timeout == 0)
-  {
-    set_check_box(command_timeout_check, false);
-    command_timeout_value->setEnabled(false);
-    command_timeout = TIC_DEFAULT_COMMAND_TIMEOUT;
-  }
-  else
-  {
-    set_check_box(command_timeout_check, true);
-    command_timeout_value->setEnabled(true);
-  }
-  set_double_spin_box(command_timeout_value, command_timeout / 1000.);
 }
 
 void main_window::set_encoder_prescaler(uint32_t encoder_prescaler)
@@ -1405,6 +1415,34 @@ void main_window::on_serial_device_number_value_valueChanged(int value)
   controller->handle_serial_device_number_input(value);
 }
 
+void main_window::on_serial_alt_device_number_value_valueChanged(int value)
+{
+  if (suppress_events) { return; }
+  controller->handle_serial_alt_device_number_input(value);
+}
+
+void main_window::on_serial_14bit_device_number_check_stateChanged(int state)
+{
+  if (suppress_events) { return; }
+  controller->handle_serial_14bit_device_number_input(state == Qt::Checked);
+}
+
+void main_window::on_command_timeout_check_stateChanged(int state)
+{
+  // Note: set_command_timeout() (called by controller) takes care of enabling/
+  // disabling the command_timeout_value spin box.
+  if (suppress_events) { return; }
+  if (state == Qt::Checked)
+  {
+    controller->handle_command_timeout_input(
+      std::round(command_timeout_value->value() * 1000));
+  }
+  else
+  {
+    controller->handle_command_timeout_input(0);
+  }
+}
+
 void main_window::on_serial_crc_for_commands_check_stateChanged(int state)
 {
   if (suppress_events) { return; }
@@ -1428,22 +1466,6 @@ void main_window::on_serial_response_delay_value_valueChanged(int state)
 {
   if (suppress_events) { return; }
   controller->handle_serial_response_delay_input(state);
-}
-
-void main_window::on_command_timeout_check_stateChanged(int state)
-{
-  // Note: set_command_timeout() (called by controller) takes care of enabling/
-  // disabling the command_timeout_value spin box.
-  if (suppress_events) { return; }
-  if (state == Qt::Checked)
-  {
-    controller->handle_command_timeout_input(
-      std::round(command_timeout_value->value() * 1000));
-  }
-  else
-  {
-    controller->handle_command_timeout_input(0);
-  }
 }
 
 void main_window::on_command_timeout_value_valueChanged(double value)
@@ -2592,11 +2614,28 @@ QWidget * main_window::setup_serial_settings_box()
   {
     serial_device_number_value = new QSpinBox();
     serial_device_number_value->setObjectName("serial_device_number_value");
-    serial_device_number_value->setRange(0, INT8_MAX);
+    serial_device_number_value->setRange(0, 0x3FFF);
     serial_device_number_label = new QLabel();
     serial_device_number_label->setBuddy(serial_device_number_value);
     layout->addWidget(serial_device_number_label, 1, 0, FIELD_LABEL_ALIGNMENT);
     layout->addWidget(serial_device_number_value, 1, 1, Qt::AlignLeft);
+  }
+
+  {
+    serial_alt_device_number_value = new QSpinBox();
+    serial_alt_device_number_value->setObjectName("serial_alt_device_number_value");
+    serial_alt_device_number_value->setRange(0, 0x3FFF);
+    serial_alt_device_number_label = new QLabel();
+    serial_alt_device_number_label->setBuddy(serial_alt_device_number_value);
+    layout->addWidget(serial_alt_device_number_label, 2, 0, FIELD_LABEL_ALIGNMENT);
+    layout->addWidget(serial_alt_device_number_value, 2, 1, Qt::AlignLeft);
+  }
+
+  {
+    serial_14bit_device_number_check = new QCheckBox();
+    serial_14bit_device_number_check->setObjectName(
+      "serial_14bit_device_number_check");
+    layout->addWidget(serial_14bit_device_number_check, 3, 0, 1, 2, Qt::AlignLeft);
   }
 
   {
@@ -2606,8 +2645,8 @@ QWidget * main_window::setup_serial_settings_box()
     serial_response_delay_value->setRange(0, UINT8_MAX);
     serial_response_delay_label = new QLabel();
     serial_response_delay_label->setBuddy(serial_response_delay_value);
-    layout->addWidget(serial_response_delay_label, 2, 0, FIELD_LABEL_ALIGNMENT);
-    layout->addWidget(serial_response_delay_value, 2, 1, Qt::AlignLeft);
+    layout->addWidget(serial_response_delay_label, 4, 0, FIELD_LABEL_ALIGNMENT);
+    layout->addWidget(serial_response_delay_value, 4, 1, Qt::AlignLeft);
   }
 
   layout->addItem(new QSpacerItem(fontMetrics().height(), 1), 0, 2);
@@ -2644,7 +2683,7 @@ QWidget * main_window::setup_serial_settings_box()
     layout->addWidget(serial_7bit_responses_check, 3, 3, 1, 2, Qt::AlignLeft);
   }
 
-  layout->setColumnStretch(4, 1);
+  layout->setColumnStretch(5, 1);
   layout->setRowStretch(1, 1);
 
   serial_settings_box->setLayout(layout);
@@ -3334,6 +3373,9 @@ void main_window::retranslate()
   serial_settings_box->setTitle(tr("Serial"));
   serial_baud_rate_label->setText(tr("Baud rate:"));
   serial_device_number_label->setText(tr("Device number:"));
+  serial_alt_device_number_label->setText(tr("Alternative device number:"));
+  serial_14bit_device_number_check->setText(tr("Enable 14-bit device number"));
+  command_timeout_check->setText(tr("Enable command timeout:"));
   serial_crc_for_commands_check->setText(tr("Enable CRC for commands"));
   serial_crc_for_responses_check->setText(tr("Enable CRC for responses"));
   serial_7bit_responses_check->setText(tr("Enable 7-bit responses"));
@@ -3341,8 +3383,6 @@ void main_window::retranslate()
   serial_response_delay_value->setToolTip(tr(
       "The minimum time the Tic delays before replying to a serial command and "
       "the minimum time the Tic will stretch the I\u00B2C clock."));
-
-  command_timeout_check->setText(tr("Enable command timeout:"));
 
   encoder_settings_box->setTitle(tr("Encoder"));
   encoder_prescaler_label->setText(tr("Prescaler:"));

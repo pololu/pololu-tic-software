@@ -181,15 +181,35 @@ static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings
   }
 
   {
-    uint8_t device_number = tic_settings_get_serial_device_number(settings);
-    if (device_number > 127)
+    uint16_t device_number =
+      tic_settings_get_serial_device_number_u16(settings);
+    uint16_t alt_device_number =
+      tic_settings_get_serial_alt_device_number(settings);
+
+    uint16_t mask = 0x7F;
+    if (tic_settings_get_serial_14bit_device_number(settings))
     {
-      device_number = 127;
-      tic_sprintf(warnings,
-        "Warning: The serial device number is too high "
-        "so it will be changed to 127.\n");
+      mask = 0x3FFF;
     }
-    tic_settings_set_serial_device_number(settings, device_number);
+
+    if (device_number > mask)
+    {
+      device_number &= mask;
+      tic_sprintf(warnings,
+        "Warning: The device number is higher than %u "
+        "so it will be changed to %u.\n", mask, device_number);
+    }
+
+    if (alt_device_number > mask)
+    {
+      alt_device_number &= mask;
+      tic_sprintf(warnings,
+        "Warning: The alternative device number is higher than %u "
+        "so it will be changed to %u.\n", mask, alt_device_number);
+    }
+
+    tic_settings_set_serial_device_number_u16(settings, device_number);
+    tic_settings_set_serial_alt_device_number(settings, alt_device_number);
   }
 
   {
@@ -272,7 +292,7 @@ static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings
     {
       calibration = -500;
       tic_sprintf(warnings,
-        "Warning: The VIN calibration was too low "
+        "Warning: The VIN calibration is too low "
         "so it will be raised to -500.\n");
     }
 
@@ -280,7 +300,7 @@ static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings
     {
       calibration = 500;
       tic_sprintf(warnings,
-        "Warning: The VIN calibration was too high "
+        "Warning: The VIN calibration is too high "
         "so it will be lowered to 500.\n");
     }
 

@@ -88,12 +88,14 @@ public:
 
   void handle_serial_baud_rate_input(uint32_t serial_baud_rate);
   void handle_serial_baud_rate_input_finished();
-  void handle_serial_device_number_input(uint8_t serial_device_number);
+  void handle_serial_device_number_input(uint16_t number);
+  void handle_serial_alt_device_number_input(uint16_t number);
+  void handle_serial_14bit_device_number_input(bool enabled);
+  void handle_command_timeout_input(uint16_t command_timeout);
   void handle_serial_crc_for_commands_input(bool enabled);
   void handle_serial_crc_for_responses_input(bool enabled);
   void handle_serial_7bit_responses_input(bool enabled);
   void handle_serial_response_delay_input(uint8_t delay);
-  void handle_command_timeout_input(uint16_t command_timeout);
 
   void handle_encoder_prescaler_input(uint32_t encoder_prescaler);
   void handle_encoder_postscaler_input(uint32_t encoder_postscaler);

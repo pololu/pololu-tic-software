@@ -15,7 +15,9 @@ struct tic_settings
   uint8_t soft_error_response;
   int32_t soft_error_position;
   uint32_t serial_baud_rate;
-  uint8_t serial_device_number;
+  uint16_t serial_device_number;
+  uint16_t serial_alt_device_number;
+  bool serial_14bit_device_number;
   uint16_t command_timeout;
   bool serial_crc_for_commands;
   bool serial_crc_for_responses;
@@ -89,7 +91,7 @@ void tic_settings_fill_with_defaults(tic_settings * settings)
   tic_settings_set_auto_clear_driver_error(settings, true);
   tic_settings_set_soft_error_response(settings, TIC_RESPONSE_DECEL_TO_HOLD);
   tic_settings_set_serial_baud_rate(settings, 9600);
-  tic_settings_set_serial_device_number(settings, 14);
+  tic_settings_set_serial_device_number_u16(settings, 14);
   tic_settings_set_command_timeout(settings, 1000);
   tic_settings_set_low_vin_timeout(settings, 250);
   if (product == TIC_PRODUCT_T825 || product == TIC_PRODUCT_N825)
@@ -350,16 +352,55 @@ uint32_t tic_settings_get_serial_baud_rate(const tic_settings * settings)
 }
 
 void tic_settings_set_serial_device_number(tic_settings * settings,
-  uint8_t serial_device_number)
+  uint8_t number)
 {
-  if (!settings) { return; }
-  settings->serial_device_number = serial_device_number;
+  tic_settings_set_serial_device_number_u16(settings, number);
 }
 
 uint8_t tic_settings_get_serial_device_number(const tic_settings * settings)
 {
+  return tic_settings_get_serial_device_number_u16(settings);
+}
+
+void tic_settings_set_serial_device_number_u16(tic_settings * settings,
+  uint16_t number)
+{
+  if (!settings) { return; }
+  settings->serial_device_number = number;
+}
+
+uint16_t tic_settings_get_serial_device_number_u16(
+  const tic_settings * settings)
+{
   if (!settings) { return 0; }
   return settings->serial_device_number;
+}
+
+void tic_settings_set_serial_alt_device_number(tic_settings * settings,
+  uint16_t number)
+{
+  if (!settings) { return; }
+  settings->serial_alt_device_number = number;
+}
+
+uint16_t tic_settings_get_serial_alt_device_number(
+  const tic_settings * settings)
+{
+  if (!settings) { return 0; }
+  return settings->serial_alt_device_number;
+}
+
+void tic_settings_set_serial_14bit_device_number(tic_settings * settings,
+  bool enabled)
+{
+  if (!settings) { return; }
+  settings->serial_14bit_device_number = enabled;
+}
+
+bool tic_settings_get_serial_14bit_device_number(const tic_settings * settings)
+{
+  if (!settings) { return 0; }
+  return settings->serial_14bit_device_number;
 }
 
 void tic_settings_set_command_timeout(tic_settings * settings,

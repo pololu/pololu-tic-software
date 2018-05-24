@@ -125,7 +125,7 @@ const char * tic_look_up_error_name_ui(uint32_t error);
 /// The decay_mode argument should be one of the TIC_DECAY_MODE_* macros, but if
 /// it is not, this function returns "(Unknown)".  The returned string will
 /// be valid indefinitely and should not be freed.
-TIC_API
+TIC_API __attribute__((deprecated))
 const char * tic_look_up_decay_mode_name_ui(uint8_t decay_mode);
 
 /// Loops up a user-friendly string corresponding to the specified input state,
@@ -488,16 +488,44 @@ uint32_t tic_settings_get_serial_baud_rate(const tic_settings *);
 TIC_API
 uint32_t tic_settings_achievable_serial_baud_rate(const tic_settings *, uint32_t);
 
-/// Sets the serial device number, a number between 0 and 0x7F that is used to
-/// identify the device when using the Pololu serial protocol and is also used
-/// as the 7-bit I2C address.
-TIC_API
+/// Deprecated.  Use tic_settings_set_serial_device_number_u16 instead.
+TIC_API __attribute__((deprecated))
 void tic_settings_set_serial_device_number(tic_settings *, uint8_t);
 
-/// Gets the serial device number setting described in
-/// tic_settings_set_serial_device_number().
-TIC_API
+/// Deprecated.  Use tic_settings_get_serial_device_number_u16 instead.
+TIC_API __attribute__((deprecated))
 uint8_t tic_settings_get_serial_device_number(const tic_settings *);
+
+/// Sets the serial device number, a number that is used to identify the device
+/// when using the Pololu serial protocol and is also used as the 7-bit I2C
+/// address.
+TIC_API
+void tic_settings_set_serial_device_number_u16(tic_settings *, uint16_t);
+
+/// Gets the serial device number setting described in
+/// tic_settings_set_serial_device_number_u16().
+TIC_API
+uint16_t tic_settings_get_serial_device_number_u16(const tic_settings *);
+
+/// Sets the alternative serial device number.
+TIC_API
+void tic_settings_set_serial_alt_device_number(tic_settings *, uint16_t);
+
+/// Gets the alternative serial device number setting described in
+/// tic_settings_set_alt_serial_device_number().
+TIC_API
+uint16_t tic_settings_get_serial_alt_device_number(const tic_settings *);
+
+/// Sets the "Serial 14-bit device number" setting.  When true, the Tic expects
+/// two device number bytes in each serial command.  The first contains bits
+/// 0-6 of the device number and the second contains bits 7-13.
+TIC_API
+void tic_settings_set_serial_14bit_device_number(tic_settings *, bool);
+
+/// Gets the "Serial 14-bit device number" setting described in
+/// tic_settings_set_serial_14bit_device_number().
+TIC_API
+bool tic_settings_get_serial_14bit_device_number(const tic_settings *);
 
 /// Sets the command timeout, the time in milliseconds before the device
 /// considers it to be an error if we have not received certain commands.  A
@@ -510,6 +538,14 @@ void tic_settings_set_command_timeout(tic_settings *, uint16_t);
 TIC_API
 uint16_t tic_settings_get_command_timeout(const tic_settings *);
 
+/// Deprecated.  Equivalent to tic_settings_set_serial_crc_for_commands().
+TIC_API __attribute__((deprecated))
+void tic_settings_set_serial_crc_enabled(tic_settings *, bool);
+
+/// Deprecated.  Equivalent to tic_settings_get_serial_crc_for_commands().
+TIC_API __attribute__((deprecated))
+bool tic_settings_get_serial_crc_enabled(const tic_settings *);
+
 /// Sets the "Serial CRC for commands" setting.  If true, the device requires
 /// 7-bit CRC bytes on all serial commands.
 TIC_API
@@ -519,14 +555,6 @@ void tic_settings_set_serial_crc_for_commands(tic_settings *, bool);
 /// tic_settings_set_serial_crc_enabled().
 TIC_API
 bool tic_settings_get_serial_crc_for_commands(const tic_settings *);
-
-/// Deprecated.  Equivalent to tic_settings_set_serial_crc_for_commands().
-TIC_API __attribute__((deprecated))
-void tic_settings_set_serial_crc_enabled(tic_settings *, bool);
-
-/// Deprecated.  Equivalent to tic_settings_get_serial_crc_for_commands().
-TIC_API __attribute__((deprecated))
-bool tic_settings_get_serial_crc_enabled(const tic_settings *);
 
 /// Sets the "Serial CRC for responses" setting.  If true, the device adds
 /// 7-bit CRC bytes for all serial responses less than 14 bytes in length.

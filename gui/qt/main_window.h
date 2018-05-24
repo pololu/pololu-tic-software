@@ -185,12 +185,14 @@ public:
   void set_control_mode(uint8_t control_mode);
 
   void set_serial_baud_rate(uint32_t serial_baud_rate);
-  void set_serial_device_number(uint8_t serial_device_number);
+  void set_serial_device_number(uint16_t number);
+  void set_serial_alt_device_number(uint16_t number);
+  void set_serial_14bit_device_number(bool enabled);
+  void set_command_timeout(uint16_t command_timeout);
   void set_serial_crc_for_commands(bool enabled);
   void set_serial_crc_for_responses(bool enabled);
   void set_serial_7bit_responses(bool enabled);
   void set_serial_response_delay(uint8_t serial_response_delay);
-  void set_command_timeout(uint16_t command_timeout);
 
   void set_encoder_prescaler(uint32_t encoder_prescaler);
   void set_encoder_postscaler(uint32_t encoder_postscaler);
@@ -308,12 +310,14 @@ private slots:
   void on_serial_baud_rate_value_valueChanged(int value);
   void on_serial_baud_rate_value_editingFinished();
   void on_serial_device_number_value_valueChanged(int value);
+  void on_serial_alt_device_number_value_valueChanged(int value);
+  void on_serial_14bit_device_number_check_stateChanged(int state);
+  void on_command_timeout_check_stateChanged(int state);
+  void on_command_timeout_value_valueChanged(double value);
   void on_serial_crc_for_commands_check_stateChanged(int state);
   void on_serial_crc_for_responses_check_stateChanged(int state);
   void on_serial_7bit_responses_check_stateChanged(int state);
   void on_serial_response_delay_value_valueChanged(int value);
-  void on_command_timeout_check_stateChanged(int state);
-  void on_command_timeout_value_valueChanged(double value);
 
   void on_encoder_prescaler_value_valueChanged(int value);
   void on_encoder_postscaler_value_valueChanged(int value);
@@ -561,13 +565,16 @@ private:
   QSpinBox * serial_baud_rate_value;
   QLabel * serial_device_number_label;
   QSpinBox * serial_device_number_value;
+  QLabel * serial_alt_device_number_label;
+  QSpinBox * serial_alt_device_number_value;
+  QCheckBox * serial_14bit_device_number_check;
+  QCheckBox * command_timeout_check;
+  QDoubleSpinBox * command_timeout_value;
   QCheckBox * serial_crc_for_commands_check;
   QCheckBox * serial_crc_for_responses_check;
   QCheckBox * serial_7bit_responses_check;
   QLabel * serial_response_delay_label;
   QSpinBox * serial_response_delay_value;
-  QCheckBox * command_timeout_check;
-  QDoubleSpinBox * command_timeout_value;
 
   QGroupBox * encoder_settings_box;
   QGridLayout * encoder_settings_box_layout;
