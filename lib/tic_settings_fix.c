@@ -185,9 +185,19 @@ static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings
       tic_settings_get_serial_device_number_u16(settings);
     uint16_t alt_device_number =
       tic_settings_get_serial_alt_device_number(settings);
+    bool enable_14bit = tic_settings_get_serial_14bit_device_number(settings);
+
+    if (enable_14bit && firmware_version && firmware_version < 0x0105)
+    {
+      enable_14bit = false;
+      tic_sprintf(warnings,
+        "Warning: The firmware version on your device does not support "
+        "14-bit device numbers, so that option will be disabled.  "
+        "See " DOCUMENTATION_URL " for firmware upgrade instructions.\n");
+    }
 
     uint16_t mask = 0x7F;
-    if (tic_settings_get_serial_14bit_device_number(settings))
+    if (enable_14bit)
     {
       mask = 0x3FFF;
     }
@@ -210,6 +220,7 @@ static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings
 
     tic_settings_set_serial_device_number_u16(settings, device_number);
     tic_settings_set_serial_alt_device_number(settings, alt_device_number);
+    tic_settings_set_serial_14bit_device_number(settings, enable_14bit);
   }
 
   {
