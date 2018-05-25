@@ -113,6 +113,12 @@ tic_error * tic_settings_to_string(const tic_settings * settings, char ** string
   }
 
   {
+    bool enabled = tic_settings_get_serial_enable_alt_device_number(settings);
+    tic_sprintf(&str, "serial_enable_alt_device_number: %s\n",
+      enabled ? "true" : "false");
+  }
+
+  {
     bool enabled = tic_settings_get_serial_14bit_device_number(settings);
     tic_sprintf(&str, "serial_14bit_device_number: %s\n",
       enabled ? "true" : "false");

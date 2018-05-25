@@ -13,6 +13,7 @@ soft_error_position: 0
 serial_baud_rate: 9600
 serial_device_number: 14
 serial_alt_device_number: 0
+serial_enable_alt_device_number: false
 serial_14bit_device_number: false
 command_timeout: 1000
 serial_crc_for_commands: false
@@ -63,6 +64,7 @@ soft_error_position: 0
 serial_baud_rate: 9600
 serial_device_number: 14
 serial_alt_device_number: 0
+serial_enable_alt_device_number: false
 serial_14bit_device_number: false
 command_timeout: 1000
 serial_crc_for_commands: false
@@ -113,6 +115,7 @@ soft_error_position: 0
 serial_baud_rate: 9600
 serial_device_number: 14
 serial_alt_device_number: 0
+serial_enable_alt_device_number: false
 serial_14bit_device_number: false
 command_timeout: 1000
 serial_crc_for_commands: false
@@ -162,6 +165,7 @@ soft_error_position: 0
 serial_baud_rate: 9600
 serial_device_number: 14
 serial_alt_device_number: 0
+serial_enable_alt_device_number: false
 serial_14bit_device_number: false
 command_timeout: 1000
 serial_crc_for_commands: false
@@ -214,6 +218,7 @@ soft_error_position: -234333890
 serial_baud_rate: 115385
 serial_device_number: 9441
 serial_alt_device_number: 8385
+serial_enable_alt_device_number: true
 serial_14bit_device_number: true
 command_timeout: 2020
 serial_crc_for_commands: true
@@ -264,6 +269,7 @@ soft_error_position: -234333890
 serial_baud_rate: 115385
 serial_device_number: 9441
 serial_alt_device_number: 8385
+serial_enable_alt_device_number: true
 serial_14bit_device_number: true
 command_timeout: 2020
 serial_crc_for_commands: true
@@ -314,6 +320,7 @@ soft_error_position: -234333890
 serial_baud_rate: 115385
 serial_device_number: 9441
 serial_alt_device_number: 8385
+serial_enable_alt_device_number: true
 serial_14bit_device_number: true
 command_timeout: 2020
 serial_crc_for_commands: true
@@ -363,6 +370,7 @@ soft_error_position: -234333890
 serial_baud_rate: 115385
 serial_device_number: 9441
 serial_alt_device_number: 8385
+serial_enable_alt_device_number: true
 serial_14bit_device_number: true
 command_timeout: 2020
 serial_crc_for_commands: true
@@ -739,10 +747,13 @@ describe 'settings' do
     expect(result).to eq 0
 
     # Check that the settings on the device match what we expect the default
-    # settings to be.
+    # settings to be, except for serial_enable_alt_serial_number.
+    # (See comment in tic_settings_fill_with_defaults about why it is special.)
     stdout, stderr, result = run_ticcmd('--get-settings -')
     expect(stderr).to eq ""
-    expect(YAML.load(stdout)).to eq YAML.load(DefaultSettings.fetch(tic_product))
+    defaults_from_device = YAML.load(stdout)
+    defaults = YAML.load(DefaultSettings.fetch(tic_product))
+    expect(defaults_from_device).to eq defaults
     expect(result).to eq 0
   end
 
@@ -751,7 +762,9 @@ describe 'settings' do
       stdin = "product: #{product}"
       stdout, stderr, result = run_ticcmd('--fix-settings - -', input: stdin)
       expect(stderr).to eq ""
-      expect(YAML.load(stdout)).to eq YAML.load(DefaultSettings.fetch(product))
+      fixed = YAML.load(stdout)
+      defaults = YAML.load(DefaultSettings.fetch(product))
+      expect(fixed).to eq defaults
       expect(result).to eq 0
     end
 

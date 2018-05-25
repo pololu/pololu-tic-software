@@ -17,6 +17,7 @@ struct tic_settings
   uint32_t serial_baud_rate;
   uint16_t serial_device_number;
   uint16_t serial_alt_device_number;
+  bool serial_enable_alt_device_number;
   bool serial_14bit_device_number;
   uint16_t command_timeout;
   bool serial_crc_for_commands;
@@ -388,6 +389,20 @@ uint16_t tic_settings_get_serial_alt_device_number(
 {
   if (!settings) { return 0; }
   return settings->serial_alt_device_number;
+}
+
+void tic_settings_set_serial_enable_alt_device_number(
+  tic_settings * settings, bool enable)
+{
+  if (!settings) { return; }
+  settings->serial_enable_alt_device_number = enable;
+}
+
+bool tic_settings_get_serial_enable_alt_device_number(
+  const tic_settings * settings)
+{
+  if (!settings) { return 0; }
+  return settings->serial_enable_alt_device_number;
 }
 
 void tic_settings_set_serial_14bit_device_number(tic_settings * settings,

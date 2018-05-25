@@ -90,7 +90,8 @@ public:
   void handle_serial_baud_rate_input_finished();
   void handle_serial_device_number_input(uint16_t number);
   void handle_serial_alt_device_number_input(uint16_t number);
-  void handle_serial_14bit_device_number_input(bool enabled);
+  void handle_serial_enable_alt_device_number_input(bool enable);
+  void handle_serial_14bit_device_number_input(bool enable);
   void handle_command_timeout_input(uint16_t command_timeout);
   void handle_serial_crc_for_commands_input(bool enabled);
   void handle_serial_crc_for_responses_input(bool enabled);

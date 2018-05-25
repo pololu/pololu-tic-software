@@ -657,9 +657,14 @@ void main_window::set_serial_alt_device_number(uint16_t number)
   set_spin_box(serial_alt_device_number_value, number);
 }
 
-void main_window::set_serial_14bit_device_number(bool enabled)
+void main_window::set_serial_enable_alt_device_number(bool enable)
 {
-  set_check_box(serial_14bit_device_number_check, enabled);
+  set_check_box(serial_enable_alt_device_number_check, enable);
+}
+
+void main_window::set_serial_14bit_device_number(bool enable)
+{
+  set_check_box(serial_14bit_device_number_check, enable);
 }
 
 void main_window::set_command_timeout(uint16_t command_timeout)
@@ -678,19 +683,19 @@ void main_window::set_command_timeout(uint16_t command_timeout)
   set_double_spin_box(command_timeout_value, command_timeout / 1000.);
 }
 
-void main_window::set_serial_crc_for_commands(bool enabled)
+void main_window::set_serial_crc_for_commands(bool enable)
 {
-  set_check_box(serial_crc_for_commands_check, enabled);
+  set_check_box(serial_crc_for_commands_check, enable);
 }
 
-void main_window::set_serial_crc_for_responses(bool enabled)
+void main_window::set_serial_crc_for_responses(bool enable)
 {
-  set_check_box(serial_crc_for_responses_check, enabled);
+  set_check_box(serial_crc_for_responses_check, enable);
 }
 
-void main_window::set_serial_7bit_responses(bool enabled)
+void main_window::set_serial_7bit_responses(bool enable)
 {
-  set_check_box(serial_7bit_responses_check, enabled);
+  set_check_box(serial_7bit_responses_check, enable);
 }
 
 void main_window::set_serial_response_delay(uint8_t delay)
@@ -1419,6 +1424,15 @@ void main_window::on_serial_alt_device_number_value_valueChanged(int value)
 {
   if (suppress_events) { return; }
   controller->handle_serial_alt_device_number_input(value);
+}
+
+void main_window::on_serial_enable_alt_device_number_check_stateChanged(
+  int state)
+{
+  bool enable = state == Qt::Checked;
+  serial_alt_device_number_value->setEnabled(enable);
+  if (suppress_events) { return; }
+  controller->handle_serial_enable_alt_device_number_input(enable);
 }
 
 void main_window::on_serial_14bit_device_number_check_stateChanged(int state)
@@ -2604,7 +2618,8 @@ QWidget * main_window::setup_serial_settings_box()
   {
     serial_baud_rate_value = new QSpinBox();
     serial_baud_rate_value->setObjectName("serial_baud_rate_value");
-    serial_baud_rate_value->setRange(TIC_MIN_ALLOWED_BAUD_RATE, TIC_MAX_ALLOWED_BAUD_RATE);
+    serial_baud_rate_value->setRange(
+      TIC_MIN_ALLOWED_BAUD_RATE, TIC_MAX_ALLOWED_BAUD_RATE);
     serial_baud_rate_label = new QLabel();
     serial_baud_rate_label->setBuddy(serial_baud_rate_value);
     layout->addWidget(serial_baud_rate_label, 0, 0, FIELD_LABEL_ALIGNMENT);
@@ -2622,12 +2637,14 @@ QWidget * main_window::setup_serial_settings_box()
   }
 
   {
+    serial_enable_alt_device_number_check = new QCheckBox();
+    serial_enable_alt_device_number_check->setObjectName(
+      "serial_enable_alt_device_number_check");
     serial_alt_device_number_value = new QSpinBox();
     serial_alt_device_number_value->setObjectName("serial_alt_device_number_value");
     serial_alt_device_number_value->setRange(0, 0x3FFF);
-    serial_alt_device_number_label = new QLabel();
-    serial_alt_device_number_label->setBuddy(serial_alt_device_number_value);
-    layout->addWidget(serial_alt_device_number_label, 2, 0, FIELD_LABEL_ALIGNMENT);
+    serial_alt_device_number_value->setEnabled(false);
+    layout->addWidget(serial_enable_alt_device_number_check, 2, 0, Qt::AlignLeft);
     layout->addWidget(serial_alt_device_number_value, 2, 1, Qt::AlignLeft);
   }
 
@@ -3373,7 +3390,8 @@ void main_window::retranslate()
   serial_settings_box->setTitle(tr("Serial"));
   serial_baud_rate_label->setText(tr("Baud rate:"));
   serial_device_number_label->setText(tr("Device number:"));
-  serial_alt_device_number_label->setText(tr("Alternative device number:"));
+  serial_enable_alt_device_number_check->setText(tr(
+    "Alternative device number:"));
   serial_14bit_device_number_check->setText(tr("Enable 14-bit device number"));
   command_timeout_check->setText(tr("Enable command timeout:"));
   serial_crc_for_commands_check->setText(tr("Enable CRC for commands"));

@@ -57,6 +57,9 @@ static void write_buffer_to_settings(const uint8_t * buf, tic_settings * setting
       (buf[TIC_SETTING_SERIAL_ALT_DEVICE_NUMBER] & 0x7F) |
       ((buf[TIC_SETTING_SERIAL_ALT_DEVICE_NUMBER + 1] & 0x7F) << 7);
     tic_settings_set_serial_alt_device_number(settings, number);
+
+    bool enable = buf[TIC_SETTING_SERIAL_ALT_DEVICE_NUMBER] >> 7 & 1;
+    tic_settings_set_serial_enable_alt_device_number(settings, enable);
   }
 
   {

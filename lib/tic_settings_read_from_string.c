@@ -175,9 +175,20 @@ static tic_error * apply_string_pair(tic_settings * settings,
     }
     if (num < 0 || num > 0xFFFF)
     {
-      return tic_error_create("The serial_alt_device_number value is out of range.");
+      return tic_error_create(
+        "The serial_alt_device_number value is out of range.");
     }
     tic_settings_set_serial_alt_device_number(settings, num);
+  }
+  else if (!strcmp(key, "serial_enable_alt_device_number"))
+  {
+    uint32_t enabled;
+    if (!tic_name_to_code(tic_bool_names, value, &enabled))
+    {
+      return tic_error_create(
+        "Unrecognized serial_enable_alt_device_number value.");
+    }
+    tic_settings_set_serial_enable_alt_device_number(settings, enabled);
   }
   else if (!strcmp(key, "serial_14bit_device_number"))
   {

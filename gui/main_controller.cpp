@@ -747,6 +747,8 @@ void main_controller::handle_settings_changed()
     tic_settings_get_serial_device_number_u16(settings.get_pointer()));
   window->set_serial_alt_device_number(
     tic_settings_get_serial_alt_device_number(settings.get_pointer()));
+  window->set_serial_enable_alt_device_number(
+    tic_settings_get_serial_enable_alt_device_number(settings.get_pointer()));
   window->set_serial_14bit_device_number(
     tic_settings_get_serial_14bit_device_number(settings.get_pointer()));
   window->set_command_timeout(
@@ -898,10 +900,19 @@ void main_controller::handle_serial_alt_device_number_input(uint16_t number)
   handle_settings_changed();
 }
 
-void main_controller::handle_serial_14bit_device_number_input(bool enabled)
+void main_controller::handle_serial_enable_alt_device_number_input(bool enable)
 {
   if (!connected()) { return; }
-  tic_settings_set_serial_14bit_device_number(settings.get_pointer(), enabled);
+  tic_settings_set_serial_enable_alt_device_number(
+    settings.get_pointer(), enable);
+  settings_modified = true;
+  handle_settings_changed();
+}
+
+void main_controller::handle_serial_14bit_device_number_input(bool enable)
+{
+  if (!connected()) { return; }
+  tic_settings_set_serial_14bit_device_number(settings.get_pointer(), enable);
   settings_modified = true;
   handle_settings_changed();
 }
@@ -914,27 +925,27 @@ void main_controller::handle_command_timeout_input(uint16_t command_timeout)
   handle_settings_changed();
 }
 
-void main_controller::handle_serial_crc_for_commands_input(bool enabled)
+void main_controller::handle_serial_crc_for_commands_input(bool enable)
 {
   if (!connected()) { return; }
-  tic_settings_set_serial_crc_for_commands(settings.get_pointer(), enabled);
+  tic_settings_set_serial_crc_for_commands(settings.get_pointer(), enable);
   settings_modified = true;
   handle_settings_changed();
 }
 
-void main_controller::handle_serial_crc_for_responses_input(bool enabled)
+void main_controller::handle_serial_crc_for_responses_input(bool enable)
 {
   if (!connected()) { return; }
   tic_settings_set_serial_crc_for_responses(
-    settings.get_pointer(), enabled);
+    settings.get_pointer(), enable);
   settings_modified = true;
   handle_settings_changed();
 }
 
-void main_controller::handle_serial_7bit_responses_input(bool enabled)
+void main_controller::handle_serial_7bit_responses_input(bool enable)
 {
   if (!connected()) { return; }
-  tic_settings_set_serial_7bit_responses(settings.get_pointer(), enabled);
+  tic_settings_set_serial_7bit_responses(settings.get_pointer(), enable);
   settings_modified = true;
   handle_settings_changed();
 }

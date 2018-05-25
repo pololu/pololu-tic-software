@@ -508,6 +508,10 @@ TIC_API
 uint16_t tic_settings_get_serial_device_number_u16(const tic_settings *);
 
 /// Sets the alternative serial device number.
+///
+/// If the the alternative device number is disabled then this setting
+/// will have no effect, but you can still store it on the Tic;
+/// see tic_settings_set_serial_enable_alt_device_number().
 TIC_API
 void tic_settings_set_serial_alt_device_number(tic_settings *, uint16_t);
 
@@ -515,6 +519,19 @@ void tic_settings_set_serial_alt_device_number(tic_settings *, uint16_t);
 /// tic_settings_set_alt_serial_device_number().
 TIC_API
 uint16_t tic_settings_get_serial_alt_device_number(const tic_settings *);
+
+/// Sets the "Enable alternative device number" setting.
+///
+/// When this is true, the Tic will obey commands sent to the alternative
+/// device number (tic_settings_set_serial_alt_device_number()) as well as
+/// the normal device number.
+TIC_API
+void tic_settings_set_serial_enable_alt_device_number(tic_settings *, bool);
+
+/// Gets the "Enable alternative device number" settings described in
+/// tic_settings_set_serial_enable_alt_device_number();
+TIC_API
+bool tic_settings_get_serial_enable_alt_device_number(const tic_settings *);
 
 /// Sets the "Serial 14-bit device number" setting.  When true, the Tic expects
 /// two device number bytes in each serial command.  The first contains bits

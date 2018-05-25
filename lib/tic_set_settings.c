@@ -49,6 +49,12 @@ static void tic_write_settings_to_buffer(const tic_settings * settings, uint8_t 
     uint16_t number = tic_settings_get_serial_alt_device_number(settings);
     buf[TIC_SETTING_SERIAL_ALT_DEVICE_NUMBER + 0] = number & 0x7F;
     buf[TIC_SETTING_SERIAL_ALT_DEVICE_NUMBER + 1] = number >> 7 & 0x7F;
+
+    bool enabled = tic_settings_get_serial_enable_alt_device_number(settings);
+    if (enabled)
+    {
+      buf[TIC_SETTING_SERIAL_ALT_DEVICE_NUMBER + 0] |= 0x80;
+    }
   }
 
   buf[TIC_SETTING_SERIAL_OPTIONS_BYTE] |=
