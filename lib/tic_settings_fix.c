@@ -646,6 +646,16 @@ static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings
     // Next, we make sure no pin is configured to do something that it cannot
     // do.  These checks are in order by pin function.
 
+    if (product == TIC_PRODUCT_N825 && rc_func != TIC_PIN_FUNC_DEFAULT)
+    {
+      rc_func = TIC_PIN_FUNC_DEFAULT;
+      tic_sprintf(warnings,
+        "Warning: On the Tic N825, the RC pin is always used for controlling "
+        "the RS-485 transceiver and cannot be used for anything else, so its "
+        "function will be changed to the default (serial receiver).\n");
+      // This might change in future firmware versions.
+    }
+
     if (rc_func == TIC_PIN_FUNC_USER_IO)
     {
       rc_func = TIC_PIN_FUNC_DEFAULT;
