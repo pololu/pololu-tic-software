@@ -1,4 +1,4 @@
-This is the license for the code in bootloader/tinyxml2*:
+This is the license for the code in bootloader/libtinyxml2:
 
 Original code by Lee Thomason (www.grinninglizard.com)
 
