@@ -33,9 +33,7 @@ static void update_device_combo_box(QComboBox & box, bool & device_was_selected)
     device_was_selected = true;
   }
 
-  // tmphax: show all USB devices
-  // auto device_list = libusbp::list_connected_devices();
-  auto device_list = bootloader_list_connected_devices();
+  auto device_list = bootloader_list_connected_devices(); // TODO: catch errors
   box.clear();
   for (const auto & device : device_list)
   {
@@ -208,7 +206,7 @@ void bootloader_window::on_program_button_clicked()
   }
 
   // Make sure the bootloader is still connected and get its details.
-  auto device_list = bootloader_list_connected_devices();
+  auto device_list = bootloader_list_connected_devices();  // TODO: catch errors
   bootloader_instance device;
   for (const auto & candidate : device_list)
   {
