@@ -16,6 +16,7 @@ static const char help[] =
   "\n"
   "Control commands:\n"
   "  -p, --position NUM           Set target position in microsteps.\n"
+  "  --position-relative NUM      Set target position relative to current pos.\n"
   "  -y, --velocity NUM           Set target velocity in microsteps / 10000 s.\n"
   "  --halt-and-set-position NUM  Set where the controller thinks it currently is.\n"
   "  --halt-and-hold              Abruptly stop the motor.\n"
@@ -68,6 +69,9 @@ struct arguments
 
   bool set_target_position = false;
   int32_t target_position;
+
+  bool set_target_position_relative = false;
+  int32_t target_position_relative;
 
   bool set_target_velocity = false;
   int32_t target_velocity;
@@ -137,6 +141,7 @@ struct arguments
       show_list ||
       show_help ||
       set_target_position ||
+      set_target_position_relative ||
       set_target_velocity ||
       halt_and_set_position ||
       halt_and_hold ||
@@ -337,7 +342,14 @@ static arguments parse_args(int argc, char ** argv)
     else if (arg == "-p" || arg == "--position")
     {
       args.set_target_position = true;
+      args.set_target_position_relative = false;
       args.target_position = parse_arg_int<int32_t>(arg_reader);
+    }
+    else if (arg == "--position-relative")
+    {
+      args.set_target_position_relative = true;
+      args.set_target_position = false;
+      args.target_position_relative = parse_arg_int<int32_t>(arg_reader);
     }
     else if (arg == "-y" || arg == "--velocity")
     {
@@ -565,6 +577,17 @@ static void fix_settings(const std::string & input_filename,
   write_string_to_file_or_pipe(output_filename, settings.to_string());
 }
 
+static void set_target_position_relative(device_selector & selector,
+  int32_t target_position_relative)
+{
+  tic::device device = selector.select_device();
+  tic::handle handle(device);
+  tic::variables variables = handle.get_variables();
+  int32_t position = (uint32_t)variables.get_current_position() +
+    (uint32_t)target_position_relative;
+  handle.set_target_position(position);
+}
+
 static void print_debug_data(device_selector & selector)
 {
   tic::device device = selector.select_device();
@@ -749,6 +772,11 @@ static void run(const arguments & args)
   if (args.set_target_position)
   {
     handle(selector).set_target_position(args.target_position);
+  }
+
+  if (args.set_target_position_relative)
+  {
+    set_target_position_relative(selector, args.target_position_relative);
   }
 
   // Should be before any commands that might start the motor moving again so
