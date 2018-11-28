@@ -5,11 +5,24 @@
   end
 end
 
-license_names = ENV.fetch('license_names').split(' ')
-license_files = ENV.fetch('licenses').split(' ')
+$license_names = []
+$license_bodies = []
 
-# TODO: also need a license fragment for pololu-tic-software, like libusbp
-# TODO: need to mention libyaml, tinyxml2 too
+def add_license(name, src_file)
+  $license_names << name
+  body = "<pre>"
+  body << File.read(ENV.fetch('src') + "/" + src_file)
+  body << "</pre>"
+  $license_bodies << body
+end
+
+add_license('distribution', 'LICENSE_GPLv3.txt')
+add_license('pololu-tic-software', 'LICENSE.txt')
+add_license('tinyxml2', 'LICENSE_tinyxml2.txt')
+add_license('libyaml', 'LICENSE_libyaml.txt')
+
+$license_names.concat ENV.fetch('license_names').split(' ')
+$license_bodies.concat ENV.fetch('licenses').split(' ').map { |f| File.read(f) }
 
 File.open(ENV.fetch('out'), 'w') do |f|
   f.puts <<EOF
@@ -46,14 +59,14 @@ pre {
 EOF
 
   f.puts "<ul>"
-  license_names.each do |name|
+  $license_names.each do |name|
     f.puts "  <li><a href=\"##{name}\">#{name}</a>"
   end
   f.puts "</ul>"
 
-  license_names.zip(license_files).each do |name, filename|
+  $license_names.zip($license_bodies).each do |name, body|
     f.puts "<section id=\"#{name}\">"
-    f.puts File.read(filename)
+    f.puts body
     f.puts "</section>\n"
   end
 end
