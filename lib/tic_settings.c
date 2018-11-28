@@ -72,10 +72,13 @@ void tic_settings_fill_with_defaults(tic_settings * settings)
   if (settings == NULL) { return; }
 
   uint8_t product = tic_settings_get_product(settings);
+  uint16_t version = tic_settings_get_firmware_version(settings);
 
-  // Reset all fields to zero and then restore the product.
+  // Reset all fields to zero and then restore the product and
+  // firmware version.
   memset(settings, 0, sizeof(tic_settings));
   tic_settings_set_product(settings, product);
+  tic_settings_set_firmware_version(settings, version);
 
   // The product should be set beforehand, and if it is not then quit.
   if (!product)
