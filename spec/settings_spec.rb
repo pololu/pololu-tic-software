@@ -427,6 +427,13 @@ def test_cases_for_settings_fix(product)
     high_current = 2048
   end
 
+  if product == :N825
+    non_default_rc_pin_warning =
+      "Warning: On the Tic N825, the RC pin is always used for controlling " \
+      "the RS-485 transceiver and cannot be used for anything else, so its " \
+      "function will be changed to the default.\n"
+  end
+
   max_current = tic_max_allowed_current(product)
 
   cases = [
@@ -599,16 +606,19 @@ def test_cases_for_settings_fix(product)
     ],
     [ { 'control_mode' => 'rc_position', 'rc_config' => 'kill_switch active_high' },
       { 'rc_config' => 'default active_high' },
+      non_default_rc_pin_warning ||
       "Warning: The RC pin must be used as an RC input " \
       "so its function will be changed to the default.\n"
     ],
     [ { 'control_mode' => 'rc_speed', 'rc_config' => 'user_io pullup' },
       { 'rc_config' => 'default pullup' },
+      non_default_rc_pin_warning ||
       "Warning: The RC pin must be used as an RC input " \
       "so its function will be changed to the default.\n"
     ],
     [ { 'control_mode' => 'rc_speed', 'rc_config' => 'rc pullup' },
-      { }
+      non_default_rc_pin_warning ? { 'rc_config' => 'default pullup' } : { },
+      non_default_rc_pin_warning || ''
     ],
     [ { 'control_mode' => 'encoder_speed', 'tx_config' => 'kill_switch active_high' },
       { 'tx_config' => 'default active_high' },
@@ -623,6 +633,7 @@ def test_cases_for_settings_fix(product)
     ],
     [ { 'rc_config' => 'user_io active_high' },
       { 'rc_config' => 'default active_high' },
+      non_default_rc_pin_warning ||
       "Warning: The RC pin cannot be a user I/O pin " \
       "so its function will be changed to the default.\n"
     ],
@@ -643,11 +654,13 @@ def test_cases_for_settings_fix(product)
     ],
     [ { 'rc_config' => 'pot_power' },
       { 'rc_config' => 'default' },
+      non_default_rc_pin_warning ||
       "Warning: The RC pin cannot be used as a potentiometer power pin " \
       "so its function will be changed to the default.\n"
     ],
     [ { 'rc_config' => 'serial pullup active_high' },
       { 'rc_config' => 'default pullup active_high' },
+      non_default_rc_pin_warning ||
       "Warning: The RC pin cannot be a serial pin " \
       "so its function will be changed to the default.\n"
     ],
@@ -683,11 +696,13 @@ def test_cases_for_settings_fix(product)
     ],
     [ { 'rc_config' => 'encoder pullup' },
       { 'rc_config' => 'default pullup' },
+      non_default_rc_pin_warning ||
       "Warning: The RC pin cannot be used as an encoder input " \
       "so its function will be changed to the default.\n"
     ],
     [ { 'rc_config' => 'user_input analog' },
-      { 'rc_config' => 'user_input' },
+      { 'rc_config' => non_default_rc_pin_warning ? 'default' : 'user_input' },
+      non_default_rc_pin_warning.to_s +
       "Warning: The RC pin cannot be an analog input " \
       "so that feature will be disabled.\n"
     ],
