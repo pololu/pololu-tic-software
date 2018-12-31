@@ -697,8 +697,11 @@ static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings
       break;
     case TIC_CONTROL_MODE_RC_POSITION:
     case TIC_CONTROL_MODE_RC_SPEED:
+      // Skip this warning for the N825, because the RC pin function
+      // will be set to its default later and that part gives a better
+      // error message.
       if (rc_func != TIC_PIN_FUNC_DEFAULT &&
-        rc_func != TIC_PIN_FUNC_RC)
+        rc_func != TIC_PIN_FUNC_RC && product != TIC_PRODUCT_N825)
       {
         rc_func = TIC_PIN_FUNC_DEFAULT;
         tic_sprintf(warnings,
@@ -736,7 +739,7 @@ static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings
       tic_sprintf(warnings,
         "Warning: On the Tic N825, the RC pin is always used for controlling "
         "the RS-485 transceiver and cannot be used for anything else, so its "
-        "function will be changed to the default (serial receiver).\n");
+        "function will be changed to the default.\n");
       // This might change in future firmware versions.
     }
 
