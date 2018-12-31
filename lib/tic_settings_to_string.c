@@ -304,14 +304,46 @@ tic_error * tic_settings_to_string(const tic_settings * settings, char ** string
     tic_sprintf(&str, "step_mode: %s\n", name);
   }
 
-  // The decay mode setting for the Tic T500 is useless because there is only
-  // one allowed value, so we don't want to write it to the settings file.
-  if (product != TIC_PRODUCT_T500)
+  // The decay mode setting for the Tic T500 and T249 is useless because there
+  // is only one allowed value, so don't write it to the settings file.
+  if (product != TIC_PRODUCT_T500 && product != TIC_PRODUCT_T249)
   {
     uint8_t mode = tic_settings_get_decay_mode(settings);
     const char * name;
     tic_look_up_decay_mode_name(mode, product, TIC_NAME_SNAKE_CASE, &name);
     tic_sprintf(&str, "decay_mode: %s\n", name);
+  }
+
+  if (product == TIC_PRODUCT_T249)
+  {
+    uint8_t mode = tic_settings_get_agc_mode(settings);
+    const char * name;
+    tic_code_to_name(tic_agc_mode_names, mode, &name);
+    tic_sprintf(&str, "agc_mode: %s\n", name);
+  }
+
+  if (product == TIC_PRODUCT_T249)
+  {
+    uint8_t limit = tic_settings_get_agc_bottom_current_limit(settings);
+    const char * name;
+    tic_code_to_name(tic_agc_bottom_current_limit_names, limit, &name);
+    tic_sprintf(&str, "agc_bottom_current_limit: %s\n", name);
+  }
+
+  if (product == TIC_PRODUCT_T249)
+  {
+    uint8_t steps = tic_settings_get_agc_current_boost_steps(settings);
+    const char * name;
+    tic_code_to_name(tic_agc_current_boost_steps_names, steps, &name);
+    tic_sprintf(&str, "agc_current_boost_steps: %s\n", name);
+  }
+
+  if (product == TIC_PRODUCT_T249)
+  {
+    uint8_t mode = tic_settings_get_agc_frequency_limit(settings);
+    const char * name;
+    tic_code_to_name(tic_agc_frequency_limit_names, mode, &name);
+    tic_sprintf(&str, "agc_frequency_limit: %s\n", name);
   }
 
   {

@@ -4,6 +4,8 @@
 
 static void write_buffer_to_settings(const uint8_t * buf, tic_settings * settings)
 {
+  uint8_t product = tic_settings_get_product(settings);
+
   {
     uint8_t control_mode = buf[TIC_SETTING_CONTROL_MODE];
     tic_settings_set_control_mode(settings, control_mode);
@@ -292,6 +294,29 @@ static void write_buffer_to_settings(const uint8_t * buf, tic_settings * setting
   {
     uint8_t decay_mode = buf[TIC_SETTING_DECAY_MODE];
     tic_settings_set_decay_mode(settings, decay_mode);
+  }
+
+  if (product == TIC_PRODUCT_T249)
+  {
+    {
+      uint8_t mode = buf[TIC_SETTING_AGC_MODE];
+      tic_settings_set_agc_mode(settings, mode);
+    }
+
+    {
+      uint8_t limit = buf[TIC_SETTING_AGC_BOTTOM_CURRENT_LIMIT];
+      tic_settings_set_agc_bottom_current_limit(settings, limit);
+    }
+
+    {
+      uint8_t steps = buf[TIC_SETTING_AGC_CURRENT_BOOST_STEPS];
+      tic_settings_set_agc_current_boost_steps(settings, steps);
+    }
+
+    {
+      uint8_t limit = buf[TIC_SETTING_AGC_FREQUENCY_LIMIT];
+      tic_settings_set_agc_frequency_limit(settings, limit);
+    }
   }
 
   {

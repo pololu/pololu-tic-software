@@ -68,7 +68,10 @@ extern const tic_name tic_control_mode_names[];
 extern const tic_name tic_response_names[];
 extern const tic_name tic_scaling_degree_names[];
 extern const tic_name tic_pin_func_names[];
-
+extern const tic_name tic_agc_mode_names[];
+extern const tic_name tic_agc_bottom_current_limit_names[];
+extern const tic_name tic_agc_current_boost_steps_names[];
+extern const tic_name tic_agc_frequency_limit_names[];
 
 // Intenral variables functions.
 

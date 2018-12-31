@@ -7,6 +7,8 @@ static void tic_write_settings_to_buffer(const tic_settings * settings, uint8_t 
   assert(settings != NULL);
   assert(buf != NULL);
 
+  uint8_t product = tic_settings_get_product(settings);
+
   buf[TIC_SETTING_CONTROL_MODE] =
     tic_settings_get_control_mode(settings);
 
@@ -266,6 +268,17 @@ static void tic_write_settings_to_buffer(const tic_settings * settings, uint8_t 
     tic_settings_get_step_mode(settings);
 
   buf[TIC_SETTING_DECAY_MODE] = tic_settings_get_decay_mode(settings);
+
+  if (product == TIC_PRODUCT_ID_T249)
+  {
+    buf[TIC_SETTING_AGC_MODE] = tic_settings_get_agc_mode(settings);
+    buf[TIC_SETTING_AGC_BOTTOM_CURRENT_LIMIT] =
+      tic_settings_get_agc_bottom_current_limit(settings);
+    buf[TIC_SETTING_AGC_CURRENT_BOOST_STEPS] =
+      tic_settings_get_agc_current_boost_steps(settings);
+    buf[TIC_SETTING_AGC_FREQUENCY_LIMIT] =
+      tic_settings_get_agc_frequency_limit(settings);
+  }
 
   {
     uint32_t speed = tic_settings_get_starting_speed(settings);

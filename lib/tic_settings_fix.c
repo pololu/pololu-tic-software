@@ -108,6 +108,90 @@ static void tic_settings_fix_enums(tic_settings * settings, tic_string * warning
     }
     tic_settings_set_decay_mode(settings, mode);
   }
+
+  {
+    uint8_t mode = tic_settings_get_agc_mode(settings);
+
+    if (product == TIC_PRODUCT_T249)
+    {
+      if (!tic_code_to_name(tic_agc_mode_names, mode, NULL))
+      {
+        tic_sprintf(warnings,
+          "Warning: The AGC mode was invalid "
+          "so it will be changed to on.\n");
+        mode = TIC_AGC_MODE_ON;
+      }
+    }
+    else
+    {
+      mode = 0;
+    }
+
+    tic_settings_set_agc_mode(settings, mode);
+  }
+
+  {
+    uint8_t limit = tic_settings_get_agc_bottom_current_limit(settings);
+
+    if (product == TIC_PRODUCT_T249)
+    {
+      if (!tic_code_to_name(tic_agc_bottom_current_limit_names, limit, NULL))
+      {
+        tic_sprintf(warnings,
+          "Warning: The AGC bottom current limit was invalid "
+          "so it will be changed to 75%%.\n");
+        limit = TIC_AGC_BOTTOM_CURRENT_LIMIT_75;
+      }
+    }
+    else
+    {
+      limit = 0;
+    }
+
+    tic_settings_set_agc_bottom_current_limit(settings, limit);
+  }
+
+  {
+    uint8_t steps = tic_settings_get_agc_current_boost_steps(settings);
+
+    if (product == TIC_PRODUCT_T249)
+    {
+      if (!tic_code_to_name(tic_agc_current_boost_steps_names, steps, NULL))
+      {
+        tic_sprintf(warnings,
+          "Warning: The AGC current boost steps setting was invalid "
+          "so it will be changed to 5.\n");
+        steps = TIC_AGC_CURRENT_BOOST_STEPS_5;
+      }
+    }
+    else
+    {
+      steps = 0;
+    }
+
+    tic_settings_set_agc_current_boost_steps(settings, steps);
+  }
+
+  {
+    uint8_t limit = tic_settings_get_agc_frequency_limit(settings);
+
+    if (product == TIC_PRODUCT_T249)
+    {
+      if (!tic_code_to_name(tic_agc_frequency_limit_names, limit, NULL))
+      {
+        tic_sprintf(warnings,
+          "Warning: The AGC frequency limit was invalid "
+          "so it will be changed to off.\n");
+        limit = TIC_AGC_FREQUENCY_LIMIT_OFF;
+      }
+    }
+    else
+    {
+      limit = 0;
+    }
+
+    tic_settings_set_agc_frequency_limit(settings, limit);
+  }
 }
 
 static bool is_limit_switch(uint8_t pin_func)

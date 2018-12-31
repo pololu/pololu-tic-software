@@ -63,6 +63,7 @@ extern "C" {
 #define TIC_PRODUCT_T834 2
 #define TIC_PRODUCT_T500 3
 #define TIC_PRODUCT_N825 4
+#define TIC_PRODUCT_T249 5
 
 // The maximum firmware major version supported by this library.
 #define TIC_FIRMWARE_VERSION_MAJOR_MAX 1
@@ -919,6 +920,58 @@ void tic_settings_set_decay_mode(tic_settings *, uint8_t);
 /// Gets the decay mode described in tic_settings_get_decay_mode().
 TIC_API
 uint8_t tic_settings_get_decay_mode(const tic_settings *);
+
+/// Sets the AGC mode.  The argument should be TIC_AGC_MODE_OFF,
+/// TIC_AGC_MODE_ON, or TIC_AGC_MODE_ACTIVE_OFF.
+TIC_API
+void tic_settings_set_agc_mode(tic_settings *, uint8_t);
+
+/// Gets the AGC mode described in tic_settings_set_agc_mode().
+TIC_API
+uint8_t tic_settings_get_agc_mode(const tic_settings *);
+
+/// Sets the AGC bottom current limit.  The argument should be one of:
+/// - TIC_AGC_BOTTOM_CURRENT_LIMIT_45
+/// - TIC_AGC_BOTTOM_CURRENT_LIMIT_50
+/// - TIC_AGC_BOTTOM_CURRENT_LIMIT_55
+/// - TIC_AGC_BOTTOM_CURRENT_LIMIT_60
+/// - TIC_AGC_BOTTOM_CURRENT_LIMIT_65
+/// - TIC_AGC_BOTTOM_CURRENT_LIMIT_70
+/// - TIC_AGC_BOTTOM_CURRENT_LIMIT_75
+/// - TIC_AGC_BOTTOM_CURRENT_LIMIT_80
+TIC_API
+void tic_settings_set_agc_bottom_current_limit(tic_settings *, uint8_t);
+
+/// Gets the AGC bottom current limit described in
+/// tic_settings_set_agc_bottom_current_limit().
+TIC_API
+uint8_t tic_settings_get_agc_bottom_current_limit(const tic_settings *);
+
+/// Sets the AGC current boost steps.  The argument should be one of:
+/// - TIC_AGC_CURRENT_BOOST_STEPS_5
+/// - TIC_AGC_CURRENT_BOOST_STEPS_7
+/// - TIC_AGC_CURRENT_BOOST_STEPS_9
+/// - TIC_AGC_CURRENT_BOOST_STEPS_11
+TIC_API
+void tic_settings_set_agc_current_boost_steps(tic_settings *, uint8_t);
+
+/// Gets the AGC current boost steps described in
+/// tic_settings_set_agc_current_boost_steps().
+TIC_API
+uint8_t tic_settings_get_agc_current_boost_steps(const tic_settings *);
+
+/// Sets the AGC frequency limit.  The argument should be one of:
+/// - TIC_AGC_FREQUENCY_LIMIT_OFF
+/// - TIC_AGC_FREQUENCY_LIMIT_225
+/// - TIC_AGC_FREQUENCY_LIMIT_450
+/// - TIC_AGC_FREQUENCY_LIMIT_675
+TIC_API
+void tic_settings_set_agc_frequency_limit(tic_settings *, uint8_t);
+
+/// Gets the AGC frequency limit described in
+/// tic_settings_set_agc_frequency_limit().
+TIC_API
+uint8_t tic_settings_get_agc_frequency_limit(const tic_settings *);
 
 /// Sets the maximum speed, or speed limit, in steps per 10000 seconds.  Valid
 /// values are from 0 to 500000000 (50 kHz).  Values between 0 and 6 behave the

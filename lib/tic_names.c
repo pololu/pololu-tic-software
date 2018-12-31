@@ -233,6 +233,45 @@ const tic_name tic_pin_func_names[] =
   { NULL, 0 },
 };
 
+const tic_name tic_agc_mode_names[] =
+{
+  { "off", TIC_AGC_MODE_OFF },
+  { "on", TIC_AGC_MODE_ON },
+  { "active_off", TIC_AGC_MODE_ACTIVE_OFF },
+  { NULL, 0 },
+};
+
+const tic_name tic_agc_bottom_current_limit_names[] =
+{
+  { "45", TIC_AGC_BOTTOM_CURRENT_LIMIT_45 },
+  { "50", TIC_AGC_BOTTOM_CURRENT_LIMIT_50 },
+  { "55", TIC_AGC_BOTTOM_CURRENT_LIMIT_55 },
+  { "60", TIC_AGC_BOTTOM_CURRENT_LIMIT_60 },
+  { "65", TIC_AGC_BOTTOM_CURRENT_LIMIT_65 },
+  { "70", TIC_AGC_BOTTOM_CURRENT_LIMIT_70 },
+  { "75", TIC_AGC_BOTTOM_CURRENT_LIMIT_75 },
+  { "80", TIC_AGC_BOTTOM_CURRENT_LIMIT_80 },
+  { NULL, 0 },
+};
+
+const tic_name tic_agc_current_boost_steps_names[] =
+{
+  { "5", TIC_AGC_CURRENT_BOOST_STEPS_5 },
+  { "7", TIC_AGC_CURRENT_BOOST_STEPS_7 },
+  { "9", TIC_AGC_CURRENT_BOOST_STEPS_9 },
+  { "11", TIC_AGC_CURRENT_BOOST_STEPS_11 },
+  { NULL, 0 },
+};
+
+const tic_name tic_agc_frequency_limit_names[] =
+{
+  { "off", TIC_AGC_FREQUENCY_LIMIT_OFF },
+  { "225", TIC_AGC_FREQUENCY_LIMIT_225 },
+  { "450", TIC_AGC_FREQUENCY_LIMIT_450 },
+  { "675", TIC_AGC_FREQUENCY_LIMIT_675 },
+  { NULL, 0 },
+};
+
 const char * tic_look_up_product_name_short(uint8_t product)
 {
   const char * str = "";

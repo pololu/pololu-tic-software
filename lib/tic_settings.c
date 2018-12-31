@@ -58,6 +58,10 @@ struct tic_settings
   int32_t current_limit_during_error;
   uint8_t step_mode;
   uint8_t decay_mode;
+  uint8_t agc_mode;
+  uint8_t agc_bottom_current_limit;
+  uint8_t agc_current_boost_steps;
+  uint8_t agc_frequency_limit;
   uint32_t starting_speed;
   uint32_t max_speed;
   uint32_t max_accel;
@@ -119,6 +123,13 @@ void tic_settings_fill_with_defaults(tic_settings * settings)
     tic_settings_set_high_vin_shutoff_voltage(settings, 30000);
     tic_settings_set_current_limit(settings, 174);
   }
+  else if (product == TIC_PRODUCT_T249)
+  {
+    tic_settings_set_low_vin_shutoff_voltage(settings, 5500);
+    tic_settings_set_low_vin_startup_voltage(settings, 5800);
+    tic_settings_set_high_vin_shutoff_voltage(settings, 40000);
+    tic_settings_set_current_limit(settings, 200);
+  }
   tic_settings_set_rc_max_pulse_period(settings, 100);
   tic_settings_set_rc_bad_signal_timeout(settings, 500);
   tic_settings_set_rc_consecutive_good_pulses(settings, 2);
@@ -132,6 +143,14 @@ void tic_settings_fill_with_defaults(tic_settings * settings)
   tic_settings_set_encoder_prescaler(settings, 1);
   tic_settings_set_encoder_postscaler(settings, 1);
   tic_settings_set_current_limit_during_error(settings, -1);
+
+  if (product == TIC_PRODUCT_ID_T249)
+  {
+    tic_settings_set_agc_mode(settings, TIC_AGC_MODE_ON);
+    tic_settings_set_agc_bottom_current_limit(settings,
+      TIC_AGC_BOTTOM_CURRENT_LIMIT_75);
+  }
+
   tic_settings_set_max_speed(settings, 2000000);
   tic_settings_set_max_accel(settings, 40000);
   tic_settings_set_homing_speed_towards(settings, 1000000);
@@ -932,6 +951,56 @@ uint8_t tic_settings_get_decay_mode(const tic_settings * settings)
 {
   if (!settings) { return 0; }
   return settings->decay_mode;
+}
+
+void tic_settings_set_agc_mode(tic_settings * settings, uint8_t mode)
+{
+  if (!settings) { return; }
+  settings->agc_mode = mode;
+}
+
+uint8_t tic_settings_get_agc_mode(const tic_settings * settings)
+{
+  if (!settings) { return 0; }
+  return settings->agc_mode;
+}
+
+void tic_settings_set_agc_bottom_current_limit(tic_settings * settings,
+  uint8_t limit)
+{
+  if (!settings) { return; }
+  settings->agc_bottom_current_limit = limit;
+}
+
+uint8_t tic_settings_get_agc_bottom_current_limit(const tic_settings * settings)
+{
+  if (!settings) { return 0; }
+  return settings->agc_bottom_current_limit;
+}
+
+void tic_settings_set_agc_current_boost_steps(tic_settings * settings,
+  uint8_t steps)
+{
+  if (!settings) { return; }
+  settings->agc_current_boost_steps = steps;
+}
+
+uint8_t tic_settings_get_agc_current_boost_steps(const tic_settings * settings)
+{
+  if (!settings) { return 0; }
+  return settings->agc_current_boost_steps;
+}
+
+void tic_settings_set_agc_frequency_limit(tic_settings * settings, uint8_t limit)
+{
+  if (!settings) { return; }
+  settings->agc_frequency_limit = limit;
+}
+
+uint8_t tic_settings_get_agc_frequency_limit(const tic_settings * settings)
+{
+  if (!settings) { return 0; }
+  return settings->agc_frequency_limit;
 }
 
 void tic_settings_set_starting_speed(tic_settings * settings, uint32_t starting_speed)
