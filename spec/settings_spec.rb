@@ -203,6 +203,60 @@ homing_speed_towards: 1000000
 homing_speed_away: 500000
 invert_motor_direction: false
 END
+
+T249: <<END,
+product: T249
+control_mode: serial
+never_sleep: false
+disable_safe_start: false
+ignore_err_line_high: false
+auto_clear_driver_error: true
+soft_error_response: decel_to_hold
+soft_error_position: 0
+serial_baud_rate: 9600
+serial_device_number: 14
+serial_alt_device_number: 0
+serial_enable_alt_device_number: false
+serial_14bit_device_number: false
+command_timeout: 1000
+serial_crc_for_commands: false
+serial_crc_for_responses: false
+serial_7bit_responses: false
+serial_response_delay: 0
+vin_calibration: 0
+input_averaging_enabled: true
+input_hysteresis: 0
+input_scaling_degree: linear
+input_invert: false
+input_min: 0
+input_neutral_min: 2015
+input_neutral_max: 2080
+input_max: 4095
+output_min: -200
+output_max: 200
+encoder_prescaler: 1
+encoder_postscaler: 1
+encoder_unlimited: false
+scl_config: default
+sda_config: default
+tx_config: default
+rx_config: default
+rc_config: default
+current_limit: 200
+current_limit_during_error: -1
+step_mode: 1
+agc_mode: on
+agc_bottom_current_limit: 75
+agc_current_boost_steps: 5
+agc_frequency_limit: off
+max_speed: 2000000
+starting_speed: 0
+max_accel: 40000
+max_decel: 0
+homing_speed_towards: 1000000
+homing_speed_away: 500000
+invert_motor_direction: false
+END
 }
 
 TestSettings1 = {
@@ -408,6 +462,61 @@ homing_speed_towards: 123456789
 homing_speed_away: 90876722
 invert_motor_direction: true
 END
+
+  T249: <<END,
+product: T249
+control_mode: rc_position
+never_sleep: true
+disable_safe_start: true
+ignore_err_line_high: true
+auto_clear_driver_error: true
+soft_error_response: decel_to_hold
+soft_error_position: -234333890
+serial_baud_rate: 115385
+serial_device_number: 9441
+serial_alt_device_number: 8385
+serial_enable_alt_device_number: true
+serial_14bit_device_number: true
+command_timeout: 2020
+serial_crc_for_commands: true
+serial_crc_for_responses: false
+serial_7bit_responses: true
+serial_response_delay: 123
+vin_calibration: -345
+input_averaging_enabled: false
+input_hysteresis: 4455
+input_scaling_degree: cubic
+input_invert: true
+input_min: 404
+input_neutral_min: 505
+input_neutral_max: 606
+input_max: 3000
+output_min: -999
+output_max: 999
+encoder_prescaler: 5
+encoder_postscaler: 1000000000
+encoder_unlimited: true
+scl_config: user_input pullup active_high
+sda_config: kill_switch analog
+tx_config: kill_switch pullup analog
+rx_config: serial
+rc_config: rc pullup
+current_limit: 384
+current_limit_during_error: 96
+step_mode: 32
+agc_mode: active_off
+agc_bottom_current_limit: 50
+agc_current_boost_steps: 11
+agc_frequency_limit: 450
+max_speed: 234567890
+starting_speed: 10000
+max_accel: 934567820
+max_decel: 734567890
+homing_speed_towards: 123456789
+homing_speed_away: 90876722
+invert_motor_direction: true
+END
+
 }
 
 def test_cases_for_settings_fix(product)
@@ -419,6 +528,12 @@ def test_cases_for_settings_fix(product)
     default_current = 174
     medium_current = 762
     high_current = 2056
+  elsif product == :T249
+    lowest_current = 0
+    low_current = 40
+    default_current = 200
+    medium_current = 440
+    high_current = 1440
   else
     lowest_current = 0
     low_current = 64
@@ -727,7 +842,9 @@ def test_cases_for_settings_fix(product)
                "Warning: The step mode is invalid " \
                "so it will be changed to 1 (full step).\n"
              ]
-  else
+  end
+
+  if product != :T500 && product != :T249
     cases << [ { 'decay_mode' => 'mode4' },
                { 'decay_mode' => case product
                                  when :T834 then 'mixed75'
@@ -735,6 +852,15 @@ def test_cases_for_settings_fix(product)
                                  end
                },
              ]
+  end
+
+  if product == :T249
+    cases << [ { 'step_mode' => '2max' }, {}]
+  else
+    cases << [ { 'step_mode' => '2max' },
+               { 'step_mode' => 1 },
+               "Warning: The step mode is invalid " \
+               "so it will be changed to 1 (full step).\n" ]
   end
 
   cases
@@ -790,6 +916,7 @@ describe 'settings' do
         if !warnings.empty? && !warnings.end_with?("\n")
           raise "Warnings should end with newline: #{warnings.inspect}"
         end
+        #p input_part
         input = defaults.merge(input_part)
         output = input.merge(output_part)
 

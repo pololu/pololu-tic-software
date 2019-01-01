@@ -144,7 +144,7 @@ void tic_settings_fill_with_defaults(tic_settings * settings)
   tic_settings_set_encoder_postscaler(settings, 1);
   tic_settings_set_current_limit_during_error(settings, -1);
 
-  if (product == TIC_PRODUCT_ID_T249)
+  if (product == TIC_PRODUCT_T249)
   {
     tic_settings_set_agc_mode(settings, TIC_AGC_MODE_ON);
     tic_settings_set_agc_bottom_current_limit(settings,

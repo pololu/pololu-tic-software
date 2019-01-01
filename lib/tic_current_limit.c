@@ -73,6 +73,8 @@ uint32_t tic_get_max_allowed_current(uint8_t product)
   case TIC_PRODUCT_T825:
   case TIC_PRODUCT_N825:
     return TIC_MAX_ALLOWED_CURRENT_T825;
+  case TIC_PRODUCT_T249:
+    return TIC_MAX_ALLOWED_CURRENT_T249;
   default:
     return 0;
   }
@@ -92,11 +94,17 @@ const uint8_t * tic_get_recommended_current_limit_codes(
     break;
 
   case TIC_PRODUCT_T834:
-    // Some of the codes at the end of the table are too high; they violate
-    // TIC_MAX_ALLOWED_CURRENT_T834.  So just return a count lower than the
-    // actual number of items in the table.
+    // Only use part of the table to avoid exceeding the maximum allowed
+    // current.
     table = tic01a_recommended_codes;
-    count = 60;
+    count = 60;  // Only use part of the table
+    break;
+
+  case TIC_PRODUCT_T249:
+    // Only use part of the table to avoid exceeding the maximum allowed
+    // current.
+    table = tic01a_recommended_codes;
+    count = 61;
     break;
 
   case TIC_PRODUCT_T825:
@@ -127,14 +135,19 @@ uint32_t tic_current_limit_code_to_ma(uint8_t product, uint8_t code)
   }
   else
   {
-    uint8_t max = tic_get_max_allowed_current(product)
-      / TIC_CURRENT_LIMIT_UNITS_MA;
+    uint8_t units = TIC_CURRENT_LIMIT_UNITS_MA;
+    if (product == TIC_PRODUCT_T249)
+    {
+      units = TIC_CURRENT_LIMIT_UNITS_MA_T249;
+    }
+
+    uint8_t max = tic_get_max_allowed_current(product) / units;
 
     if (code > max) { code = max; }
     else if (code > 64) { code &= ~3; }
     else if (code > 32) { code &= ~1; }
 
-    return code * TIC_CURRENT_LIMIT_UNITS_MA;
+    return code * units;
   }
 }
 

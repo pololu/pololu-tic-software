@@ -15,6 +15,7 @@ const tic_name tic_product_names_short[] =
   { "T834", TIC_PRODUCT_T834 },
   { "T500", TIC_PRODUCT_T500 },
   { "N825", TIC_PRODUCT_N825 },
+  { "T249", TIC_PRODUCT_T249 },
   { NULL, 0 },
 };
 
@@ -24,6 +25,7 @@ const tic_name tic_product_names_ui[] =
   { "Tic T834 Stepper Motor Controller", TIC_PRODUCT_T834 },
   { "Tic T500 Stepper Motor Controller", TIC_PRODUCT_T500 },
   { "Tic N825 Stepper Motor Controller", TIC_PRODUCT_N825 },
+  { "Tic T249 Stepper Motor Controller", TIC_PRODUCT_T249 },
   { NULL, 0 },
 };
 
@@ -80,6 +82,12 @@ const tic_name tic_decay_mode_names_t500_ui[] =
   { NULL, 0 },
 };
 
+const tic_name tic_decay_mode_names_t249_ui[] =
+{
+  { "Mixed", TIC_DECAY_MODE_T249_MIXED },
+  { NULL, 0 },
+};
+
 const tic_name tic_decay_mode_names_generic_snake[] =
 {
   { "mixed", TIC_DECAY_MODE_MIXED },
@@ -111,6 +119,12 @@ const tic_name tic_decay_mode_names_t834_snake[] =
 const tic_name tic_decay_mode_names_t500_snake[] =
 {
   { "auto", TIC_DECAY_MODE_T500_AUTO },
+  { NULL, 0 },
+};
+
+const tic_name tic_decay_mode_names_t249_snake[] =
+{
+  { "mixed", TIC_DECAY_MODE_T249_MIXED },
   { NULL, 0 },
 };
 
@@ -151,6 +165,7 @@ const tic_name tic_step_mode_names[] =
 {
   { "1", TIC_STEP_MODE_MICROSTEP1 },
   { "2", TIC_STEP_MODE_MICROSTEP2 },
+  { "2max", TIC_STEP_MODE_MICROSTEP2_FULL_CURRENT },
   { "4", TIC_STEP_MODE_MICROSTEP4 },
   { "8", TIC_STEP_MODE_MICROSTEP8 },
   { "16", TIC_STEP_MODE_MICROSTEP16 },
@@ -163,11 +178,12 @@ const tic_name tic_step_mode_names[] =
 const tic_name tic_step_mode_names_ui[] =
 {
   { "Full step", TIC_STEP_MODE_MICROSTEP1 },
-  { "1/2 step", TIC_STEP_MODE_MICROSTEP2 },
+  { "1/2 step max current", TIC_STEP_MODE_MICROSTEP2 },
   { "1/4 step", TIC_STEP_MODE_MICROSTEP4 },
   { "1/8 step", TIC_STEP_MODE_MICROSTEP8 },
   { "1/16 step", TIC_STEP_MODE_MICROSTEP16 },
   { "1/32 step", TIC_STEP_MODE_MICROSTEP32 },
+  { "1/2 step max current", TIC_STEP_MODE_MICROSTEP2_FULL_CURRENT },
   { NULL, 0 },
 };
 
@@ -238,6 +254,8 @@ const tic_name tic_agc_mode_names[] =
   { "off", TIC_AGC_MODE_OFF },
   { "on", TIC_AGC_MODE_ON },
   { "active_off", TIC_AGC_MODE_ACTIVE_OFF },
+  { "false", TIC_AGC_MODE_OFF },  // for parsing YAML
+  { "true", TIC_AGC_MODE_ON },    // for parsing YAML
   { NULL, 0 },
 };
 
@@ -269,6 +287,7 @@ const tic_name tic_agc_frequency_limit_names[] =
   { "225", TIC_AGC_FREQUENCY_LIMIT_225 },
   { "450", TIC_AGC_FREQUENCY_LIMIT_450 },
   { "675", TIC_AGC_FREQUENCY_LIMIT_675 },
+  { "false", TIC_AGC_FREQUENCY_LIMIT_OFF },  // for parsing YAML
   { NULL, 0 },
 };
 
@@ -366,6 +385,9 @@ bool tic_look_up_decay_mode_name(uint8_t decay_mode,
     case TIC_PRODUCT_T500:
       name_table = tic_decay_mode_names_t500_snake;
       break;
+    case TIC_PRODUCT_T249:
+      name_table = tic_decay_mode_names_t249_snake;
+      break;
     }
   }
   else
@@ -386,6 +408,9 @@ bool tic_look_up_decay_mode_name(uint8_t decay_mode,
       break;
     case TIC_PRODUCT_T500:
       name_table = tic_decay_mode_names_t500_ui;
+      break;
+    case TIC_PRODUCT_T249:
+      name_table = tic_decay_mode_names_t249_ui;
       break;
     }
   }
@@ -436,6 +461,15 @@ bool tic_look_up_decay_mode_code(const char * name,
         return true;
       }
     }
+
+    if (!product || product == TIC_PRODUCT_T249)
+    {
+      if (tic_name_to_code(tic_decay_mode_names_t249_snake, name, &result))
+      {
+        *code = result;
+        return true;
+      }
+    }
   }
 
   if (flags & TIC_NAME_UI)
@@ -467,6 +501,15 @@ bool tic_look_up_decay_mode_code(const char * name,
     if (!product || product == TIC_PRODUCT_T500)
     {
       if (tic_name_to_code(tic_decay_mode_names_t500_ui, name, &result))
+      {
+        *code = result;
+        return true;
+      }
+    }
+
+    if (!product || product == TIC_PRODUCT_T249)
+    {
+      if (tic_name_to_code(tic_decay_mode_names_t249_ui, name, &result))
       {
         *code = result;
         return true;
