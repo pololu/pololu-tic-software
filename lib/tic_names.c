@@ -178,7 +178,7 @@ const tic_name tic_step_mode_names[] =
 const tic_name tic_step_mode_names_ui[] =
 {
   { "Full step", TIC_STEP_MODE_MICROSTEP1 },
-  { "1/2 step max current", TIC_STEP_MODE_MICROSTEP2 },
+  { "1/2 step", TIC_STEP_MODE_MICROSTEP2 },
   { "1/4 step", TIC_STEP_MODE_MICROSTEP4 },
   { "1/8 step", TIC_STEP_MODE_MICROSTEP8 },
   { "1/16 step", TIC_STEP_MODE_MICROSTEP16 },
