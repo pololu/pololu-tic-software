@@ -165,7 +165,7 @@ const tic_name tic_step_mode_names[] =
 {
   { "1", TIC_STEP_MODE_MICROSTEP1 },
   { "2", TIC_STEP_MODE_MICROSTEP2 },
-  { "2max", TIC_STEP_MODE_MICROSTEP2_FULL_CURRENT },
+  { "2_100", TIC_STEP_MODE_MICROSTEP2_100 },
   { "4", TIC_STEP_MODE_MICROSTEP4 },
   { "8", TIC_STEP_MODE_MICROSTEP8 },
   { "16", TIC_STEP_MODE_MICROSTEP16 },
@@ -183,7 +183,7 @@ const tic_name tic_step_mode_names_ui[] =
   { "1/8 step", TIC_STEP_MODE_MICROSTEP8 },
   { "1/16 step", TIC_STEP_MODE_MICROSTEP16 },
   { "1/32 step", TIC_STEP_MODE_MICROSTEP32 },
-  { "1/2 step max current", TIC_STEP_MODE_MICROSTEP2_FULL_CURRENT },
+  { "1/2 step 100%", TIC_STEP_MODE_MICROSTEP2_100 },
   { NULL, 0 },
 };
 

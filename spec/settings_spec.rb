@@ -855,9 +855,9 @@ def test_cases_for_settings_fix(product)
   end
 
   if product == :T249
-    cases << [ { 'step_mode' => '2max' }, {}]
+    cases << [ { 'step_mode' => '2_100' }, {}]
   else
-    cases << [ { 'step_mode' => '2max' },
+    cases << [ { 'step_mode' => '2_100' },
                { 'step_mode' => 1 },
                "Warning: The step mode is invalid " \
                "so it will be changed to 1 (full step).\n" ]

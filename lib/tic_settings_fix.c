@@ -70,7 +70,7 @@ static void tic_settings_fix_enums(tic_settings * settings, tic_string * warning
       TIC_STEP_MODE_MICROSTEP8,
       TIC_STEP_MODE_MICROSTEP16,
       TIC_STEP_MODE_MICROSTEP32,
-      TIC_STEP_MODE_MICROSTEP2_FULL_CURRENT,
+      TIC_STEP_MODE_MICROSTEP2_100,
     };
     if (product == TIC_PRODUCT_T500)
     {
@@ -79,7 +79,7 @@ static void tic_settings_fix_enums(tic_settings * settings, tic_string * warning
     }
     if (product != TIC_PRODUCT_T249)
     {
-      valid_step_modes[6] = 0;  // 2max is not allowed
+      valid_step_modes[6] = 0;  // 2_100 is not allowed
     }
 
     if (!enum_is_valid(mode, valid_step_modes, sizeof(valid_step_modes)))
