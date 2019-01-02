@@ -197,7 +197,6 @@ void main_window::adjust_ui_for_product(uint8_t product)
       { { "Slow", TIC_DECAY_MODE_T825_SLOW },
         { "Mixed", TIC_DECAY_MODE_T825_MIXED },
         { "Fast", TIC_DECAY_MODE_T825_FAST } });
-    decay_mode_label->setVisible(true);
     decay_mode_value->setVisible(true);
     break;
 
@@ -216,7 +215,6 @@ void main_window::adjust_ui_for_product(uint8_t product)
         { "Mixed 50%", TIC_DECAY_MODE_T834_MIXED50 },
         { "Mixed 75%", TIC_DECAY_MODE_T834_MIXED75 },
         { "Fast", TIC_DECAY_MODE_T834_FAST } });
-    decay_mode_label->setVisible(true);
     decay_mode_value->setVisible(true);
     break;
 
@@ -229,10 +227,26 @@ void main_window::adjust_ui_for_product(uint8_t product)
 
     set_combo_items(decay_mode_value,
       { { "Auto", TIC_DECAY_MODE_T500_AUTO } });
-    decay_mode_label->setVisible(false);
+    decay_mode_value->setVisible(false);
+    break;
+
+  case TIC_PRODUCT_T249:
+    set_combo_items(step_mode_value,
+      { { "Full step", TIC_STEP_MODE_MICROSTEP1 },
+        { "1/2 step", TIC_STEP_MODE_MICROSTEP2 },
+        { "1/2 step 100%", TIC_STEP_MODE_MICROSTEP2_100 },
+        { "1/4 step", TIC_STEP_MODE_MICROSTEP4 },
+        { "1/8 step", TIC_STEP_MODE_MICROSTEP8 },
+        { "1/16 step", TIC_STEP_MODE_MICROSTEP16 },
+        { "1/32 step", TIC_STEP_MODE_MICROSTEP32 } });
+
+    set_combo_items(decay_mode_value,
+      { { "Mixed", TIC_DECAY_MODE_T249_MIXED } });
     decay_mode_value->setVisible(false);
     break;
   }
+
+  decay_mode_label->setVisible(decay_mode_value->isVisible());
 
   update_current_limit_table(product);
 }
