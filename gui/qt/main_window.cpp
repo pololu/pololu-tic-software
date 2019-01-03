@@ -2288,6 +2288,7 @@ QWidget * main_window::setup_input_status_box()
     row++;
   }
   setup_read_only_text_field(layout, row++, 0, 2, &input_after_scaling_label, &input_after_scaling_value);
+  setup_read_only_text_field(layout, row++, 0, 2, &limit_active_label, &limit_active_value);
 
   // Set fixed sizes for performance.
   {
@@ -2298,6 +2299,7 @@ QWidget * main_window::setup_input_status_box()
     input_after_averaging_value->setFixedSize(input_after_scaling_value->sizeHint());
     input_after_hysteresis_value->setFixedSize(input_after_scaling_value->sizeHint());
     input_after_scaling_value->setFixedSize(input_after_scaling_value->sizeHint());
+    limit_active_value->setFixedSize(input_after_scaling_value->sizeHint());
 
     input_before_scaling_value->setText(QString::number(4500 * 12));
     input_before_scaling_value->setFixedSize(input_before_scaling_value->sizeHint());
@@ -2324,7 +2326,6 @@ QWidget * main_window::setup_operation_status_box()
   setup_read_only_text_field(layout, row++, 0, 3, &vin_voltage_label, &vin_voltage_value);
   setup_read_only_text_field(layout, row++, 0, 3, &operation_state_label, &operation_state_value);
   setup_read_only_text_field(layout, row++, 0, 3, &energized_label, &energized_value);
-  setup_read_only_text_field(layout, row++, 0, 3, &limit_active_label, &limit_active_value);
   setup_read_only_text_field(layout, row++, 0, 3, &homing_active_label, &homing_active_value);
   layout->addItem(new QSpacerItem(1, fontMetrics().height()), row++, 0);
 
@@ -3475,7 +3476,6 @@ void main_window::retranslate()
   input_after_hysteresis_label->setText(tr("Input after hysteresis:"));
   input_before_scaling_label->setText(tr("Input before scaling:"));
   input_after_scaling_label->setText(tr("Input after scaling:"));
-
 
   operation_status_box->setTitle(tr("Operation"));
   vin_voltage_label->setText(tr("VIN voltage:"));
