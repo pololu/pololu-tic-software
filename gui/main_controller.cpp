@@ -24,6 +24,8 @@ void main_controller::start()
   window->set_update_timer_interval(UPDATE_INTERVAL_MS);
   window->start_update_timer();
 
+  window->adjust_ui_for_product(TIC_PRODUCT_T825);
+
   handle_model_changed();
 }
 
