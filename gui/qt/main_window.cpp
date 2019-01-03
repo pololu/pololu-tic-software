@@ -180,6 +180,9 @@ void main_window::set_connection_status(const std::string & status, bool error)
 
 void main_window::adjust_ui_for_product(uint8_t product)
 {
+  bool decay_mode_visible = true;
+  bool agc_mode_visible = false;
+
   switch (product)
   {
   default:
@@ -197,7 +200,6 @@ void main_window::adjust_ui_for_product(uint8_t product)
       { { "Slow", TIC_DECAY_MODE_T825_SLOW },
         { "Mixed", TIC_DECAY_MODE_T825_MIXED },
         { "Fast", TIC_DECAY_MODE_T825_FAST } });
-    decay_mode_value->setVisible(true);
     break;
 
   case TIC_PRODUCT_T834:
@@ -215,7 +217,6 @@ void main_window::adjust_ui_for_product(uint8_t product)
         { "Mixed 50%", TIC_DECAY_MODE_T834_MIXED50 },
         { "Mixed 75%", TIC_DECAY_MODE_T834_MIXED75 },
         { "Fast", TIC_DECAY_MODE_T834_FAST } });
-    decay_mode_value->setVisible(true);
     break;
 
   case TIC_PRODUCT_T500:
@@ -227,7 +228,8 @@ void main_window::adjust_ui_for_product(uint8_t product)
 
     set_combo_items(decay_mode_value,
       { { "Auto", TIC_DECAY_MODE_T500_AUTO } });
-    decay_mode_value->setVisible(false);
+
+    decay_mode_visible = false;
     break;
 
   case TIC_PRODUCT_T249:
@@ -242,11 +244,23 @@ void main_window::adjust_ui_for_product(uint8_t product)
 
     set_combo_items(decay_mode_value,
       { { "Mixed", TIC_DECAY_MODE_T249_MIXED } });
-    decay_mode_value->setVisible(false);
+
+    decay_mode_visible = false;
+    agc_mode_visible = true;
     break;
   }
 
-  decay_mode_label->setVisible(decay_mode_value->isVisible());
+  decay_mode_label->setVisible(decay_mode_visible);
+  decay_mode_value->setVisible(decay_mode_visible);
+
+  agc_mode_label->setVisible(agc_mode_visible);
+  agc_mode_value->setVisible(agc_mode_visible);
+  agc_bottom_current_limit_label->setVisible(agc_mode_visible);
+  agc_bottom_current_limit_value->setVisible(agc_mode_visible);
+  agc_current_boost_steps_label->setVisible(agc_mode_visible);
+  agc_current_boost_steps_value->setVisible(agc_mode_visible);
+  agc_frequency_limit_label->setVisible(agc_mode_visible);
+  agc_frequency_limit_value->setVisible(agc_mode_visible);
 
   update_current_limit_table(product);
 }
@@ -853,6 +867,26 @@ void main_window::set_current_limit(uint32_t current_limit)
 void main_window::set_decay_mode(uint8_t decay_mode)
 {
   set_combo(decay_mode_value, decay_mode);
+}
+
+void main_window::set_agc_mode(uint8_t mode)
+{
+  set_combo(agc_mode_value, mode);
+}
+
+void main_window::set_agc_bottom_current_limit(uint8_t limit)
+{
+  set_combo(agc_bottom_current_limit_value, limit);
+}
+
+void main_window::set_agc_current_boost_steps(uint8_t steps)
+{
+  set_combo(agc_current_boost_steps_value, steps);
+}
+
+void main_window::set_agc_frequency_limit(uint8_t limit)
+{
+  set_combo(agc_frequency_limit_value, limit);
 }
 
 void main_window::set_soft_error_response(uint8_t soft_error_response)
@@ -1650,6 +1684,39 @@ void main_window::on_decay_mode_value_currentIndexChanged(int index)
   if (suppress_events) { return; }
   uint8_t decay_mode = decay_mode_value->itemData(index).toUInt();
   controller->handle_decay_mode_input(decay_mode);
+}
+
+void main_window::on_agc_mode_value_currentIndexChanged(int index)
+{
+  if (suppress_events) { return; }
+  uint8_t mode = agc_mode_value->itemData(index).toUInt();
+  controller->handle_agc_mode_input(mode);
+
+  bool agc_on = mode == TIC_AGC_MODE_ON;
+  agc_bottom_current_limit_value->setEnabled(agc_on);
+  agc_current_boost_steps_value->setEnabled(agc_on);
+  agc_frequency_limit_value->setEnabled(agc_on);
+}
+
+void main_window::on_agc_bottom_current_limit_value_currentIndexChanged(int index)
+{
+  if (suppress_events) { return; }
+  uint8_t limit = agc_bottom_current_limit_value->itemData(index).toUInt();
+  controller->handle_agc_bottom_current_limit_input(limit);
+}
+
+void main_window::on_agc_current_boost_steps_value_currentIndexChanged(int index)
+{
+  if (suppress_events) { return; }
+  uint8_t steps = agc_current_boost_steps_value->itemData(index).toUInt();
+  controller->handle_agc_current_boost_steps_input(steps);
+}
+
+void main_window::on_agc_frequency_limit_value_currentIndexChanged(int index)
+{
+  if (suppress_events) { return; }
+  uint8_t limit = agc_frequency_limit_value->itemData(index).toUInt();
+  controller->handle_agc_frequency_limit_input(limit);
 }
 
 void main_window::on_soft_error_response_radio_group_buttonToggled(int id, bool checked)
@@ -3012,6 +3079,67 @@ QLayout * main_window::setup_motor_settings_layout()
     row++;
   }
 
+  layout->addItem(new QSpacerItem(1, fontMetrics().height()), row++, 0);
+
+  {
+    agc_mode_value = new QComboBox();
+    agc_mode_value->setObjectName("agc_mode_value");
+    agc_mode_value->addItem("Off", TIC_AGC_MODE_OFF);
+    agc_mode_value->addItem("On", TIC_AGC_MODE_ON);
+    agc_mode_value->addItem("Active off", TIC_AGC_MODE_ACTIVE_OFF);
+    agc_mode_label = new QLabel();
+    agc_mode_label->setBuddy(agc_mode_value);
+    layout->addWidget(agc_mode_label, row, 0, FIELD_LABEL_ALIGNMENT);
+    layout->addWidget(agc_mode_value, row, 1, Qt::AlignLeft);
+    row++;
+  }
+
+  {
+    agc_bottom_current_limit_value = new QComboBox();
+    agc_bottom_current_limit_value->setObjectName("agc_bottom_current_limit_value");
+    agc_bottom_current_limit_value->addItem("45%", TIC_AGC_BOTTOM_CURRENT_LIMIT_45);
+    agc_bottom_current_limit_value->addItem("50%", TIC_AGC_BOTTOM_CURRENT_LIMIT_50);
+    agc_bottom_current_limit_value->addItem("55%", TIC_AGC_BOTTOM_CURRENT_LIMIT_55);
+    agc_bottom_current_limit_value->addItem("60%", TIC_AGC_BOTTOM_CURRENT_LIMIT_60);
+    agc_bottom_current_limit_value->addItem("65%", TIC_AGC_BOTTOM_CURRENT_LIMIT_65);
+    agc_bottom_current_limit_value->addItem("70%", TIC_AGC_BOTTOM_CURRENT_LIMIT_70);
+    agc_bottom_current_limit_value->addItem("75%", TIC_AGC_BOTTOM_CURRENT_LIMIT_75);
+    agc_bottom_current_limit_value->addItem("80%", TIC_AGC_BOTTOM_CURRENT_LIMIT_80);
+    agc_bottom_current_limit_label = new QLabel();
+    agc_bottom_current_limit_label->setBuddy(agc_bottom_current_limit_value);
+    layout->addWidget(agc_bottom_current_limit_label, row, 0, FIELD_LABEL_ALIGNMENT);
+    layout->addWidget(agc_bottom_current_limit_value, row, 1, Qt::AlignLeft);
+    row++;
+  }
+
+  {
+    agc_current_boost_steps_value = new QComboBox();
+    agc_current_boost_steps_value->setObjectName("agc_current_boost_steps_value");
+    agc_current_boost_steps_value->addItem("5", TIC_AGC_CURRENT_BOOST_STEPS_5);
+    agc_current_boost_steps_value->addItem("7", TIC_AGC_CURRENT_BOOST_STEPS_7);
+    agc_current_boost_steps_value->addItem("9", TIC_AGC_CURRENT_BOOST_STEPS_9);
+    agc_current_boost_steps_value->addItem("11", TIC_AGC_CURRENT_BOOST_STEPS_11);
+    agc_current_boost_steps_label = new QLabel();
+    agc_current_boost_steps_label->setBuddy(agc_current_boost_steps_value);
+    layout->addWidget(agc_current_boost_steps_label, row, 0, FIELD_LABEL_ALIGNMENT);
+    layout->addWidget(agc_current_boost_steps_value, row, 1, Qt::AlignLeft);
+    row++;
+  }
+
+  {
+    agc_frequency_limit_value = new QComboBox();
+    agc_frequency_limit_value->setObjectName("agc_frequency_limit_value");
+    agc_frequency_limit_value->addItem("Off", TIC_AGC_FREQUENCY_LIMIT_OFF);
+    agc_frequency_limit_value->addItem("225 Hz", TIC_AGC_FREQUENCY_LIMIT_225);
+    agc_frequency_limit_value->addItem("450 Hz", TIC_AGC_FREQUENCY_LIMIT_450);
+    agc_frequency_limit_value->addItem("675 Hz", TIC_AGC_FREQUENCY_LIMIT_675);
+    agc_frequency_limit_label = new QLabel();
+    agc_frequency_limit_label->setBuddy(agc_frequency_limit_value);
+    layout->addWidget(agc_frequency_limit_label, row, 0, FIELD_LABEL_ALIGNMENT);
+    layout->addWidget(agc_frequency_limit_value, row, 1, Qt::AlignLeft);
+    row++;
+  }
+
   layout->setColumnStretch(2, 1);
   layout->setRowStretch(row, 1);
 
@@ -3449,6 +3577,10 @@ void main_window::retranslate()
   step_mode_label->setText(tr("Step mode:"));
   current_limit_label->setText(tr("Current limit:"));
   decay_mode_label->setText(tr("Decay mode:"));
+  agc_mode_label->setText(tr("AGC mode:"));
+  agc_bottom_current_limit_label->setText(tr("AGC bottom current limit:"));
+  agc_current_boost_steps_label->setText(tr("AGC current boost steps:"));
+  agc_frequency_limit_label->setText(tr("AGC frequency limit:"));
 
   //// advanced settings page
 

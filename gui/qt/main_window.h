@@ -222,6 +222,10 @@ public:
   void set_step_mode(uint8_t step_mode);
   void set_current_limit(uint32_t current_limit);
   void set_decay_mode(uint8_t decay_mode);
+  void set_agc_mode(uint8_t);
+  void set_agc_bottom_current_limit(uint8_t);
+  void set_agc_current_boost_steps(uint8_t);
+  void set_agc_frequency_limit(uint8_t);
 
   void set_soft_error_response(uint8_t soft_error_response);
   void set_soft_error_position(int32_t soft_error_position);
@@ -347,6 +351,10 @@ private slots:
   void on_step_mode_value_currentIndexChanged(int index);
   void on_current_limit_value_valueChanged(int value);
   void on_decay_mode_value_currentIndexChanged(int index);
+  void on_agc_mode_value_currentIndexChanged(int index);
+  void on_agc_bottom_current_limit_value_currentIndexChanged(int index);
+  void on_agc_current_boost_steps_value_currentIndexChanged(int index);
+  void on_agc_frequency_limit_value_currentIndexChanged(int index);
 
   void on_soft_error_response_radio_group_buttonToggled(int id, bool checked);
   void on_soft_error_position_value_valueChanged(int value);
@@ -634,6 +642,14 @@ private:
   current_spin_box * current_limit_value;
   QLabel * decay_mode_label;
   QComboBox * decay_mode_value;
+  QLabel * agc_mode_label;
+  QComboBox * agc_mode_value;
+  QLabel * agc_bottom_current_limit_label;
+  QComboBox * agc_bottom_current_limit_value;
+  QLabel * agc_current_boost_steps_label;
+  QComboBox * agc_current_boost_steps_value;
+  QLabel * agc_frequency_limit_label;
+  QComboBox * agc_frequency_limit_value;
 
   //// advanced settings page
 

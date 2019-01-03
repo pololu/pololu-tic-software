@@ -122,6 +122,10 @@ public:
   void handle_step_mode_input(uint8_t step_mode);
   void handle_current_limit_input(uint32_t current_limit);
   void handle_decay_mode_input(uint8_t decay_mode);
+  void handle_agc_mode_input(uint8_t);
+  void handle_agc_bottom_current_limit_input(uint8_t);
+  void handle_agc_current_boost_steps_input(uint8_t);
+  void handle_agc_frequency_limit_input(uint8_t);
 
   void handle_soft_error_response_input(uint8_t soft_error_response);
   void handle_soft_error_position_input(int32_t soft_error_position);

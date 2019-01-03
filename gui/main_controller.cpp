@@ -786,6 +786,10 @@ void main_controller::handle_settings_changed()
   window->set_step_mode(tic_settings_get_step_mode(settings.get_pointer()));
   window->set_current_limit(tic_settings_get_current_limit(settings.get_pointer()));
   window->set_decay_mode(tic_settings_get_decay_mode(settings.get_pointer()));
+  window->set_agc_mode(tic_settings_get_agc_mode(settings.get_pointer()));
+  window->set_agc_bottom_current_limit(tic_settings_get_agc_bottom_current_limit(settings.get_pointer()));
+  window->set_agc_current_boost_steps(tic_settings_get_agc_current_boost_steps(settings.get_pointer()));
+  window->set_agc_frequency_limit(tic_settings_get_agc_frequency_limit(settings.get_pointer()));
 
   window->set_soft_error_response(tic_settings_get_soft_error_response(settings.get_pointer()));
   window->set_soft_error_position(tic_settings_get_soft_error_position(settings.get_pointer()));
@@ -1122,6 +1126,38 @@ void main_controller::handle_decay_mode_input(uint8_t decay_mode)
 {
   if (!connected()) { return; }
   tic_settings_set_decay_mode(settings.get_pointer(), decay_mode);
+  settings_modified = true;
+  handle_settings_changed();
+}
+
+void main_controller::handle_agc_mode_input(uint8_t mode)
+{
+  if (!connected()) { return; }
+  tic_settings_set_agc_mode(settings.get_pointer(), mode);
+  settings_modified = true;
+  handle_settings_changed();
+}
+
+void main_controller::handle_agc_bottom_current_limit_input(uint8_t limit)
+{
+  if (!connected()) { return; }
+  tic_settings_set_agc_bottom_current_limit(settings.get_pointer(), limit);
+  settings_modified = true;
+  handle_settings_changed();
+}
+
+void main_controller::handle_agc_current_boost_steps_input(uint8_t steps)
+{
+  if (!connected()) { return; }
+  tic_settings_set_agc_current_boost_steps(settings.get_pointer(), steps);
+  settings_modified = true;
+  handle_settings_changed();
+}
+
+void main_controller::handle_agc_frequency_limit_input(uint8_t limit)
+{
+  if (!connected()) { return; }
+  tic_settings_set_agc_frequency_limit(settings.get_pointer(), limit);
   settings_modified = true;
   handle_settings_changed();
 }
