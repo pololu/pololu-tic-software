@@ -476,7 +476,7 @@ void main_window::set_limit_active(bool forward_limit_active,
   bool reverse_limit_active)
 {
   if (forward_limit_active && reverse_limit_active) {
-    limit_active_value->setText(tr("Forward and Reverse"));
+    limit_active_value->setText(tr("Both"));
   }
   else if (forward_limit_active) {
     limit_active_value->setText(tr("Forward"));
@@ -3481,7 +3481,7 @@ void main_window::retranslate()
   vin_voltage_label->setText(tr("VIN voltage:"));
   operation_state_label->setText(tr("Operation state:"));
   energized_label->setText(tr("Energized:"));
-  limit_active_label->setText(tr("Limits active:"));
+  limit_active_label->setText(tr("Limit switches active:"));
   homing_active_label->setText(tr("Homing active:"));
   set_target_none();
   current_position_label->setText(tr("Current position:"));
