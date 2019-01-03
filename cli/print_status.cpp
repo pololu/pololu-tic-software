@@ -150,6 +150,14 @@ void print_status(const tic::variables & vars,
     << vars.get_input_after_scaling()
     << std::endl;
 
+  std::cout << left_column << "Forward limit active: "
+    << (vars.get_forward_limit_active() ? "Yes" : "No")
+    << std::endl;
+
+  std::cout << left_column << "Reverse limit active: "
+    << (vars.get_reverse_limit_active() ? "Yes" : "No")
+    << std::endl;
+
   std::cout << std::endl;
 
   std::cout << left_column << "VIN voltage: "
@@ -162,14 +170,6 @@ void print_status(const tic::variables & vars,
 
   std::cout << left_column << "Energized: "
     << (vars.get_energized() ? "Yes" : "No")
-    << std::endl;
-
-  std::cout << left_column << "Forward limit active: "
-    << (vars.get_forward_limit_active() ? "Yes" : "No")
-    << std::endl;
-
-  std::cout << left_column << "Reverse limit active: "
-    << (vars.get_reverse_limit_active() ? "Yes" : "No")
     << std::endl;
 
   std::cout << left_column << "Homing active: "
