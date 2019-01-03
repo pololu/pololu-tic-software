@@ -269,7 +269,7 @@ static void tic_write_settings_to_buffer(const tic_settings * settings, uint8_t 
 
   buf[TIC_SETTING_DECAY_MODE] = tic_settings_get_decay_mode(settings);
 
-  if (product == TIC_PRODUCT_ID_T249)
+  if (product == TIC_PRODUCT_T249)
   {
     buf[TIC_SETTING_AGC_MODE] = tic_settings_get_agc_mode(settings);
     buf[TIC_SETTING_AGC_BOTTOM_CURRENT_LIMIT] =
