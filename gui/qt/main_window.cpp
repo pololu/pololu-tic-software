@@ -182,6 +182,7 @@ void main_window::adjust_ui_for_product(uint8_t product)
 {
   bool decay_mode_visible = true;
   bool agc_mode_visible = false;
+  bool last_motor_driver_error_visible = false;
 
   switch (product)
   {
@@ -247,6 +248,7 @@ void main_window::adjust_ui_for_product(uint8_t product)
 
     decay_mode_visible = false;
     agc_mode_visible = true;
+    last_motor_driver_error_visible = true;
     break;
   }
 
@@ -261,6 +263,9 @@ void main_window::adjust_ui_for_product(uint8_t product)
   agc_current_boost_steps_value->setVisible(agc_mode_visible);
   agc_frequency_limit_label->setVisible(agc_mode_visible);
   agc_frequency_limit_value->setVisible(agc_mode_visible);
+
+  last_motor_driver_error_label->setVisible(last_motor_driver_error_visible);
+  last_motor_driver_error_value->setVisible(last_motor_driver_error_visible);
 
   update_current_limit_table(product);
 }
@@ -310,6 +315,7 @@ void main_window::set_resume_button_enabled(bool enabled)
 
 void main_window::set_apply_settings_enabled(bool enabled)
 {
+  // TODO: make the apply settings button blue and animated like the Jrk G2 one
   apply_settings_button->setEnabled(enabled);
   apply_settings_action->setEnabled(enabled);
 }
@@ -475,6 +481,7 @@ void main_window::set_energized(bool energized)
 void main_window::set_limit_active(bool forward_limit_active,
   bool reverse_limit_active)
 {
+  // TODO: use yellow highlighting if limit switches are active
   if (forward_limit_active && reverse_limit_active) {
     limit_active_value->setText(tr("Both"));
   }
@@ -492,6 +499,11 @@ void main_window::set_limit_active(bool forward_limit_active,
 void main_window::set_homing_active(bool active)
 {
   homing_active_value->setText(active ? tr("Yes") : tr("No"));
+}
+
+void main_window::set_last_motor_driver_error(const char * str)
+{
+  last_motor_driver_error_value->setText(str);
 }
 
 void main_window::set_target_position(int32_t target_position)
@@ -2289,6 +2301,8 @@ QWidget * main_window::setup_input_status_box()
   }
   setup_read_only_text_field(layout, row++, 0, 2, &input_after_scaling_label, &input_after_scaling_value);
   setup_read_only_text_field(layout, row++, 0, 2, &limit_active_label, &limit_active_value);
+  // TODO: limit_active_label should be disabled and show N/A like the input_after_* labels
+  // if there are no limit switches enabled.
 
   // Set fixed sizes for performance.
   {
@@ -2327,6 +2341,9 @@ QWidget * main_window::setup_operation_status_box()
   setup_read_only_text_field(layout, row++, 0, 3, &operation_state_label, &operation_state_value);
   setup_read_only_text_field(layout, row++, 0, 3, &energized_label, &energized_value);
   setup_read_only_text_field(layout, row++, 0, 3, &homing_active_label, &homing_active_value);
+  setup_read_only_text_field(layout, row++, 0, 3,
+    &last_motor_driver_error_label, &last_motor_driver_error_value);
+  layout->setAlignment(last_motor_driver_error_value, Qt::AlignBottom);
   layout->addItem(new QSpacerItem(1, fontMetrics().height()), row++, 0);
 
   {
@@ -3483,6 +3500,7 @@ void main_window::retranslate()
   energized_label->setText(tr("Energized:"));
   limit_active_label->setText(tr("Limit switches active:"));
   homing_active_label->setText(tr("Homing active:"));
+  last_motor_driver_error_label->setText(tr("Last motor\ndriver error:"));
   set_target_none();
   current_position_label->setText(tr("Current position:"));
   position_uncertain_label->setText(tr("Uncertain:"));

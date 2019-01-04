@@ -162,6 +162,7 @@ public:
   void set_energized(bool energized);
   void set_limit_active(bool forward, bool reverse);
   void set_homing_active(bool active);
+  void set_last_motor_driver_error(const char * str);
   void set_target_position(int32_t target_position);
   void set_target_velocity(int32_t target_velocity);
   void set_target_none();
@@ -505,6 +506,8 @@ private:
   QLabel * limit_active_value;
   QLabel * homing_active_label;
   QLabel * homing_active_value;
+  QLabel * last_motor_driver_error_label;
+  QLabel * last_motor_driver_error_value;
   QLabel * target_label;
   QLabel * target_value;
   QLabel * target_velocity_pretty;

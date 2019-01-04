@@ -259,6 +259,23 @@ const tic_name tic_agc_mode_names[] =
   { NULL, 0 },
 };
 
+const tic_name tic_agc_mode_names_ui[] =
+{
+  { "Off", TIC_AGC_MODE_OFF },
+  { "On", TIC_AGC_MODE_ON },
+  { "Active off", TIC_AGC_MODE_ACTIVE_OFF },
+  { NULL, 0 },
+};
+
+const tic_name tic_motor_driver_error_names_ui[] =
+{
+  { "None", TIC_MOTOR_DRIVER_ERROR_NONE },
+  { "Open load", TIC_MOTOR_DRIVER_ERROR_OPEN_LOAD },
+  { "Overcurrent", TIC_MOTOR_DRIVER_ERROR_OVERCURRENT },
+  { "Overtemperature", TIC_MOTOR_DRIVER_ERROR_OVERTEMPERATURE },
+  { NULL, 0 },
+};
+
 const tic_name tic_agc_bottom_current_limit_names[] =
 {
   { "45", TIC_AGC_BOTTOM_CURRENT_LIMIT_45 },
@@ -269,6 +286,19 @@ const tic_name tic_agc_bottom_current_limit_names[] =
   { "70", TIC_AGC_BOTTOM_CURRENT_LIMIT_70 },
   { "75", TIC_AGC_BOTTOM_CURRENT_LIMIT_75 },
   { "80", TIC_AGC_BOTTOM_CURRENT_LIMIT_80 },
+  { NULL, 0 },
+};
+
+const tic_name tic_agc_bottom_current_limit_names_ui[] =
+{
+  { "45%", TIC_AGC_BOTTOM_CURRENT_LIMIT_45 },
+  { "50%", TIC_AGC_BOTTOM_CURRENT_LIMIT_50 },
+  { "55%", TIC_AGC_BOTTOM_CURRENT_LIMIT_55 },
+  { "60%", TIC_AGC_BOTTOM_CURRENT_LIMIT_60 },
+  { "65%", TIC_AGC_BOTTOM_CURRENT_LIMIT_65 },
+  { "70%", TIC_AGC_BOTTOM_CURRENT_LIMIT_70 },
+  { "75%", TIC_AGC_BOTTOM_CURRENT_LIMIT_75 },
+  { "80%", TIC_AGC_BOTTOM_CURRENT_LIMIT_80 },
   { NULL, 0 },
 };
 
@@ -288,6 +318,15 @@ const tic_name tic_agc_frequency_limit_names[] =
   { "450", TIC_AGC_FREQUENCY_LIMIT_450 },
   { "675", TIC_AGC_FREQUENCY_LIMIT_675 },
   { "false", TIC_AGC_FREQUENCY_LIMIT_OFF },  // for parsing YAML
+  { NULL, 0 },
+};
+
+const tic_name tic_agc_frequency_limit_names_ui[] =
+{
+  { "Off", TIC_AGC_FREQUENCY_LIMIT_OFF },
+  { "225 Hz", TIC_AGC_FREQUENCY_LIMIT_225 },
+  { "450 Hz", TIC_AGC_FREQUENCY_LIMIT_450 },
+  { "675 Hz", TIC_AGC_FREQUENCY_LIMIT_675 },
   { NULL, 0 },
 };
 
@@ -358,6 +397,41 @@ const char * tic_look_up_planning_mode_name_ui(uint8_t planning_mode)
 {
   const char * str = "(Unknown)";
   tic_code_to_name(tic_planning_mode_names_ui, planning_mode, &str);
+  return str;
+}
+
+const char * tic_look_up_motor_driver_error_name_ui(uint8_t error)
+{
+  const char * str = "(Unknown)";
+  tic_code_to_name(tic_motor_driver_error_names_ui, error, &str);
+  return str;
+}
+
+const char * tic_look_up_agc_mode_name_ui(uint8_t error)
+{
+  const char * str = "(Unknown)";
+  tic_code_to_name(tic_agc_mode_names_ui, error, &str);
+  return str;
+}
+
+const char * tic_look_up_agc_bottom_current_limit_name_ui(uint8_t limit)
+{
+  const char * str = "(Unknown)";
+  tic_code_to_name(tic_agc_bottom_current_limit_names_ui, limit, &str);
+  return str;
+}
+
+const char * tic_look_up_agc_current_boost_steps_name_ui(uint8_t steps)
+{
+  const char * str = "(Unknown)";
+  tic_code_to_name(tic_agc_current_boost_steps_names, steps, &str);
+  return str;
+}
+
+const char * tic_look_up_agc_frequency_limit_name_ui(uint8_t limit)
+{
+  const char * str = "(Unknown)";
+  tic_code_to_name(tic_agc_frequency_limit_names_ui, limit, &str);
   return str;
 }
 

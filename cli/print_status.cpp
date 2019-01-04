@@ -176,6 +176,13 @@ void print_status(const tic::variables & vars,
     << (vars.get_homing_active() ? "Yes" : "No")
     << std::endl;
 
+  if (product == TIC_PRODUCT_T249)
+  {
+    std::cout << left_column << "Last motor driver error: "
+      << tic_look_up_motor_driver_error_name_ui(vars.get_last_motor_driver_error())
+      << std::endl;
+  }
+
   std::cout << std::endl;
 
   uint8_t planning_mode = vars.get_planning_mode();
@@ -233,12 +240,30 @@ void print_status(const tic::variables & vars,
       << vars.get_current_limit() << " mA"
       << std::endl;
 
-    // The decay mode is useless for the Tic T500.
-    if (product != TIC_PRODUCT_T500)
+    if (product != TIC_PRODUCT_T500 && product != TIC_PRODUCT_T249)
     {
       const char * decay_name;
       tic_look_up_decay_mode_name(vars.get_decay_mode(), product, 0, &decay_name);
       std::cout << left_column << "Decay mode: " << decay_name << std::endl;
+    }
+
+    if (product == TIC_PRODUCT_T249)
+    {
+      std::cout << left_column << "AGC mode: "
+        << tic_look_up_agc_mode_name_ui(vars.get_agc_mode())
+        << std::endl;
+
+      std::cout << left_column << "AGC bottom current limit: "
+        << tic_look_up_agc_bottom_current_limit_name_ui(vars.get_agc_bottom_current_limit())
+        << std::endl;
+
+      std::cout << left_column << "AGC current boost steps: "
+        << tic_look_up_agc_current_boost_steps_name_ui(vars.get_agc_current_boost_steps())
+        << std::endl;
+
+      std::cout << left_column << "AGC frequency limit: "
+        << tic_look_up_agc_frequency_limit_name_ui(vars.get_agc_frequency_limit())
+        << std::endl;
     }
   }
 

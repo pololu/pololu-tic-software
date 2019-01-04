@@ -38,6 +38,11 @@ struct tic_variables
   uint16_t input_after_averaging;
   uint16_t input_after_hysteresis;
   int32_t input_after_scaling;
+  uint8_t last_motor_driver_error;
+  uint8_t agc_mode;
+  uint8_t agc_bottom_current_limit;
+  uint8_t agc_current_boost_steps;
+  uint8_t agc_frequency_limit;
 
   struct {
     uint16_t analog_reading;
@@ -187,6 +192,15 @@ static void write_buffer_to_variables(const uint8_t * buf, tic_variables * vars)
   // cannot do analog readings.
   vars->pin_info[TIC_PIN_NUM_RC].pin_state = TIC_PIN_STATE_HIGH_IMPEDANCE;
   vars->pin_info[TIC_PIN_NUM_RC].analog_reading = 0;
+
+  if (vars->product == TIC_PRODUCT_T249)
+  {
+    vars->last_motor_driver_error = buf[TIC_VAR_LAST_MOTOR_DRIVER_ERROR];
+    vars->agc_mode = buf[TIC_VAR_AGC_MODE];
+    vars->agc_bottom_current_limit = buf[TIC_VAR_AGC_BOTTOM_CURRENT_LIMIT];
+    vars->agc_current_boost_steps = buf[TIC_VAR_AGC_CURRENT_BOOST_STEPS];
+    vars->agc_frequency_limit = buf[TIC_VAR_AGC_FREQUENCY_LIMIT];
+  }
 }
 
 tic_error * tic_get_variables(tic_handle * handle, tic_variables ** variables,
@@ -490,11 +504,40 @@ uint16_t tic_variables_get_input_before_scaling(const tic_variables * variables,
   return input >> shift;
 }
 
-
 int32_t tic_variables_get_input_after_scaling(const tic_variables * variables)
 {
   if (variables == NULL) { return 0; }
   return variables->input_after_scaling;
+}
+
+uint8_t tic_variables_get_last_motor_driver_error(const tic_variables * variables)
+{
+  if (variables == NULL) { return 0; }
+  return variables->last_motor_driver_error;
+}
+
+uint8_t tic_variables_get_agc_mode(const tic_variables * variables)
+{
+  if (variables == NULL) { return 0; }
+  return variables->agc_mode;
+}
+
+uint8_t tic_variables_get_agc_bottom_current_limit(const tic_variables * variables)
+{
+  if (variables == NULL) { return 0; }
+  return variables->agc_bottom_current_limit;
+}
+
+uint8_t tic_variables_get_agc_current_boost_steps(const tic_variables * variables)
+{
+  if (variables == NULL) { return 0; }
+  return variables->agc_current_boost_steps;
+}
+
+uint8_t tic_variables_get_agc_frequency_limit(const tic_variables * variables)
+{
+  if (variables == NULL) { return 0; }
+  return variables->agc_frequency_limit;
 }
 
 uint16_t tic_variables_get_analog_reading(const tic_variables * variables,

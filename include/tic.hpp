@@ -535,6 +535,36 @@ namespace tic
       return tic_variables_get_input_after_scaling(pointer);
     }
 
+    /// Wrapper for tic_variables_get_last_motor_driver_error().
+    uint8_t get_last_motor_driver_error() const noexcept
+    {
+      return tic_variables_get_last_motor_driver_error(pointer);
+    }
+
+    /// Wrapper for tic_variables_get_agc_mode().
+    uint8_t get_agc_mode() const noexcept
+    {
+      return tic_variables_get_agc_mode(pointer);
+    }
+
+    /// Wrapper for tic_variables_get_agc_bottom_current_limit().
+    uint8_t get_agc_bottom_current_limit() const noexcept
+    {
+      return tic_variables_get_agc_bottom_current_limit(pointer);
+    }
+
+    /// Wrapper for tic_variables_get_agc_current_boost_steps().
+    uint8_t get_agc_current_boost_steps() const noexcept
+    {
+      return tic_variables_get_agc_current_boost_steps(pointer);
+    }
+
+    /// Wrapper for tic_variables_get_agc_frequency_limit().
+    uint8_t get_agc_frequency_limit() const noexcept
+    {
+      return tic_variables_get_agc_frequency_limit(pointer);
+    }
+
     /// Wrapper for tic_variables_get_analog_reading().
     uint16_t get_analog_reading(uint8_t pin) const noexcept
     {

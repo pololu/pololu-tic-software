@@ -175,6 +175,42 @@ const char * tic_look_up_pin_state_name_ui(uint8_t pin_state);
 TIC_API
 const char * tic_look_up_planning_mode_name_ui(uint8_t planning_mode);
 
+/// Looks up the string corresponding to the specified motor driver error.
+/// The argument should be one of the TIC_MOTOR_DRIVER_ERROR_* macros
+/// (e.g. the return value of tic_variables_get_last_motor_driver_error()),
+/// but if it is not, this function returns "(Unknown)".  The returned string
+/// will be valid indefinitely and should not be freed.
+TIC_API
+const char * tic_look_up_motor_driver_error_name_ui(uint8_t error);
+
+/// Looks up the string corresponding to the specified AGC mode.
+/// The argument should be one of the TIC_AGC_MODE_* macros,
+/// but if it is not, this function returns "(Unknown)".  The returned string
+/// will be valid indefinitely and should not be freed.
+TIC_API
+const char * tic_look_up_agc_mode_name_ui(uint8_t error);
+
+/// Looks up the string corresponding to the specified AGC bottom current limit
+/// setting.  The argument should be one of the TIC_AGC_BOTTOM_CURRENT_LIMIT_*
+/// macros, but if it is not, this function returns "(Unknown)".  The returned
+/// string will be valid indefinitely and should not be freed.
+TIC_API
+const char * tic_look_up_agc_bottom_current_limit_name_ui(uint8_t limit);
+
+/// Looks up the string corresponding to the specified AGC current boost steps
+/// setting.  The argument should be one of the TIC_AGC_CURRENT_BOOST_STEPS_*
+/// macros, but if it is not, this function returns "(Unknown)".  The returned
+/// string will be valid indefinitely and should not be freed.
+TIC_API
+const char * tic_look_up_agc_current_boost_steps_name_ui(uint8_t steps);
+
+/// Looks up the string corresponding to the specified AGC frequency limit
+/// setting.  The argument should be one of the TIC_AGC_CURRENT_BOOST_STEPS_*
+/// macros, but if it is not, this function returns "(Unknown)".  The returned
+/// string will be valid indefinitely and should not be freed.
+TIC_API
+const char * tic_look_up_agc_frequency_limit_name_ui(uint8_t limit);
+
 
 // Advanced name/code lookup ////////////////////////////////////////////////////
 
@@ -1329,6 +1365,62 @@ uint16_t tic_variables_get_input_before_scaling(const tic_variables *,
 /// A value of TIC_INPUT_NULL means the input value is not available.
 TIC_API
 int32_t tic_variables_get_input_after_scaling(const tic_variables *);
+
+/// Gets the type of the last motor driver error that occurred or 0 if no
+/// motor driver errors have occurred since starting up.
+///
+/// This is only valid for the Tic T249, and will be TIC_MOTOR_DRIVER_ERROR_NONE
+/// for all other Tics.
+///
+/// The return value is one of the TIC_MOTOR_DRIVER_ERROR_* macros.
+TIC_API
+uint8_t tic_variables_get_last_motor_driver_error(const tic_variables *);
+
+/// Gets the current AGC mode of the Tic.
+///
+/// Note that this is the current AGC mode.  To get the default AGC mode at
+/// startup, see tic_settings_get_agc_mode().
+///
+/// This is only valid for the Tic T249, and will be 0 for all other Tics.
+///
+/// The return value is one of the TIC_AGC_MODE_* macros.
+TIC_API
+uint8_t tic_variables_get_agc_mode(const tic_variables *);
+
+/// Gets the current AGC bottom current limit of the Tic.
+///
+/// Note that this is the AGC bottom current limit that the Tic is using
+/// presently.  To get the default at startup, see
+/// tic_settings_get_agc_bottom_current_limit().
+///
+/// This is only valid for the Tic T249, and will be 0 for all other Tics.
+///
+/// The return value is one of the TIC_AGC_BOTTOM_CURRENT_LIMIT_* macros.
+TIC_API
+uint8_t tic_variables_get_agc_bottom_current_limit(const tic_variables *);
+
+/// Gets the current AGC current boost steps of the Tic.
+///
+/// Note that this is the AGC current boost steps value that the Tic is using
+/// presently.  To get the default at startup, see
+/// tic_settings_get_agc_current_boost_steps().
+///
+/// This is only valid for the Tic T249, and will be 0 for all other Tics.
+///
+/// The return value is one of the TIC_AGC_CURRENT_BOOST_STEPS_* macros.
+TIC_API
+uint8_t tic_variables_get_agc_current_boost_steps(const tic_variables *);
+
+/// Gets the current AGC frequency limit of the Tic.
+///
+/// Note that this is the AGC frequency limit that the Tic is using presently.
+/// To get the default at startup, see tic_settings_get_agc_frequency_limit().
+///
+/// This is only valid for the Tic T249, and will be 0 for all other Tics.
+///
+/// The return value is one of the TIC_AGC_FREQUENCY_LIMIT_* macros.
+TIC_API
+uint8_t tic_variables_get_agc_frequency_limit(const tic_variables *);
 
 /// Gets the analog reading from the specified pin, if analog readings are
 /// enabled for that pin.

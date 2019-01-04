@@ -533,6 +533,8 @@ void main_controller::handle_variables_changed()
   window->set_homing_active(variables.get_homing_active());
   window->set_operation_state(
     tic_look_up_operation_state_name_ui(variables.get_operation_state()));
+  window->set_last_motor_driver_error(
+    tic_look_up_motor_driver_error_name_ui(variables.get_last_motor_driver_error()));
 
   int32_t target_position = variables.get_target_position();
   int32_t target_velocity = variables.get_target_velocity();
