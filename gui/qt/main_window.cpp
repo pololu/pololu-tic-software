@@ -3067,6 +3067,7 @@ QLayout * main_window::setup_motor_settings_layout()
   {
     step_mode_value = new QComboBox();
     step_mode_value->setObjectName("step_mode_value");
+    step_mode_value->addItem("1/2 step 100%", 0);  // reserve space
     step_mode_label = new QLabel();
     step_mode_label->setBuddy(step_mode_value);
     layout->addWidget(step_mode_label, row, 0, FIELD_LABEL_ALIGNMENT);
