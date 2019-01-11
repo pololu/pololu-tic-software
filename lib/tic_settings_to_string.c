@@ -63,8 +63,7 @@ tic_error * tic_settings_to_string(const tic_settings * settings, char ** string
 
   {
     bool never_sleep = tic_settings_get_never_sleep(settings);
-    tic_sprintf(&str, "never_sleep: %s\n",
-      never_sleep ? "true" : "false");
+    tic_sprintf(&str, "never_sleep: %s\n", never_sleep ? "true" : "false");
   }
 
   {
@@ -364,6 +363,11 @@ tic_error * tic_settings_to_string(const tic_settings * settings, char ** string
   {
     uint32_t decel = tic_settings_get_max_decel(settings);
     tic_sprintf(&str, "max_decel: %u\n", decel);
+  }
+
+  {
+    bool auto_homing = tic_settings_get_auto_homing(settings);
+    tic_sprintf(&str, "auto_homing: %s\n", auto_homing ? "true" : "false");
   }
 
   {

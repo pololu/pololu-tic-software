@@ -66,6 +66,7 @@ struct tic_settings
   uint32_t max_speed;
   uint32_t max_accel;
   uint32_t max_decel;
+  bool auto_homing;
   uint32_t homing_speed_towards;
   uint32_t homing_speed_away;
   bool invert_motor_direction;
@@ -1037,6 +1038,18 @@ uint32_t tic_settings_get_max_decel(const tic_settings * settings)
 {
   if (!settings) { return 0; }
   return settings->max_decel;
+}
+
+void tic_settings_set_auto_homing(tic_settings * settings, bool enabled)
+{
+  if (!settings) { return; }
+  settings->auto_homing = enabled;
+}
+
+bool tic_settings_get_auto_homing(const tic_settings * settings)
+{
+  if (!settings) { return 0; }
+  return settings->auto_homing;
 }
 
 void tic_settings_set_homing_speed_towards(tic_settings * settings, uint32_t speed)

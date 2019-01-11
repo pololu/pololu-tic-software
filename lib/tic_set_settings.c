@@ -12,7 +12,9 @@ static void tic_write_settings_to_buffer(const tic_settings * settings, uint8_t 
   buf[TIC_SETTING_CONTROL_MODE] =
     tic_settings_get_control_mode(settings);
 
-  buf[TIC_SETTING_NEVER_SLEEP] = tic_settings_get_never_sleep(settings) & 1;
+  buf[TIC_SETTING_OPTIONS_BYTE1] |=
+    (tic_settings_get_never_sleep(settings) & 1) <<
+    TIC_OPTIONS_BYTE1_NEVER_SLEEP;
 
   buf[TIC_SETTING_DISABLE_SAFE_START] =
     tic_settings_get_disable_safe_start(settings);
@@ -311,6 +313,10 @@ static void tic_write_settings_to_buffer(const tic_settings * settings, uint8_t 
     buf[TIC_SETTING_MAX_DECEL + 2] = decel >> 16 & 0xFF;
     buf[TIC_SETTING_MAX_DECEL + 3] = decel >> 24 & 0xFF;
   }
+
+  buf[TIC_SETTING_OPTIONS_BYTE1] |=
+    (tic_settings_get_auto_homing(settings) & 1) <<
+    TIC_OPTIONS_BYTE1_AUTO_HOMING;
 
   {
     uint32_t speed = tic_settings_get_homing_speed_towards(settings);

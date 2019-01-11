@@ -970,6 +970,11 @@ void main_window::set_vin_calibration(int16_t vin_calibration)
   set_spin_box(vin_calibration_value, vin_calibration);
 }
 
+void main_window::set_auto_homing(bool auto_homing)
+{
+  set_check_box(auto_homing_check, auto_homing);
+}
+
 void main_window::set_homing_speed_towards(uint32_t speed)
 {
   set_spin_box(homing_speed_towards_value, speed);
@@ -1793,6 +1798,12 @@ void main_window::on_vin_calibration_value_valueChanged(int value)
 {
   if (suppress_events) { return; }
   controller->handle_vin_calibration_input(value);
+}
+
+void main_window::on_auto_homing_check_stateChanged(int state)
+{
+  if (suppress_events) { return; }
+  controller->handle_auto_homing_input(state == Qt::Checked);
 }
 
 void main_window::on_homing_speed_towards_value_valueChanged(int value)
@@ -3374,6 +3385,13 @@ QWidget * main_window::setup_homing_settings_box()
   int row = 0;
 
   {
+    auto_homing_check = new QCheckBox();
+    auto_homing_check->setObjectName("auto_homing_check");
+    layout->addWidget(auto_homing_check, row, 0, 1, 2, Qt::AlignLeft);
+    row++;
+  }
+
+  {
     homing_speed_towards_value = new QSpinBox();
     homing_speed_towards_value->setObjectName("homing_speed_towards_value");
     homing_speed_towards_value->setRange(0, TIC_MAX_ALLOWED_SPEED);
@@ -3641,6 +3659,7 @@ void main_window::retranslate()
   vin_calibration_label->setText(tr("VIN measurement calibration:"));
 
   homing_settings_box->setTitle(tr("Homing"));
+  auto_homing_check->setText(tr("Automatic homing"));
   homing_speed_towards_label->setText(tr("Homing speed towards:"));
   homing_speed_away_label->setText(tr("Homing speed away:"));
 

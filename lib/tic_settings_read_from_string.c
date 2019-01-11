@@ -712,6 +712,15 @@ static tic_error * apply_string_pair(tic_settings * settings,
     }
     tic_settings_set_max_decel(settings, max_decel);
   }
+  else if (!strcmp(key, "auto_homing"))
+  {
+    uint32_t auto_homing;
+    if (!tic_name_to_code(tic_bool_names, value, &auto_homing))
+    {
+      return tic_error_create("Unrecognized auto_homing value.");
+    }
+    tic_settings_set_auto_homing(settings, auto_homing);
+  }
   else if (!strcmp(key, "homing_speed_towards"))
   {
     int64_t speed;

@@ -137,6 +137,7 @@ public:
   void handle_never_sleep_input(bool never_sleep);
   void handle_vin_calibration_input(int16_t vin_calibration);
 
+  void handle_auto_homing_input(bool);
   void handle_homing_speed_towards_input(uint32_t speed);
   void handle_homing_speed_away_input(uint32_t speed);
 

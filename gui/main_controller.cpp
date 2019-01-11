@@ -805,6 +805,7 @@ void main_controller::handle_settings_changed()
   window->set_never_sleep(tic_settings_get_never_sleep(settings.get_pointer()));
   window->set_vin_calibration(tic_settings_get_vin_calibration(settings.get_pointer()));
 
+  window->set_auto_homing(tic_settings_get_auto_homing(settings.get_pointer()));
   window->set_homing_speed_towards(
     tic_settings_get_homing_speed_towards(settings.get_pointer()));
   window->set_homing_speed_away(
@@ -1226,6 +1227,14 @@ void main_controller::handle_vin_calibration_input(int16_t vin_calibration)
 {
   if (!connected()) { return; }
   tic_settings_set_vin_calibration(settings.get_pointer(), vin_calibration);
+  settings_modified = true;
+  handle_settings_changed();
+}
+
+void main_controller::handle_auto_homing_input(bool auto_homing)
+{
+  if (!connected()) { return; }
+  tic_settings_set_auto_homing(settings.get_pointer(), auto_homing);
   settings_modified = true;
   handle_settings_changed();
 }

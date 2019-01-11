@@ -238,6 +238,7 @@ public:
   void set_never_sleep(bool never_sleep);
   void set_vin_calibration(int16_t vin_calibration);
 
+  void set_auto_homing(bool auto_homing);
   void set_homing_speed_towards(uint32_t speed);
   void set_homing_speed_away(uint32_t speed);
 
@@ -368,8 +369,9 @@ private slots:
   void on_never_sleep_check_stateChanged(int state);
   void on_vin_calibration_value_valueChanged(int value);
 
-  void on_homing_speed_towards_value_valueChanged(int);
-  void on_homing_speed_away_value_valueChanged(int);
+  void on_auto_homing_check_stateChanged(int state);
+  void on_homing_speed_towards_value_valueChanged(int value);
+  void on_homing_speed_away_value_valueChanged(int value);
 
   void upload_complete();
 
@@ -679,6 +681,8 @@ private:
   QSpinBox * vin_calibration_value;
 
   QGroupBox * homing_settings_box;
+  QLabel * auto_homing_label;
+  QCheckBox * auto_homing_check;
   QLabel * homing_speed_towards_label;
   QSpinBox * homing_speed_towards_value;
   QLabel * homing_speed_towards_value_pretty;

@@ -581,6 +581,15 @@ static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings
     tic_settings_set_current_limit_during_error(settings, current_during_error);
   }
 
+  if (firmware_version && firmware_version < 0x0106 &&
+    tic_settings_get_auto_homing(settings))
+  {
+    tic_settings_set_auto_homing(settings, false);
+    tic_sprintf(warnings,
+      "Warning: The firmware version on your device does not support"
+      "auto homing (or homing in general), so it will be disabled.");
+  }
+
   {
     uint32_t max_speed = tic_settings_get_max_speed(settings);
     uint32_t starting_speed = tic_settings_get_starting_speed(settings);

@@ -12,7 +12,8 @@ static void write_buffer_to_settings(const uint8_t * buf, tic_settings * setting
   }
 
   {
-    bool never_sleep = buf[TIC_SETTING_NEVER_SLEEP] & 1;
+    bool never_sleep = buf[TIC_SETTING_OPTIONS_BYTE1] >>
+      TIC_OPTIONS_BYTE1_NEVER_SLEEP & 1;
     tic_settings_set_never_sleep(settings, never_sleep);
   }
 
@@ -341,6 +342,12 @@ static void write_buffer_to_settings(const uint8_t * buf, tic_settings * setting
     const uint8_t * p = buf + TIC_SETTING_MAX_DECEL;
     uint32_t max_decel = p[0] + (p[1] << 8) + (p[2] << 16) + (p[3] << 24);
     tic_settings_set_max_decel(settings, max_decel);
+  }
+
+  {
+    bool auto_homing = buf[TIC_SETTING_OPTIONS_BYTE1] >>
+      TIC_OPTIONS_BYTE1_AUTO_HOMING & 1;
+    tic_settings_set_auto_homing(settings, auto_homing);
   }
 
   {
