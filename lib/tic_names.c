@@ -270,7 +270,6 @@ const tic_name tic_agc_mode_names_ui[] =
 const tic_name tic_motor_driver_error_names_ui[] =
 {
   { "None", TIC_MOTOR_DRIVER_ERROR_NONE },
-  { "Open load", TIC_MOTOR_DRIVER_ERROR_OPEN_LOAD },
   { "Overcurrent", TIC_MOTOR_DRIVER_ERROR_OVERCURRENT },
   { "Overtemperature", TIC_MOTOR_DRIVER_ERROR_OVERTEMPERATURE },
   { NULL, 0 },
