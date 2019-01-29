@@ -481,18 +481,34 @@ void main_window::set_energized(bool energized)
 void main_window::set_limit_active(bool forward_limit_active,
   bool reverse_limit_active)
 {
-  // TODO: use yellow highlighting if limit switches are active
+  // setStyleSheet() is expensive, so only call it if something actually
+  // changed.
+  bool styled = !limit_active_value->styleSheet().isEmpty();
+  bool want_style = false;
+
   if (forward_limit_active && reverse_limit_active) {
     limit_active_value->setText(tr("Both"));
+    want_style = true;
   }
   else if (forward_limit_active) {
     limit_active_value->setText(tr("Forward"));
+    want_style = true;
   }
   else if (reverse_limit_active) {
     limit_active_value->setText(tr("Reverse"));
+    want_style = true;
   }
   else {
     limit_active_value->setText(tr("None"));
+  }
+
+  if (styled && !want_style)
+  {
+    limit_active_value->setStyleSheet("");
+  }
+  if (!styled && want_style)
+  {
+    limit_active_value->setStyleSheet(":enabled { background-color: yellow; }");
   }
 }
 
