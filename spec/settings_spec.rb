@@ -245,8 +245,8 @@ rc_config: default
 current_limit: 200
 current_limit_during_error: -1
 step_mode: 1
-agc_mode: on
-agc_bottom_current_limit: 75
+agc_mode: off
+agc_bottom_current_limit: 80
 agc_current_boost_steps: 5
 agc_frequency_limit: off
 max_speed: 2000000

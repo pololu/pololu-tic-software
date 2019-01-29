@@ -147,9 +147,8 @@ void tic_settings_fill_with_defaults(tic_settings * settings)
 
   if (product == TIC_PRODUCT_T249)
   {
-    tic_settings_set_agc_mode(settings, TIC_AGC_MODE_ON);
     tic_settings_set_agc_bottom_current_limit(settings,
-      TIC_AGC_BOTTOM_CURRENT_LIMIT_75);
+      TIC_AGC_BOTTOM_CURRENT_LIMIT_80);
   }
 
   tic_settings_set_max_speed(settings, 2000000);
