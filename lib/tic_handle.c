@@ -596,6 +596,58 @@ tic_error * tic_set_decay_mode(tic_handle * handle, uint8_t decay_mode)
   return error;
 }
 
+static tic_error * tic_set_agc_option(tic_handle * handle,
+  uint8_t option, uint8_t value)
+{
+  if (handle == NULL)
+  {
+    return tic_error_create("Handle is null.");
+  }
+
+  const tic_device * device = tic_handle_get_device(handle);
+  uint8_t product = tic_device_get_product(device);
+  if (product != TIC_PRODUCT_T249)
+  {
+    return tic_error_create(
+      "This Tic does not support AGC or the commands to configure it.");
+  }
+
+  tic_error * error = NULL;
+
+  uint16_t wValue = ((option & 0x07) << 4) | (value & 0x0F);
+  error = tic_usb_error(libusbp_control_transfer(handle->usb_handle,
+    0x40, TIC_CMD_SET_AGC_OPTION, wValue, 0, NULL, 0, NULL));
+
+  if (error != NULL)
+  {
+    error = tic_error_add(error,
+      "There was an error setting an AGC option (%d,%d).", option, value);
+  }
+
+  return error;
+}
+
+tic_error * tic_set_agc_mode(tic_handle * handle, uint8_t mode)
+{
+  return tic_set_agc_option(handle, TIC_AGC_OPTION_MODE, mode);
+}
+
+tic_error * tic_set_agc_bottom_current_limit(tic_handle * handle, uint8_t limit)
+{
+  return tic_set_agc_option(handle, TIC_AGC_OPTION_BOTTOM_CURRENT_LIMIT, limit);
+}
+
+tic_error * tic_set_agc_current_boost_steps(tic_handle * handle, uint8_t steps)
+{
+  return tic_set_agc_option(handle, TIC_AGC_OPTION_CURRENT_BOOST_STEPS, steps);
+}
+
+tic_error * tic_set_agc_frequency_limit(tic_handle * handle, uint8_t limit)
+{
+  return tic_set_agc_option(handle, TIC_AGC_OPTION_FREQUENCY_LIMIT, limit);
+}
+
+
 tic_error * tic_set_setting_byte(tic_handle * handle,
   uint8_t address, uint8_t byte)
 {

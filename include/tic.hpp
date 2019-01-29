@@ -813,6 +813,30 @@ namespace tic
       throw_if_needed(tic_set_decay_mode(pointer, decay_mode));
     }
 
+    /// Wrapper for tic_set_agc_mode().
+    void set_agc_mode(uint8_t mode)
+    {
+      throw_if_needed(tic_set_agc_mode(pointer, mode));
+    }
+
+    /// Wrapper for tic_set_agc_bottom_current_limit().
+    void set_agc_bottom_current_limit(uint8_t limit)
+    {
+      throw_if_needed(tic_set_agc_bottom_current_limit(pointer, limit));
+    }
+
+    /// Wrapper for tic_set_agc_current_boost_steps().
+    void set_agc_current_boost_steps(uint8_t steps)
+    {
+      throw_if_needed(tic_set_agc_current_boost_steps(pointer, steps));
+    }
+
+    /// Wrapper for tic_set_agc_frequency_limit().
+    void set_agc_frequency_limit(uint8_t limit)
+    {
+      throw_if_needed(tic_set_agc_frequency_limit(pointer, limit));
+    }
+
     /// Wrapper for tic_get_variables().
     variables get_variables(bool clear_errors_occurred = false)
     {

@@ -959,14 +959,18 @@ uint8_t tic_settings_get_decay_mode(const tic_settings *);
 
 /// Sets the AGC mode.  The argument should be TIC_AGC_MODE_OFF,
 /// TIC_AGC_MODE_ON, or TIC_AGC_MODE_ACTIVE_OFF.
+///
+/// This setting is only valid for the Tic T249.
 TIC_API
-void tic_settings_set_agc_mode(tic_settings *, uint8_t);
+void tic_settings_set_agc_mode(tic_settings *, uint8_t mode);
 
 /// Gets the AGC mode described in tic_settings_set_agc_mode().
 TIC_API
 uint8_t tic_settings_get_agc_mode(const tic_settings *);
 
-/// Sets the AGC bottom current limit.  The argument should be one of:
+/// Sets the AGC bottom current limit.
+///
+/// The limit argument should be one of:
 /// - TIC_AGC_BOTTOM_CURRENT_LIMIT_45
 /// - TIC_AGC_BOTTOM_CURRENT_LIMIT_50
 /// - TIC_AGC_BOTTOM_CURRENT_LIMIT_55
@@ -975,34 +979,44 @@ uint8_t tic_settings_get_agc_mode(const tic_settings *);
 /// - TIC_AGC_BOTTOM_CURRENT_LIMIT_70
 /// - TIC_AGC_BOTTOM_CURRENT_LIMIT_75
 /// - TIC_AGC_BOTTOM_CURRENT_LIMIT_80
+///
+/// This setting is only valid for the Tic T249.
 TIC_API
-void tic_settings_set_agc_bottom_current_limit(tic_settings *, uint8_t);
+void tic_settings_set_agc_bottom_current_limit(tic_settings *, uint8_t limit);
 
 /// Gets the AGC bottom current limit described in
 /// tic_settings_set_agc_bottom_current_limit().
 TIC_API
 uint8_t tic_settings_get_agc_bottom_current_limit(const tic_settings *);
 
-/// Sets the AGC current boost steps.  The argument should be one of:
+/// Sets the AGC current boost steps.
+///
+/// The steps argument should be one of:
 /// - TIC_AGC_CURRENT_BOOST_STEPS_5
 /// - TIC_AGC_CURRENT_BOOST_STEPS_7
 /// - TIC_AGC_CURRENT_BOOST_STEPS_9
 /// - TIC_AGC_CURRENT_BOOST_STEPS_11
+///
+/// This setting is only valid for the Tic T249.
 TIC_API
-void tic_settings_set_agc_current_boost_steps(tic_settings *, uint8_t);
+void tic_settings_set_agc_current_boost_steps(tic_settings *, uint8_t steps);
 
 /// Gets the AGC current boost steps described in
 /// tic_settings_set_agc_current_boost_steps().
 TIC_API
 uint8_t tic_settings_get_agc_current_boost_steps(const tic_settings *);
 
-/// Sets the AGC frequency limit.  The argument should be one of:
+/// Sets the AGC frequency limit.
+///
+/// The limit argument should be one of:
 /// - TIC_AGC_FREQUENCY_LIMIT_OFF
 /// - TIC_AGC_FREQUENCY_LIMIT_225
 /// - TIC_AGC_FREQUENCY_LIMIT_450
 /// - TIC_AGC_FREQUENCY_LIMIT_675
+///
+/// This setting is only valid for the Tic T249.
 TIC_API
-void tic_settings_set_agc_frequency_limit(tic_settings *, uint8_t);
+void tic_settings_set_agc_frequency_limit(tic_settings *, uint8_t limit);
 
 /// Gets the AGC frequency limit described in
 /// tic_settings_set_agc_frequency_limit().
@@ -1784,6 +1798,75 @@ tic_error * tic_set_current_limit_code(tic_handle *, uint8_t current_limit);
 /// permanently, see tic_settings_set_decay_mode().
 TIC_API TIC_WARN_UNUSED
 tic_error * tic_set_decay_mode(tic_handle *, uint8_t decay_mode);
+
+/// Temporarily sets the AGC mode.
+///
+/// The mode argument should be TIC_AGC_MODE_OFF, TIC_AGC_MODE_ON, or
+/// TIC_AGC_MODE_ACTIVE_OFF.
+///
+/// This function sends a "Set AGC option" command to the Tic.  This option
+/// will stay in effect until the Tic is powered off, reset, or reinitialized,
+/// or another "Set AGC option" command changes it.  If you want a permanent
+/// effect, see tic_settings_set_agc_mode().
+///
+/// This command is only valid for the Tic T249.
+TIC_API TIC_WARN_UNUSED
+tic_error * tic_set_agc_mode(tic_handle *, uint8_t mode);
+
+/// Temporarily sets the AGC bottom current limit.
+///
+/// The limit argument should be one of:
+/// - TIC_AGC_BOTTOM_CURRENT_LIMIT_45
+/// - TIC_AGC_BOTTOM_CURRENT_LIMIT_50
+/// - TIC_AGC_BOTTOM_CURRENT_LIMIT_55
+/// - TIC_AGC_BOTTOM_CURRENT_LIMIT_60
+/// - TIC_AGC_BOTTOM_CURRENT_LIMIT_65
+/// - TIC_AGC_BOTTOM_CURRENT_LIMIT_70
+/// - TIC_AGC_BOTTOM_CURRENT_LIMIT_75
+/// - TIC_AGC_BOTTOM_CURRENT_LIMIT_80
+///
+/// This function sends a "Set AGC option" command to the Tic.  This option
+/// will stay in effect until the Tic is powered off, reset, or reinitialized,
+/// or another "Set AGC option" command changes it.  If you want a permanent
+/// effect, see tic_settings_set_agc_bottom_current_limit().
+///
+/// This command is only valid for the Tic T249.
+TIC_API TIC_WARN_UNUSED
+tic_error * tic_set_agc_bottom_current_limit(tic_handle *, uint8_t limit);
+
+/// Sets the AGC current boost steps.
+///
+/// The steps argument should be one of:
+/// - TIC_AGC_CURRENT_BOOST_STEPS_5
+/// - TIC_AGC_CURRENT_BOOST_STEPS_7
+/// - TIC_AGC_CURRENT_BOOST_STEPS_9
+/// - TIC_AGC_CURRENT_BOOST_STEPS_11
+///
+/// This function sends a "Set AGC option" command to the Tic.  This option
+/// will stay in effect until the Tic is powered off, reset, or reinitialized,
+/// or another "Set AGC option" command changes it.  If you want a permanent
+/// effect, see tic_settings_set_agc_current_boost_steps().
+///
+/// This command is only valid for the Tic T249.
+TIC_API TIC_WARN_UNUSED
+tic_error * tic_set_agc_current_boost_steps(tic_handle *, uint8_t steps);
+
+/// Temporarily sets the AGC frequency limit.
+///
+/// The limit argument should be one of:
+/// - TIC_AGC_FREQUENCY_LIMIT_OFF
+/// - TIC_AGC_FREQUENCY_LIMIT_225
+/// - TIC_AGC_FREQUENCY_LIMIT_450
+/// - TIC_AGC_FREQUENCY_LIMIT_675
+///
+/// This function sends a "Set AGC option" command to the Tic.  This option
+/// will stay in effect until the Tic is powered off, reset, or reinitialized,
+/// or another "Set AGC option" command changes it.  If you want a permanent
+/// effect, see tic_settings_set_agc_frequency_limit().
+///
+/// This command is only valid for the Tic T249.
+TIC_API TIC_WARN_UNUSED
+tic_error * tic_set_agc_frequency_limit(tic_handle *, uint8_t limit);
 
 /// Reads all of the Tic's status variables and returns them as an object.
 ///

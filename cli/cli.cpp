@@ -42,6 +42,15 @@ static const char help[] =
   "                               Tic T825/N825: mixed, slow, or fast\n"
   "                               T834: slow, mixed25, mixed50, mixed75, or fast\n"
   "\n"
+  "Temporary settings for AGC on the Tic T249:\n"
+  "  --agc-mode MODE                    Set AGC mode: on, off, active_off\n"
+  "  --agc-bottom-current-limit LIMIT   Set AGC bottom current limit %:\n"
+  "                                     45, 50, 55, 60, 65, 70, 75, or 80.\n"
+  "  --agc-current-boost-steps STEPS    Set AGC current boost steps:\n"
+  "                                     5, 7, 9, or 11.\n"
+  "  --agc-frequency-limit LIMIT        Set AGC frequency limit in Hz:\n"
+  "                                     off, 225, 450, or 675.\n"
+  "\n"
   "Permanent settings:\n"
   "  --restore-defaults           Restore device's factory settings\n"
   "  --settings FILE              Load settings file into device.\n"
@@ -120,6 +129,18 @@ struct arguments
   bool set_decay_mode = false;
   uint8_t decay_mode;
 
+  bool set_agc_mode = false;
+  uint8_t agc_mode;
+
+  bool set_agc_bottom_current_limit = false;
+  uint8_t agc_bottom_current_limit;
+
+  bool set_agc_current_boost_steps = false;
+  uint8_t agc_current_boost_steps;
+
+  bool set_agc_frequency_limit = false;
+  uint8_t agc_frequency_limit;
+
   bool restore_defaults = false;
 
   bool set_settings = false;
@@ -161,6 +182,10 @@ struct arguments
       set_step_mode ||
       set_current_limit ||
       set_decay_mode ||
+      set_agc_mode ||
+      set_agc_bottom_current_limit ||
+      set_agc_current_boost_steps ||
+      set_agc_frequency_limit ||
       restore_defaults ||
       set_settings ||
       get_settings ||
@@ -272,6 +297,122 @@ static uint8_t parse_arg_decay_mode(arg_reader & arg_reader)
   }
 
   return code;
+}
+
+static uint8_t parse_arg_agc_mode(arg_reader & arg_reader)
+{
+  std::string str = parse_arg_string(arg_reader);
+  if (str == "on")
+  {
+    return TIC_AGC_MODE_ON;
+  }
+  else if (str == "off")
+  {
+    return TIC_AGC_MODE_OFF;
+  }
+  else if (str == "active_off")
+  {
+    return TIC_AGC_MODE_ACTIVE_OFF;
+  }
+  else
+  {
+    throw exception_with_exit_code(EXIT_BAD_ARGS,
+      "The AGC mode specified is invalid.");
+  }
+}
+
+static uint8_t parse_arg_agc_bottom_current_limit(arg_reader & arg_reader)
+{
+  std::string str = parse_arg_string(arg_reader);
+  if (str == "45")
+  {
+    return TIC_AGC_BOTTOM_CURRENT_LIMIT_45;
+  }
+  else if (str == "50")
+  {
+    return TIC_AGC_BOTTOM_CURRENT_LIMIT_50;
+  }
+  else if (str == "55")
+  {
+    return TIC_AGC_BOTTOM_CURRENT_LIMIT_55;
+  }
+  else if (str == "60")
+  {
+    return TIC_AGC_BOTTOM_CURRENT_LIMIT_60;
+  }
+  else if (str == "65")
+  {
+    return TIC_AGC_BOTTOM_CURRENT_LIMIT_65;
+  }
+  else if (str == "70")
+  {
+    return TIC_AGC_BOTTOM_CURRENT_LIMIT_70;
+  }
+  else if (str == "75")
+  {
+    return TIC_AGC_BOTTOM_CURRENT_LIMIT_75;
+  }
+  else if (str == "80")
+  {
+    return TIC_AGC_BOTTOM_CURRENT_LIMIT_80;
+  }
+  else
+  {
+    throw exception_with_exit_code(EXIT_BAD_ARGS,
+      "The AGC bottom current limit specified is invalid.");
+  }
+}
+
+static uint8_t parse_arg_agc_current_boost_steps(arg_reader & arg_reader)
+{
+  std::string str = parse_arg_string(arg_reader);
+  if (str == "5")
+  {
+    return TIC_AGC_CURRENT_BOOST_STEPS_5;
+  }
+  else if (str == "7")
+  {
+    return TIC_AGC_CURRENT_BOOST_STEPS_7;
+  }
+  else if (str == "9")
+  {
+    return TIC_AGC_CURRENT_BOOST_STEPS_9;
+  }
+  else if (str == "11")
+  {
+    return TIC_AGC_CURRENT_BOOST_STEPS_11;
+  }
+  else
+  {
+    throw exception_with_exit_code(EXIT_BAD_ARGS,
+      "The AGC current boost steps number specified is invalid.");
+  }
+}
+
+static uint8_t parse_arg_agc_frequency_limit(arg_reader & arg_reader)
+{
+  std::string str = parse_arg_string(arg_reader);
+  if (str == "off")
+  {
+    return TIC_AGC_FREQUENCY_LIMIT_OFF;
+  }
+  else if (str == "225")
+  {
+    return TIC_AGC_FREQUENCY_LIMIT_225;
+  }
+  else if (str == "450")
+  {
+    return TIC_AGC_FREQUENCY_LIMIT_450;
+  }
+  else if (str == "675")
+  {
+    return TIC_AGC_FREQUENCY_LIMIT_675;
+  }
+  else
+  {
+    throw exception_with_exit_code(EXIT_BAD_ARGS,
+      "The AGC freuqency limit specified is invalid.");
+  }
 }
 
 static uint8_t parse_arg_homing_direction(arg_reader & arg_reader)
@@ -441,6 +582,26 @@ static arguments parse_args(int argc, char ** argv)
     {
       args.set_decay_mode = true;
       args.decay_mode = parse_arg_decay_mode(arg_reader);
+    }
+    else if (arg == "--agc-mode")
+    {
+      args.set_agc_mode = true;
+      args.agc_mode = parse_arg_agc_mode(arg_reader);
+    }
+    else if (arg == "--agc-bottom-current-limit")
+    {
+      args.set_agc_bottom_current_limit = true;
+      args.agc_bottom_current_limit = parse_arg_agc_bottom_current_limit(arg_reader);
+    }
+    else if (arg == "--agc-current-boost-steps")
+    {
+      args.set_agc_current_boost_steps = true;
+      args.agc_current_boost_steps = parse_arg_agc_current_boost_steps(arg_reader);
+    }
+    else if (arg == "--agc-frequency-limit")
+    {
+      args.set_agc_frequency_limit = true;
+      args.agc_frequency_limit = parse_arg_agc_frequency_limit(arg_reader);
     }
     else if (arg == "--restore-defaults" || arg == "--restoredefaults")
     {
@@ -842,6 +1003,26 @@ static void run(const arguments & args)
   if (args.set_decay_mode)
   {
     handle(selector).set_decay_mode(args.decay_mode);
+  }
+
+  if (args.set_agc_mode)
+  {
+    handle(selector).set_agc_mode(args.agc_mode);
+  }
+
+  if (args.set_agc_bottom_current_limit)
+  {
+    handle(selector).set_agc_bottom_current_limit(args.agc_bottom_current_limit);
+  }
+
+  if (args.set_agc_current_boost_steps)
+  {
+    handle(selector).set_agc_current_boost_steps(args.agc_current_boost_steps);
+  }
+
+  if (args.set_agc_frequency_limit)
+  {
+    handle(selector).set_agc_frequency_limit(args.agc_frequency_limit);
   }
 
   if (args.clear_driver_error)
