@@ -973,6 +973,13 @@ void main_window::set_vin_calibration(int16_t vin_calibration)
 void main_window::set_auto_homing(bool auto_homing)
 {
   set_check_box(auto_homing_check, auto_homing);
+  auto_homing_direction_label->setEnabled(auto_homing);
+  auto_homing_direction_value->setEnabled(auto_homing);
+}
+
+void main_window::set_auto_homing_forward(bool forward)
+{
+  set_combo(auto_homing_direction_value, forward);
 }
 
 void main_window::set_homing_speed_towards(uint32_t speed)
@@ -1804,6 +1811,13 @@ void main_window::on_auto_homing_check_stateChanged(int state)
 {
   if (suppress_events) { return; }
   controller->handle_auto_homing_input(state == Qt::Checked);
+}
+
+void main_window::on_auto_homing_direction_value_currentIndexChanged(int index)
+{
+  if (suppress_events) { return; }
+  bool forward = auto_homing_direction_value->itemData(index).toUInt();
+  controller->handle_auto_homing_forward_input(forward);
 }
 
 void main_window::on_homing_speed_towards_value_valueChanged(int value)
@@ -3392,6 +3406,18 @@ QWidget * main_window::setup_homing_settings_box()
   }
 
   {
+    auto_homing_direction_value = new QComboBox();
+    auto_homing_direction_value->setObjectName("auto_homing_direction_value");
+    auto_homing_direction_value->addItem("Reverse", 0);
+    auto_homing_direction_value->addItem("Forward", 1);
+    auto_homing_direction_label = new QLabel();
+    auto_homing_direction_label->setBuddy(auto_homing_direction_value);
+    layout->addWidget(auto_homing_direction_label, row, 0, FIELD_LABEL_ALIGNMENT);
+    layout->addWidget(auto_homing_direction_value, row, 1, Qt::AlignLeft);
+    row++;
+  }
+
+  {
     homing_speed_towards_value = new QSpinBox();
     homing_speed_towards_value->setObjectName("homing_speed_towards_value");
     homing_speed_towards_value->setRange(0, TIC_MAX_ALLOWED_SPEED);
@@ -3659,7 +3685,8 @@ void main_window::retranslate()
   vin_calibration_label->setText(tr("VIN measurement calibration:"));
 
   homing_settings_box->setTitle(tr("Homing"));
-  auto_homing_check->setText(tr("Automatic homing"));
+  auto_homing_check->setText(tr("Enable automatic homing"));
+  auto_homing_direction_label->setText(tr("Automatic homing direction:"));
   homing_speed_towards_label->setText(tr("Homing speed towards:"));
   homing_speed_away_label->setText(tr("Homing speed away:"));
 

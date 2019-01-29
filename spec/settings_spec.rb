@@ -47,6 +47,8 @@ max_speed: 2000000
 starting_speed: 0
 max_accel: 40000
 max_decel: 0
+auto_homing: false
+auto_homing_forward: false
 homing_speed_towards: 1000000
 homing_speed_away: 500000
 invert_motor_direction: false
@@ -98,6 +100,8 @@ max_speed: 2000000
 starting_speed: 0
 max_accel: 40000
 max_decel: 0
+auto_homing: false
+auto_homing_forward: false
 homing_speed_towards: 1000000
 homing_speed_away: 500000
 invert_motor_direction: false
@@ -148,6 +152,8 @@ max_speed: 2000000
 starting_speed: 0
 max_accel: 40000
 max_decel: 0
+auto_homing: false
+auto_homing_forward: false
 homing_speed_towards: 1000000
 homing_speed_away: 500000
 invert_motor_direction: false
@@ -199,6 +205,8 @@ max_speed: 2000000
 starting_speed: 0
 max_accel: 40000
 max_decel: 0
+auto_homing: false
+auto_homing_forward: false
 homing_speed_towards: 1000000
 homing_speed_away: 500000
 invert_motor_direction: false
@@ -253,6 +261,8 @@ max_speed: 2000000
 starting_speed: 0
 max_accel: 40000
 max_decel: 0
+auto_homing: false
+auto_homing_forward: false
 homing_speed_towards: 1000000
 homing_speed_away: 500000
 invert_motor_direction: false
@@ -306,6 +316,8 @@ max_speed: 234567890
 starting_speed: 10000
 max_accel: 934567820
 max_decel: 734567890
+auto_homing: true
+auto_homing_forward: true
 homing_speed_towards: 123456789
 homing_speed_away: 90876722
 invert_motor_direction: true
@@ -357,6 +369,8 @@ max_speed: 234567890
 starting_speed: 10000
 max_accel: 934567820
 max_decel: 734567890
+auto_homing: true
+auto_homing_forward: true
 homing_speed_towards: 123456789
 homing_speed_away: 90876722
 invert_motor_direction: true
@@ -407,6 +421,8 @@ max_speed: 234567890
 starting_speed: 10000
 max_accel: 934567820
 max_decel: 734567890
+auto_homing: true
+auto_homing_forward: true
 homing_speed_towards: 123456789
 homing_speed_away: 90876722
 invert_motor_direction: true
@@ -458,6 +474,8 @@ max_speed: 234567890
 starting_speed: 10000
 max_accel: 934567820
 max_decel: 734567890
+auto_homing: true
+auto_homing_forward: true
 homing_speed_towards: 123456789
 homing_speed_away: 90876722
 invert_motor_direction: true
@@ -512,6 +530,8 @@ max_speed: 234567890
 starting_speed: 10000
 max_accel: 934567820
 max_decel: 734567890
+auto_homing: true
+auto_homing_forward: true
 homing_speed_towards: 123456789
 homing_speed_away: 90876722
 invert_motor_direction: true

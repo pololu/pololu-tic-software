@@ -239,6 +239,7 @@ public:
   void set_vin_calibration(int16_t vin_calibration);
 
   void set_auto_homing(bool auto_homing);
+  void set_auto_homing_forward(bool forward);
   void set_homing_speed_towards(uint32_t speed);
   void set_homing_speed_away(uint32_t speed);
 
@@ -370,6 +371,7 @@ private slots:
   void on_vin_calibration_value_valueChanged(int value);
 
   void on_auto_homing_check_stateChanged(int state);
+  void on_auto_homing_direction_value_currentIndexChanged(int index);
   void on_homing_speed_towards_value_valueChanged(int value);
   void on_homing_speed_away_value_valueChanged(int value);
 
@@ -683,6 +685,8 @@ private:
   QGroupBox * homing_settings_box;
   QLabel * auto_homing_label;
   QCheckBox * auto_homing_check;
+  QLabel * auto_homing_direction_label;
+  QComboBox * auto_homing_direction_value;
   QLabel * homing_speed_towards_label;
   QSpinBox * homing_speed_towards_value;
   QLabel * homing_speed_towards_value_pretty;

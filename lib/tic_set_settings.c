@@ -318,6 +318,10 @@ static void tic_write_settings_to_buffer(const tic_settings * settings, uint8_t 
     (tic_settings_get_auto_homing(settings) & 1) <<
     TIC_OPTIONS_BYTE1_AUTO_HOMING;
 
+  buf[TIC_SETTING_OPTIONS_BYTE1] |=
+    (tic_settings_get_auto_homing_forward(settings) & 1) <<
+    TIC_OPTIONS_BYTE1_AUTO_HOMING_FORWARD;
+
   {
     uint32_t speed = tic_settings_get_homing_speed_towards(settings);
     buf[TIC_SETTING_HOMING_SPEED_TOWARDS + 0] = speed >> 0 & 0xFF;

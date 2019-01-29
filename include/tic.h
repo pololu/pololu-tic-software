@@ -1083,6 +1083,8 @@ void tic_settings_set_max_decel(tic_settings *, uint32_t);
 TIC_API
 uint32_t tic_settings_get_max_decel(const tic_settings *);
 
+/// Sets the "Enable automatic homing" setting.
+///
 /// If true, the Tic will do the homing procedure whenever it is in normal
 /// operation mode, trying to get to a target position, and the position
 /// uncertain flag is set.  This setting was added in firmware version 1.06.
@@ -1092,6 +1094,19 @@ void tic_settings_set_auto_homing(tic_settings *, bool);
 /// Gets the setting described in tic_settings_set_auto_homing().
 TIC_API
 bool tic_settings_get_auto_homing(const tic_settings *);
+
+/// Sets the auto homing forward setting, also known as
+/// "Automatic homing direction" in the GUI.
+///
+/// If true, the primary direction that the Tic moves during the auto-homing
+/// procedure will be forward.  Otherwise, it will be reverse.
+TIC_API
+void tic_settings_set_auto_homing_forward(tic_settings *, bool);
+
+/// Gets the auto homing forward setting described in
+/// tic_settings_set_auto_homing_forward().
+TIC_API
+bool tic_settings_get_auto_homing_forward(const tic_settings *);
 
 /// Sets the speed to use while moving towards a limit switch during homing,
 /// in microsteps per 10000 seconds.

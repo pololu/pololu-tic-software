@@ -588,6 +588,9 @@ static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings
     tic_sprintf(warnings,
       "Warning: The firmware version on your device does not support"
       "auto homing (or homing in general), so it will be disabled.");
+
+    // Note: It would also be nice to check that the user has enabled proper
+    // limit switches and disable auto homing if needed.
   }
 
   {

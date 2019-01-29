@@ -721,6 +721,15 @@ static tic_error * apply_string_pair(tic_settings * settings,
     }
     tic_settings_set_auto_homing(settings, auto_homing);
   }
+  else if (!strcmp(key, "auto_homing_forward"))
+  {
+    uint32_t forward;
+    if (!tic_name_to_code(tic_bool_names, value, &forward))
+    {
+      return tic_error_create("Unrecognized auto_homing_forward value.");
+    }
+    tic_settings_set_auto_homing_forward(settings, forward);
+  }
   else if (!strcmp(key, "homing_speed_towards"))
   {
     int64_t speed;

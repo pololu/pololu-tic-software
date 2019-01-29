@@ -165,7 +165,7 @@ const tic_name tic_step_mode_names[] =
 {
   { "1", TIC_STEP_MODE_MICROSTEP1 },
   { "2", TIC_STEP_MODE_MICROSTEP2 },
-  { "2_100", TIC_STEP_MODE_MICROSTEP2_100 },
+  { "2_100", TIC_STEP_MODE_MICROSTEP2_100 },  // TODO: use something else, YAML treats this as 2100
   { "4", TIC_STEP_MODE_MICROSTEP4 },
   { "8", TIC_STEP_MODE_MICROSTEP8 },
   { "16", TIC_STEP_MODE_MICROSTEP16 },

@@ -351,6 +351,12 @@ static void write_buffer_to_settings(const uint8_t * buf, tic_settings * setting
   }
 
   {
+    bool forward = buf[TIC_SETTING_OPTIONS_BYTE1] >>
+      TIC_OPTIONS_BYTE1_AUTO_HOMING_FORWARD & 1;
+    tic_settings_set_auto_homing_forward(settings, forward);
+  }
+
+  {
     const uint8_t * p = buf + TIC_SETTING_HOMING_SPEED_TOWARDS;
     uint32_t speed = p[0] + (p[1] << 8) + (p[2] << 16) + (p[3] << 24);
     tic_settings_set_homing_speed_towards(settings, speed);
