@@ -235,7 +235,7 @@ void main_window::adjust_ui_for_product(uint8_t product)
 
   case TIC_PRODUCT_T249:
     set_combo_items(step_mode_value,
-      { { "Full step", TIC_STEP_MODE_MICROSTEP1 },
+      { { "Full step 100%", TIC_STEP_MODE_MICROSTEP1 },
         { "1/2 step", TIC_STEP_MODE_MICROSTEP2 },
         { "1/2 step 100%", TIC_STEP_MODE_MICROSTEP2_100 },
         { "1/4 step", TIC_STEP_MODE_MICROSTEP4 },
