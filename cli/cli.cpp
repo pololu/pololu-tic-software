@@ -35,7 +35,8 @@ static const char help[] =
   "  --starting-speed NUM         Set the starting speed.\n"
   "  --max-accel NUM              Set the acceleration limit.\n"
   "  --max-decel NUM              Set the deceleration limit.\n"
-  "  --step-mode MODE             Set step mode: full, half, 1, 2, 4, 8, 16, 32.\n"
+  "  --step-mode MODE             Set step mode: full, half, 1, 2, 2_100, 4, 8,\n"
+  "                               16, 32.\n"
   "  --current NUM                Set the current limit in mA.\n"
   "  --decay MODE                 Set decay mode:\n"
   "                               Tic T825/N825: mixed, slow, or fast\n"
@@ -229,6 +230,10 @@ static uint8_t parse_arg_step_mode(arg_reader & arg_reader)
   else if (mode_str == "2" || mode_str == "half" || mode_str == "1/2 step")
   {
     return TIC_STEP_MODE_MICROSTEP2;
+  }
+  else if (mode_str == "2_100")
+  {
+    return TIC_STEP_MODE_MICROSTEP2_100;
   }
   else if (mode_str == "4" || mode_str == "1/4 step")
   {
