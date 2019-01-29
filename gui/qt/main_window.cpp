@@ -884,6 +884,13 @@ void main_window::set_decay_mode(uint8_t decay_mode)
 void main_window::set_agc_mode(uint8_t mode)
 {
   set_combo(agc_mode_value, mode);
+
+  // Note: Maybe this is ugly because it depends on the controller calling this
+  // function whenever the AGC mode setting changes.
+  bool agc_on = mode == TIC_AGC_MODE_ON;
+  agc_bottom_current_limit_value->setEnabled(agc_on);
+  agc_current_boost_steps_value->setEnabled(agc_on);
+  agc_frequency_limit_value->setEnabled(agc_on);
 }
 
 void main_window::set_agc_bottom_current_limit(uint8_t limit)
@@ -973,6 +980,9 @@ void main_window::set_vin_calibration(int16_t vin_calibration)
 void main_window::set_auto_homing(bool auto_homing)
 {
   set_check_box(auto_homing_check, auto_homing);
+
+  // Note: Maybe this is ugly because it depends on the controller calling this
+  // function whenever the auto_homing_check is changed.
   auto_homing_direction_label->setEnabled(auto_homing);
   auto_homing_direction_value->setEnabled(auto_homing);
 }
@@ -1715,11 +1725,6 @@ void main_window::on_agc_mode_value_currentIndexChanged(int index)
   if (suppress_events) { return; }
   uint8_t mode = agc_mode_value->itemData(index).toUInt();
   controller->handle_agc_mode_input(mode);
-
-  bool agc_on = mode == TIC_AGC_MODE_ON;
-  agc_bottom_current_limit_value->setEnabled(agc_on);
-  agc_current_boost_steps_value->setEnabled(agc_on);
-  agc_frequency_limit_value->setEnabled(agc_on);
 }
 
 void main_window::on_agc_bottom_current_limit_value_currentIndexChanged(int index)
