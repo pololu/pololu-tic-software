@@ -519,8 +519,8 @@ sda_config: kill_switch analog
 tx_config: kill_switch pullup analog
 rx_config: serial
 rc_config: rc pullup
-current_limit: 384
-current_limit_during_error: 96
+current_limit: 360
+current_limit_during_error: 80
 step_mode: 32
 agc_mode: active_off
 agc_bottom_current_limit: 50
@@ -875,9 +875,9 @@ def test_cases_for_settings_fix(product)
   end
 
   if product == :T249
-    cases << [ { 'step_mode' => '2_100' }, {}]
+    cases << [ { 'step_mode' => '2_100p' }, {}]
   else
-    cases << [ { 'step_mode' => '2_100' },
+    cases << [ { 'step_mode' => '2_100p' },
                { 'step_mode' => 1 },
                "Warning: The step mode is invalid " \
                "so it will be changed to 1 (full step).\n" ]

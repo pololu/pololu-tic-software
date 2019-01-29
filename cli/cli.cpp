@@ -35,7 +35,7 @@ static const char help[] =
   "  --starting-speed NUM         Set the starting speed.\n"
   "  --max-accel NUM              Set the acceleration limit.\n"
   "  --max-decel NUM              Set the deceleration limit.\n"
-  "  --step-mode MODE             Set step mode: full, half, 1, 2, 2_100, 4, 8,\n"
+  "  --step-mode MODE             Set step mode: full, half, 1, 2, 2_100p, 4, 8,\n"
   "                               16, 32.\n"
   "  --current NUM                Set the current limit in mA.\n"
   "  --decay MODE                 Set decay mode:\n"
@@ -256,9 +256,9 @@ static uint8_t parse_arg_step_mode(arg_reader & arg_reader)
   {
     return TIC_STEP_MODE_MICROSTEP2;
   }
-  else if (mode_str == "2_100")
+  else if (mode_str == "2_100p")
   {
-    return TIC_STEP_MODE_MICROSTEP2_100;
+    return TIC_STEP_MODE_MICROSTEP2_100P;
   }
   else if (mode_str == "4" || mode_str == "1/4 step")
   {
