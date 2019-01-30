@@ -5,6 +5,7 @@
 
 #include "BallScrollBar.h"
 #include "current_spin_box.h"
+#include "elided_label.h"
 
 #include <QApplication>
 #include <QButtonGroup>
@@ -317,6 +318,9 @@ void main_window::set_apply_settings_enabled(bool enabled)
 {
   apply_settings_button->setEnabled(enabled);
   apply_settings_action->setEnabled(enabled);
+  apply_settings_label->setVisible(enabled);
+  apply_settings_button->setToolTip(
+    enabled ? apply_settings_label->toolTip() : "");
 }
 
 void main_window::set_open_save_settings_enabled(bool enabled)
@@ -3522,51 +3526,33 @@ QWidget * main_window::setup_homing_settings_box()
 
 QLayout * main_window::setup_footer()
 {
+  deenergize_button = new QPushButton();
+  deenergize_button->setObjectName("deenergize_button");
+  deenergize_button->setStyleSheet(":enabled { background-color: red; "
+    "color: white; font-weight: bold; }");
+
+  resume_button = new QPushButton();
+  resume_button->setObjectName("resume_button");
+  resume_button->setStyleSheet(":enabled { background-color: green; "
+    "color: white; font-weight: bold; }");
+
+  motor_status_value = new elided_label();
+
+  apply_settings_label = new QLabel();
+  apply_settings_label->setStyleSheet("QLabel { color: #1f2f93; }");
+
+  apply_settings_button = new QPushButton();
+  connect(apply_settings_button, SIGNAL(clicked()),
+    apply_settings_action, SLOT(trigger()));
+  set_apply_settings_button_stylesheet(0);
+
   QHBoxLayout * layout = footer_layout = new QHBoxLayout();
-
-  {
-    deenergize_button = new QPushButton();
-    deenergize_button->setObjectName("deenergize_button");
-    deenergize_button->setStyleSheet(":enabled { background-color: red; "
-      "color: white; font-weight: bold; }");
-    layout->addWidget(deenergize_button);
-  }
-
-  {
-    resume_button = new QPushButton();
-    resume_button->setObjectName("resume_button");
-    resume_button->setStyleSheet(":enabled { background-color: green; "
-      "color: white; font-weight: bold; }");
-    layout->addWidget(resume_button);
-  }
-
-  {
-    motor_status_value = new QLabel();
-    {
-      QLabel tmp_label;
-      tmp_label.setText("Motor de-energized because of motor driver error "
-        "(probably low VIN).");
-      uint32_t width = tmp_label.sizeHint().width();
-      tmp_label.setText("Motor moving to error position because of "
-        "Safe Start Violation.  Center the input.");
-      uint32_t width2 = tmp_label.sizeHint().width();
-      if (width2 > width) { width = width2; }
-      motor_status_value->setMinimumWidth(width);
-    }
-    layout->addWidget(motor_status_value);
-  }
-
-  layout->addStretch(1);
-
-  {
-    apply_settings_button = new QPushButton();
-    connect(apply_settings_button, SIGNAL(clicked()),
-      this, SLOT(on_apply_settings_action_triggered()));
-    set_apply_settings_button_stylesheet(0);
-    layout->addWidget(apply_settings_button);
-  }
-
-  return footer_layout;
+  layout->addWidget(deenergize_button,0, Qt::AlignLeft);
+  layout->addWidget(resume_button, 0, Qt::AlignLeft);
+  layout->addWidget(motor_status_value, 1);
+  layout->addWidget(apply_settings_label, 0, Qt::AlignRight);
+  layout->addWidget(apply_settings_button, 0, Qt::AlignRight);
+  return layout;
 }
 
 void main_window::retranslate()
@@ -3764,6 +3750,10 @@ void main_window::retranslate()
 
   deenergize_button->setText(tr("De-ener&gize"));
   resume_button->setText(tr("&Resume"));
+  apply_settings_label->setText(tr("There are unapplied changes."));
+  apply_settings_label->setToolTip(tr(
+    "You changed some settings but have not saved them to your device yet."
+  ));
   apply_settings_button->setText(apply_settings_action->text());
 }
 
