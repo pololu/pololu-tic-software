@@ -8,12 +8,13 @@ p00B2="Pololu Tic T825 Bootloader"
 p00B4="Pololu Tic T834 Bootloader"
 p00BC="Pololu Tic T500 Bootloader"
 p00C2="Pololu Tic N825 Bootloader"
+p00C8="Pololu Tic T249 Bootloader"
 
 [DefaultInstall]
 CopyINF=tic-bootloader.inf
 
 [Version]
-DriverVer=05/02/2018,1.3.0
+DriverVer=12/21/2018,1.4.0
 Signature=$Windows NT$
 Class=USBDevice
 ClassGuid={88BAE032-5A81-49F0-BC3D-A4FF138216D6}
@@ -40,18 +41,21 @@ HKR,,Configurable,,1
 %p00B4%=DriverInstall, USB\VID_1FFB&PID_00B4
 %p00BC%=DriverInstall, USB\VID_1FFB&PID_00BC
 %p00C2%=DriverInstall, USB\VID_1FFB&PID_00C2
+%p00C8%=DriverInstall, USB\VID_1FFB&PID_00C8
 
 [Models.NTamd64]
 %p00B2%=DriverInstall, USB\VID_1FFB&PID_00B2
 %p00B4%=DriverInstall, USB\VID_1FFB&PID_00B4
 %p00BC%=DriverInstall, USB\VID_1FFB&PID_00BC
 %p00C2%=DriverInstall, USB\VID_1FFB&PID_00C2
+%p00C8%=DriverInstall, USB\VID_1FFB&PID_00C8
 
 [Models.NTarm]
 %p00B2%=DriverInstall, USB\VID_1FFB&PID_00B2
 %p00B4%=DriverInstall, USB\VID_1FFB&PID_00B4
 %p00BC%=DriverInstall, USB\VID_1FFB&PID_00BC
 %p00C2%=DriverInstall, USB\VID_1FFB&PID_00C2
+%p00C8%=DriverInstall, USB\VID_1FFB&PID_00C8
 
 [DriverInstall]
 Include=Winusb.inf
