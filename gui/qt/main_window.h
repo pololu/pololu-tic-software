@@ -182,6 +182,9 @@ public:
   void set_manual_target_ball_position(int32_t current_position, bool on_target);
   void set_manual_target_ball_velocity(int32_t current_velocity, bool on_target);
 
+  void set_apply_settings_button_stylesheet(int offset);
+  void animate_apply_settings_button();
+
   // [all-settings]
 
   void set_control_mode(uint8_t control_mode);
@@ -702,6 +705,7 @@ private:
   QPushButton * resume_button;
   QLabel * motor_status_value;
   QPushButton * apply_settings_button;
+  uint32_t apply_settings_animation_count = 0;
 
   main_controller * controller;
 

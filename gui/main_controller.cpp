@@ -1508,9 +1508,8 @@ void main_controller::open_settings_from_file(std::string filename)
   handle_settings_changed();
 }
 
-// TODO: Change this code to fix the settings and prompt the user about that
-// before prompting the user about where to save the settings; that seems more
-// intuitive.
+// Note: It would be better to ask for the file location *after* warning the
+// user about settings that need to be fixed.
 void main_controller::save_settings_to_file(std::string filename)
 {
   if (!connected()) { return; }

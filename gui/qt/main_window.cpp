@@ -315,7 +315,6 @@ void main_window::set_resume_button_enabled(bool enabled)
 
 void main_window::set_apply_settings_enabled(bool enabled)
 {
-  // TODO: make the apply settings button blue and animated like the Jrk G2 one
   apply_settings_button->setEnabled(enabled);
   apply_settings_action->setEnabled(enabled);
 }
@@ -707,6 +706,45 @@ void main_window::set_manual_target_ball_velocity(int32_t current_velocity, bool
     manual_target_scroll_bar->setBallValue(current_velocity);
     manual_target_scroll_bar->setBallColor(on_target ? Qt::darkGreen : Qt::blue);
   }
+}
+
+void main_window::set_apply_settings_button_stylesheet(int offset)
+{
+  int base = 12;
+  int left = base + offset;
+  int right = base - offset;
+  QString style = QString(
+    "QPushButton:enabled {"
+    "background-color: #1f2f93;"  // Pololu blue
+    "color: white;"
+    "font-weight: bold;"
+    "padding: 0.3em %1px 0.3em %2px; }").arg(left).arg(right);
+  apply_settings_button->setStyleSheet(style);
+}
+
+void main_window::animate_apply_settings_button()
+{
+  static const int8_t offsets[] = {
+    // 2 seconds of stillness
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    // move right and left
+    1, 2, 3, 4, 3, 2, 1, 0, -1, -2, -3, -4, -3, -2, -1,
+  };
+
+  if (!apply_settings_button->isEnabled())
+  {
+    apply_settings_animation_count = 0;
+    set_apply_settings_button_stylesheet(0);
+    return;
+  }
+
+  apply_settings_animation_count++;
+  if (apply_settings_animation_count >= sizeof(offsets)/sizeof(offsets[0]))
+  {
+    apply_settings_animation_count = 0;
+  }
+  set_apply_settings_button_stylesheet(offsets[apply_settings_animation_count]);
 }
 
 void main_window::set_serial_baud_rate(uint32_t serial_baud_rate)
@@ -1285,6 +1323,7 @@ void main_window::on_restore_defaults_action_triggered()
 void main_window::on_update_timer_timeout()
 {
   controller->update();
+  animate_apply_settings_button();
 }
 
 void main_window::on_device_name_value_linkActivated()
@@ -3523,6 +3562,7 @@ QLayout * main_window::setup_footer()
     apply_settings_button = new QPushButton();
     connect(apply_settings_button, SIGNAL(clicked()),
       this, SLOT(on_apply_settings_action_triggered()));
+    set_apply_settings_button_stylesheet(0);
     layout->addWidget(apply_settings_button);
   }
 
