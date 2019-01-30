@@ -234,6 +234,9 @@ describe 'Set current limit command' do
     if tic_product == :T500
       currents = [1, 174]
     end
+    if tic_product == :T249
+      currents = [40, 80]
+    end
     currents.each do |limit|
       stdout, stderr, result = run_ticcmd("--current #{limit}")
       expect(stderr).to eq ''
@@ -269,8 +272,8 @@ describe 'Set decay mode' do
         'mixed25' => 'Mixed 25%',
         'mixed75' => 'Mixed 75%',
       }
-    when :T500
-      # The T500 only has one decay mode, so skip this test.
+    when :T500, :T249
+      # The board only has one decay mode so skip this test.
       next
     end
 

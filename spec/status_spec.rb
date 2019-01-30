@@ -14,12 +14,12 @@ Input state:                  (Unknown)
 Input after averaging:        N/A
 Input after hysteresis:       N/A
 Input after scaling:          -1
+Forward limit active:         Yes
+Reverse limit active:         Yes
 
 VIN voltage:                  65.535 V
 Operation state:              (Unknown)
 Energized:                    Yes
-Forward limit active:         Yes
-Reverse limit active:         Yes
 Homing active:                Yes
 
 Target:                       No target
@@ -133,12 +133,21 @@ describe '--status' do
 
     actual_keys = status.keys.sort
     expected_keys = YAML.load(FakeStatus).keys.sort
+    if tic_product == :T500 || tic_product == :T249
+      expected_keys.delete("Decay mode")
+    end
+    if tic_product == :T249
+      expected_keys << 'AGC bottom current limit'
+      expected_keys << 'AGC current boost steps'
+      expected_keys << 'AGC frequency limit'
+      expected_keys << 'AGC mode'
+      expected_keys << 'Last motor driver error'
+    end
 
     unexpected_keys = actual_keys - expected_keys - unreliable_keys
     expect(unexpected_keys).to eq []
 
     missing_keys = expected_keys - actual_keys - unreliable_keys
-    missing_keys.delete("Decay mode") if tic_product == :T500
     expect(missing_keys).to eq []
   end
 end
