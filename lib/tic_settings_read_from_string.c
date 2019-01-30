@@ -895,7 +895,9 @@ static tic_error * read_from_yaml_doc(
   memcpy(product_str, product_value->data.scalar.value,
     product_value->data.scalar.length);
   product_str[product_value->data.scalar.length] = 0;
-  apply_product_name(settings, product_str);  // TODO: handle returned errors
+  tic_error * error;
+  error = apply_product_name(settings, product_str);
+  if (error) { return error; }
 
   // Iterate over the pairs in the YAML mapping and process each one.
   for (yaml_node_pair_t * pair = root->data.mapping.pairs.start;
