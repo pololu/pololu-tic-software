@@ -161,6 +161,7 @@ public:
   void set_operation_state(const std::string & operation_state);
   void set_energized(bool energized);
   void set_limit_active(bool forward, bool reverse);
+  void disable_limit_active();
   void set_homing_active(bool active);
   void set_last_motor_driver_error(const char * str);
   void set_target_position(int32_t target_position);

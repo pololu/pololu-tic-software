@@ -510,6 +510,17 @@ void main_window::set_limit_active(bool forward_limit_active,
   {
     limit_active_value->setStyleSheet(":enabled { background-color: yellow; }");
   }
+
+  limit_active_label->setEnabled(true);
+  limit_active_value->setEnabled(true);
+}
+
+void main_window::disable_limit_active()
+{
+  limit_active_value->setText(tr("N/A"));
+  limit_active_value->setStyleSheet("");
+  limit_active_label->setEnabled(false);
+  limit_active_value->setEnabled(false);
 }
 
 void main_window::set_homing_active(bool active)
@@ -2347,8 +2358,6 @@ QWidget * main_window::setup_input_status_box()
   }
   setup_read_only_text_field(layout, row++, 0, 2, &input_after_scaling_label, &input_after_scaling_value);
   setup_read_only_text_field(layout, row++, 0, 2, &limit_active_label, &limit_active_value);
-  // TODO: limit_active_label should be disabled and show N/A like the input_after_* labels
-  // if there are no limit switches enabled.
 
   // Set fixed sizes for performance.
   {

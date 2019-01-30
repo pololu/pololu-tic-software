@@ -11,6 +11,20 @@ static const uint32_t UPDATE_INTERVAL_MS = 50;
 // Only update the device list once per second to save CPU time.
 static const uint32_t UPDATE_DEVICE_LIST_DIVIDER = 20;
 
+static bool settings_have_limit_switch(const tic::settings & settings)
+{
+  for (uint8_t i = 0; i < TIC_CONTROL_PIN_COUNT; i++)
+  {
+    uint8_t func = tic_settings_get_pin_func(settings.get_pointer(), i);
+    if (func == TIC_PIN_FUNC_LIMIT_SWITCH_FORWARD ||
+      func == TIC_PIN_FUNC_LIMIT_SWITCH_REVERSE)
+    {
+      return true;
+    }
+  }
+  return false;
+}
+
 void main_controller::set_window(main_window * window)
 {
   this->window = window;
@@ -528,8 +542,15 @@ void main_controller::handle_variables_changed()
 
   window->set_vin_voltage(variables.get_vin_voltage());
   window->set_energized(variables.get_energized());
-  window->set_limit_active(variables.get_forward_limit_active(),
-    variables.get_reverse_limit_active());
+  if (settings_have_limit_switch(cached_settings))
+  {
+    window->set_limit_active(variables.get_forward_limit_active(),
+      variables.get_reverse_limit_active());
+  }
+  else
+  {
+    window->disable_limit_active();
+  }
   window->set_homing_active(variables.get_homing_active());
   window->set_operation_state(
     tic_look_up_operation_state_name_ui(variables.get_operation_state()));
