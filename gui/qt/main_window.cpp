@@ -1883,7 +1883,7 @@ void main_window::upload_complete()
   controller->handle_upload_complete();
 }
 
-// On Mac OS X, field labels are usually right-aligned, but we want to
+// On macOS, field labels are usually right-aligned, but we want to
 // use the fusion style so we will do left-alignment instead.
 //
 // Code we used to use for macOS:
