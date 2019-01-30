@@ -33,7 +33,18 @@ static void update_device_combo_box(QComboBox & box, bool & device_was_selected)
     device_was_selected = true;
   }
 
-  auto device_list = bootloader_list_connected_devices(); // TODO: catch errors
+  std::vector<bootloader_instance> device_list;
+  try
+  {
+    device_list = bootloader_list_connected_devices();
+  }
+  catch (const std::exception &)
+  {
+    // Note: It would be nice to have better error handling here eventually.
+    // We don't want to simply show a message box here because the error might
+    // happen every second and be really annoying.
+    return;
+  }
   box.clear();
   for (const auto & device : device_list)
   {
@@ -206,7 +217,18 @@ void bootloader_window::on_program_button_clicked()
   }
 
   // Make sure the bootloader is still connected and get its details.
-  auto device_list = bootloader_list_connected_devices();  // TODO: catch errors
+  std::vector<bootloader_instance> device_list;
+  try
+  {
+    device_list = bootloader_list_connected_devices();
+  }
+  catch (const std::exception & e)
+  {
+    std::string message = "There was an error listing bootloaders.  ";
+    message += e.what();
+    show_error_message(message);
+    return;
+  }
   bootloader_instance device;
   for (const auto & candidate : device_list)
   {
