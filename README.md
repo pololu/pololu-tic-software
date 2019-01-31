@@ -1,7 +1,7 @@
 # Tic Stepper Motor Controller software
 
 Version: 1.7.0<br>
-Release date: (unreleased)<br>
+Release date: 2019-01-31<br>
 [www.pololu.com](https://www.pololu.com/)
 
 This repository contains the source code of the configuration and control software for
@@ -19,11 +19,12 @@ from source.
 
 ## Version history
 
-- 1.7.0 (unreleased):
+- 1.7.0 (2019-01-31):
   - Added support for the Tic N825.
-  - Added support for the new features in firmware version 1.05: limit switches,
-    the "Go home" command, 14-bit serial device numbers, alternative serial
-    device numbers, CRC for serial responses, and 7-bit serial responses.
+  - Added support for the new features in firmware version 1.06: limit switches,
+    the "Go home" command, automatic homing, 14-bit serial device numbers,
+    alternative serial device numbers,
+    CRC for serial responses, and 7-bit serial responses.
 - 1.6.2 (2018-03-14):
   - Call `SetProcessDPIAware()` to fix issues on Windows caused by dragging the
     application between monitors with different DPIs.
