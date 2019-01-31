@@ -5,7 +5,6 @@
 
 #include "BallScrollBar.h"
 #include "current_spin_box.h"
-#include "elided_label.h"
 
 #include <QApplication>
 #include <QButtonGroup>

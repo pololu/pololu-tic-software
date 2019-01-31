@@ -5,6 +5,7 @@
 #include "tic.hpp"
 
 #include "bootloader_window.h"
+#include "elided_label.h"
 #include "InputWizard.h"
 
 #include <QMainWindow>
@@ -703,7 +704,7 @@ private:
   QHBoxLayout * footer_layout;
   QPushButton * deenergize_button;
   QPushButton * resume_button;
-  QLabel * motor_status_value;
+  elided_label * motor_status_value;
   QLabel * apply_settings_label;
   QPushButton * apply_settings_button;
   uint32_t apply_settings_animation_count = 0;
