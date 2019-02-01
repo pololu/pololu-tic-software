@@ -25,6 +25,7 @@ from source.
     the "Go home" command, automatic homing, 14-bit serial device numbers,
     alternative serial device numbers,
     CRC for serial responses, and 7-bit serial responses.
+  - Added the `--position-relative` option to `ticcmd`.
 - 1.6.2 (2018-03-14):
   - Call `SetProcessDPIAware()` to fix issues on Windows caused by dragging the
     application between monitors with different DPIs.
