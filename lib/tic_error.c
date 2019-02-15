@@ -145,7 +145,10 @@ tic_error * tic_error_add_v(tic_error * error, const char * format, va_list ap)
 
   // Assemble the message.
   vsnprintf(message, outer_message_length + 1, format, ap);
-  strncpy(message + outer_message_length, "  ", separator_length + 1);
+  if (separator_length)
+  {
+    strncpy(message + outer_message_length, "  ", separator_length + 1);
+  }
   strncpy(message + outer_message_length + separator_length,
     error->message, inner_message_length + 1);
   message[message_length] = 0;
