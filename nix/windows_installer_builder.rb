@@ -313,15 +313,13 @@ File.open(OutDir + 'build.sh', 'w') do |f|
 
 set -ue
 
-MSBUILD="/c/Program Files (x86)/MSBuild/14.0/Bin/MSBuild.exe"
-SIGNTOOL="/c/Program Files (x86)/Windows Kits/10/bin/x64/signtool.exe"
-SIGNFLAGS="-fd sha256 -tr http://timestamp.globalsign.com/?signature=sha2 -td sha256"
+. $POLOLU_SIGN_ENV
 
 "$MSBUILD" -t:rebuild -p:Configuration=Release -p:TreatWarningsAsErrors=True \\
   app.wixproj
 
 cp bin/Release/en-us/*.msi .
 
-"$SIGNTOOL" sign -n "Pololu Corporation" $SIGNFLAGS -d "Pololu Tic Stepper Motor Controller Setup" *.msi
+"$SIGNTOOL" sign $SIGNFLAGS -d "Pololu Tic Stepper Motor Controller Setup" *.msi
 EOF
 end
