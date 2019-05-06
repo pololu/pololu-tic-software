@@ -65,7 +65,8 @@ tic_error * tic_list_connected_devices(
       product_id != TIC_PRODUCT_ID_T834 &&
       product_id != TIC_PRODUCT_ID_T500 &&
       product_id != TIC_PRODUCT_ID_N825 &&
-      product_id != TIC_PRODUCT_ID_T249)
+      product_id != TIC_PRODUCT_ID_T249 &&
+      product_id != TIC_PRODUCT_ID_TIC06A)
     {
       continue;
     }
@@ -135,6 +136,9 @@ tic_error * tic_list_connected_devices(
       break;
     case TIC_PRODUCT_ID_T249:
       new_device->product = TIC_PRODUCT_T249;
+      break;
+    case TIC_PRODUCT_ID_TIC06A:
+      new_device->product = TIC_PRODUCT_TIC06A;
       break;
     }
     if (new_device->product == 0)

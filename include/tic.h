@@ -64,6 +64,7 @@ extern "C" {
 #define TIC_PRODUCT_T500 3
 #define TIC_PRODUCT_N825 4
 #define TIC_PRODUCT_T249 5
+#define TIC_PRODUCT_TIC06A 6
 
 // The maximum firmware major version supported by this library.
 #define TIC_FIRMWARE_VERSION_MAJOR_MAX 1
