@@ -227,13 +227,38 @@ tic_error * tic_get_variables(tic_handle * handle, tic_variables ** variables,
     error = tic_variables_create(&new_variables);
   }
 
+  uint8_t product = tic_device_get_product(tic_handle_get_device(handle));
+
+  // Define the different variable segments we will read.
+  uint8_t general_size = TIC_VAR_INPUT_AFTER_SCALING + 4;
+  uint8_t product_specific_offset = 0;
+
+  if (product == TIC_PRODUCT_ID_T249)
+  {
+    // The Tic T249 actually has some product-specific variables that were
+    // placed in the general variables area.
+    general_size = TIC_VAR_AGC_FREQUENCY_LIMIT + 1;
+  }
+
+  if (product == TIC_PRODUCT_TIC06A)
+  {
+    product_specific_offset = TIC_SETTING_DRV8711_REGISTERS;
+  }
+
   // Read all the variables from the device.
-  uint8_t buf[TIC_VARIABLES_SIZE];
+  uint8_t buf[256] = { 0 };
   if (error == NULL)
   {
-    size_t index = 0;
-    error = tic_get_variable_segment(handle, index, sizeof(buf), buf,
-      clear_errors_occurred);
+    uint8_t offset = 0;
+    error = tic_get_variable_segment(handle, offset, general_size,
+      buf + offset, clear_errors_occurred);
+  }
+
+  if (error == NULL && product_specific_offset)
+  {
+    uint8_t size = 256 - product_specific_offset;
+    error = tic_get_variable_segment(handle, product_specific_offset,
+      size, buf + product_specific_offset, false);
   }
 
   // Store the variables in the new variables object.

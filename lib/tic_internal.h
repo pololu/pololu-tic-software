@@ -92,8 +92,8 @@ tic_device_get_generic_interface(const tic_device * device);
 
 // Internal tic_handle functions.
 
-tic_error * tic_set_setting_byte(tic_handle * handle,
-  uint8_t address, uint8_t byte);
+tic_error * tic_set_setting_segment(tic_handle * handle,
+  uint8_t address, size_t length, const uint8_t * input);
 
 tic_error * tic_get_setting_segment(tic_handle * handle,
   uint8_t address, size_t length, uint8_t * output);
@@ -234,3 +234,14 @@ void tic_settings_set_input_error_max(tic_settings *, uint16_t);
 /// tic_settings_set_error_max().
 TIC_API
 uint16_t tic_settings_get_input_error_max(const tic_settings *);
+
+
+// More internal helpers for settings.
+
+typedef struct tic_settings_segments
+{
+  uint8_t general_offset, general_size;
+  uint8_t product_specific_offset, product_specific_size;
+} tic_settings_segments;
+
+tic_settings_segments tic_get_settings_segments(uint8_t product);

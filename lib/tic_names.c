@@ -331,6 +331,18 @@ const tic_name tic_agc_frequency_limit_names_ui[] =
   { NULL, 0 },
 };
 
+const tic_name tic_drv8711_error_names_ui[] =
+{
+  { "Overtemperature", 1 << TIC_DRV8711_ERROR_OTS },
+  { "Overcurrent A", 1 << TIC_DRV8711_ERROR_AOCP },
+  { "Overcurrent B", 1 << TIC_DRV8711_ERROR_BOCP },
+  { "Predriver fault A", 1 << TIC_DRV8711_ERROR_APDF },
+  { "Predriver fault B", 1 << TIC_DRV8711_ERROR_BPDF },
+  { "Undervoltage", 1 << TIC_DRV8711_ERROR_UVLO },
+  { "Verification failure", 1 << TIC_DRV8711_ERROR_VERIFY },
+  { NULL, 0 },
+};
+
 const char * tic_look_up_product_name_short(uint8_t product)
 {
   const char * str = "";
@@ -398,41 +410,6 @@ const char * tic_look_up_planning_mode_name_ui(uint8_t planning_mode)
 {
   const char * str = "(Unknown)";
   tic_code_to_name(tic_planning_mode_names_ui, planning_mode, &str);
-  return str;
-}
-
-const char * tic_look_up_motor_driver_error_name_ui(uint8_t error)
-{
-  const char * str = "(Unknown)";
-  tic_code_to_name(tic_motor_driver_error_names_ui, error, &str);
-  return str;
-}
-
-const char * tic_look_up_agc_mode_name_ui(uint8_t error)
-{
-  const char * str = "(Unknown)";
-  tic_code_to_name(tic_agc_mode_names_ui, error, &str);
-  return str;
-}
-
-const char * tic_look_up_agc_bottom_current_limit_name_ui(uint8_t limit)
-{
-  const char * str = "(Unknown)";
-  tic_code_to_name(tic_agc_bottom_current_limit_names_ui, limit, &str);
-  return str;
-}
-
-const char * tic_look_up_agc_current_boost_steps_name_ui(uint8_t steps)
-{
-  const char * str = "(Unknown)";
-  tic_code_to_name(tic_agc_current_boost_steps_names, steps, &str);
-  return str;
-}
-
-const char * tic_look_up_agc_frequency_limit_name_ui(uint8_t limit)
-{
-  const char * str = "(Unknown)";
-  tic_code_to_name(tic_agc_frequency_limit_names_ui, limit, &str);
   return str;
 }
 
@@ -593,6 +570,48 @@ bool tic_look_up_decay_mode_code(const char * name,
   }
 
   return false;
+}
+
+const char * tic_look_up_motor_driver_error_name_ui(uint8_t error)
+{
+  const char * str = "(Unknown)";
+  tic_code_to_name(tic_motor_driver_error_names_ui, error, &str);
+  return str;
+}
+
+const char * tic_look_up_agc_mode_name_ui(uint8_t error)
+{
+  const char * str = "(Unknown)";
+  tic_code_to_name(tic_agc_mode_names_ui, error, &str);
+  return str;
+}
+
+const char * tic_look_up_agc_bottom_current_limit_name_ui(uint8_t limit)
+{
+  const char * str = "(Unknown)";
+  tic_code_to_name(tic_agc_bottom_current_limit_names_ui, limit, &str);
+  return str;
+}
+
+const char * tic_look_up_agc_current_boost_steps_name_ui(uint8_t steps)
+{
+  const char * str = "(Unknown)";
+  tic_code_to_name(tic_agc_current_boost_steps_names, steps, &str);
+  return str;
+}
+
+const char * tic_look_up_agc_frequency_limit_name_ui(uint8_t limit)
+{
+  const char * str = "(Unknown)";
+  tic_code_to_name(tic_agc_frequency_limit_names_ui, limit, &str);
+  return str;
+}
+
+const char * tic_look_up_drv8711_error_name_ui(uint8_t error)
+{
+  const char * str = "(Unknown)";
+  tic_code_to_name(tic_drv8711_error_names_ui, error, &str);
+  return str;
 }
 
 bool tic_name_to_code(const tic_name * table, const char * name, uint32_t * code)

@@ -379,14 +379,24 @@ tic_error * tic_set_settings(tic_handle * handle, const tic_settings * settings)
   }
 
   // Construct a buffer holding the bytes we want to write.
-  uint8_t buf[TIC_SETTINGS_SIZE];
-  memset(buf, 0, sizeof(buf));
+  uint8_t buf[256] = { 0 };
   tic_write_settings_to_buffer(fixed_settings, buf);
 
   // Write the bytes to the device.
-  for (uint8_t i = 1; i < sizeof(buf) && error == NULL; i++)
+  uint8_t product = tic_device_get_product(tic_handle_get_device(handle));
+  tic_settings_segments segments = tic_get_settings_segments(product);
+  if (error == NULL)
   {
-    error = tic_set_setting_byte(handle, i, buf[i]);
+    error = tic_set_setting_segment(handle,
+      segments.general_offset, segments.general_size,
+      buf + segments.general_offset);
+  }
+
+  if (error == NULL && segments.product_specific_size)
+  {
+    error = tic_set_setting_segment(handle,
+      segments.product_specific_offset, segments.product_specific_size,
+      buf + segments.product_specific_offset);
   }
 
   tic_settings_free(fixed_settings);

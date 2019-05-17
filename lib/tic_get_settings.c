@@ -406,21 +406,22 @@ tic_error * tic_get_settings(tic_handle * handle, tic_settings ** settings)
       tic_device_get_firmware_version(device));
   }
 
-  // Read all the settings from the device into a buffer.
-  uint8_t buf[TIC_SETTINGS_SIZE];
+  // Read all the settings from the device.
+  uint8_t product = tic_device_get_product(tic_handle_get_device(handle));
+  tic_settings_segments segments = tic_get_settings_segments(product);
+  uint8_t buf[256] = { 0 };
+  if (error == NULL)
   {
-    memset(buf, 0, sizeof(buf));
-    size_t index = 1;
-    while (index < sizeof(buf) && error == NULL)
-    {
-      size_t length = TIC_MAX_USB_RESPONSE_SIZE;
-      if (index + length > sizeof(buf))
-      {
-        length = sizeof(buf) - index;
-      }
-      error = tic_get_setting_segment(handle, index, length, buf + index);
-      index += length;
-    }
+    error = tic_get_setting_segment(handle,
+      segments.general_offset, segments.general_size,
+      buf + segments.general_offset);
+  }
+
+  if (error == NULL && segments.product_specific_size)
+  {
+    error = tic_get_setting_segment(handle,
+      segments.product_specific_offset, segments.product_specific_size,
+      buf + segments.product_specific_offset);
   }
 
   // Store the settings in the new settings object.
@@ -445,4 +446,31 @@ tic_error * tic_get_settings(tic_handle * handle, tic_settings ** settings)
   }
 
   return error;
+}
+
+tic_settings_segments tic_get_settings_segments(uint8_t product)
+{
+  tic_settings_segments segments = {
+    .general_offset = 1,
+    .general_size = (TIC_SETTING_SERIAL_ALT_DEVICE_NUMBER + 2) - 1
+  };
+
+  if (product == TIC_PRODUCT_ID_T249)
+  {
+    // The Tic T249 actually has some product-specific variables that were
+    // placed in the general variables area.
+    segments.general_size = TIC_SETTING_AGC_FREQUENCY_LIMIT + 1;
+  }
+
+  if (product == TIC_PRODUCT_TIC06A)
+  {
+    segments.product_specific_offset = TIC_SETTING_DRV8711_REGISTERS;
+  }
+
+  if (segments.product_specific_offset)
+  {
+    segments.product_specific_size = 256 - segments.product_specific_offset;
+  }
+
+  return segments;
 }

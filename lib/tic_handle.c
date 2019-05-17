@@ -664,6 +664,17 @@ tic_error * tic_set_setting_byte(tic_handle * handle,
   return error;
 }
 
+tic_error * tic_set_setting_segment(tic_handle * handle,
+  uint8_t address, size_t length, const uint8_t * input)
+{
+  tic_error * error = NULL;
+  for (uint8_t i = 0; i < length && error == NULL; i++)
+  {
+    error = tic_set_setting_byte(handle, address + i, input[i]);
+  }
+  return error;
+}
+
 tic_error * tic_get_setting_segment(tic_handle * handle,
   uint8_t index, size_t length, uint8_t * output)
 {
