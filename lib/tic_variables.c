@@ -242,7 +242,7 @@ tic_error * tic_get_variables(tic_handle * handle, tic_variables ** variables,
 
   if (product == TIC_PRODUCT_TIC06A)
   {
-    product_specific_offset = TIC_SETTING_DRV8711_REGISTERS;
+    product_specific_offset = TIC_VAR_LAST_DRV8711_ERROR;
   }
 
   // Read all the variables from the device.
