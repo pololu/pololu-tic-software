@@ -181,6 +181,8 @@ const char * tic_look_up_planning_mode_name_ui(uint8_t planning_mode);
 /// (e.g. the return value of tic_variables_get_last_motor_driver_error()),
 /// but if it is not, this function returns "(Unknown)".  The returned string
 /// will be valid indefinitely and should not be freed.
+///
+/// This function is only useful for the Tic T249.
 TIC_API
 const char * tic_look_up_motor_driver_error_name_ui(uint8_t error);
 
@@ -188,13 +190,17 @@ const char * tic_look_up_motor_driver_error_name_ui(uint8_t error);
 /// The argument should be one of the TIC_AGC_MODE_* macros,
 /// but if it is not, this function returns "(Unknown)".  The returned string
 /// will be valid indefinitely and should not be freed.
+///
+/// This function is only useful for the Tic T249.
 TIC_API
-const char * tic_look_up_agc_mode_name_ui(uint8_t error);
+const char * tic_look_up_agc_mode_name_ui(uint8_t mode);
 
 /// Looks up the string corresponding to the specified AGC bottom current limit
 /// setting.  The argument should be one of the TIC_AGC_BOTTOM_CURRENT_LIMIT_*
 /// macros, but if it is not, this function returns "(Unknown)".  The returned
 /// string will be valid indefinitely and should not be freed.
+///
+/// This function is only useful for the Tic T249.
 TIC_API
 const char * tic_look_up_agc_bottom_current_limit_name_ui(uint8_t limit);
 
@@ -202,6 +208,8 @@ const char * tic_look_up_agc_bottom_current_limit_name_ui(uint8_t limit);
 /// setting.  The argument should be one of the TIC_AGC_CURRENT_BOOST_STEPS_*
 /// macros, but if it is not, this function returns "(Unknown)".  The returned
 /// string will be valid indefinitely and should not be freed.
+///
+/// This function is only useful for the Tic T249.
 TIC_API
 const char * tic_look_up_agc_current_boost_steps_name_ui(uint8_t steps);
 
@@ -209,8 +217,24 @@ const char * tic_look_up_agc_current_boost_steps_name_ui(uint8_t steps);
 /// setting.  The argument should be one of the TIC_AGC_CURRENT_BOOST_STEPS_*
 /// macros, but if it is not, this function returns "(Unknown)".  The returned
 /// string will be valid indefinitely and should not be freed.
+///
+/// This function is only useful for the Tic T249.
 TIC_API
 const char * tic_look_up_agc_frequency_limit_name_ui(uint8_t limit);
+
+/// Looks up a user-friendly string corresponding to the specified DRV8711
+/// error bit, e.g. "Overtemperature".
+///
+/// The \p error argument should be of the form (1 << x) where x is one of the
+/// TIC_DRV8711_ERROR_* macros, but if it is not, this function
+/// returns "(Unknown)".  The returned string will be valid indefinitely and
+/// should not be freed.
+///
+/// This function is only useful for Tics based on the DRV8711 motor driver.
+///
+/// See also tic_variables_get_last_drv8711_error().
+TIC_API
+const char * tic_look_up_drv8711_error_name_ui(uint8_t error);
 
 
 // Advanced name/code lookup ////////////////////////////////////////////////////
