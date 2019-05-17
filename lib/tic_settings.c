@@ -54,23 +54,26 @@ struct tic_settings
     bool polarity;
   } pin_settings[TIC_CONTROL_PIN_COUNT];
 
+  bool invert_motor_direction;
+  uint32_t max_speed;
+  uint32_t starting_speed;
+  uint32_t max_accel;
+  uint32_t max_decel;
+
   uint32_t current_limit;
   int32_t current_limit_during_error;
   uint8_t step_mode;
   uint8_t decay_mode;
-  uint8_t agc_mode;
-  uint8_t agc_bottom_current_limit;
-  uint8_t agc_current_boost_steps;
-  uint8_t agc_frequency_limit;
-  uint32_t starting_speed;
-  uint32_t max_speed;
-  uint32_t max_accel;
-  uint32_t max_decel;
+
   bool auto_homing;
   bool auto_homing_forward;
   uint32_t homing_speed_towards;
   uint32_t homing_speed_away;
-  bool invert_motor_direction;
+
+  uint8_t agc_mode;
+  uint8_t agc_bottom_current_limit;
+  uint8_t agc_current_boost_steps;
+  uint8_t agc_frequency_limit;
 };
 
 void tic_settings_fill_with_defaults(tic_settings * settings)
@@ -860,6 +863,78 @@ bool tic_settings_get_pin_polarity(const tic_settings * settings, uint8_t pin)
   return settings->pin_settings[pin].polarity;
 }
 
+void tic_settings_set_invert_motor_direction(tic_settings * settings, bool invert)
+{
+  if (!settings) { return; }
+  settings->invert_motor_direction = invert;
+}
+
+bool tic_settings_get_invert_motor_direction(const tic_settings * settings)
+{
+  if (!settings) { return 0; }
+  return settings->invert_motor_direction;
+}
+
+void tic_settings_set_max_speed(tic_settings * settings, uint32_t max_speed)
+{
+  if (!settings) { return; }
+  settings->max_speed = max_speed;
+}
+
+uint32_t tic_settings_get_max_speed(const tic_settings * settings)
+{
+  if (!settings) { return 0; }
+  return settings->max_speed;
+}
+
+void tic_settings_set_starting_speed(tic_settings * settings, uint32_t starting_speed)
+{
+  if (!settings) { return; }
+  settings->starting_speed = starting_speed;
+}
+
+uint32_t tic_settings_get_starting_speed(const tic_settings * settings)
+{
+  if (!settings) { return 0; }
+  return settings->starting_speed;
+}
+
+void tic_settings_set_max_accel(tic_settings * settings, uint32_t max_accel)
+{
+  if (!settings) { return; }
+  settings->max_accel = max_accel;
+}
+
+uint32_t tic_settings_get_max_accel(const tic_settings * settings)
+{
+  if (!settings) { return 0; }
+  return settings->max_accel;
+}
+
+void tic_settings_set_max_decel(tic_settings * settings, uint32_t max_decel)
+{
+  if (!settings) { return; }
+  settings->max_decel = max_decel;
+}
+
+uint32_t tic_settings_get_max_decel(const tic_settings * settings)
+{
+  if (!settings) { return 0; }
+  return settings->max_decel;
+}
+
+void tic_settings_set_step_mode(tic_settings * settings, uint8_t step_mode)
+{
+  if (!settings) { return; }
+  settings->step_mode = step_mode;
+}
+
+uint8_t tic_settings_get_step_mode(const tic_settings * settings)
+{
+  if (!settings) { return 0; }
+  return settings->step_mode;
+}
+
 void tic_settings_set_current_limit(tic_settings * settings,
   uint32_t current_limit)
 {
@@ -930,18 +1005,6 @@ uint8_t tic_settings_get_current_limit_code_during_error(const tic_settings * se
   }
 }
 
-void tic_settings_set_step_mode(tic_settings * settings, uint8_t step_mode)
-{
-  if (!settings) { return; }
-  settings->step_mode = step_mode;
-}
-
-uint8_t tic_settings_get_step_mode(const tic_settings * settings)
-{
-  if (!settings) { return 0; }
-  return settings->step_mode;
-}
-
 void tic_settings_set_decay_mode(tic_settings * settings, uint8_t decay_mode)
 {
   if (!settings) { return; }
@@ -952,92 +1015,6 @@ uint8_t tic_settings_get_decay_mode(const tic_settings * settings)
 {
   if (!settings) { return 0; }
   return settings->decay_mode;
-}
-
-void tic_settings_set_agc_mode(tic_settings * settings, uint8_t mode)
-{
-  if (!settings) { return; }
-  settings->agc_mode = mode;
-}
-
-uint8_t tic_settings_get_agc_mode(const tic_settings * settings)
-{
-  if (!settings) { return 0; }
-  return settings->agc_mode;
-}
-
-void tic_settings_set_agc_bottom_current_limit(tic_settings * settings,
-  uint8_t limit)
-{
-  if (!settings) { return; }
-  settings->agc_bottom_current_limit = limit;
-}
-
-uint8_t tic_settings_get_agc_bottom_current_limit(const tic_settings * settings)
-{
-  if (!settings) { return 0; }
-  return settings->agc_bottom_current_limit;
-}
-
-void tic_settings_set_agc_current_boost_steps(tic_settings * settings,
-  uint8_t steps)
-{
-  if (!settings) { return; }
-  settings->agc_current_boost_steps = steps;
-}
-
-uint8_t tic_settings_get_agc_current_boost_steps(const tic_settings * settings)
-{
-  if (!settings) { return 0; }
-  return settings->agc_current_boost_steps;
-}
-
-void tic_settings_set_agc_frequency_limit(tic_settings * settings, uint8_t limit)
-{
-  if (!settings) { return; }
-  settings->agc_frequency_limit = limit;
-}
-
-uint8_t tic_settings_get_agc_frequency_limit(const tic_settings * settings)
-{
-  if (!settings) { return 0; }
-  return settings->agc_frequency_limit;
-}
-
-void tic_settings_set_starting_speed(tic_settings * settings, uint32_t starting_speed)
-{
-  if (!settings) { return; }
-  settings->starting_speed = starting_speed;
-}
-
-uint32_t tic_settings_get_starting_speed(const tic_settings * settings)
-{
-  if (!settings) { return 0; }
-  return settings->starting_speed;
-}
-
-void tic_settings_set_max_speed(tic_settings * settings, uint32_t max_speed)
-{
-  if (!settings) { return; }
-  settings->max_speed = max_speed;
-}
-
-uint32_t tic_settings_get_max_speed(const tic_settings * settings)
-{
-  if (!settings) { return 0; }
-  return settings->max_speed;
-}
-
-void tic_settings_set_max_decel(tic_settings * settings, uint32_t max_decel)
-{
-  if (!settings) { return; }
-  settings->max_decel = max_decel;
-}
-
-uint32_t tic_settings_get_max_decel(const tic_settings * settings)
-{
-  if (!settings) { return 0; }
-  return settings->max_decel;
 }
 
 void tic_settings_set_auto_homing(tic_settings * settings, bool enabled)
@@ -1088,26 +1065,52 @@ uint32_t tic_settings_get_homing_speed_away(const tic_settings * settings)
   return settings->homing_speed_away;
 }
 
-void tic_settings_set_max_accel(tic_settings * settings, uint32_t max_accel)
+void tic_settings_set_agc_mode(tic_settings * settings, uint8_t mode)
 {
   if (!settings) { return; }
-  settings->max_accel = max_accel;
+  settings->agc_mode = mode;
 }
 
-uint32_t tic_settings_get_max_accel(const tic_settings * settings)
+uint8_t tic_settings_get_agc_mode(const tic_settings * settings)
 {
   if (!settings) { return 0; }
-  return settings->max_accel;
+  return settings->agc_mode;
 }
 
-void tic_settings_set_invert_motor_direction(tic_settings * settings, bool invert)
+void tic_settings_set_agc_bottom_current_limit(tic_settings * settings,
+  uint8_t limit)
 {
   if (!settings) { return; }
-  settings->invert_motor_direction = invert;
+  settings->agc_bottom_current_limit = limit;
 }
 
-bool tic_settings_get_invert_motor_direction(const tic_settings * settings)
+uint8_t tic_settings_get_agc_bottom_current_limit(const tic_settings * settings)
 {
   if (!settings) { return 0; }
-  return settings->invert_motor_direction;
+  return settings->agc_bottom_current_limit;
+}
+
+void tic_settings_set_agc_current_boost_steps(tic_settings * settings,
+  uint8_t steps)
+{
+  if (!settings) { return; }
+  settings->agc_current_boost_steps = steps;
+}
+
+uint8_t tic_settings_get_agc_current_boost_steps(const tic_settings * settings)
+{
+  if (!settings) { return 0; }
+  return settings->agc_current_boost_steps;
+}
+
+void tic_settings_set_agc_frequency_limit(tic_settings * settings, uint8_t limit)
+{
+  if (!settings) { return; }
+  settings->agc_frequency_limit = limit;
+}
+
+uint8_t tic_settings_get_agc_frequency_limit(const tic_settings * settings)
+{
+  if (!settings) { return 0; }
+  return settings->agc_frequency_limit;
 }

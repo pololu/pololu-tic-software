@@ -287,13 +287,29 @@ tic_error * tic_settings_to_string(const tic_settings * settings, char ** string
   }
 
   {
-    uint32_t current = tic_settings_get_current_limit(settings);
-    tic_sprintf(&str, "current_limit: %u\n", current);
+    bool invert = tic_settings_get_invert_motor_direction(settings);
+    tic_sprintf(&str, "invert_motor_direction: %s\n",
+      invert ? "true" : "false");
   }
 
   {
-    int32_t current = tic_settings_get_current_limit_during_error(settings);
-    tic_sprintf(&str, "current_limit_during_error: %d\n", current);
+    uint32_t max_speed = tic_settings_get_max_speed(settings);
+    tic_sprintf(&str, "max_speed: %u\n", max_speed);
+  }
+
+  {
+    uint32_t starting_speed = tic_settings_get_starting_speed(settings);
+    tic_sprintf(&str, "starting_speed: %u\n", starting_speed);
+  }
+
+  {
+    uint32_t accel = tic_settings_get_max_accel(settings);
+    tic_sprintf(&str, "max_accel: %u\n", accel);
+  }
+
+  {
+    uint32_t decel = tic_settings_get_max_decel(settings);
+    tic_sprintf(&str, "max_decel: %u\n", decel);
   }
 
   {
@@ -301,6 +317,16 @@ tic_error * tic_settings_to_string(const tic_settings * settings, char ** string
     const char * name = "";
     tic_code_to_name(tic_step_mode_names, mode, &name);
     tic_sprintf(&str, "step_mode: %s\n", name);
+  }
+
+  {
+    uint32_t current = tic_settings_get_current_limit(settings);
+    tic_sprintf(&str, "current_limit: %u\n", current);
+  }
+
+  {
+    int32_t current = tic_settings_get_current_limit_during_error(settings);
+    tic_sprintf(&str, "current_limit_during_error: %d\n", current);
   }
 
   // The decay mode setting for the Tic T500 and T249 is useless because there
@@ -311,6 +337,26 @@ tic_error * tic_settings_to_string(const tic_settings * settings, char ** string
     const char * name;
     tic_look_up_decay_mode_name(mode, product, TIC_NAME_SNAKE_CASE, &name);
     tic_sprintf(&str, "decay_mode: %s\n", name);
+  }
+
+  {
+    bool auto_homing = tic_settings_get_auto_homing(settings);
+    tic_sprintf(&str, "auto_homing: %s\n", auto_homing ? "true" : "false");
+  }
+
+  {
+    bool forward = tic_settings_get_auto_homing_forward(settings);
+    tic_sprintf(&str, "auto_homing_forward: %s\n", forward ? "true" : "false");
+  }
+
+  {
+    uint32_t speed = tic_settings_get_homing_speed_towards(settings);
+    tic_sprintf(&str, "homing_speed_towards: %u\n", speed);
+  }
+
+  {
+    uint32_t speed = tic_settings_get_homing_speed_away(settings);
+    tic_sprintf(&str, "homing_speed_away: %u\n", speed);
   }
 
   if (product == TIC_PRODUCT_T249)
@@ -343,52 +389,6 @@ tic_error * tic_settings_to_string(const tic_settings * settings, char ** string
     const char * name;
     tic_code_to_name(tic_agc_frequency_limit_names, mode, &name);
     tic_sprintf(&str, "agc_frequency_limit: %s\n", name);
-  }
-
-  {
-    uint32_t max_speed = tic_settings_get_max_speed(settings);
-    tic_sprintf(&str, "max_speed: %u\n", max_speed);
-  }
-
-  {
-    uint32_t starting_speed = tic_settings_get_starting_speed(settings);
-    tic_sprintf(&str, "starting_speed: %u\n", starting_speed);
-  }
-
-  {
-    uint32_t accel = tic_settings_get_max_accel(settings);
-    tic_sprintf(&str, "max_accel: %u\n", accel);
-  }
-
-  {
-    uint32_t decel = tic_settings_get_max_decel(settings);
-    tic_sprintf(&str, "max_decel: %u\n", decel);
-  }
-
-  {
-    bool auto_homing = tic_settings_get_auto_homing(settings);
-    tic_sprintf(&str, "auto_homing: %s\n", auto_homing ? "true" : "false");
-  }
-
-  {
-    bool forward = tic_settings_get_auto_homing_forward(settings);
-    tic_sprintf(&str, "auto_homing_forward: %s\n", forward ? "true" : "false");
-  }
-
-  {
-    uint32_t speed = tic_settings_get_homing_speed_towards(settings);
-    tic_sprintf(&str, "homing_speed_towards: %u\n", speed);
-  }
-
-  {
-    uint32_t speed = tic_settings_get_homing_speed_away(settings);
-    tic_sprintf(&str, "homing_speed_away: %u\n", speed);
-  }
-
-  {
-    bool invert = tic_settings_get_invert_motor_direction(settings);
-    tic_sprintf(&str, "invert_motor_direction: %s\n",
-      invert ? "true" : "false");
   }
 
   if (error == NULL && str.data == NULL)

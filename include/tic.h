@@ -903,6 +903,90 @@ void tic_settings_set_pin_polarity(tic_settings *, uint8_t pin, bool polarity);
 TIC_API
 bool tic_settings_get_pin_polarity(const tic_settings *, uint8_t pin);
 
+/// Sets the Invert motor direction setting.
+///
+/// If true, then forward/positive motion corresponds to the DIR pin being low.
+/// Normally, forward/positive motion corresponds to the DIR pin being high.
+TIC_API
+void tic_settings_set_invert_motor_direction(tic_settings *, bool);
+
+/// Gets the Invert motor direction setting describe in
+/// tic_settings_set_invert_motor_direction().
+TIC_API
+bool tic_settings_get_invert_motor_direction(const tic_settings *);
+
+/// Sets the maximum speed, or speed limit, in steps per 10000 seconds.  Valid
+/// values are from 0 to 500000000 (50 kHz).  Values between 0 and 6 behave the
+/// same as 0.
+///
+/// This sets the default value.  To set or get the current value, see:
+///
+/// - tic_set_max_speed()
+/// - tic_variables_get_max_speed()
+TIC_API
+void tic_settings_set_max_speed(tic_settings *, uint32_t);
+
+/// Gets the speed maximum described in tic_settings_set_max_speed().
+TIC_API
+uint32_t tic_settings_get_max_speed(const tic_settings *);
+
+/// Sets the starting speed in microsteps per 10000 seconds.
+///
+/// Valid values are from -500000000 to 500000000.
+///
+/// This sets the default value.  To set or get the current value, see:
+///
+/// - tic_set_starting_speed()
+/// - tic_variables_get_starting_speed()
+TIC_API
+void tic_settings_set_starting_speed(tic_settings *, uint32_t);
+
+/// Gets the starting speed described in tic_settings_set_starting_speed().
+TIC_API
+uint32_t tic_settings_get_starting_speed(const tic_settings *);
+
+/// Sets the maximum acceleration, or acceleration limit, in steps per 100
+/// square seconds.  Valid values are 59 to 2147483647.
+///
+/// This sets the default value.  To set or get the current value, see:
+///
+/// - tic_set_max_accel()
+/// - tic_variables_get_max_accel()
+TIC_API
+void tic_settings_set_max_accel(tic_settings *, uint32_t);
+
+/// Gets the acceleration maximum described in tic_settings_set_max_accel().
+TIC_API
+uint32_t tic_settings_get_max_accel(const tic_settings *);
+
+/// Sets the maximum deceleration, or deceleration limit, in steps per 100
+/// square seconds.  Valid values are 0 and 59 to 2147483647.  A value of 0
+/// causes the controller's deceleration limit to be equal to the acceleration
+/// limit.
+///
+/// This sets the default value.  To set or get the current value, see:
+///
+/// - tic_set_max_decel()
+/// - tic_variables_get_max_decel()
+TIC_API
+void tic_settings_set_max_decel(tic_settings *, uint32_t);
+
+/// Gets the maximum deceleration described in tic_settings_set_max_decel().
+TIC_API
+uint32_t tic_settings_get_max_decel(const tic_settings *);
+
+/// Sets the default step mode, also known as the microstepping mode.  This
+/// should be one of the TIC_STEP_MODE_* macros, but not all step modes are
+/// supported on all products.  If you specify an invalid or unsupported mode to
+/// this function, you can fix it with tic_settings_fix().
+TIC_API
+void tic_settings_set_step_mode(tic_settings *, uint8_t);
+
+/// Gets the step mode described in
+/// tic_settings_set_step_mode().
+TIC_API
+uint8_t tic_settings_get_step_mode(const tic_settings *);
+
 /// Sets the default stepper motor coil current limit in milliamps.
 TIC_API
 void tic_settings_set_current_limit(tic_settings *, uint32_t);
@@ -961,18 +1045,6 @@ uint8_t tic_settings_get_current_limit_code_during_error(const tic_settings *);
 TIC_API
 uint32_t tic_settings_achievable_current_limit(const tic_settings *, uint32_t);
 
-/// Sets the default step mode, also known as the microstepping mode.  This
-/// should be one of the TIC_STEP_MODE_* macros, but not all step modes are
-/// supported on all products.  If you specify an invalid or unsupported mode to
-/// this function, you can fix it with tic_settings_fix().
-TIC_API
-void tic_settings_set_step_mode(tic_settings *, uint8_t);
-
-/// Gets the step mode described in
-/// tic_settings_set_step_mode().
-TIC_API
-uint8_t tic_settings_get_step_mode(const tic_settings *);
-
 /// Sets the decay mode.  The argument should be TIC_DECAY_MIXED,
 /// TIC_DELAY_SLOW, or TIC_DECAY_FAST.
 TIC_API
@@ -981,6 +1053,49 @@ void tic_settings_set_decay_mode(tic_settings *, uint8_t);
 /// Gets the decay mode described in tic_settings_get_decay_mode().
 TIC_API
 uint8_t tic_settings_get_decay_mode(const tic_settings *);
+
+/// Sets the "Enable automatic homing" setting.
+///
+/// If true, the Tic will do the homing procedure whenever it is in normal
+/// operation mode, trying to get to a target position, and the position
+/// uncertain flag is set.  This setting was added in firmware version 1.06.
+TIC_API
+void tic_settings_set_auto_homing(tic_settings *, bool);
+
+/// Gets the setting described in tic_settings_set_auto_homing().
+TIC_API
+bool tic_settings_get_auto_homing(const tic_settings *);
+
+/// Sets the auto homing forward setting, also known as
+/// "Automatic homing direction" in the GUI.
+///
+/// If true, the primary direction that the Tic moves during the auto-homing
+/// procedure will be forward.  Otherwise, it will be reverse.
+TIC_API
+void tic_settings_set_auto_homing_forward(tic_settings *, bool);
+
+/// Gets the auto homing forward setting described in
+/// tic_settings_set_auto_homing_forward().
+TIC_API
+bool tic_settings_get_auto_homing_forward(const tic_settings *);
+
+/// Sets the speed to use while moving towards a limit switch during homing,
+/// in microsteps per 10000 seconds.
+TIC_API
+void tic_settings_set_homing_speed_towards(tic_settings *, uint32_t);
+
+/// Gets the setting described in tic_settings_get_homing_speed_towards().
+TIC_API
+uint32_t tic_settings_get_homing_speed_towards(const tic_settings *);
+
+/// Sets the speed to use while moving away from a limit switch during homing,
+/// in microsteps per 10000 seconds.
+TIC_API
+void tic_settings_set_homing_speed_away(tic_settings *, uint32_t);
+
+/// Gets the setting described in tic_settings_get_homing_speed_away().
+TIC_API
+uint32_t tic_settings_get_homing_speed_away(const tic_settings *);
 
 /// Sets the AGC mode.  The argument should be TIC_AGC_MODE_OFF,
 /// TIC_AGC_MODE_ON, or TIC_AGC_MODE_ACTIVE_OFF.
@@ -1047,121 +1162,6 @@ void tic_settings_set_agc_frequency_limit(tic_settings *, uint8_t limit);
 /// tic_settings_set_agc_frequency_limit().
 TIC_API
 uint8_t tic_settings_get_agc_frequency_limit(const tic_settings *);
-
-/// Sets the maximum speed, or speed limit, in steps per 10000 seconds.  Valid
-/// values are from 0 to 500000000 (50 kHz).  Values between 0 and 6 behave the
-/// same as 0.
-///
-/// This sets the default value.  To set or get the current value, see:
-///
-/// - tic_set_max_speed()
-/// - tic_variables_get_max_speed()
-TIC_API
-void tic_settings_set_max_speed(tic_settings *, uint32_t);
-
-/// Gets the speed maximum described in tic_settings_set_max_speed().
-TIC_API
-uint32_t tic_settings_get_max_speed(const tic_settings *);
-
-/// Sets the starting speed in microsteps per 10000 seconds.
-///
-/// Valid values are from -500000000 to 500000000.
-///
-/// This sets the default value.  To set or get the current value, see:
-///
-/// - tic_set_starting_speed()
-/// - tic_variables_get_starting_speed()
-TIC_API
-void tic_settings_set_starting_speed(tic_settings *, uint32_t);
-
-/// Gets the starting speed described in tic_settings_set_starting_speed().
-TIC_API
-uint32_t tic_settings_get_starting_speed(const tic_settings *);
-
-/// Sets the maximum acceleration, or acceleration limit, in steps per 100
-/// square seconds.  Valid values are 59 to 2147483647.
-///
-/// This sets the default value.  To set or get the current value, see:
-///
-/// - tic_set_max_accel()
-/// - tic_variables_get_max_accel()
-TIC_API
-void tic_settings_set_max_accel(tic_settings *, uint32_t);
-
-/// Gets the acceleration maximum described in tic_settings_set_max_accel().
-TIC_API
-uint32_t tic_settings_get_max_accel(const tic_settings *);
-
-/// Sets the maximum deceleration, or deceleration limit, in steps per 100
-/// square seconds.  Valid values are 0 and 59 to 2147483647.  A value of 0
-/// causes the controller's deceleration limit to be equal to the acceleration
-/// limit.
-///
-/// This sets the default value.  To set or get the current value, see:
-///
-/// - tic_set_max_decel()
-/// - tic_variables_get_max_decel()
-TIC_API
-void tic_settings_set_max_decel(tic_settings *, uint32_t);
-
-/// Gets the maximum deceleration described in tic_settings_set_max_decel().
-TIC_API
-uint32_t tic_settings_get_max_decel(const tic_settings *);
-
-/// Sets the "Enable automatic homing" setting.
-///
-/// If true, the Tic will do the homing procedure whenever it is in normal
-/// operation mode, trying to get to a target position, and the position
-/// uncertain flag is set.  This setting was added in firmware version 1.06.
-TIC_API
-void tic_settings_set_auto_homing(tic_settings *, bool);
-
-/// Gets the setting described in tic_settings_set_auto_homing().
-TIC_API
-bool tic_settings_get_auto_homing(const tic_settings *);
-
-/// Sets the auto homing forward setting, also known as
-/// "Automatic homing direction" in the GUI.
-///
-/// If true, the primary direction that the Tic moves during the auto-homing
-/// procedure will be forward.  Otherwise, it will be reverse.
-TIC_API
-void tic_settings_set_auto_homing_forward(tic_settings *, bool);
-
-/// Gets the auto homing forward setting described in
-/// tic_settings_set_auto_homing_forward().
-TIC_API
-bool tic_settings_get_auto_homing_forward(const tic_settings *);
-
-/// Sets the speed to use while moving towards a limit switch during homing,
-/// in microsteps per 10000 seconds.
-TIC_API
-void tic_settings_set_homing_speed_towards(tic_settings *, uint32_t);
-
-/// Gets the setting described in tic_settings_get_homing_speed_towards().
-TIC_API
-uint32_t tic_settings_get_homing_speed_towards(const tic_settings *);
-
-/// Sets the speed to use while moving away from a limit switch during homing,
-/// in microsteps per 10000 seconds.
-TIC_API
-void tic_settings_set_homing_speed_away(tic_settings *, uint32_t);
-
-/// Gets the setting described in tic_settings_get_homing_speed_away().
-TIC_API
-uint32_t tic_settings_get_homing_speed_away(const tic_settings *);
-
-/// Sets the Invert motor direction setting.
-///
-/// If true, then forward/positive motion corresponds to the DIR pin being low.
-/// Normally, forward/positive motion corresponds to the DIR pin being high.
-TIC_API
-void tic_settings_set_invert_motor_direction(tic_settings *, bool);
-
-/// Gets the Invert motor direction setting describe in
-/// tic_settings_set_invert_motor_direction().
-TIC_API
-bool tic_settings_get_invert_motor_direction(const tic_settings *);
 
 
 // tic_variables ///////////////////////////////////////////////////////////////
