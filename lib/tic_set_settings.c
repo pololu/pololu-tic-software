@@ -340,6 +340,35 @@ static void tic_write_settings_to_buffer(const tic_settings * settings, uint8_t 
 
   buf[TIC_SETTING_INVERT_MOTOR_DIRECTION] =
     tic_settings_get_invert_motor_direction(settings);
+
+  if (product == TIC_PRODUCT_TIC06A)
+  {
+    // Take care of DRV8711 registers.
+
+    uint8_t * p = buf + TIC_SETTING_DRV8711_REGISTERS;
+
+    // CTRL register: Defaults except MODE, which is full-step.
+    p[0] = 0b00000000;
+    p[1] = 0b1100;
+    // TORQUE register: Default current limit, default SMPLTH.
+    p[2] = 3;
+    p[3] = 0b0001;
+    // OFF register: defaults.
+    p[4] = 0x30;
+    p[5] = 0x0;
+    // BLANK register: defaults.
+    p[6] = 0x80;
+    p[7] = 0x0;
+    // DECAY register: defaults.
+    p[8] = 0x10;
+    p[9] = 0b0001;
+    // STALL register: defaults, except SDTHR is 0 to disable stall detection.
+    p[10] = 0x00;
+    p[11] = 0b0000;
+    // DRIVE register: defaults.
+    p[12] = 0b01011001;
+    p[13] = 0b1010;
+  }
 }
 
 tic_error * tic_set_settings(tic_handle * handle, const tic_settings * settings)

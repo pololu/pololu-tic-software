@@ -16,7 +16,7 @@ const tic_name tic_product_names_short[] =
   { "T500", TIC_PRODUCT_T500 },
   { "N825", TIC_PRODUCT_N825 },
   { "T249", TIC_PRODUCT_T249 },
-  { "tic06a", TIC_PRODUCT_ID_TIC06A },  // TODO: real names
+  { "tic06a", TIC_PRODUCT_TIC06A },  // TODO: real names
   { NULL, 0 },
 };
 
