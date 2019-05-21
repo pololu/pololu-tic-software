@@ -95,6 +95,8 @@ uint32_t tic_get_max_allowed_current(uint8_t product)
     return TIC_MAX_ALLOWED_CURRENT_T825;
   case TIC_PRODUCT_T249:
     return TIC_MAX_ALLOWED_CURRENT_T249;
+  case TIC_PRODUCT_TIC06A:
+    return TIC_MAX_ALLOWED_CURRENT_TIC06A;
   default:
     return 0;
   }

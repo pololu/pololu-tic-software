@@ -810,6 +810,7 @@ static void test_procedure(device_selector & selector, uint32_t procedure)
       TIC_PRODUCT_T500,
       TIC_PRODUCT_N825,
       TIC_PRODUCT_T249,
+      TIC_PRODUCT_TIC06A,
     };
 
     for (uint8_t product : products)
