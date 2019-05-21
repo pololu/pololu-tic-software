@@ -261,7 +261,8 @@ static void tic_write_settings_to_buffer(const tic_settings * settings, uint8_t 
     }
   }
 
-  buf[TIC_SETTING_CURRENT_LIMIT] = tic_settings_get_current_limit_code(settings);
+  uint8_t current_limit_code = tic_settings_get_current_limit_code(settings);
+  buf[TIC_SETTING_CURRENT_LIMIT] = current_limit_code;
 
   buf[TIC_SETTING_CURRENT_LIMIT_DURING_ERROR] =
     tic_settings_get_current_limit_code_during_error(settings);
@@ -351,7 +352,7 @@ static void tic_write_settings_to_buffer(const tic_settings * settings, uint8_t 
     p[0] = 0b00000000;
     p[1] = 0b1100;
     // TORQUE register: Default current limit, default SMPLTH.
-    p[2] = 3;
+    p[2] = current_limit_code;
     p[3] = 0b0001;
     // OFF register: defaults.
     p[4] = 0x30;
