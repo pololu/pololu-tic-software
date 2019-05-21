@@ -82,10 +82,22 @@ static const uint8_t tic06a_recommended_codes[128] =
   120, 121, 122, 123, 124, 125, 126, 127,
 };
 
-tic_error * tic_get_settings_needed_to_convert_current_limits(
-  tic_handle * handle, tic_settings ** settings)
+uint32_t tic_get_max_allowed_current(uint8_t product)
 {
-  // TODO
+  switch (product)
+  {
+  case TIC_PRODUCT_T500:
+    return TIC_MAX_ALLOWED_CURRENT_T500;
+  case TIC_PRODUCT_T834:
+    return TIC_MAX_ALLOWED_CURRENT_T834;
+  case TIC_PRODUCT_T825:
+  case TIC_PRODUCT_N825:
+    return TIC_MAX_ALLOWED_CURRENT_T825;
+  case TIC_PRODUCT_T249:
+    return TIC_MAX_ALLOWED_CURRENT_T249;
+  default:
+    return 0;
+  }
 }
 
 const uint8_t * tic_get_recommended_current_limit_codes(
@@ -136,28 +148,6 @@ const uint8_t * tic_get_recommended_current_limit_codes(
   return table;
 }
 
-// Deprecated: Without access to a tic_settings object, this function cannot
-// to do the right thing for tic06a.
-uint32_t tic_get_max_allowed_current(uint8_t product)
-{
-  switch (product)
-  {
-  case TIC_PRODUCT_T500:
-    return TIC_MAX_ALLOWED_CURRENT_T500;
-  case TIC_PRODUCT_T834:
-    return TIC_MAX_ALLOWED_CURRENT_T834;
-  case TIC_PRODUCT_T825:
-  case TIC_PRODUCT_N825:
-    return TIC_MAX_ALLOWED_CURRENT_T825;
-  case TIC_PRODUCT_T249:
-    return TIC_MAX_ALLOWED_CURRENT_T249;
-  default:
-    return 0;
-  }
-}
-
-// Deprecated: Without access to a tic_settings object, this function cannot
-// to do the right thing for tic06a.
 uint32_t tic_current_limit_code_to_ma(uint8_t product, uint8_t code)
 {
   if (product == TIC_PRODUCT_T500)
@@ -187,47 +177,38 @@ uint32_t tic_current_limit_code_to_ma(uint8_t product, uint8_t code)
 
     return code * units;
   }
+  else if (product == TIC_PRODUCT_TIC06A)
+  {
+    if (code > 127) { code = 127; }
+    return (275000 * code + 1920) / 3840;
+  }
   else
   {
-    // Other products are not supported by this deprecated function.
+    // Unknown product.
     return 0;
   }
 }
 
-// Deprecated: Without access to a tic_settings object, this function cannot
-// to do the right thing for tic06a.
 uint8_t tic_current_limit_ma_to_code(uint8_t product, uint32_t ma)
 {
-  if (product == TIC_PRODUCT_T500 ||
-    product == TIC_PRODUCT_T825 ||
-    product == TIC_PRODUCT_N825 ||
-    product == TIC_PRODUCT_T834 ||
-    product == TIC_PRODUCT_T249)
-  {
-    size_t count;
-    const uint8_t * table = tic_get_recommended_current_limit_codes(
-      product, &count);
+  size_t count;
+  const uint8_t * table = tic_get_recommended_current_limit_codes(
+    product, &count);
 
-    // Assumption: The table is in ascending order, so we want to return the last
-    // one that is less than or equal to the desired current.
-    // Assumption: 0 is a valid code and a good default to use.
-    uint8_t code = 0;
-    for (size_t i = 0; i < count; i++)
-    {
-      if (tic_current_limit_code_to_ma(product, table[i]) <= ma)
-      {
-        code = table[i];
-      }
-      else
-      {
-        break;
-      }
-    }
-    return code;
-  }
-  else
+  // Assumption: The table is in ascending order, so we want to return the last
+  // one that is less than or equal to the desired current.
+  // Assumption: 0 is a valid code and a good default to use.
+  uint8_t code = 0;
+  for (size_t i = 0; i < count; i++)
   {
-    // Other products are not supported by this deprecated function.
-    return 0;
+    if (tic_current_limit_code_to_ma(product, table[i]) <= ma)
+    {
+      code = table[i];
+    }
+    else
+    {
+      break;
+    }
   }
+  return code;
 }

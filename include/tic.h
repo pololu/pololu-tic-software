@@ -1821,7 +1821,7 @@ tic_error * tic_set_current_limit(tic_handle *, uint32_t current_limit);
 /// This function sends a set current limit command to the Tic.  For more
 /// information, see the Tic user's guide.
 ///
-/// To calculate what code to use, see tic_current_limit_encode().
+/// To calculate what code to use, see tic_current_limit_ma_to_code().
 ///
 /// To set the current limit permanently, see tic_settings_set_current_limit_code().
 TIC_API TIC_WARN_UNUSED
@@ -1975,48 +1975,13 @@ tic_error * tic_get_debug_data(tic_handle *, uint8_t * data, size_t * size);
 
 //// Current limits
 
-/// Given a handle to a Tic, this function retrieves any information from the
-/// device that is needed for interpreting the current limit codes returned
-/// by tic_variables_get_current_limit_code(), or for creating the current
-/// limit codes needed by tic_set_current_limit_code() for temporarily setting
-/// the current limit.
+/// Gets the maximum allowed current limit setting for the specified Tic
+/// product (one the TIC_PRODUCT_* macros), in milliamps.
 ///
-/// For many Tic devices, current conversions do not depend on any settings, so
-/// this function will not perform I/O, and it will give you a tic_settings
-/// object that is just filled with default settings for the specified product.
-///
-/// For the tic06a, this function uses a "Get variable" command to retrieve
-/// (from RAM) the value of the DRV8711's ISGAIN setting and the Tic's
-/// drv8711_double_torque setting.  It stores those in a tic_settings object.
-///
-/// Note that the values in RAM might be different from the values stored in
-/// the Tic's non-volatile memory (EEPROM), which can be accessed ith
-/// tic_get_settings().  If you are trying to interpret or set current limit
-/// codes stored in non-volatile memory, you should use tic_get_settings()
-/// instead of this function.
-///
-/// After calling this function, you would generally use
-/// tic_current_limit_decode() or tic_current_limit_encode() to perform the
-/// conversions.
-///
-/// If you just want to specify a current limit in milliamps and temporarily
-/// set the device to use that current limit, see tic_set_current_limit().
-///
-/// If you just want to specify a current limit in milliamps and store it
-/// permanently in the Tic's settings, see tic_get_settings,
-/// tic_settings_set_current_limit(),
-/// tic_settings_set_current_limit_during_error(), and tic_set_settings().
-///
-/// If this functions NULL, that means it succeeded, and you will need to
-/// free the tic_settings object it provides (if it is not NULL).
+/// If you try to set a current limit higher than this, the Tic's firmware will
+/// adjust it down because of of hardware limitations.
 TIC_API
-bool tic_get_ram_settings_needed_to_convert_current_limits(
-  tic_handle *, tic_settings **);
-
-/// Given a tic_settings object, returns the maximum allowed current limit,
-/// in milliamps.
-TIC_API
-uint32_t tic_get_max_allowed_current_v2(const tic_settings *)
+uint32_t tic_get_max_allowed_current(uint8_t product);
 
 /// Gets a list of the recommended current limit codes for the specified
 /// product.  They will be in ascending order by current limit in milliamps.
@@ -2024,59 +1989,15 @@ TIC_API
 const uint8_t * tic_get_recommended_current_limit_codes(
   uint8_t product, size_t * code_count);
 
-/// Converts a current limit code to milliamps, taking into account the product
-/// and any settings it has that affect the conversion.
-///
-/// You can use this to interpret the encoded values returned by
-/// tic_settings_get_current_limit_code() or
-/// tic_settings_get_current_limit_code_during_error().
-///
-/// See also tic_current_limit_encode().
-TIC_API
-uint32_t tic_current_limit_decode(const jrk_settings *, uint8_t code);
-
-// Converts a current limit value in milliamps into a recommended encoded hard
-// current limit value.
-//
-// You can use this to get the encoded values needed by
-// jrk_settings_set_encoded_hard_current_limit_forward() or
-// jrk_settings_set_encoded_hard_current_limit_reverse().
-//
-// Note that this function only returns codes that are in the recommended set, a
-// subset of the codes supported by the device.
-//
-// The ma argument should be a current limit in milliamps.
-//
-// See also jrk_current_limit_decode().
-TIC_API
-uint8_t tic_current_limit_encode(const jrk_settings *, uint32_t ma);
-
-/// This is deprecated because it cannot support the tic06a.
-/// See tic_get_max_allowed_current_v2().
-///
-/// Gets the maximum allowed current limit setting for the specified Tic
-/// product (one the TIC_PRODUCT_* macros), in milliamps.
-///
-/// If you try to set a current limit higher than this, the Tic's firmware will
-/// adjust it down because of of hardware limitations.
-TIC_API __attribute__((deprecated))
-uint32_t tic_get_max_allowed_current(uint8_t product);
-
-// This is deprecated because it cannot support the tic06a.
-// See tic_current_limit_decode().
-//
 // Converts current limit codes to milliamps for the specified product.
 //
 // The code argument should be a current limit code, but it doesn't have to be a
 // recommended one.
 //
 // See also tic_current_limit_ma_to_code().
-TIC_API __attribute__((deprecated))
+TIC_API
 uint32_t tic_current_limit_code_to_ma(uint8_t product, uint8_t code);
 
-// This is deprecated because it cannot support the tic06a.
-// See tic_current_limit_encode().
-//
 // Converts a current limit value in milliamps into a recommended max current
 // code.
 //
@@ -2086,7 +2007,7 @@ uint32_t tic_current_limit_code_to_ma(uint8_t product, uint8_t code);
 // The raw argument should be a raw current limit value.
 //
 // See also tic_current_limit_code_to_ma().
-TIC_API __attribute__((deprecated))
+TIC_API
 uint8_t tic_current_limit_ma_to_code(uint8_t product, uint32_t ma);
 
 #ifdef __cplusplus

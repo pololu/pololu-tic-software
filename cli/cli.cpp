@@ -665,14 +665,7 @@ static void set_current_limit_after_warning(device_selector & selector, uint32_t
   tic::handle handle = ::handle(selector);
   uint8_t product = handle.get_device().get_product();
 
-  // Note: We could just call handle.set_current_limit(current_limit), but
-  // we want to display a nice warning if the current limit is too high so
-  // we do some extra work.
-
-  tic::settings settings =
-    handle.get_ram_settings_needed_to_convert_current_limits();
-
-  uint32_t max_current = settings.get_max_allowed_current_v2();
+  uint32_t max_current = tic_get_max_allowed_current(product);
   if (current_limit > max_current)
   {
     current_limit = max_current;
@@ -681,8 +674,7 @@ static void set_current_limit_after_warning(device_selector & selector, uint32_t
       << "so it will be lowered to " << current_limit << " mA." << std::endl;
   }
 
-  uint8_t code = settings.current_limit_encode(current_limit);
-  handle.set_current_limit_core(code);
+  handle.set_current_limit(current_limit);
 }
 
 static void get_status(device_selector & selector, bool full_output)
