@@ -276,6 +276,18 @@ static uint8_t parse_arg_step_mode(arg_reader & arg_reader)
   {
     return TIC_STEP_MODE_MICROSTEP32;
   }
+  else if (mode_str == "64" || mode_str == "1/64 step")
+  {
+    return TIC_STEP_MODE_MICROSTEP64;
+  }
+  else if (mode_str == "128" || mode_str == "1/128 step")
+  {
+    return TIC_STEP_MODE_MICROSTEP128;
+  }
+  else if (mode_str == "256" || mode_str == "1/256 step")
+  {
+    return TIC_STEP_MODE_MICROSTEP256;
+  }
   else
   {
     throw exception_with_exit_code(EXIT_BAD_ARGS,

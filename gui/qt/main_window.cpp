@@ -253,6 +253,22 @@ void main_window::adjust_ui_for_product(uint8_t product)
     agc_mode_visible = true;
     last_motor_driver_error_visible = true;
     break;
+
+  case TIC_PRODUCT_TIC06A:
+    set_combo_items(step_mode_value,
+      { { "Full step", TIC_STEP_MODE_MICROSTEP1 },
+        { "1/2 step", TIC_STEP_MODE_MICROSTEP2 },
+        { "1/4 step", TIC_STEP_MODE_MICROSTEP4 },
+        { "1/8 step", TIC_STEP_MODE_MICROSTEP8 },
+        { "1/16 step", TIC_STEP_MODE_MICROSTEP16 },
+        { "1/32 step", TIC_STEP_MODE_MICROSTEP32 },
+        { "1/64 step", TIC_STEP_MODE_MICROSTEP64 },
+        { "1/128 step", TIC_STEP_MODE_MICROSTEP128 },
+        { "1/256 step", TIC_STEP_MODE_MICROSTEP256 } });
+
+    // TODO: set decay mode items
+
+    break;
   }
 
   decay_mode_label->setVisible(decay_mode_visible);

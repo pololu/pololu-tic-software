@@ -172,6 +172,9 @@ const tic_name tic_step_mode_names[] =
   { "8", TIC_STEP_MODE_MICROSTEP8 },
   { "16", TIC_STEP_MODE_MICROSTEP16 },
   { "32", TIC_STEP_MODE_MICROSTEP32 },
+  { "64", TIC_STEP_MODE_MICROSTEP64 },
+  { "128", TIC_STEP_MODE_MICROSTEP128 },
+  { "256", TIC_STEP_MODE_MICROSTEP256 },
   { "full", TIC_STEP_MODE_FULL },
   { "half", TIC_STEP_MODE_HALF },
   { NULL, 0 },
@@ -181,11 +184,14 @@ const tic_name tic_step_mode_names_ui[] =
 {
   { "Full step", TIC_STEP_MODE_MICROSTEP1 },
   { "1/2 step", TIC_STEP_MODE_MICROSTEP2 },
+  { "1/2 step 100%", TIC_STEP_MODE_MICROSTEP2_100P },
   { "1/4 step", TIC_STEP_MODE_MICROSTEP4 },
   { "1/8 step", TIC_STEP_MODE_MICROSTEP8 },
   { "1/16 step", TIC_STEP_MODE_MICROSTEP16 },
   { "1/32 step", TIC_STEP_MODE_MICROSTEP32 },
-  { "1/2 step 100%", TIC_STEP_MODE_MICROSTEP2_100P },
+  { "1/64 step", TIC_STEP_MODE_MICROSTEP64 },
+  { "1/128 step", TIC_STEP_MODE_MICROSTEP128 },
+  { "1/256 step", TIC_STEP_MODE_MICROSTEP256 },
   { NULL, 0 },
 };
 

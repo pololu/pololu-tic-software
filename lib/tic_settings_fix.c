@@ -63,26 +63,37 @@ static void tic_settings_fix_enums(tic_settings * settings, tic_string * warning
   {
     uint8_t mode = tic_settings_get_step_mode(settings);
 
-    uint8_t valid_step_modes[] = {
-      TIC_STEP_MODE_MICROSTEP1,
-      TIC_STEP_MODE_MICROSTEP2,
-      TIC_STEP_MODE_MICROSTEP4,
-      TIC_STEP_MODE_MICROSTEP8,
-      TIC_STEP_MODE_MICROSTEP16,
-      TIC_STEP_MODE_MICROSTEP32,
-      TIC_STEP_MODE_MICROSTEP2_100P,
-    };
-    if (product == TIC_PRODUCT_T500)
+    uint8_t valid_step_modes[32];
+    uint8_t * p = valid_step_modes;
+
+    *p++ = TIC_STEP_MODE_MICROSTEP1;
+    *p++ = TIC_STEP_MODE_MICROSTEP2;
+    *p++ = TIC_STEP_MODE_MICROSTEP4;
+    *p++ = TIC_STEP_MODE_MICROSTEP8;
+
+    switch (product)
     {
-      valid_step_modes[4] = 0;  // 1/16 step is not allowed
-      valid_step_modes[5] = 0;  // 1/32 step is not allowed
-    }
-    if (product != TIC_PRODUCT_T249)
-    {
-      valid_step_modes[6] = 0;  // 2_100p is not allowed
+    case TIC_PRODUCT_T825:
+    case TIC_PRODUCT_N825:
+    case TIC_PRODUCT_T834:
+      *p++ = TIC_STEP_MODE_MICROSTEP16;
+      *p++ = TIC_STEP_MODE_MICROSTEP32;
+      break;
+    case TIC_PRODUCT_T249:
+      *p++ = TIC_STEP_MODE_MICROSTEP16;
+      *p++ = TIC_STEP_MODE_MICROSTEP32;
+      *p++ = TIC_STEP_MODE_MICROSTEP2_100P;
+      break;
+    case TIC_PRODUCT_TIC06A:
+      *p++ = TIC_STEP_MODE_MICROSTEP16;
+      *p++ = TIC_STEP_MODE_MICROSTEP32;
+      *p++ = TIC_STEP_MODE_MICROSTEP64;
+      *p++ = TIC_STEP_MODE_MICROSTEP128;
+      *p++ = TIC_STEP_MODE_MICROSTEP256;
+      break;
     }
 
-    if (!enum_is_valid(mode, valid_step_modes, sizeof(valid_step_modes)))
+    if (!enum_is_valid(mode, valid_step_modes, p - valid_step_modes))
     {
       mode = TIC_STEP_MODE_MICROSTEP1;
       tic_sprintf(warnings,
