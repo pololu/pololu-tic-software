@@ -55,8 +55,11 @@ const tic_name tic_decay_mode_names_generic_ui[] =
   { "Slow", TIC_DECAY_MODE_SLOW },
   { "Mixed", TIC_DECAY_MODE_MIXED },
   { "Fast", TIC_DECAY_MODE_FAST },
-  { "Mode 3", TIC_DECAY_MODE_MODE3 },
-  { "Mode 4", TIC_DECAY_MODE_MODE4 },
+  { "Mode 3", 3 },
+  { "Mode 4", 4 },
+  { "Mode 5", 5 },
+  { "Mode 6", 6 },
+  { "Mode 7", 7 },
   { NULL, 0 },
 };
 
@@ -90,13 +93,27 @@ const tic_name tic_decay_mode_names_t249_ui[] =
   { NULL, 0 },
 };
 
+const tic_name tic_decay_mode_names_drv8711_ui[] =
+{
+  { "Slow / mixed", TIC_DECAY_MODE_DRV8711_SLOW_MIXED },
+  { "Always slow", TIC_DECAY_MODE_DRV8711_ALWAYS_SLOW },
+  { "Always fast", TIC_DECAY_MODE_DRV8711_ALWAYS_FAST },
+  { "Always mixed", TIC_DECAY_MODE_DRV8711_ALWAYS_MIXED },
+  { "Slow / auto mixed", TIC_DECAY_MODE_DRV8711_SLOW_AUTO_MIXED },
+  { "Always auto mixed", TIC_DECAY_MODE_DRV8711_ALWAYS_AUTO_MIXED },
+  { NULL, 0 },
+};
+
 const tic_name tic_decay_mode_names_generic_snake[] =
 {
   { "mixed", TIC_DECAY_MODE_MIXED },
   { "slow", TIC_DECAY_MODE_SLOW },
   { "fast", TIC_DECAY_MODE_FAST },
-  { "mode3", TIC_DECAY_MODE_MODE3 },
-  { "mode4", TIC_DECAY_MODE_MODE4 },
+  { "mode3", 3 },
+  { "mode4", 4 },
+  { "mode5", 5 },
+  { "mode6", 6 },
+  { "mode7", 7 },
   { NULL, 0 },
 };
 
@@ -127,6 +144,17 @@ const tic_name tic_decay_mode_names_t500_snake[] =
 const tic_name tic_decay_mode_names_t249_snake[] =
 {
   { "mixed", TIC_DECAY_MODE_T249_MIXED },
+  { NULL, 0 },
+};
+
+const tic_name tic_decay_mode_names_drv8711_snake[] =
+{
+  { "slow_mixed", TIC_DECAY_MODE_DRV8711_SLOW_MIXED },
+  { "always_slow", TIC_DECAY_MODE_DRV8711_ALWAYS_SLOW },
+  { "always_fast", TIC_DECAY_MODE_DRV8711_ALWAYS_FAST },
+  { "always_mixed", TIC_DECAY_MODE_DRV8711_ALWAYS_MIXED },
+  { "slow_auto_mixed", TIC_DECAY_MODE_DRV8711_SLOW_AUTO_MIXED },
+  { "always_auto_mixed", TIC_DECAY_MODE_DRV8711_ALWAYS_AUTO_MIXED },
   { NULL, 0 },
 };
 
@@ -446,6 +474,9 @@ bool tic_look_up_decay_mode_name(uint8_t decay_mode,
     case TIC_PRODUCT_T249:
       name_table = tic_decay_mode_names_t249_snake;
       break;
+    case TIC_PRODUCT_TIC06A:
+      name_table = tic_decay_mode_names_drv8711_snake;
+      break;
     }
   }
   else
@@ -469,6 +500,9 @@ bool tic_look_up_decay_mode_name(uint8_t decay_mode,
       break;
     case TIC_PRODUCT_T249:
       name_table = tic_decay_mode_names_t249_ui;
+      break;
+    case TIC_PRODUCT_TIC06A:
+      name_table = tic_decay_mode_names_drv8711_ui;
       break;
     }
   }
@@ -528,6 +562,15 @@ bool tic_look_up_decay_mode_code(const char * name,
         return true;
       }
     }
+
+    if (!product || product == TIC_PRODUCT_TIC06A)
+    {
+      if (tic_name_to_code(tic_decay_mode_names_drv8711_snake, name, &result))
+      {
+        *code = result;
+        return true;
+      }
+    }
   }
 
   if (flags & TIC_NAME_UI)
@@ -568,6 +611,15 @@ bool tic_look_up_decay_mode_code(const char * name,
     if (!product || product == TIC_PRODUCT_T249)
     {
       if (tic_name_to_code(tic_decay_mode_names_t249_ui, name, &result))
+      {
+        *code = result;
+        return true;
+      }
+    }
+
+    if (!product || product == TIC_PRODUCT_TIC06A)
+    {
+      if (tic_name_to_code(tic_decay_mode_names_drv8711_ui, name, &result))
       {
         *code = result;
         return true;

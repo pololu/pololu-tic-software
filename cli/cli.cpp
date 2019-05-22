@@ -41,6 +41,9 @@ static const char help[] =
   "  --decay MODE                 Set decay mode:\n"
   "                               Tic T825/N825: mixed, slow, or fast\n"
   "                               T834: slow, mixed25, mixed50, mixed75, or fast\n"
+  // TODO: real name for tic06a here
+  "                               tic06a: slow_mixed, always_slow, always_fast,\n"
+  "                               always_mixed, slow_auto_mixed, always_auto_mixed\n"
   "\n"
   "Temporary settings for AGC on the Tic T249:\n"
   "  --agc-mode MODE                    Set AGC mode: on, off, active_off\n"

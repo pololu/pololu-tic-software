@@ -266,7 +266,13 @@ void main_window::adjust_ui_for_product(uint8_t product)
         { "1/128 step", TIC_STEP_MODE_MICROSTEP128 },
         { "1/256 step", TIC_STEP_MODE_MICROSTEP256 } });
 
-    // TODO: set decay mode items
+    set_combo_items(decay_mode_value,
+      { { "Slow / mixed", TIC_DECAY_MODE_DRV8711_SLOW_MIXED },
+        { "Always slow", TIC_DECAY_MODE_DRV8711_ALWAYS_SLOW },
+        { "Always fast", TIC_DECAY_MODE_DRV8711_ALWAYS_FAST },
+        { "Always mixed", TIC_DECAY_MODE_DRV8711_ALWAYS_MIXED },
+        { "Slow / auto mixed", TIC_DECAY_MODE_DRV8711_SLOW_AUTO_MIXED },
+        { "Always auto mixed", TIC_DECAY_MODE_DRV8711_ALWAYS_AUTO_MIXED }});
 
     break;
   }
