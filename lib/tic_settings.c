@@ -74,6 +74,10 @@ struct tic_settings
   uint8_t agc_bottom_current_limit;
   uint8_t agc_current_boost_steps;
   uint8_t agc_frequency_limit;
+
+  uint8_t drv8711_toff;
+  uint8_t drv8711_tblank;
+  uint8_t drv8711_tdecay;
 };
 
 void tic_settings_fill_with_defaults(tic_settings * settings)
@@ -149,16 +153,23 @@ void tic_settings_fill_with_defaults(tic_settings * settings)
   tic_settings_set_encoder_postscaler(settings, 1);
   tic_settings_set_current_limit_during_error(settings, -1);
 
+  tic_settings_set_max_speed(settings, 2000000);
+  tic_settings_set_max_accel(settings, 40000);
+  tic_settings_set_homing_speed_towards(settings, 1000000);
+  tic_settings_set_homing_speed_away(settings, 500000);
+
   if (product == TIC_PRODUCT_T249)
   {
     tic_settings_set_agc_bottom_current_limit(settings,
       TIC_AGC_BOTTOM_CURRENT_LIMIT_80);
   }
 
-  tic_settings_set_max_speed(settings, 2000000);
-  tic_settings_set_max_accel(settings, 40000);
-  tic_settings_set_homing_speed_towards(settings, 1000000);
-  tic_settings_set_homing_speed_away(settings, 500000);
+  if (product == TIC_PRODUCT_TIC06A)
+  {
+    tic_settings_set_drv8711_toff(settings, 0x30);
+    tic_settings_set_drv8711_tblank(settings, 0x80);
+    tic_settings_set_drv8711_tdecay(settings, 0x10);
+  }
 }
 
 tic_error * tic_settings_create(tic_settings ** settings)
@@ -1113,4 +1124,40 @@ uint8_t tic_settings_get_agc_frequency_limit(const tic_settings * settings)
 {
   if (!settings) { return 0; }
   return settings->agc_frequency_limit;
+}
+
+void tic_settings_set_drv8711_toff(tic_settings * settings, uint8_t time)
+{
+  if (!settings) { return; }
+  settings->drv8711_toff = time;
+}
+
+uint8_t tic_settings_get_drv8711_toff(const tic_settings * settings)
+{
+  if (!settings) { return 0; }
+  return settings->drv8711_toff;
+}
+
+void tic_settings_set_drv8711_tblank(tic_settings * settings, uint8_t time)
+{
+  if (!settings) { return; }
+  settings->drv8711_tblank = time;
+}
+
+uint8_t tic_settings_get_drv8711_tblank(const tic_settings * settings)
+{
+  if (!settings) { return 0; }
+  return settings->drv8711_tblank;
+}
+
+void tic_settings_set_drv8711_tdecay(tic_settings * settings, uint8_t time)
+{
+  if (!settings) { return; }
+  settings->drv8711_tdecay = time;
+}
+
+uint8_t tic_settings_get_drv8711_tdecay(const tic_settings * settings)
+{
+  if (!settings) { return 0; }
+  return settings->drv8711_tdecay;
 }

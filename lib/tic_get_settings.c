@@ -297,29 +297,6 @@ static void write_buffer_to_settings(const uint8_t * buf, tic_settings * setting
     tic_settings_set_decay_mode(settings, decay_mode);
   }
 
-  if (product == TIC_PRODUCT_T249)
-  {
-    {
-      uint8_t mode = buf[TIC_SETTING_AGC_MODE];
-      tic_settings_set_agc_mode(settings, mode);
-    }
-
-    {
-      uint8_t limit = buf[TIC_SETTING_AGC_BOTTOM_CURRENT_LIMIT];
-      tic_settings_set_agc_bottom_current_limit(settings, limit);
-    }
-
-    {
-      uint8_t steps = buf[TIC_SETTING_AGC_CURRENT_BOOST_STEPS];
-      tic_settings_set_agc_current_boost_steps(settings, steps);
-    }
-
-    {
-      uint8_t limit = buf[TIC_SETTING_AGC_FREQUENCY_LIMIT];
-      tic_settings_set_agc_frequency_limit(settings, limit);
-    }
-  }
-
   {
     const uint8_t * p = buf + TIC_SETTING_STARTING_SPEED;
     uint32_t starting_speed = p[0] + (p[1] << 8) + (p[2] << 16) + (p[3] << 24);
@@ -371,6 +348,37 @@ static void write_buffer_to_settings(const uint8_t * buf, tic_settings * setting
   {
     bool invert = buf[TIC_SETTING_INVERT_MOTOR_DIRECTION] & 1;
     tic_settings_set_invert_motor_direction(settings, invert);
+  }
+
+  if (product == TIC_PRODUCT_T249)
+  {
+    {
+      uint8_t mode = buf[TIC_SETTING_AGC_MODE];
+      tic_settings_set_agc_mode(settings, mode);
+    }
+
+    {
+      uint8_t limit = buf[TIC_SETTING_AGC_BOTTOM_CURRENT_LIMIT];
+      tic_settings_set_agc_bottom_current_limit(settings, limit);
+    }
+
+    {
+      uint8_t steps = buf[TIC_SETTING_AGC_CURRENT_BOOST_STEPS];
+      tic_settings_set_agc_current_boost_steps(settings, steps);
+    }
+
+    {
+      uint8_t limit = buf[TIC_SETTING_AGC_FREQUENCY_LIMIT];
+      tic_settings_set_agc_frequency_limit(settings, limit);
+    }
+  }
+
+  if (product == TIC_PRODUCT_TIC06A)
+  {
+    uint8_t * p = buf + TIC_SETTING_DRV8711_REGISTERS;
+    tic_settings_set_drv8711_toff(settings, p[4]);
+    tic_settings_set_drv8711_tblank(settings, p[6]);
+    tic_settings_set_drv8711_tdecay(settings, p[8]);
   }
 }
 

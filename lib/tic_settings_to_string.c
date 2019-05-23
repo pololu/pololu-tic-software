@@ -391,6 +391,26 @@ tic_error * tic_settings_to_string(const tic_settings * settings, char ** string
     tic_sprintf(&str, "agc_frequency_limit: %s\n", name);
   }
 
+  bool drv8711 = product == TIC_PRODUCT_TIC06A;
+
+  if (drv8711)
+  {
+    uint8_t time = tic_settings_get_drv8711_toff(settings);
+    tic_sprintf(&str, "drv8711_toff: %d\n", time);
+  }
+
+  if (drv8711)
+  {
+    uint8_t time = tic_settings_get_drv8711_tblank(settings);
+    tic_sprintf(&str, "drv8711_tblank: %d\n", time);
+  }
+
+  if (drv8711)
+  {
+    uint8_t time = tic_settings_get_drv8711_tdecay(settings);
+    tic_sprintf(&str, "drv8711_tdecay: %d\n", time);
+  }
+
   if (error == NULL && str.data == NULL)
   {
     error = &tic_error_no_memory;

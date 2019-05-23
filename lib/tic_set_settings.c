@@ -362,25 +362,25 @@ static void tic_write_settings_to_buffer(const tic_settings * settings, uint8_t 
     // DRV8711 DECAY register using a "Get settings" command.
     // TODO: set DECAY
 
-    // CTRL register: Defaults except for MODE (step_mode).
+    // CTRL register
     p[0] = step_mode_code << 3;
     p[1] = 0b1100;
-    // TORQUE register: Default current limit, default SMPLTH.
+    // TORQUE register
     p[2] = current_limit_code;
     p[3] = 0b0001;
-    // OFF register: defaults.
-    p[4] = 0x30;
+    // OFF register
+    p[4] = tic_settings_get_drv8711_toff(settings);
     p[5] = 0;
-    // BLANK register: defaults.
-    p[6] = 0x80;
+    // BLANK register
+    p[6] = tic_settings_get_drv8711_tblank(settings);
     p[7] = 0;
-    // DECAY register: defaults.
-    p[8] = 0x10;
+    // DECAY register
+    p[8] = tic_settings_get_drv8711_tdecay(settings);
     p[9] = 0b0001;
-    // STALL register: defaults, except SDTHR is 0 to disable stall detection.
+    // STALL register
     p[10] = 0;
     p[11] = 0;
-    // DRIVE register: defaults.
+    // DRIVE register
     p[12] = 0b01011001;
     p[13] = 0b1010;
   }

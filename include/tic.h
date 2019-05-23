@@ -1163,6 +1163,54 @@ void tic_settings_set_agc_frequency_limit(tic_settings *, uint8_t limit);
 TIC_API
 uint8_t tic_settings_get_agc_frequency_limit(const tic_settings *);
 
+/// Sets the value of TOFF in the DRV8711's OFF register.
+///
+/// This sets the fixed off time in increments of 500 nanoseconds,
+/// with 0 corresponding to 500 ns.
+/// Any value between 0 (500 ns) and 255 (1280 us) is allowed.
+///
+/// This setting is only valid for Tics based on the DRV8711.
+TIC_API
+void tic_settings_set_drv8711_toff(tic_settings *, uint8_t time);
+
+/// Gets the value of TOFF in the DRV8711's OFF register, as described in
+/// tic_settings_set_drv8711_toff().
+TIC_API
+uint8_t tic_settings_get_drv8711_toff(const tic_settings *);
+
+/// Sets the value of TBLANK in the DRV8711's BLANK register.
+///
+/// This sets the current trip blanking time, in increments of 20 ns.
+///
+/// Any value between 0 and 255 is valid.
+/// Any value between 0 and 50 corresponds to 1 us.
+/// Any value above 50 corresponds to 20 ns times the value, so a value of
+/// 255 corresponds to 5.1 us.
+///
+/// This setting is only valid for Tics based on the DRV8711.
+TIC_API
+void tic_settings_set_drv8711_tblank(tic_settings *, uint8_t time);
+
+/// Gets the value of TBLANK in the DRV8711's BLANK register, as described in
+/// tic_settings_set_drv8711_tblank().
+TIC_API
+uint8_t tic_settings_get_drv8711_tblank(const tic_settings *);
+
+/// Sets the value of TDECAY in the DRV8711's DECAY register.
+///
+/// This sets the mixed decay transition time, in units of 500 ns.
+///
+/// Any value between 0 (0.5 us) and 255 (127.5 us) is valid.
+///
+/// This setting is only valid for Tics based on the DRV8711.
+TIC_API
+void tic_settings_set_drv8711_tdecay(tic_settings *, uint8_t time);
+
+/// Gets the value of TDECAY in the DRV8711's DECAY register, as described in
+/// tic_settings_set_drv8711_tdecay().
+TIC_API
+uint8_t tic_settings_get_drv8711_tdecay(const tic_settings *);
+
 
 // tic_variables ///////////////////////////////////////////////////////////////
 

@@ -624,42 +624,6 @@ static tic_error * apply_string_pair(tic_settings * settings,
     }
     tic_settings_set_decay_mode(settings, decay_mode);
   }
-  else if (!strcmp(key, "agc_mode"))
-  {
-    uint32_t mode;
-    if (!tic_name_to_code(tic_agc_mode_names, value, &mode))
-    {
-      return tic_error_create("Invalid agc_mode value.");
-    }
-    tic_settings_set_agc_mode(settings, mode);
-  }
-  else if (!strcmp(key, "agc_bottom_current_limit"))
-  {
-    uint32_t limit;
-    if (!tic_name_to_code(tic_agc_bottom_current_limit_names, value, &limit))
-    {
-      return tic_error_create("Invalid agc_bottom_current_limit value.");
-    }
-    tic_settings_set_agc_bottom_current_limit(settings, limit);
-  }
-  else if (!strcmp(key, "agc_current_boost_steps"))
-  {
-    uint32_t steps;
-    if (!tic_name_to_code(tic_agc_current_boost_steps_names, value, &steps))
-    {
-      return tic_error_create("Invalid agc_current_boost_steps value.");
-    }
-    tic_settings_set_agc_current_boost_steps(settings, steps);
-  }
-  else if (!strcmp(key, "agc_frequency_limit"))
-  {
-    uint32_t limit;
-    if (!tic_name_to_code(tic_agc_frequency_limit_names, value, &limit))
-    {
-      return tic_error_create("Invalid agc_frequency_limit value.");
-    }
-    tic_settings_set_agc_frequency_limit(settings, limit);
-  }
   else if (!strcmp(key, "max_speed"))
   {
     int64_t max_speed;
@@ -766,6 +730,82 @@ static tic_error * apply_string_pair(tic_settings * settings,
     }
     tic_settings_set_invert_motor_direction(settings, invert);
   }
+  else if (!strcmp(key, "agc_mode"))
+  {
+    uint32_t mode;
+    if (!tic_name_to_code(tic_agc_mode_names, value, &mode))
+    {
+      return tic_error_create("Invalid agc_mode value.");
+    }
+    tic_settings_set_agc_mode(settings, mode);
+  }
+  else if (!strcmp(key, "agc_bottom_current_limit"))
+  {
+    uint32_t limit;
+    if (!tic_name_to_code(tic_agc_bottom_current_limit_names, value, &limit))
+    {
+      return tic_error_create("Invalid agc_bottom_current_limit value.");
+    }
+    tic_settings_set_agc_bottom_current_limit(settings, limit);
+  }
+  else if (!strcmp(key, "agc_current_boost_steps"))
+  {
+    uint32_t steps;
+    if (!tic_name_to_code(tic_agc_current_boost_steps_names, value, &steps))
+    {
+      return tic_error_create("Invalid agc_current_boost_steps value.");
+    }
+    tic_settings_set_agc_current_boost_steps(settings, steps);
+  }
+  else if (!strcmp(key, "agc_frequency_limit"))
+  {
+    uint32_t limit;
+    if (!tic_name_to_code(tic_agc_frequency_limit_names, value, &limit))
+    {
+      return tic_error_create("Invalid agc_frequency_limit value.");
+    }
+    tic_settings_set_agc_frequency_limit(settings, limit);
+  }
+  else if (!strcmp(key, "drv8711_toff"))
+  {
+    int64_t time;
+    if (tic_string_to_i64(value, &time))
+    {
+      return tic_error_create("Invalid drv8711_toff value.");
+    }
+    if (time < 0 || time > UINT8_MAX)
+    {
+      return tic_error_create("The drv8711_toff value is out of range.");
+    }
+    tic_settings_set_drv8711_toff(settings, time);
+  }
+  else if (!strcmp(key, "drv8711_tblank"))
+  {
+    int64_t time;
+    if (tic_string_to_i64(value, &time))
+    {
+      return tic_error_create("Invalid drv8711_tblank value.");
+    }
+    if (time < 0 || time > UINT8_MAX)
+    {
+      return tic_error_create("The drv8711_tblank value is out of range.");
+    }
+    tic_settings_set_drv8711_tblank(settings, time);
+  }
+  else if (!strcmp(key, "drv8711_tdecay"))
+  {
+    int64_t time;
+    if (tic_string_to_i64(value, &time))
+    {
+      return tic_error_create("Invalid drv8711_tdecay value.");
+    }
+    if (time < 0 || time > UINT8_MAX)
+    {
+      return tic_error_create("The drv8711_tdecay value is out of range.");
+    }
+    tic_settings_set_drv8711_tdecay(settings, time);
+  }
+
   else
   {
     return tic_error_create("Unrecognized key on line %d: \"%s\".", line, key);
