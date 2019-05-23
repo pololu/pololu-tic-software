@@ -139,6 +139,13 @@ void tic_settings_fill_with_defaults(tic_settings * settings)
     tic_settings_set_high_vin_shutoff_voltage(settings, 40000);
     tic_settings_set_current_limit(settings, 200);
   }
+  else if (product == TIC_PRODUCT_TIC06A)
+  {
+    tic_settings_set_low_vin_shutoff_voltage(settings, 5800);
+    tic_settings_set_low_vin_startup_voltage(settings, 6100);
+    tic_settings_set_high_vin_shutoff_voltage(settings, 50000);
+    tic_settings_set_current_limit(settings, 215);
+  }
   tic_settings_set_rc_max_pulse_period(settings, 100);
   tic_settings_set_rc_bad_signal_timeout(settings, 500);
   tic_settings_set_rc_consecutive_good_pulses(settings, 2);

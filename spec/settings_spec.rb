@@ -1,546 +1,19 @@
 require_relative 'spec_helper'
 
-DefaultSettings = {
-  T825: <<END,
-product: T825
-control_mode: serial
-never_sleep: false
-disable_safe_start: false
-ignore_err_line_high: false
-auto_clear_driver_error: true
-soft_error_response: decel_to_hold
-soft_error_position: 0
-serial_baud_rate: 9600
-serial_device_number: 14
-serial_alt_device_number: 0
-serial_enable_alt_device_number: false
-serial_14bit_device_number: false
-command_timeout: 1000
-serial_crc_for_commands: false
-serial_crc_for_responses: false
-serial_7bit_responses: false
-serial_response_delay: 0
-vin_calibration: 0
-input_averaging_enabled: true
-input_hysteresis: 0
-input_scaling_degree: linear
-input_invert: false
-input_min: 0
-input_neutral_min: 2015
-input_neutral_max: 2080
-input_max: 4095
-output_min: -200
-output_max: 200
-encoder_prescaler: 1
-encoder_postscaler: 1
-encoder_unlimited: false
-scl_config: default
-sda_config: default
-tx_config: default
-rx_config: default
-rc_config: default
-current_limit: 192
-current_limit_during_error: -1
-step_mode: 1
-decay_mode: mixed
-max_speed: 2000000
-starting_speed: 0
-max_accel: 40000
-max_decel: 0
-auto_homing: false
-auto_homing_forward: false
-homing_speed_towards: 1000000
-homing_speed_away: 500000
-invert_motor_direction: false
-END
+def default_settings(product)
+  raise ArgumentError if product.nil?
+  File.read(File.dirname(__FILE__) +
+    "/default_settings/#{product.to_s.downcase}.txt")
+end
 
-  T834: <<END,
-product: T834
-control_mode: serial
-never_sleep: false
-disable_safe_start: false
-ignore_err_line_high: false
-auto_clear_driver_error: true
-soft_error_response: decel_to_hold
-soft_error_position: 0
-serial_baud_rate: 9600
-serial_device_number: 14
-serial_alt_device_number: 0
-serial_enable_alt_device_number: false
-serial_14bit_device_number: false
-command_timeout: 1000
-serial_crc_for_commands: false
-serial_crc_for_responses: false
-serial_7bit_responses: false
-serial_response_delay: 0
-vin_calibration: 0
-input_averaging_enabled: true
-input_hysteresis: 0
-input_scaling_degree: linear
-input_invert: false
-input_min: 0
-input_neutral_min: 2015
-input_neutral_max: 2080
-input_max: 4095
-output_min: -200
-output_max: 200
-encoder_prescaler: 1
-encoder_postscaler: 1
-encoder_unlimited: false
-scl_config: default
-sda_config: default
-tx_config: default
-rx_config: default
-rc_config: default
-current_limit: 192
-current_limit_during_error: -1
-step_mode: 1
-decay_mode: mixed50
-max_speed: 2000000
-starting_speed: 0
-max_accel: 40000
-max_decel: 0
-auto_homing: false
-auto_homing_forward: false
-homing_speed_towards: 1000000
-homing_speed_away: 500000
-invert_motor_direction: false
-END
-
-  T500: <<END,
-product: T500
-control_mode: serial
-never_sleep: false
-disable_safe_start: false
-ignore_err_line_high: false
-auto_clear_driver_error: true
-soft_error_response: decel_to_hold
-soft_error_position: 0
-serial_baud_rate: 9600
-serial_device_number: 14
-serial_alt_device_number: 0
-serial_enable_alt_device_number: false
-serial_14bit_device_number: false
-command_timeout: 1000
-serial_crc_for_commands: false
-serial_crc_for_responses: false
-serial_7bit_responses: false
-serial_response_delay: 0
-vin_calibration: 0
-input_averaging_enabled: true
-input_hysteresis: 0
-input_scaling_degree: linear
-input_invert: false
-input_min: 0
-input_neutral_min: 2015
-input_neutral_max: 2080
-input_max: 4095
-output_min: -200
-output_max: 200
-encoder_prescaler: 1
-encoder_postscaler: 1
-encoder_unlimited: false
-scl_config: default
-sda_config: default
-tx_config: default
-rx_config: default
-rc_config: default
-current_limit: 174
-current_limit_during_error: -1
-step_mode: 1
-max_speed: 2000000
-starting_speed: 0
-max_accel: 40000
-max_decel: 0
-auto_homing: false
-auto_homing_forward: false
-homing_speed_towards: 1000000
-homing_speed_away: 500000
-invert_motor_direction: false
-END
-
-  N825: <<END,
-product: N825
-control_mode: serial
-never_sleep: false
-disable_safe_start: false
-ignore_err_line_high: false
-auto_clear_driver_error: true
-soft_error_response: decel_to_hold
-soft_error_position: 0
-serial_baud_rate: 9600
-serial_device_number: 14
-serial_alt_device_number: 0
-serial_enable_alt_device_number: false
-serial_14bit_device_number: false
-command_timeout: 1000
-serial_crc_for_commands: false
-serial_crc_for_responses: false
-serial_7bit_responses: true
-serial_response_delay: 100
-vin_calibration: 0
-input_averaging_enabled: true
-input_hysteresis: 0
-input_scaling_degree: linear
-input_invert: false
-input_min: 0
-input_neutral_min: 2015
-input_neutral_max: 2080
-input_max: 4095
-output_min: -200
-output_max: 200
-encoder_prescaler: 1
-encoder_postscaler: 1
-encoder_unlimited: false
-scl_config: default
-sda_config: default
-tx_config: default
-rx_config: default
-rc_config: default
-current_limit: 192
-current_limit_during_error: -1
-step_mode: 1
-decay_mode: mixed
-max_speed: 2000000
-starting_speed: 0
-max_accel: 40000
-max_decel: 0
-auto_homing: false
-auto_homing_forward: false
-homing_speed_towards: 1000000
-homing_speed_away: 500000
-invert_motor_direction: false
-END
-
-T249: <<END,
-product: T249
-control_mode: serial
-never_sleep: false
-disable_safe_start: false
-ignore_err_line_high: false
-auto_clear_driver_error: true
-soft_error_response: decel_to_hold
-soft_error_position: 0
-serial_baud_rate: 9600
-serial_device_number: 14
-serial_alt_device_number: 0
-serial_enable_alt_device_number: false
-serial_14bit_device_number: false
-command_timeout: 1000
-serial_crc_for_commands: false
-serial_crc_for_responses: false
-serial_7bit_responses: false
-serial_response_delay: 0
-vin_calibration: 0
-input_averaging_enabled: true
-input_hysteresis: 0
-input_scaling_degree: linear
-input_invert: false
-input_min: 0
-input_neutral_min: 2015
-input_neutral_max: 2080
-input_max: 4095
-output_min: -200
-output_max: 200
-encoder_prescaler: 1
-encoder_postscaler: 1
-encoder_unlimited: false
-scl_config: default
-sda_config: default
-tx_config: default
-rx_config: default
-rc_config: default
-current_limit: 200
-current_limit_during_error: -1
-step_mode: 1
-agc_mode: off
-agc_bottom_current_limit: 80
-agc_current_boost_steps: 5
-agc_frequency_limit: off
-max_speed: 2000000
-starting_speed: 0
-max_accel: 40000
-max_decel: 0
-auto_homing: false
-auto_homing_forward: false
-homing_speed_towards: 1000000
-homing_speed_away: 500000
-invert_motor_direction: false
-END
-}
-
-TestSettings1 = {
-  T825: <<END,
-product: T825
-control_mode: rc_position
-never_sleep: true
-disable_safe_start: true
-ignore_err_line_high: true
-auto_clear_driver_error: true
-soft_error_response: decel_to_hold
-soft_error_position: -234333890
-serial_baud_rate: 115385
-serial_device_number: 9441
-serial_alt_device_number: 8385
-serial_enable_alt_device_number: true
-serial_14bit_device_number: true
-command_timeout: 2020
-serial_crc_for_commands: true
-serial_crc_for_responses: false
-serial_7bit_responses: true
-serial_response_delay: 123
-vin_calibration: -345
-input_averaging_enabled: false
-input_hysteresis: 4455
-input_scaling_degree: cubic
-input_invert: true
-input_min: 404
-input_neutral_min: 505
-input_neutral_max: 606
-input_max: 3000
-output_min: -999
-output_max: 999
-encoder_prescaler: 5
-encoder_postscaler: 1000000000
-encoder_unlimited: true
-scl_config: user_input pullup active_high
-sda_config: kill_switch analog
-tx_config: kill_switch pullup analog
-rx_config: serial
-rc_config: rc pullup
-current_limit: 384
-current_limit_during_error: 96
-step_mode: 32
-decay_mode: fast
-max_speed: 234567890
-starting_speed: 10000
-max_accel: 934567820
-max_decel: 734567890
-auto_homing: true
-auto_homing_forward: true
-homing_speed_towards: 123456789
-homing_speed_away: 90876722
-invert_motor_direction: true
-END
-
-  T834: <<END,
-product: T834
-control_mode: rc_position
-never_sleep: true
-disable_safe_start: true
-ignore_err_line_high: true
-auto_clear_driver_error: true
-soft_error_response: decel_to_hold
-soft_error_position: -234333890
-serial_baud_rate: 115385
-serial_device_number: 9441
-serial_alt_device_number: 8385
-serial_enable_alt_device_number: true
-serial_14bit_device_number: true
-command_timeout: 2020
-serial_crc_for_commands: true
-serial_crc_for_responses: false
-serial_7bit_responses: true
-serial_response_delay: 123
-vin_calibration: -345
-input_averaging_enabled: false
-input_hysteresis: 4455
-input_scaling_degree: cubic
-input_invert: true
-input_min: 404
-input_neutral_min: 505
-input_neutral_max: 606
-input_max: 3000
-output_min: -999
-output_max: 999
-encoder_prescaler: 5
-encoder_postscaler: 1000000000
-encoder_unlimited: true
-scl_config: user_input pullup active_high
-sda_config: kill_switch analog
-tx_config: kill_switch pullup analog
-rx_config: serial
-rc_config: rc pullup
-current_limit: 384
-current_limit_during_error: 96
-step_mode: 32
-decay_mode: mixed75
-max_speed: 234567890
-starting_speed: 10000
-max_accel: 934567820
-max_decel: 734567890
-auto_homing: true
-auto_homing_forward: true
-homing_speed_towards: 123456789
-homing_speed_away: 90876722
-invert_motor_direction: true
-END
-
-  T500: <<END,
-product: T500
-control_mode: rc_position
-never_sleep: true
-disable_safe_start: true
-ignore_err_line_high: true
-auto_clear_driver_error: true
-soft_error_response: decel_to_hold
-soft_error_position: -234333890
-serial_baud_rate: 115385
-serial_device_number: 9441
-serial_alt_device_number: 8385
-serial_enable_alt_device_number: true
-serial_14bit_device_number: true
-command_timeout: 2020
-serial_crc_for_commands: true
-serial_crc_for_responses: false
-serial_7bit_responses: true
-serial_response_delay: 123
-vin_calibration: -345
-input_averaging_enabled: false
-input_hysteresis: 4455
-input_scaling_degree: cubic
-input_invert: true
-input_min: 404
-input_neutral_min: 505
-input_neutral_max: 606
-input_max: 3000
-output_min: -999
-output_max: 999
-encoder_prescaler: 5
-encoder_postscaler: 1000000000
-encoder_unlimited: true
-scl_config: user_input pullup active_high
-sda_config: kill_switch analog
-tx_config: kill_switch pullup analog
-rx_config: serial
-rc_config: rc pullup
-current_limit: 1452
-current_limit_during_error: 880
-step_mode: 8
-max_speed: 234567890
-starting_speed: 10000
-max_accel: 934567820
-max_decel: 734567890
-auto_homing: true
-auto_homing_forward: true
-homing_speed_towards: 123456789
-homing_speed_away: 90876722
-invert_motor_direction: true
-END
-
-  N825: <<END,
-product: N825
-control_mode: rc_position
-never_sleep: true
-disable_safe_start: true
-ignore_err_line_high: true
-auto_clear_driver_error: true
-soft_error_response: decel_to_hold
-soft_error_position: -234333890
-serial_baud_rate: 115385
-serial_device_number: 9441
-serial_alt_device_number: 8385
-serial_enable_alt_device_number: true
-serial_14bit_device_number: true
-command_timeout: 2020
-serial_crc_for_commands: true
-serial_crc_for_responses: false
-serial_7bit_responses: true
-serial_response_delay: 123
-vin_calibration: -345
-input_averaging_enabled: false
-input_hysteresis: 4455
-input_scaling_degree: cubic
-input_invert: true
-input_min: 404
-input_neutral_min: 505
-input_neutral_max: 606
-input_max: 3000
-output_min: -999
-output_max: 999
-encoder_prescaler: 5
-encoder_postscaler: 1000000000
-encoder_unlimited: true
-scl_config: user_input pullup active_high
-sda_config: kill_switch analog
-tx_config: kill_switch pullup analog
-rx_config: serial
-rc_config: rc pullup
-current_limit: 384
-current_limit_during_error: 96
-step_mode: 32
-decay_mode: fast
-max_speed: 234567890
-starting_speed: 10000
-max_accel: 934567820
-max_decel: 734567890
-auto_homing: true
-auto_homing_forward: true
-homing_speed_towards: 123456789
-homing_speed_away: 90876722
-invert_motor_direction: true
-END
-
-  T249: <<END,
-product: T249
-control_mode: rc_position
-never_sleep: true
-disable_safe_start: true
-ignore_err_line_high: true
-auto_clear_driver_error: true
-soft_error_response: decel_to_hold
-soft_error_position: -234333890
-serial_baud_rate: 115385
-serial_device_number: 9441
-serial_alt_device_number: 8385
-serial_enable_alt_device_number: true
-serial_14bit_device_number: true
-command_timeout: 2020
-serial_crc_for_commands: true
-serial_crc_for_responses: false
-serial_7bit_responses: true
-serial_response_delay: 123
-vin_calibration: -345
-input_averaging_enabled: false
-input_hysteresis: 4455
-input_scaling_degree: cubic
-input_invert: true
-input_min: 404
-input_neutral_min: 505
-input_neutral_max: 606
-input_max: 3000
-output_min: -999
-output_max: 999
-encoder_prescaler: 5
-encoder_postscaler: 1000000000
-encoder_unlimited: true
-scl_config: user_input pullup active_high
-sda_config: kill_switch analog
-tx_config: kill_switch pullup analog
-rx_config: serial
-rc_config: rc pullup
-current_limit: 360
-current_limit_during_error: 80
-step_mode: 32
-agc_mode: active_off
-agc_bottom_current_limit: 50
-agc_current_boost_steps: 11
-agc_frequency_limit: 450
-max_speed: 234567890
-starting_speed: 10000
-max_accel: 934567820
-max_decel: 734567890
-auto_homing: true
-auto_homing_forward: true
-homing_speed_towards: 123456789
-homing_speed_away: 90876722
-invert_motor_direction: true
-END
-
-}
+def test_settings1(product)
+  raise ArgumentError if product.nil?
+  File.read(File.dirname(__FILE__) +
+    "/test_settings1/#{product.to_s.downcase}.txt")
+end
 
 def test_cases_for_settings_fix(product)
-  defaults = YAML.load(DefaultSettings.fetch(product))
+  defaults = YAML.load(default_settings(product))
 
   if product == :T500
     lowest_current = 0
@@ -554,6 +27,12 @@ def test_cases_for_settings_fix(product)
     default_current = 200
     medium_current = 440
     high_current = 1440
+  elsif product == :tic06a
+    lowest_current = 0
+    low_current = 72
+    default_current = 215
+    medium_current = 573
+    high_current = 1504
   else
     lowest_current = 0
     low_current = 64
@@ -868,6 +347,7 @@ def test_cases_for_settings_fix(product)
     cases << [ { 'decay_mode' => 'mode4' },
                { 'decay_mode' => case product
                                  when :T834 then 'mixed75'
+                                 when :tic06a then 'slow_mixed'
                                  else 'mixed'
                                  end
                },
@@ -890,7 +370,7 @@ describe 'settings' do
   specify 'settings test 1', usb: true do
     # Set the settings to something kind of random.
     stdout, stderr, result = run_ticcmd('--set-settings -',
-      input: TestSettings1.fetch(tic_product))
+      input: test_settings1(tic_product))
     expect(stderr).to eq ""
     expect(stdout).to eq ""
     expect(result).to eq 0
@@ -898,7 +378,7 @@ describe 'settings' do
     # Read the settings back and make sure they match.
     stdout, stderr, result = run_ticcmd('--get-settings -')
     expect(stderr).to eq ""
-    expect(YAML.load(stdout)).to eq YAML.load(TestSettings1.fetch(tic_product))
+    expect(YAML.load(stdout)).to eq YAML.load(test_settings1(tic_product))
     expect(result). to eq 0
 
     # Restore the device to its default settings.
@@ -913,7 +393,7 @@ describe 'settings' do
     stdout, stderr, result = run_ticcmd('--get-settings -')
     expect(stderr).to eq ""
     defaults_from_device = YAML.load(stdout)
-    defaults = YAML.load(DefaultSettings.fetch(tic_product))
+    defaults = YAML.load(default_settings(tic_product))
     expect(defaults_from_device).to eq defaults
     expect(result).to eq 0
   end
@@ -924,13 +404,13 @@ describe 'settings' do
       stdout, stderr, result = run_ticcmd('--fix-settings - -', input: stdin)
       expect(stderr).to eq ""
       fixed = YAML.load(stdout)
-      defaults = YAML.load(DefaultSettings.fetch(product))
+      defaults = YAML.load(default_settings(product))
       expect(fixed).to eq defaults
       expect(result).to eq 0
     end
 
     specify "tic_settings_fix is correct for #{product}" do
-      defaults = YAML.load(DefaultSettings.fetch(product))
+      defaults = YAML.load(default_settings(product))
       test_cases_for_settings_fix(product).each do |input_part, output_part, warnings|
         warnings ||= ""
         if !warnings.empty? && !warnings.end_with?("\n")
