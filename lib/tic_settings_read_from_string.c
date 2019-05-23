@@ -805,7 +805,6 @@ static tic_error * apply_string_pair(tic_settings * settings,
     }
     tic_settings_set_drv8711_tdecay(settings, time);
   }
-
   else
   {
     return tic_error_create("Unrecognized key on line %d: \"%s\".", line, key);

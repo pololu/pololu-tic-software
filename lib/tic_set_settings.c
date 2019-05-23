@@ -348,19 +348,16 @@ static void tic_write_settings_to_buffer(const tic_settings * settings, uint8_t 
 
     uint8_t * p = buf + TIC_SETTING_DRV8711_REGISTERS;
 
-    // Setting TORQUE accurately here typically saves the firmware from doing
-    // some work, since it synchronizes DRV8711 registers before setting the
-    // current for the first time.
-
-    // Setting MODE accurately here only matters if people want to read the
-    // DRV8711 CTRL register using a "Get settings" command.
     uint8_t step_mode_code = step_mode;
     if (step_mode_code >= TIC_STEP_MODE_MICROSTEP2_100P) { step_mode_code--; }
     step_mode_code &= 0xF;
 
-    // Setting DECAY accurately here only matters if people want to read the
-    // DRV8711 DECAY register using a "Get settings" command.
-    // TODO: set DECAY
+    static const uint8_t decay_mode_table[] = { 1, 0, 2, 1, 1, 3, 4, 5 };
+    uint8_t decay_mode_code = 1;
+    if (decay_mode < sizeof(decay_mode_table))
+    {
+      decay_mode_code = decay_mode_table[decay_mode];
+    }
 
     // CTRL register
     p[0] = step_mode_code << 3;
@@ -376,7 +373,7 @@ static void tic_write_settings_to_buffer(const tic_settings * settings, uint8_t 
     p[7] = 0;
     // DECAY register
     p[8] = tic_settings_get_drv8711_tdecay(settings);
-    p[9] = 0b0001;
+    p[9] = decay_mode_code;
     // STALL register
     p[10] = 0;
     p[11] = 0;
