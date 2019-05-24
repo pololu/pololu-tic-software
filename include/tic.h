@@ -1749,7 +1749,7 @@ tic_error * tic_halt_and_set_position(tic_handle *, int32_t position);
 TIC_API TIC_WARN_UNUSED
 tic_error * tic_halt_and_hold(tic_handle *);
 
-/// Sends a 'Go Home' command, starting the Tic's homing procedure.
+/// Sends a "Go Home" command, starting the Tic's homing procedure.
 ///
 /// The direcition argument should be 1 for forward or 0 for reverse.
 TIC_API TIC_WARN_UNUSED
@@ -1779,12 +1779,14 @@ tic_error * tic_deenergize(tic_handle *);
 /// Sends the Energize command.
 ///
 /// This function sends an Energize command to the Tic, clearing the
-/// "Intentionally deenergized" error bit.  If there are no other errors, this
-/// allows the system to start up.
+/// "Intentionally deenergized" error bit.
+///
+/// Note that this function is not normally needed to use the Tic: it is only
+/// needed if the Tic previously received a "De-energize" command.
 TIC_API TIC_WARN_UNUSED
 tic_error * tic_energize(tic_handle *);
 
-/// Sends the Exit safe start command.
+/// Sends the "Exit safe start" command.
 ///
 /// In Serial/I2C/USB control mode, this command causes the Safe Start Violation
 /// error to be cleared for 200 ms.  If there are no other errors, this
@@ -1792,7 +1794,7 @@ tic_error * tic_energize(tic_handle *);
 TIC_API TIC_WARN_UNUSED
 tic_error * tic_exit_safe_start(tic_handle *);
 
-/// Sends the Enter safe start command.
+/// Sends the "Enter safe start" command.
 ///
 /// This command has no effect if safe-start is disabled in the Tic settings (see
 /// tic_settings_set_disable_safe_start()).
@@ -1838,20 +1840,20 @@ tic_error * tic_reset(tic_handle *);
 
 /// Attempts to clear a motor driver error.
 ///
-/// This function sends a clear driver error command to the Tic.
+/// This function sends a "Clear driver error" command to the Tic.
 TIC_API TIC_WARN_UNUSED
 tic_error * tic_clear_driver_error(tic_handle *);
 
 /// Temporarily sets the maximum speed, in units of steps per 10000 seconds.
 ///
-/// This function sends a set max speed command to the Tic.  For more
+/// This function sends a "Set max speed command" to the Tic.  For more
 /// information, see tic_settings_set_max_speed().
 TIC_API TIC_WARN_UNUSED
 tic_error * tic_set_max_speed(tic_handle *, uint32_t max_speed);
 
 /// Temporarily sets the starting speed, in units of steps per 10000 seconds.
 ///
-/// This function sends a set starting speed command to the Tic.  For more
+/// This function sends a "Set starting speed" command to the Tic.  For more
 /// information, see tic_settings_set_starting_speed().
 TIC_API TIC_WARN_UNUSED
 tic_error * tic_set_starting_speed(tic_handle *, uint32_t starting_speed);
@@ -1859,14 +1861,14 @@ tic_error * tic_set_starting_speed(tic_handle *, uint32_t starting_speed);
 /// Temporarily sets the maximum acceleration, in units of steps per second per
 /// 100 seconds.
 ///
-/// This function sends a set max acceleration command to the Tic.  For more
+/// This function sends a "Set max acceleration" command to the Tic.  For more
 /// information, see tic_settings_set_max_accel().
 TIC_API TIC_WARN_UNUSED
 tic_error * tic_set_max_accel(tic_handle *, uint32_t max_accel);
 
 /// Temporarily sets the maximum deceleration.
 ///
-/// This function sends a Set Deceleration Max command to the Tic.  For more
+/// This function sends a "Set max deceleration" command to the Tic.  For more
 /// information, see tic_settings_set_max_decel().
 TIC_API TIC_WARN_UNUSED
 tic_error * tic_set_max_decel(tic_handle *, uint32_t max_decel);
@@ -1876,7 +1878,7 @@ tic_error * tic_set_max_decel(tic_handle *, uint32_t max_decel);
 ///
 /// The step_mode argument should be one of the TIC_STEP_MODE_* macros.
 ///
-/// This function sends a set step mode command to the Tic.  For more
+/// This function sends a "Set step mode" command to the Tic.  For more
 /// information, see the Tic user's guide.
 ///
 /// See also tic_settings_set_step_mode() and tic_variables_get_step_mode().
@@ -1885,7 +1887,7 @@ tic_error * tic_set_step_mode(tic_handle *, uint8_t step_mode);
 
 /// Temporarily sets the stepper motor coil current limit in milliamps.
 ///
-/// This function sends a set current limit command to the Tic.  For more
+/// This function sends a "Set current limit" command to the Tic.  For more
 /// information, see the Tic user's guide.
 ///
 /// To set the current limit permanently, see tic_settings_set_current_limit().
@@ -1894,7 +1896,7 @@ tic_error * tic_set_current_limit(tic_handle *, uint32_t current_limit);
 
 /// Temporarily sets the stepper motor coil current limit code.
 ///
-/// This function sends a set current limit command to the Tic.  For more
+/// This function sends a "Set current limit" command to the Tic.  For more
 /// information, see the Tic user's guide.
 ///
 /// To calculate what code to use, see tic_current_limit_ma_to_code().
@@ -1905,13 +1907,25 @@ tic_error * tic_set_current_limit_code(tic_handle *, uint8_t current_limit);
 
 /// Temporarily sets the stepper motor decay mode.
 ///
-/// The decay_mode argument should be TIC_DECAY_MODE_MIXED, TIC_DECAY_MODE_SLOW,
-/// or TIC_DECAY_MODE_FAST.
-///
-/// This function sends a set decay mode command to the Tic.  This decay mode
+/// This function sends a "Set decay mode" command to the Tic.  This decay mode
 /// will stay in effect until the Tic is powered off, reset, or reinitialized,
-/// or another Set Decay Mode command is issued.  To set the decay mode
+/// or another "Set decay mode" command is issued.  To set the decay mode
 /// permanently, see tic_settings_set_decay_mode().
+///
+/// Different Tic products have different levels of support for this command:
+///
+/// - Tic T825 and Tic N825: This command is supported,, and the argument
+///   should be one of the TIC_DECAY_MODE_T825_* macros.
+/// - Tic T834: This command is supported, and the argument should be one of the
+///   TIC_DECAY_MODE_T834_* macros.
+/// - Tic T500 and Tic T249: This command is supported, but there is only one
+///   decay mode (0), so it is not useful.
+/// - Tics based on the DRV8711: This command is not supported, and this
+///   function will return an error instead of attempting to send the command
+///   to the device.  For these Tics, see tic_set_drv8711_decmod() or
+///   tic_settings_set_drv8711_decmod().
+///
+/// Invalid \p decay_mdoe arguments will be changed to 0 by the firmware.
 TIC_API TIC_WARN_UNUSED
 tic_error * tic_set_decay_mode(tic_handle *, uint8_t decay_mode);
 

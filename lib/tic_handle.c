@@ -583,9 +583,34 @@ tic_error * tic_set_decay_mode(tic_handle * handle, uint8_t decay_mode)
 
   tic_error * error = NULL;
 
-  uint16_t wValue = decay_mode;
-  error = tic_usb_error(libusbp_control_transfer(handle->usb_handle,
-    0x40, TIC_CMD_SET_DECAY_MODE, wValue, 0, NULL, 0, NULL));
+  uint8_t product = tic_device_get_product(tic_handle_get_device(handle));
+  switch (product)
+  {
+  case TIC_PRODUCT_T825:
+  case TIC_PRODUCT_N825:
+  case TIC_PRODUCT_T834:
+    // This Tic supports the "Set decay mode" command and it is useful.
+    break;
+  case TIC_PRODUCT_T500:
+  case TIC_PRODUCT_T249:
+    // This Tic supports the "Set decay mode" command but there is only
+    // one decay mode (0) so it is not useful.  But let's send the command
+    // anyway because previous versions of the library did, and we do not
+    // want to have a breaking change.
+    break;
+  default:
+    // This Tic does not support the "Set decay mode" command.
+    error = tic_error_create(
+      "This Tic product does not support the \"Set decay mode\" command.");
+    break;
+  }
+
+  if (error == NULL)
+  {
+    uint16_t wValue = decay_mode;
+    error = tic_usb_error(libusbp_control_transfer(handle->usb_handle,
+      0x40, TIC_CMD_SET_DECAY_MODE, wValue, 0, NULL, 0, NULL));
+  }
 
   if (error != NULL)
   {
