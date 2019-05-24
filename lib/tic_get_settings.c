@@ -292,6 +292,9 @@ static void write_buffer_to_settings(const uint8_t * buf, tic_settings * setting
     tic_settings_set_step_mode(settings, step_mode);
   }
 
+  if (product == TIC_PRODUCT_T825 ||
+    product == TIC_PRODUCT_N825 ||
+    product == TIC_PRODUCT_T834)
   {
     uint8_t decay_mode = buf[TIC_SETTING_DECAY_MODE];
     tic_settings_set_decay_mode(settings, decay_mode);
@@ -379,6 +382,7 @@ static void write_buffer_to_settings(const uint8_t * buf, tic_settings * setting
     tic_settings_set_drv8711_toff(settings, p[4]);
     tic_settings_set_drv8711_tblank(settings, p[6]);
     tic_settings_set_drv8711_tdecay(settings, p[8]);
+    tic_settings_set_drv8711_decmod(settings, p[9] & 7);
   }
 }
 

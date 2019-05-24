@@ -810,7 +810,14 @@ void main_controller::handle_settings_changed()
   window->set_decel_max(tic_settings_get_max_decel(settings.get_pointer()));
   window->set_step_mode(tic_settings_get_step_mode(settings.get_pointer()));
   window->set_current_limit(tic_settings_get_current_limit(settings.get_pointer()));
-  window->set_decay_mode(tic_settings_get_decay_mode(settings.get_pointer()));
+  if (settings.get_product() == TIC_PRODUCT_TIC06A)
+  {
+    window->set_decay_mode(tic_settings_get_drv8711_decmod(settings.get_pointer()));
+  }
+  else
+  {
+    window->set_decay_mode(tic_settings_get_decay_mode(settings.get_pointer()));
+  }
   window->set_agc_mode(tic_settings_get_agc_mode(settings.get_pointer()));
   window->set_agc_bottom_current_limit(tic_settings_get_agc_bottom_current_limit(settings.get_pointer()));
   window->set_agc_current_boost_steps(tic_settings_get_agc_current_boost_steps(settings.get_pointer()));
@@ -1152,7 +1159,14 @@ void main_controller::handle_current_limit_input(uint32_t current_limit)
 void main_controller::handle_decay_mode_input(uint8_t decay_mode)
 {
   if (!connected()) { return; }
-  tic_settings_set_decay_mode(settings.get_pointer(), decay_mode);
+  if (settings.get_product() == TIC_PRODUCT_TIC06A)
+  {
+    tic_settings_set_drv8711_decmod(settings.get_pointer(), decay_mode);
+  }
+  else
+  {
+    tic_settings_set_decay_mode(settings.get_pointer(), decay_mode);
+  }
   settings_modified = true;
   handle_settings_changed();
 }

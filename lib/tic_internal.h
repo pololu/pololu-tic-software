@@ -72,6 +72,9 @@ extern const tic_name tic_agc_mode_names[];
 extern const tic_name tic_agc_bottom_current_limit_names[];
 extern const tic_name tic_agc_current_boost_steps_names[];
 extern const tic_name tic_agc_frequency_limit_names[];
+extern const tic_name tic_drv8711_decmod_names_snake[];
+extern const tic_name tic_drv8711_decmod_names_ui[];
+extern const tic_name tic_drv8711_error_names_ui[];
 
 // Intenral variables functions.
 

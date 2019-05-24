@@ -45,7 +45,6 @@ max_decel: 766667890
 step_mode: 256
 current_limit: 573
 current_limit_during_error: 72
-decay_mode: always_auto_mixed
 auto_homing: true
 auto_homing_forward: true
 homing_speed_towards: 123456789
@@ -53,3 +52,4 @@ homing_speed_away: 90786722
 drv8711_toff: 255
 drv8711_tblank: 127
 drv8711_tdecay: 71
+drv8711_decmod: auto_mixed

@@ -93,17 +93,6 @@ const tic_name tic_decay_mode_names_t249_ui[] =
   { NULL, 0 },
 };
 
-const tic_name tic_decay_mode_names_drv8711_ui[] =
-{
-  { "Slow / mixed", TIC_DECAY_MODE_DRV8711_SLOW_MIXED },
-  { "Always slow", TIC_DECAY_MODE_DRV8711_ALWAYS_SLOW },
-  { "Always fast", TIC_DECAY_MODE_DRV8711_ALWAYS_FAST },
-  { "Always mixed", TIC_DECAY_MODE_DRV8711_ALWAYS_MIXED },
-  { "Slow / auto mixed", TIC_DECAY_MODE_DRV8711_SLOW_AUTO_MIXED },
-  { "Always auto mixed", TIC_DECAY_MODE_DRV8711_ALWAYS_AUTO_MIXED },
-  { NULL, 0 },
-};
-
 const tic_name tic_decay_mode_names_generic_snake[] =
 {
   { "mixed", TIC_DECAY_MODE_MIXED },
@@ -144,17 +133,6 @@ const tic_name tic_decay_mode_names_t500_snake[] =
 const tic_name tic_decay_mode_names_t249_snake[] =
 {
   { "mixed", TIC_DECAY_MODE_T249_MIXED },
-  { NULL, 0 },
-};
-
-const tic_name tic_decay_mode_names_drv8711_snake[] =
-{
-  { "slow_mixed", TIC_DECAY_MODE_DRV8711_SLOW_MIXED },
-  { "always_slow", TIC_DECAY_MODE_DRV8711_ALWAYS_SLOW },
-  { "always_fast", TIC_DECAY_MODE_DRV8711_ALWAYS_FAST },
-  { "always_mixed", TIC_DECAY_MODE_DRV8711_ALWAYS_MIXED },
-  { "slow_auto_mixed", TIC_DECAY_MODE_DRV8711_SLOW_AUTO_MIXED },
-  { "always_auto_mixed", TIC_DECAY_MODE_DRV8711_ALWAYS_AUTO_MIXED },
   { NULL, 0 },
 };
 
@@ -365,6 +343,28 @@ const tic_name tic_agc_frequency_limit_names_ui[] =
   { NULL, 0 },
 };
 
+const tic_name tic_drv8711_decmod_names_snake[] =
+{
+  { "slow_mixed", TIC_DRV8711_DECMOD_SLOW_MIXED },
+  { "slow", TIC_DRV8711_DECMOD_SLOW },
+  { "fast", TIC_DRV8711_DECMOD_FAST },
+  { "mixed", TIC_DRV8711_DECMOD_MIXED },
+  { "slow_auto_mixed", TIC_DRV8711_DECMOD_SLOW_AUTO_MIXED },
+  { "auto_mixed", TIC_DRV8711_DECMOD_AUTO_MIXED },
+  { NULL, 0 },
+};
+
+const tic_name tic_drv8711_decmod_names_ui[] =
+{
+  { "Slow / mixed", TIC_DRV8711_DECMOD_SLOW_MIXED },
+  { "Slow", TIC_DRV8711_DECMOD_SLOW },
+  { "Fast", TIC_DRV8711_DECMOD_FAST },
+  { "Mixed", TIC_DRV8711_DECMOD_MIXED },
+  { "Slow / auto mixed", TIC_DRV8711_DECMOD_SLOW_AUTO_MIXED },
+  { "Auto mixed", TIC_DRV8711_DECMOD_AUTO_MIXED },
+  { NULL, 0 },
+};
+
 const tic_name tic_drv8711_error_names_ui[] =
 {
   { "Overtemperature", 1 << TIC_DRV8711_ERROR_OTS },
@@ -447,6 +447,13 @@ const char * tic_look_up_planning_mode_name_ui(uint8_t planning_mode)
   return str;
 }
 
+const char * tic_look_up_drv8711_decmod_name_ui(uint8_t mode)
+{
+  const char * str = "(Unknown)";
+  tic_code_to_name(tic_drv8711_decmod_names_ui, mode, &str);
+  return str;
+}
+
 bool tic_look_up_decay_mode_name(uint8_t decay_mode,
   uint8_t product, uint32_t flags, const char ** name)
 {
@@ -474,9 +481,6 @@ bool tic_look_up_decay_mode_name(uint8_t decay_mode,
     case TIC_PRODUCT_T249:
       name_table = tic_decay_mode_names_t249_snake;
       break;
-    case TIC_PRODUCT_TIC06A:
-      name_table = tic_decay_mode_names_drv8711_snake;
-      break;
     }
   }
   else
@@ -500,9 +504,6 @@ bool tic_look_up_decay_mode_name(uint8_t decay_mode,
       break;
     case TIC_PRODUCT_T249:
       name_table = tic_decay_mode_names_t249_ui;
-      break;
-    case TIC_PRODUCT_TIC06A:
-      name_table = tic_decay_mode_names_drv8711_ui;
       break;
     }
   }
@@ -562,15 +563,6 @@ bool tic_look_up_decay_mode_code(const char * name,
         return true;
       }
     }
-
-    if (!product || product == TIC_PRODUCT_TIC06A)
-    {
-      if (tic_name_to_code(tic_decay_mode_names_drv8711_snake, name, &result))
-      {
-        *code = result;
-        return true;
-      }
-    }
   }
 
   if (flags & TIC_NAME_UI)
@@ -611,15 +603,6 @@ bool tic_look_up_decay_mode_code(const char * name,
     if (!product || product == TIC_PRODUCT_T249)
     {
       if (tic_name_to_code(tic_decay_mode_names_t249_ui, name, &result))
-      {
-        *code = result;
-        return true;
-      }
-    }
-
-    if (!product || product == TIC_PRODUCT_TIC06A)
-    {
-      if (tic_name_to_code(tic_decay_mode_names_drv8711_ui, name, &result))
       {
         *code = result;
         return true;

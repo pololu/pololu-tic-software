@@ -127,7 +127,6 @@ static void tic_settings_fix_enums(tic_settings * settings, tic_string * warning
 
   {
     uint8_t mode = tic_settings_get_agc_mode(settings);
-
     if (product == TIC_PRODUCT_T249)
     {
       if (!tic_code_to_name(tic_agc_mode_names, mode, NULL))
@@ -142,13 +141,11 @@ static void tic_settings_fix_enums(tic_settings * settings, tic_string * warning
     {
       mode = 0;
     }
-
     tic_settings_set_agc_mode(settings, mode);
   }
 
   {
     uint8_t limit = tic_settings_get_agc_bottom_current_limit(settings);
-
     if (product == TIC_PRODUCT_T249)
     {
       if (!tic_code_to_name(tic_agc_bottom_current_limit_names, limit, NULL))
@@ -163,13 +160,11 @@ static void tic_settings_fix_enums(tic_settings * settings, tic_string * warning
     {
       limit = 0;
     }
-
     tic_settings_set_agc_bottom_current_limit(settings, limit);
   }
 
   {
     uint8_t steps = tic_settings_get_agc_current_boost_steps(settings);
-
     if (product == TIC_PRODUCT_T249)
     {
       if (!tic_code_to_name(tic_agc_current_boost_steps_names, steps, NULL))
@@ -184,13 +179,11 @@ static void tic_settings_fix_enums(tic_settings * settings, tic_string * warning
     {
       steps = 0;
     }
-
     tic_settings_set_agc_current_boost_steps(settings, steps);
   }
 
   {
     uint8_t limit = tic_settings_get_agc_frequency_limit(settings);
-
     if (product == TIC_PRODUCT_T249)
     {
       if (!tic_code_to_name(tic_agc_frequency_limit_names, limit, NULL))
@@ -205,8 +198,26 @@ static void tic_settings_fix_enums(tic_settings * settings, tic_string * warning
     {
       limit = 0;
     }
-
     tic_settings_set_agc_frequency_limit(settings, limit);
+  }
+
+  {
+    uint8_t mode = tic_settings_get_drv8711_decmod(settings);
+    if (product == TIC_PRODUCT_TIC06A)
+    {
+      if (!tic_code_to_name(tic_drv8711_decmod_names_snake, mode, NULL))
+      {
+        tic_sprintf(warnings,
+          "Warning: The DRV8711 decay mode was invalid "
+          "so it will be changed to \"Slow / mixed\".\n");
+        mode = TIC_DRV8711_DECMOD_SLOW_MIXED;
+      }
+    }
+    else
+    {
+      mode = 0;
+    }
+    tic_settings_set_drv8711_decmod(settings, mode);
   }
 }
 

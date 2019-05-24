@@ -78,6 +78,7 @@ struct tic_settings
   uint8_t drv8711_toff;
   uint8_t drv8711_tblank;
   uint8_t drv8711_tdecay;
+  uint8_t drv8711_decmod;
 };
 
 void tic_settings_fill_with_defaults(tic_settings * settings)
@@ -176,6 +177,7 @@ void tic_settings_fill_with_defaults(tic_settings * settings)
     tic_settings_set_drv8711_toff(settings, 0x30);
     tic_settings_set_drv8711_tblank(settings, 0x80);
     tic_settings_set_drv8711_tdecay(settings, 0x10);
+    tic_settings_set_drv8711_decmod(settings, TIC_DRV8711_DECMOD_SLOW_MIXED);
   }
 }
 
@@ -1167,4 +1169,16 @@ uint8_t tic_settings_get_drv8711_tdecay(const tic_settings * settings)
 {
   if (!settings) { return 0; }
   return settings->drv8711_tdecay;
+}
+
+void tic_settings_set_drv8711_decmod(tic_settings * settings, uint8_t mode)
+{
+  if (!settings) { return; }
+  settings->drv8711_decmod = mode;
+}
+
+uint8_t tic_settings_get_drv8711_decmod(const tic_settings * settings)
+{
+  if (!settings) { return 0; }
+  return settings->drv8711_decmod;
 }

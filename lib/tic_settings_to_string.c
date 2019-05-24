@@ -331,7 +331,9 @@ tic_error * tic_settings_to_string(const tic_settings * settings, char ** string
 
   // The decay mode setting for the Tic T500 and T249 is useless because there
   // is only one allowed value, so don't write it to the settings file.
-  if (product != TIC_PRODUCT_T500 && product != TIC_PRODUCT_T249)
+  if (product == TIC_PRODUCT_T825 ||
+    product == TIC_PRODUCT_N825 ||
+    product == TIC_PRODUCT_T834)
   {
     uint8_t mode = tic_settings_get_decay_mode(settings);
     const char * name;
@@ -409,6 +411,14 @@ tic_error * tic_settings_to_string(const tic_settings * settings, char ** string
   {
     uint8_t time = tic_settings_get_drv8711_tdecay(settings);
     tic_sprintf(&str, "drv8711_tdecay: %d\n", time);
+  }
+
+  if (drv8711)
+  {
+    uint8_t mode = tic_settings_get_drv8711_decmod(settings);
+    const char * name;
+    tic_code_to_name(tic_drv8711_decmod_names_snake, mode, &name);
+    tic_sprintf(&str, "drv8711_decmod: %s\n", name);
   }
 
   if (error == NULL && str.data == NULL)

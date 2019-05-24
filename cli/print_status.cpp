@@ -240,7 +240,9 @@ void print_status(const tic::variables & vars,
       << vars.get_current_limit() << " mA"
       << std::endl;
 
-    if (product != TIC_PRODUCT_T500 && product != TIC_PRODUCT_T249)
+    if (product == TIC_PRODUCT_T825 ||
+      product == TIC_PRODUCT_N825 ||
+      product == TIC_PRODUCT_T834)
     {
       const char * decay_name;
       tic_look_up_decay_mode_name(vars.get_decay_mode(), product, 0, &decay_name);
@@ -264,6 +266,11 @@ void print_status(const tic::variables & vars,
       std::cout << left_column << "AGC frequency limit: "
         << tic_look_up_agc_frequency_limit_name_ui(vars.get_agc_frequency_limit())
         << std::endl;
+    }
+
+    if (product == TIC_PRODUCT_TIC06A)
+    {
+      // TODO: print DRV8711 decay mode, etc.
     }
   }
 

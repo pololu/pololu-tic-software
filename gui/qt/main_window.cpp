@@ -183,7 +183,7 @@ void main_window::set_connection_status(const std::string & status, bool error)
 
 void main_window::adjust_ui_for_product(uint8_t product)
 {
-  bool decay_mode_visible = true;
+  bool decay_mode_visible = false;
   bool agc_mode_visible = false;
   bool last_motor_driver_error_visible = false;
 
@@ -204,6 +204,7 @@ void main_window::adjust_ui_for_product(uint8_t product)
       { { "Slow", TIC_DECAY_MODE_T825_SLOW },
         { "Mixed", TIC_DECAY_MODE_T825_MIXED },
         { "Fast", TIC_DECAY_MODE_T825_FAST } });
+    decay_mode_visible = true;
     break;
 
   case TIC_PRODUCT_T834:
@@ -221,6 +222,7 @@ void main_window::adjust_ui_for_product(uint8_t product)
         { "Mixed 50%", TIC_DECAY_MODE_T834_MIXED50 },
         { "Mixed 75%", TIC_DECAY_MODE_T834_MIXED75 },
         { "Fast", TIC_DECAY_MODE_T834_FAST } });
+    decay_mode_visible = true;
     break;
 
   case TIC_PRODUCT_T500:
@@ -232,8 +234,6 @@ void main_window::adjust_ui_for_product(uint8_t product)
 
     set_combo_items(decay_mode_value,
       { { "Auto", TIC_DECAY_MODE_T500_AUTO } });
-
-    decay_mode_visible = false;
     break;
 
   case TIC_PRODUCT_T249:
@@ -249,7 +249,6 @@ void main_window::adjust_ui_for_product(uint8_t product)
     set_combo_items(decay_mode_value,
       { { "Mixed", TIC_DECAY_MODE_T249_MIXED } });
 
-    decay_mode_visible = false;
     agc_mode_visible = true;
     last_motor_driver_error_visible = true;
     break;
@@ -267,13 +266,13 @@ void main_window::adjust_ui_for_product(uint8_t product)
         { "1/256 step", TIC_STEP_MODE_MICROSTEP256 } });
 
     set_combo_items(decay_mode_value,
-      { { "Slow / mixed", TIC_DECAY_MODE_DRV8711_SLOW_MIXED },
-        { "Always slow", TIC_DECAY_MODE_DRV8711_ALWAYS_SLOW },
-        { "Always fast", TIC_DECAY_MODE_DRV8711_ALWAYS_FAST },
-        { "Always mixed", TIC_DECAY_MODE_DRV8711_ALWAYS_MIXED },
-        { "Slow / auto mixed", TIC_DECAY_MODE_DRV8711_SLOW_AUTO_MIXED },
-        { "Always auto mixed", TIC_DECAY_MODE_DRV8711_ALWAYS_AUTO_MIXED }});
-
+      { { "Slow", TIC_DRV8711_DECMOD_SLOW },
+        { "Slow / mixed", TIC_DRV8711_DECMOD_SLOW_MIXED },
+        { "Fast", TIC_DRV8711_DECMOD_FAST },
+        { "Mixed", TIC_DRV8711_DECMOD_MIXED },
+        { "Slow / auto mixed", TIC_DRV8711_DECMOD_SLOW_AUTO_MIXED },
+        { "Auto mixed", TIC_DRV8711_DECMOD_AUTO_MIXED }});
+    decay_mode_visible = true;
     break;
   }
 

@@ -805,6 +805,15 @@ static tic_error * apply_string_pair(tic_settings * settings,
     }
     tic_settings_set_drv8711_tdecay(settings, time);
   }
+  else if (!strcmp(key, "drv8711_decmod"))
+  {
+    uint32_t code;
+    if (!tic_name_to_code(tic_drv8711_decmod_names_snake, value, &code))
+    {
+      return tic_error_create("Invalid drv8711_decmod value.");
+    }
+    tic_settings_set_drv8711_decmod(settings, code);
+  }
   else
   {
     return tic_error_create("Unrecognized key on line %d: \"%s\".", line, key);

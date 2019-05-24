@@ -343,7 +343,7 @@ def test_cases_for_settings_fix(product)
              ]
   end
 
-  if product != :T500 && product != :T249
+  if product == :T825 || product == :N825 || product == :T834
     cases << [ { 'decay_mode' => 'mode4' },
                { 'decay_mode' => case product
                                  when :T834 then 'mixed75'

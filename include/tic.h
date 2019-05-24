@@ -236,6 +236,16 @@ const char * tic_look_up_agc_frequency_limit_name_ui(uint8_t limit);
 TIC_API
 const char * tic_look_up_drv8711_error_name_ui(uint8_t error);
 
+/// Looks up a user-friendly string corresponding to the specified DRV8711 decay
+/// mode, e.g. "Mixed".
+///
+/// The \p mode argument should be one of the TIC_DRV8711_DECMOD_*
+/// macros, but if it is not, this function returns "(Unknown)".
+/// The returned string will be valid indefinitely and should not be freed.
+///
+/// This function is only useful for Tics based on the DRV8711 motor driver.
+const char * tic_look_up_drv8711_decmod_name_ui(uint8_t mode);
+
 
 // Advanced name/code lookup ////////////////////////////////////////////////////
 
@@ -266,6 +276,9 @@ const char * tic_look_up_drv8711_error_name_ui(uint8_t error);
 /// (UI-style) or "" (snake-case) if the function failed.
 ///
 /// If this function succeeds, it returns true.  Otherwise, it returns false.
+///
+/// This function is only useful to the Tic T825, Tic N825, and Tic T834.
+/// For DRV8711-based Tics, see tic_look_up_drv8711_decmod_name_ui().
 ///
 /// See also tic_look_up_decay_mode_code().
 TIC_API
@@ -1169,7 +1182,7 @@ uint8_t tic_settings_get_agc_frequency_limit(const tic_settings *);
 /// with 0 corresponding to 500 ns.
 /// Any value between 0 (500 ns) and 255 (1280 us) is allowed.
 ///
-/// This setting is only valid for Tics based on the DRV8711.
+/// This setting is only valid for Tics based on the DRV8711 motor driver.
 TIC_API
 void tic_settings_set_drv8711_toff(tic_settings *, uint8_t time);
 
@@ -1187,7 +1200,7 @@ uint8_t tic_settings_get_drv8711_toff(const tic_settings *);
 /// Any value above 50 corresponds to 20 ns times the value, so a value of
 /// 255 corresponds to 5.1 us.
 ///
-/// This setting is only valid for Tics based on the DRV8711.
+/// This setting is only valid for Tics based on the DRV8711 motor driver.
 TIC_API
 void tic_settings_set_drv8711_tblank(tic_settings *, uint8_t time);
 
@@ -1202,7 +1215,7 @@ uint8_t tic_settings_get_drv8711_tblank(const tic_settings *);
 ///
 /// Any value between 0 (0.5 us) and 255 (127.5 us) is valid.
 ///
-/// This setting is only valid for Tics based on the DRV8711.
+/// This setting is only valid for Tics based on the DRV8711 motor driver.
 TIC_API
 void tic_settings_set_drv8711_tdecay(tic_settings *, uint8_t time);
 
@@ -1210,6 +1223,21 @@ void tic_settings_set_drv8711_tdecay(tic_settings *, uint8_t time);
 /// tic_settings_set_drv8711_tdecay().
 TIC_API
 uint8_t tic_settings_get_drv8711_tdecay(const tic_settings *);
+
+/// Sets the value of the DECMOD bits in the DRV8711's DECAY register.
+///
+/// This sets the decay mode of the DRV8711 motor driver.
+///
+/// The /p mode argument should be one of the TIC_DRV8711_DECMOD_* macros.
+///
+/// This setting is only valid for Tics based on the DRV8711 motor driver.
+TIC_API
+void tic_settings_set_drv8711_decmod(tic_settings *, uint8_t mode);
+
+/// Gets the value of the DECMOD bits in the DRV8711's DECAY register,
+/// as described in tic_settings_set_drv8711_decmod().
+TIC_API
+uint8_t tic_settings_get_drv8711_decmod(const tic_settings *);
 
 
 // tic_variables ///////////////////////////////////////////////////////////////

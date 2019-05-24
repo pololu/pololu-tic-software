@@ -124,7 +124,8 @@ void tic_variables_free(tic_variables * variables)
   free(variables);
 }
 
-static void write_buffer_to_variables(const uint8_t * buf, tic_variables * vars)
+static void write_buffer_to_variables(const uint8_t * buf,
+  tic_variables * vars, uint8_t product)
 {
   assert(vars != NULL);
   assert(buf != NULL);
@@ -156,7 +157,20 @@ static void write_buffer_to_variables(const uint8_t * buf, tic_variables * vars)
   vars->rc_pulse_width = read_u16(buf + TIC_VAR_RC_PULSE_WIDTH);
   vars->step_mode = buf[TIC_VAR_STEP_MODE];
   vars->current_limit_code = buf[TIC_VAR_CURRENT_LIMIT];
-  vars->decay_mode = buf[TIC_VAR_DECAY_MODE];
+
+  if (product == TIC_PRODUCT_T825 ||
+    product == TIC_PRODUCT_N825 ||
+    product == TIC_PRODUCT_T834)
+  {
+    vars->decay_mode = buf[TIC_VAR_DECAY_MODE];
+  }
+  else
+  {
+    // Ignore the Decay mode variable here since it does not really apply,
+    // and ignoring it here makes it safer to reuse its byte for a different
+    // variable in the future.
+  }
+
   vars->input_state = buf[TIC_VAR_INPUT_STATE];
   vars->input_after_averaging = read_u16(buf + TIC_VAR_INPUT_AFTER_AVERAGING);
   vars->input_after_hysteresis = read_u16(buf + TIC_VAR_INPUT_AFTER_HYSTERESIS);
@@ -265,7 +279,7 @@ tic_error * tic_get_variables(tic_handle * handle, tic_variables ** variables,
   if (error == NULL)
   {
     new_variables->product = tic_device_get_product(tic_handle_get_device(handle));
-    write_buffer_to_variables(buf, new_variables);
+    write_buffer_to_variables(buf, new_variables, product);
   }
 
   // Pass the new variables to the caller.
