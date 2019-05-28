@@ -448,7 +448,9 @@ private:
   QWidget * setup_pin_config_box();
   QWidget * setup_error_settings_box();
   QWidget * setup_misc_settings_box();
+  QLayout * setup_homing_settings_layout();
   QWidget * setup_homing_settings_box();
+  QWidget * setup_homing_settings_widget();
 
   QWidget * setup_drv8711_settings_page_widget();
 
@@ -712,7 +714,7 @@ private:
   QLabel * vin_calibration_label;
   QSpinBox * vin_calibration_value;
 
-  QGroupBox * homing_settings_box;
+  QGroupBox * homing_settings_box = nullptr;
   QLabel * auto_homing_label;
   QCheckBox * auto_homing_check;
   QLabel * auto_homing_direction_label;

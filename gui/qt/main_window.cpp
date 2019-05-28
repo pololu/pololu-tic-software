@@ -2415,15 +2415,16 @@ QWidget * main_window::setup_tab_widget()
     add_tab(setup_manual_target_widget(), tr("Set target"));
     add_tab(setup_input_motor_settings_page_widget(), tr("Input"));
     add_tab(setup_motor_settings_widget(), tr("Motor"));
-    add_tab(setup_advanced_settings_page_widget(), tr("Advanced"));
     add_tab(setup_drv8711_settings_page_widget(), tr("DRV8711"));
+    add_tab(setup_homing_settings_widget(), tr("Homing"));
+    add_tab(setup_advanced_settings_page_widget(), tr("Advanced"));
   }
   else
   {
     add_tab(setup_status_page_widget(), tr("Status"));
     add_tab(setup_input_motor_settings_page_widget(), tr("Input and motor settings"));
-    add_tab(setup_advanced_settings_page_widget(), tr("Advanced settings"));
     add_tab(setup_drv8711_settings_page_widget(), tr("DRV8711 settings"));
+    add_tab(setup_advanced_settings_page_widget(), tr("Advanced settings"));
   }
   update_shown_tabs();
 
@@ -3396,7 +3397,10 @@ QWidget * main_window::setup_advanced_settings_page_widget()
   layout->addWidget(setup_pin_config_box(), 0, 0, 1, 2);
   layout->addWidget(setup_error_settings_box(), 1, 0);
   layout->addWidget(setup_misc_settings_box(), 1, 1);
-  layout->addWidget(setup_homing_settings_box(), 2, 0, 1, 2);
+  if (!compact)
+  {
+    layout->addWidget(setup_homing_settings_box(), 2, 0, 1, 2);
+  }
 
   layout->setColumnStretch(2, 1);
   layout->setRowStretch(3, 1);
@@ -3574,9 +3578,8 @@ QWidget * main_window::setup_misc_settings_box()
   return misc_settings_box;
 }
 
-QWidget * main_window::setup_homing_settings_box()
+QLayout * main_window::setup_homing_settings_layout()
 {
-  homing_settings_box = new QGroupBox();
   QGridLayout * layout = new QGridLayout();
   int row = 0;
 
@@ -3627,9 +3630,23 @@ QWidget * main_window::setup_homing_settings_box()
 
   layout->setColumnStretch(3, 1);
   layout->setRowStretch(row, 1);
-  homing_settings_box->setLayout(layout);
+  return layout;
+}
+
+QWidget * main_window::setup_homing_settings_box()
+{
+  homing_settings_box = new QGroupBox();
+  homing_settings_box->setLayout(setup_homing_settings_layout());
   return homing_settings_box;
 }
+
+QWidget * main_window::setup_homing_settings_widget()
+{
+  QWidget * widget = new QWidget();
+  widget->setLayout(setup_homing_settings_layout());
+  return widget;
+}
+
 
 //// DRV8711 settings page
 
@@ -3899,7 +3916,10 @@ void main_window::retranslate()
   never_sleep_check->setText(tr("Never sleep (ignore USB suspend)"));
   vin_calibration_label->setText(tr("VIN measurement calibration:"));
 
-  homing_settings_box->setTitle(tr("Homing"));
+  if (homing_settings_box)
+  {
+    homing_settings_box->setTitle(tr("Homing"));
+  }
   auto_homing_check->setText(tr("Enable automatic homing"));
   auto_homing_direction_label->setText(tr("Automatic homing direction:"));
   homing_speed_towards_label->setText(tr("Homing speed towards:"));
