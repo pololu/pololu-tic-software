@@ -2413,9 +2413,9 @@ QWidget * main_window::setup_tab_widget()
     add_tab(setup_status_page_widget(), tr("Status"));
     add_tab(setup_errors_widget(), tr("Errors"));
     add_tab(setup_manual_target_widget(), tr("Set target"));
-    add_tab(setup_input_motor_settings_page_widget(), tr("Input settings"));
-    add_tab(setup_motor_settings_widget(), tr("Motor settings"));
-    add_tab(setup_advanced_settings_page_widget(), tr("Advanced settings"));
+    add_tab(setup_input_motor_settings_page_widget(), tr("Input"));
+    add_tab(setup_motor_settings_widget(), tr("Motor"));
+    add_tab(setup_advanced_settings_page_widget(), tr("Advanced"));
     add_tab(setup_drv8711_settings_page_widget(), tr("DRV8711"));
   }
   else
