@@ -186,6 +186,7 @@ void main_window::adjust_ui_for_product(uint8_t product)
   bool decay_mode_visible = false;
   bool agc_mode_visible = false;
   bool last_motor_driver_error_visible = false;
+  bool drv8711_visible = false;
 
   switch (product)
   {
@@ -273,6 +274,7 @@ void main_window::adjust_ui_for_product(uint8_t product)
         { "Slow / auto mixed", TIC_DRV8711_DECMOD_SLOW_AUTO_MIXED },
         { "Auto mixed", TIC_DRV8711_DECMOD_AUTO_MIXED }});
     decay_mode_visible = true;
+    drv8711_visible = true;
     break;
   }
 
@@ -291,7 +293,49 @@ void main_window::adjust_ui_for_product(uint8_t product)
   last_motor_driver_error_label->setVisible(last_motor_driver_error_visible);
   last_motor_driver_error_value->setVisible(last_motor_driver_error_visible);
 
+  // We can't just use drv8711_settings_page_widget->setVisible(); that is
+  // used by the tab widget to control whether the stuff in the tab is visible
+  // on the screen. So we'll iterate through the tabs, remove any
+  // product-specific ones, then add them back at the end.
+  find_tab_spec(drv8711_settings_page_widget).hidden = !drv8711_visible;
+  update_shown_tabs();
+
   update_current_limit_table(product);
+}
+
+void main_window::update_shown_tabs()
+{
+  int widget_index = 0;
+  for (int i = 0; i < tab_specs.count(); i++)
+  {
+    tab_spec & ts = tab_specs[i];
+    QWidget * tab = tab_widget->widget(widget_index);
+
+    if (ts.hidden)
+    {
+      if (tab == ts.tab)
+      {
+        // Need to remove this tab.  Instead of just calling
+        // tab_widget.removeTab, we call `tab.setParent` so that the tab is
+        // still in the tree of Qt objects and will be destroyed properly
+        // (though that does not matter much for the main window of the
+        // application).
+        tab->setParent(tab_widget);
+      }
+    }
+    else
+    {
+      if (tab != ts.tab)
+      {
+        tab_widget->insertTab(widget_index, ts.tab, ts.name);
+      }
+      widget_index++;
+    }
+  }
+
+  // Assumption: Any tab in the tab widget's main list already has a
+  // corresponding tab spec, so we already processed it and there is no need
+  // for an extra loop to hide it.
 }
 
 void main_window::update_current_limit_table(uint8_t product)
@@ -998,6 +1042,21 @@ void main_window::set_agc_current_boost_steps(uint8_t steps)
 void main_window::set_agc_frequency_limit(uint8_t limit)
 {
   set_combo(agc_frequency_limit_value, limit);
+}
+
+void main_window::set_drv8711_tdecay(uint8_t time)
+{
+  set_spin_box(drv8711_tdecay_value, time);
+}
+
+void main_window::set_drv8711_toff(uint8_t time)
+{
+  set_spin_box(drv8711_toff_value, time);
+}
+
+void main_window::set_drv8711_tblank(uint8_t time)
+{
+  set_spin_box(drv8711_tblank_value, time);
 }
 
 void main_window::set_soft_error_response(uint8_t soft_error_response)
@@ -1841,6 +1900,24 @@ void main_window::on_agc_frequency_limit_value_currentIndexChanged(int index)
   controller->handle_agc_frequency_limit_input(limit);
 }
 
+void main_window::on_drv8711_tdecay_value_valueChanged(int value)
+{
+  if (suppress_events) { return; }
+  controller->handle_drv8711_tdecay_input(value);
+}
+
+void main_window::on_drv8711_toff_value_valueChanged(int value)
+{
+  if (suppress_events) { return; }
+  controller->handle_drv8711_toff_input(value);
+}
+
+void main_window::on_drv8711_tblank_value_valueChanged(int value)
+{
+  if (suppress_events) { return; }
+  controller->handle_drv8711_tblank_input(value);
+}
+
 void main_window::on_soft_error_response_radio_group_buttonToggled(int id, bool checked)
 {
   if (suppress_events) { return; }
@@ -2312,34 +2389,43 @@ QLayout * main_window::setup_header()
   return header_layout;
 }
 
+void main_window::add_tab(QWidget * tab, QString name, bool hidden)
+{
+  tab_specs.append(tab_spec(tab, name, hidden));
+}
+
+tab_spec & main_window::find_tab_spec(QWidget * tab)
+{
+  for (tab_spec & ts : tab_specs)
+  {
+    if (ts.tab == tab) { return ts; }
+  }
+  static tab_spec invalid_tab_spec(nullptr, "");
+  return invalid_tab_spec;
+}
+
 QWidget * main_window::setup_tab_widget()
 {
   tab_widget = new QTabWidget();
 
   if (compact)
   {
-    tab_widget->addTab(setup_status_page_widget(),
-      tr("Status"));
-    tab_widget->addTab(setup_errors_widget(),
-      tr("Errors"));
-    tab_widget->addTab(setup_manual_target_widget(),
-      tr("Set target"));
-    tab_widget->addTab(setup_input_motor_settings_page_widget(),
-      tr("Input settings"));
-    tab_widget->addTab(setup_motor_settings_widget(),
-      tr("Motor settings"));
-    tab_widget->addTab(setup_advanced_settings_page_widget(),
-      tr("Advanced settings"));
+    add_tab(setup_status_page_widget(), tr("Status"));
+    add_tab(setup_errors_widget(), tr("Errors"));
+    add_tab(setup_manual_target_widget(), tr("Set target"));
+    add_tab(setup_input_motor_settings_page_widget(), tr("Input settings"));
+    add_tab(setup_motor_settings_widget(), tr("Motor settings"));
+    add_tab(setup_advanced_settings_page_widget(), tr("Advanced settings"));
+    add_tab(setup_drv8711_settings_page_widget(), tr("DRV8711"));
   }
   else
   {
-    tab_widget->addTab(setup_status_page_widget(),
-      tr("Status"));
-    tab_widget->addTab(setup_input_motor_settings_page_widget(),
-      tr("Input and motor settings"));
-    tab_widget->addTab(setup_advanced_settings_page_widget(),
-      tr("Advanced settings"));
+    add_tab(setup_status_page_widget(), tr("Status"));
+    add_tab(setup_input_motor_settings_page_widget(), tr("Input and motor settings"));
+    add_tab(setup_advanced_settings_page_widget(), tr("Advanced settings"));
+    add_tab(setup_drv8711_settings_page_widget(), tr("DRV8711 settings"));
   }
+  update_shown_tabs();
 
   // Let the user specify which tab to start on.  Handy for development.
   auto env = QProcessEnvironment::systemEnvironment();
@@ -3545,6 +3631,56 @@ QWidget * main_window::setup_homing_settings_box()
   return homing_settings_box;
 }
 
+//// DRV8711 settings page
+
+QWidget * main_window::setup_drv8711_settings_page_widget()
+{
+  drv8711_settings_page_widget = new QWidget();
+  QGridLayout * layout = new QGridLayout();
+
+  int row = 0;
+
+  {
+    drv8711_toff_value = new QSpinBox();
+    drv8711_toff_value->setObjectName("drv8711_toff_value");
+    drv8711_toff_value->setRange(0, 255);
+    drv8711_toff_label = new QLabel();
+    drv8711_toff_label->setBuddy(drv8711_toff_value);
+    layout->addWidget(drv8711_toff_label, row, 0, FIELD_LABEL_ALIGNMENT);
+    layout->addWidget(drv8711_toff_value, row, 1, Qt::AlignLeft);
+    row++;
+  }
+
+  {
+    drv8711_tblank_value = new QSpinBox();
+    drv8711_tblank_value->setObjectName("drv8711_tblank_value");
+    drv8711_tblank_value->setRange(0, 255);
+    drv8711_tblank_label = new QLabel();
+    drv8711_tblank_label->setBuddy(drv8711_tblank_value);
+    layout->addWidget(drv8711_tblank_label, row, 0, FIELD_LABEL_ALIGNMENT);
+    layout->addWidget(drv8711_tblank_value, row, 1, Qt::AlignLeft);
+    row++;
+  }
+
+  {
+    drv8711_tdecay_value = new QSpinBox();
+    drv8711_tdecay_value->setObjectName("drv8711_tdecay_value");
+    drv8711_tdecay_value->setRange(0, 255);
+    drv8711_tdecay_label = new QLabel();
+    drv8711_tdecay_label->setBuddy(drv8711_tdecay_value);
+    layout->addWidget(drv8711_tdecay_label, row, 0, FIELD_LABEL_ALIGNMENT);
+    layout->addWidget(drv8711_tdecay_value, row, 1, Qt::AlignLeft);
+    row++;
+  }
+
+  layout->setColumnStretch(2, 1);
+  layout->setRowStretch(row, 1);
+
+  drv8711_settings_page_widget->setLayout(layout);
+  return drv8711_settings_page_widget;
+}
+
+
 //// end of pages
 
 QLayout * main_window::setup_footer()
@@ -3768,6 +3904,13 @@ void main_window::retranslate()
   auto_homing_direction_label->setText(tr("Automatic homing direction:"));
   homing_speed_towards_label->setText(tr("Homing speed towards:"));
   homing_speed_away_label->setText(tr("Homing speed away:"));
+
+  //// DRV8711 settings page
+
+  drv8711_toff_label->setText(tr("Fixed off time (TOFF):"));
+  drv8711_tblank_label->setText(tr("Current trip blanking time (TBLANK):"));
+  drv8711_tdecay_label->setText(tr("Mixed decay transition time (TDECAY):"));
+
 
   //// end pages
 

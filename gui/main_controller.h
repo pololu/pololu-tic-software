@@ -127,6 +127,10 @@ public:
   void handle_agc_current_boost_steps_input(uint8_t);
   void handle_agc_frequency_limit_input(uint8_t);
 
+  void handle_drv8711_toff_input(uint8_t);
+  void handle_drv8711_tblank_input(uint8_t);
+  void handle_drv8711_tdecay_input(uint8_t);
+
   void handle_soft_error_response_input(uint8_t soft_error_response);
   void handle_soft_error_position_input(int32_t soft_error_position);
   void handle_current_limit_during_error_input(int32_t current_limit_during_error);

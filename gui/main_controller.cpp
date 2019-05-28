@@ -766,86 +766,88 @@ void main_controller::handle_settings_changed()
 {
   // [all-settings]
 
-  window->set_control_mode(tic_settings_get_control_mode(settings.get_pointer()));
-  window->set_serial_baud_rate(tic_settings_get_serial_baud_rate(settings.get_pointer()));
+  tic_settings * s = settings.get_pointer();
+
+  window->set_control_mode(tic_settings_get_control_mode(s));
+  window->set_serial_baud_rate(tic_settings_get_serial_baud_rate(s));
   window->set_serial_device_number(
-    tic_settings_get_serial_device_number_u16(settings.get_pointer()));
+    tic_settings_get_serial_device_number_u16(s));
   window->set_serial_alt_device_number(
-    tic_settings_get_serial_alt_device_number(settings.get_pointer()));
+    tic_settings_get_serial_alt_device_number(s));
   window->set_serial_enable_alt_device_number(
-    tic_settings_get_serial_enable_alt_device_number(settings.get_pointer()));
+    tic_settings_get_serial_enable_alt_device_number(s));
   window->set_serial_14bit_device_number(
-    tic_settings_get_serial_14bit_device_number(settings.get_pointer()));
+    tic_settings_get_serial_14bit_device_number(s));
   window->set_command_timeout(
-    tic_settings_get_command_timeout(settings.get_pointer()));
+    tic_settings_get_command_timeout(s));
   window->set_serial_crc_for_commands(
-    tic_settings_get_serial_crc_for_commands(settings.get_pointer()));
+    tic_settings_get_serial_crc_for_commands(s));
   window->set_serial_crc_for_responses(
-    tic_settings_get_serial_crc_for_responses(settings.get_pointer()));
+    tic_settings_get_serial_crc_for_responses(s));
   window->set_serial_7bit_responses(
-    tic_settings_get_serial_7bit_responses(settings.get_pointer()));
+    tic_settings_get_serial_7bit_responses(s));
   window->set_serial_response_delay(
-    tic_settings_get_serial_response_delay(settings.get_pointer()));
+    tic_settings_get_serial_response_delay(s));
 
-  window->set_encoder_prescaler(tic_settings_get_encoder_prescaler(settings.get_pointer()));
-  window->set_encoder_postscaler(tic_settings_get_encoder_postscaler(settings.get_pointer()));
-  window->set_encoder_unlimited(tic_settings_get_encoder_unlimited(settings.get_pointer()));
+  window->set_encoder_prescaler(tic_settings_get_encoder_prescaler(s));
+  window->set_encoder_postscaler(tic_settings_get_encoder_postscaler(s));
+  window->set_encoder_unlimited(tic_settings_get_encoder_unlimited(s));
 
-  window->set_input_averaging_enabled(tic_settings_get_input_averaging_enabled(settings.get_pointer()));
-  window->set_input_hysteresis(tic_settings_get_input_hysteresis(settings.get_pointer()));
+  window->set_input_averaging_enabled(tic_settings_get_input_averaging_enabled(s));
+  window->set_input_hysteresis(tic_settings_get_input_hysteresis(s));
 
-  window->set_input_invert(tic_settings_get_input_invert(settings.get_pointer()));
-  window->set_input_min(tic_settings_get_input_min(settings.get_pointer()));
-  window->set_input_neutral_min(tic_settings_get_input_neutral_min(settings.get_pointer()));
-  window->set_input_neutral_max(tic_settings_get_input_neutral_max(settings.get_pointer()));
-  window->set_input_max(tic_settings_get_input_max(settings.get_pointer()));
-  window->set_output_min(tic_settings_get_output_min(settings.get_pointer()));
-  window->set_output_max(tic_settings_get_output_max(settings.get_pointer()));
-  window->set_input_scaling_degree(tic_settings_get_input_scaling_degree(settings.get_pointer()));
+  window->set_input_invert(tic_settings_get_input_invert(s));
+  window->set_input_min(tic_settings_get_input_min(s));
+  window->set_input_neutral_min(tic_settings_get_input_neutral_min(s));
+  window->set_input_neutral_max(tic_settings_get_input_neutral_max(s));
+  window->set_input_max(tic_settings_get_input_max(s));
+  window->set_output_min(tic_settings_get_output_min(s));
+  window->set_output_max(tic_settings_get_output_max(s));
+  window->set_input_scaling_degree(tic_settings_get_input_scaling_degree(s));
 
-  window->set_invert_motor_direction(tic_settings_get_invert_motor_direction(settings.get_pointer()));
-  window->set_speed_max(tic_settings_get_max_speed(settings.get_pointer()));
-  window->set_starting_speed(tic_settings_get_starting_speed(settings.get_pointer()));
-  window->set_accel_max(tic_settings_get_max_accel(settings.get_pointer()));
-  window->set_decel_max(tic_settings_get_max_decel(settings.get_pointer()));
-  window->set_step_mode(tic_settings_get_step_mode(settings.get_pointer()));
-  window->set_current_limit(tic_settings_get_current_limit(settings.get_pointer()));
+  window->set_invert_motor_direction(tic_settings_get_invert_motor_direction(s));
+  window->set_speed_max(tic_settings_get_max_speed(s));
+  window->set_starting_speed(tic_settings_get_starting_speed(s));
+  window->set_accel_max(tic_settings_get_max_accel(s));
+  window->set_decel_max(tic_settings_get_max_decel(s));
+  window->set_step_mode(tic_settings_get_step_mode(s));
+  window->set_current_limit(tic_settings_get_current_limit(s));
   if (settings.get_product() == TIC_PRODUCT_TIC06A)
   {
-    window->set_decay_mode(tic_settings_get_drv8711_decmod(settings.get_pointer()));
+    window->set_decay_mode(tic_settings_get_drv8711_decmod(s));
   }
   else
   {
-    window->set_decay_mode(tic_settings_get_decay_mode(settings.get_pointer()));
+    window->set_decay_mode(tic_settings_get_decay_mode(s));
   }
-  window->set_agc_mode(tic_settings_get_agc_mode(settings.get_pointer()));
-  window->set_agc_bottom_current_limit(tic_settings_get_agc_bottom_current_limit(settings.get_pointer()));
-  window->set_agc_current_boost_steps(tic_settings_get_agc_current_boost_steps(settings.get_pointer()));
-  window->set_agc_frequency_limit(tic_settings_get_agc_frequency_limit(settings.get_pointer()));
+  window->set_agc_mode(tic_settings_get_agc_mode(s));
+  window->set_agc_bottom_current_limit(tic_settings_get_agc_bottom_current_limit(s));
+  window->set_agc_current_boost_steps(tic_settings_get_agc_current_boost_steps(s));
+  window->set_agc_frequency_limit(tic_settings_get_agc_frequency_limit(s));
 
-  window->set_soft_error_response(tic_settings_get_soft_error_response(settings.get_pointer()));
-  window->set_soft_error_position(tic_settings_get_soft_error_position(settings.get_pointer()));
-  window->set_current_limit_during_error(tic_settings_get_current_limit_during_error(settings.get_pointer()));
+  window->set_soft_error_response(tic_settings_get_soft_error_response(s));
+  window->set_soft_error_position(tic_settings_get_soft_error_position(s));
+  window->set_current_limit_during_error(tic_settings_get_current_limit_during_error(s));
 
-  window->set_disable_safe_start(tic_settings_get_disable_safe_start(settings.get_pointer()));
-  window->set_ignore_err_line_high(tic_settings_get_ignore_err_line_high(settings.get_pointer()));
-  window->set_auto_clear_driver_error(tic_settings_get_auto_clear_driver_error(settings.get_pointer()));
-  window->set_never_sleep(tic_settings_get_never_sleep(settings.get_pointer()));
-  window->set_vin_calibration(tic_settings_get_vin_calibration(settings.get_pointer()));
+  window->set_disable_safe_start(tic_settings_get_disable_safe_start(s));
+  window->set_ignore_err_line_high(tic_settings_get_ignore_err_line_high(s));
+  window->set_auto_clear_driver_error(tic_settings_get_auto_clear_driver_error(s));
+  window->set_never_sleep(tic_settings_get_never_sleep(s));
+  window->set_vin_calibration(tic_settings_get_vin_calibration(s));
 
-  window->set_auto_homing(tic_settings_get_auto_homing(settings.get_pointer()));
-  window->set_auto_homing_forward(tic_settings_get_auto_homing_forward(settings.get_pointer()));
+  window->set_auto_homing(tic_settings_get_auto_homing(s));
+  window->set_auto_homing_forward(tic_settings_get_auto_homing_forward(s));
   window->set_homing_speed_towards(
-    tic_settings_get_homing_speed_towards(settings.get_pointer()));
+    tic_settings_get_homing_speed_towards(s));
   window->set_homing_speed_away(
-    tic_settings_get_homing_speed_away(settings.get_pointer()));
+    tic_settings_get_homing_speed_away(s));
 
   for (int i = 0; i < 5; i++)
   {
-    uint8_t func = tic_settings_get_pin_func(settings.get_pointer(), i);
-    bool pullup = tic_settings_get_pin_pullup(settings.get_pointer(), i);
-    bool polarity = tic_settings_get_pin_polarity(settings.get_pointer(), i);
-    bool analog = tic_settings_get_pin_analog(settings.get_pointer(), i);
+    uint8_t func = tic_settings_get_pin_func(s, i);
+    bool pullup = tic_settings_get_pin_pullup(s, i);
+    bool polarity = tic_settings_get_pin_polarity(s, i);
+    bool analog = tic_settings_get_pin_analog(s, i);
 
     bool enabled = func != TIC_PIN_FUNC_DEFAULT;
     bool pullup_enabled = enabled && func != TIC_PIN_FUNC_POT_POWER;
@@ -860,6 +862,10 @@ void main_controller::handle_settings_changed()
     window->set_pin_polarity(i, polarity, polarity_enabled);
     window->set_pin_analog(i, analog, analog_enabled);
   }
+
+  window->set_drv8711_toff(tic_settings_get_drv8711_toff(s));
+  window->set_drv8711_tblank(tic_settings_get_drv8711_tblank(s));
+  window->set_drv8711_tdecay(tic_settings_get_drv8711_tdecay(s));
 
   window->set_apply_settings_enabled(connected() && settings_modified);
 }
@@ -1199,6 +1205,30 @@ void main_controller::handle_agc_frequency_limit_input(uint8_t limit)
 {
   if (!connected()) { return; }
   tic_settings_set_agc_frequency_limit(settings.get_pointer(), limit);
+  settings_modified = true;
+  handle_settings_changed();
+}
+
+void main_controller::handle_drv8711_tdecay_input(uint8_t time)
+{
+  if (!connected()) { return; }
+  tic_settings_set_drv8711_tdecay(settings.get_pointer(), time);
+  settings_modified = true;
+  handle_settings_changed();
+}
+
+void main_controller::handle_drv8711_toff_input(uint8_t time)
+{
+  if (!connected()) { return; }
+  tic_settings_set_drv8711_toff(settings.get_pointer(), time);
+  settings_modified = true;
+  handle_settings_changed();
+}
+
+void main_controller::handle_drv8711_tblank_input(uint8_t time)
+{
+  if (!connected()) { return; }
+  tic_settings_set_drv8711_tblank(settings.get_pointer(), time);
   settings_modified = true;
   handle_settings_changed();
 }

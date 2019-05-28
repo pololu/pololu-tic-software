@@ -30,6 +30,17 @@ class QVBoxLayout;
 class current_spin_box;
 class main_controller;
 
+struct tab_spec {
+  QWidget * tab = NULL;
+  QString name;
+  bool hidden = false;
+
+  tab_spec(QWidget * tab, QString name, bool hidden = false) :
+    tab(tab), name(name), hidden(hidden)
+  {
+  }
+};
+
 struct error_row
 {
   unsigned int count;
@@ -111,6 +122,8 @@ public:
   // Changes a few controls that need to be changed depending on what product
   // (e.g. Tic T825, Tic T834) we are talking to.
   void adjust_ui_for_product(uint8_t product);
+
+  void update_shown_tabs();
 
   void update_current_limit_table(uint8_t product);
 
@@ -232,6 +245,9 @@ public:
   void set_agc_bottom_current_limit(uint8_t);
   void set_agc_current_boost_steps(uint8_t);
   void set_agc_frequency_limit(uint8_t);
+  void set_drv8711_tdecay(uint8_t);
+  void set_drv8711_toff(uint8_t);
+  void set_drv8711_tblank(uint8_t);
 
   void set_soft_error_response(uint8_t soft_error_response);
   void set_soft_error_position(int32_t soft_error_position);
@@ -363,6 +379,9 @@ private slots:
   void on_agc_bottom_current_limit_value_currentIndexChanged(int index);
   void on_agc_current_boost_steps_value_currentIndexChanged(int index);
   void on_agc_frequency_limit_value_currentIndexChanged(int index);
+  void on_drv8711_tdecay_value_valueChanged(int value);
+  void on_drv8711_toff_value_valueChanged(int value);
+  void on_drv8711_tblank_value_valueChanged(int value);
 
   void on_soft_error_response_radio_group_buttonToggled(int id, bool checked);
   void on_soft_error_position_value_valueChanged(int value);
@@ -397,6 +416,8 @@ private:
   void setup_window();
   void setup_menu_bar();
   QLayout * setup_header();
+  void add_tab(QWidget * tab, QString name, bool hidden = false);
+  tab_spec & find_tab_spec(QWidget * tab);
   QWidget * setup_tab_widget();
 
   QWidget * setup_status_page_widget();
@@ -428,6 +449,8 @@ private:
   QWidget * setup_error_settings_box();
   QWidget * setup_misc_settings_box();
   QWidget * setup_homing_settings_box();
+
+  QWidget * setup_drv8711_settings_page_widget();
 
   QLayout * setup_footer();
 
@@ -468,6 +491,7 @@ private:
   QLabel * connection_status_value;
 
   QTabWidget * tab_widget;
+  QList<tab_spec> tab_specs;
 
   //// status page
 
@@ -663,6 +687,7 @@ private:
   QLabel * agc_frequency_limit_label;
   QComboBox * agc_frequency_limit_value;
 
+
   //// advanced settings page
 
   QWidget * advanced_settings_page_widget;
@@ -698,6 +723,17 @@ private:
   QLabel * homing_speed_away_label;
   QSpinBox * homing_speed_away_value;
   QLabel * homing_speed_away_value_pretty;
+
+  //// DRV8711 settings page
+
+  QWidget * drv8711_settings_page_widget;
+
+  QLabel * drv8711_tdecay_label;
+  QSpinBox * drv8711_tdecay_value;
+  QLabel * drv8711_toff_label;
+  QSpinBox * drv8711_toff_value;
+  QLabel * drv8711_tblank_label;
+  QSpinBox * drv8711_tblank_value;
 
   //// end of pages
 
