@@ -440,6 +440,7 @@ private:
   QWidget * setup_encoder_settings_box();
   QWidget * setup_conditioning_settings_box();
   QWidget * setup_scaling_settings_box();
+  QWidget * setup_drv8711_motor_widget();
   QLayout * setup_motor_settings_layout();
   QWidget * setup_motor_settings_box();
   QWidget * setup_motor_settings_widget();
@@ -451,8 +452,6 @@ private:
   QLayout * setup_homing_settings_layout();
   QWidget * setup_homing_settings_box();
   QWidget * setup_homing_settings_widget();
-
-  QWidget * setup_drv8711_settings_page_widget();
 
   QLayout * setup_footer();
 
@@ -688,7 +687,13 @@ private:
   QComboBox * agc_current_boost_steps_value;
   QLabel * agc_frequency_limit_label;
   QComboBox * agc_frequency_limit_value;
-
+  QWidget * drv8711_motor_widget;
+  QLabel * drv8711_tdecay_label;
+  QSpinBox * drv8711_tdecay_value;
+  QLabel * drv8711_toff_label;
+  QSpinBox * drv8711_toff_value;
+  QLabel * drv8711_tblank_label;
+  QSpinBox * drv8711_tblank_value;
 
   //// advanced settings page
 
@@ -725,17 +730,6 @@ private:
   QLabel * homing_speed_away_label;
   QSpinBox * homing_speed_away_value;
   QLabel * homing_speed_away_value_pretty;
-
-  //// DRV8711 settings page
-
-  QWidget * drv8711_settings_page_widget;
-
-  QLabel * drv8711_tdecay_label;
-  QSpinBox * drv8711_tdecay_value;
-  QLabel * drv8711_toff_label;
-  QSpinBox * drv8711_toff_value;
-  QLabel * drv8711_tblank_label;
-  QSpinBox * drv8711_tblank_value;
 
   //// end of pages
 

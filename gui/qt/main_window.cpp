@@ -293,12 +293,7 @@ void main_window::adjust_ui_for_product(uint8_t product)
   last_motor_driver_error_label->setVisible(last_motor_driver_error_visible);
   last_motor_driver_error_value->setVisible(last_motor_driver_error_visible);
 
-  // We can't just use drv8711_settings_page_widget->setVisible(); that is
-  // used by the tab widget to control whether the stuff in the tab is visible
-  // on the screen. So we'll iterate through the tabs, remove any
-  // product-specific ones, then add them back at the end.
-  find_tab_spec(drv8711_settings_page_widget).hidden = !drv8711_visible;
-  update_shown_tabs();
+  drv8711_motor_widget->setVisible(drv8711_visible);
 
   update_current_limit_table(product);
 }
@@ -2415,7 +2410,6 @@ QWidget * main_window::setup_tab_widget()
     add_tab(setup_manual_target_widget(), tr("Set target"));
     add_tab(setup_input_motor_settings_page_widget(), tr("Input"));
     add_tab(setup_motor_settings_widget(), tr("Motor"));
-    add_tab(setup_drv8711_settings_page_widget(), tr("DRV8711"));
     add_tab(setup_homing_settings_widget(), tr("Homing"));
     add_tab(setup_advanced_settings_page_widget(), tr("Advanced"));
   }
@@ -2423,7 +2417,6 @@ QWidget * main_window::setup_tab_widget()
   {
     add_tab(setup_status_page_widget(), tr("Status"));
     add_tab(setup_input_motor_settings_page_widget(), tr("Input and motor settings"));
-    add_tab(setup_drv8711_settings_page_widget(), tr("DRV8711 settings"));
     add_tab(setup_advanced_settings_page_widget(), tr("Advanced settings"));
   }
   update_shown_tabs();
@@ -3367,10 +3360,60 @@ QLayout * main_window::setup_motor_settings_layout()
     row++;
   }
 
+  layout->addWidget(setup_drv8711_motor_widget(), row++, 0, 1, 3);
+
   layout->setColumnStretch(2, 1);
   layout->setRowStretch(row, 1);
 
   return layout;
+}
+
+QWidget * main_window::setup_drv8711_motor_widget()
+{
+  drv8711_motor_widget = new QWidget();
+  QGridLayout * layout = new QGridLayout();
+  layout->setContentsMargins(0, 0, 0, 0);
+
+  int row = 0;
+
+  {
+    drv8711_toff_value = new QSpinBox();
+    drv8711_toff_value->setObjectName("drv8711_toff_value");
+    drv8711_toff_value->setRange(0, 255);
+    drv8711_toff_label = new QLabel();
+    drv8711_toff_label->setBuddy(drv8711_toff_value);
+    layout->addWidget(drv8711_toff_label, row, 0, FIELD_LABEL_ALIGNMENT);
+    layout->addWidget(drv8711_toff_value, row, 1, Qt::AlignLeft);
+    row++;
+  }
+
+  {
+    drv8711_tblank_value = new QSpinBox();
+    drv8711_tblank_value->setObjectName("drv8711_tblank_value");
+    drv8711_tblank_value->setRange(0, 255);
+    drv8711_tblank_label = new QLabel();
+    drv8711_tblank_label->setBuddy(drv8711_tblank_value);
+    layout->addWidget(drv8711_tblank_label, row, 0, FIELD_LABEL_ALIGNMENT);
+    layout->addWidget(drv8711_tblank_value, row, 1, Qt::AlignLeft);
+    row++;
+  }
+
+  {
+    drv8711_tdecay_value = new QSpinBox();
+    drv8711_tdecay_value->setObjectName("drv8711_tdecay_value");
+    drv8711_tdecay_value->setRange(0, 255);
+    drv8711_tdecay_label = new QLabel();
+    drv8711_tdecay_label->setBuddy(drv8711_tdecay_value);
+    layout->addWidget(drv8711_tdecay_label, row, 0, FIELD_LABEL_ALIGNMENT);
+    layout->addWidget(drv8711_tdecay_value, row, 1, Qt::AlignLeft);
+    row++;
+  }
+
+  layout->setColumnStretch(2, 1);
+  layout->setRowStretch(row, 1);
+
+  drv8711_motor_widget->setLayout(layout);
+  return drv8711_motor_widget;
 }
 
 QWidget * main_window::setup_motor_settings_box()
@@ -3648,56 +3691,6 @@ QWidget * main_window::setup_homing_settings_widget()
 }
 
 
-//// DRV8711 settings page
-
-QWidget * main_window::setup_drv8711_settings_page_widget()
-{
-  drv8711_settings_page_widget = new QWidget();
-  QGridLayout * layout = new QGridLayout();
-
-  int row = 0;
-
-  {
-    drv8711_toff_value = new QSpinBox();
-    drv8711_toff_value->setObjectName("drv8711_toff_value");
-    drv8711_toff_value->setRange(0, 255);
-    drv8711_toff_label = new QLabel();
-    drv8711_toff_label->setBuddy(drv8711_toff_value);
-    layout->addWidget(drv8711_toff_label, row, 0, FIELD_LABEL_ALIGNMENT);
-    layout->addWidget(drv8711_toff_value, row, 1, Qt::AlignLeft);
-    row++;
-  }
-
-  {
-    drv8711_tblank_value = new QSpinBox();
-    drv8711_tblank_value->setObjectName("drv8711_tblank_value");
-    drv8711_tblank_value->setRange(0, 255);
-    drv8711_tblank_label = new QLabel();
-    drv8711_tblank_label->setBuddy(drv8711_tblank_value);
-    layout->addWidget(drv8711_tblank_label, row, 0, FIELD_LABEL_ALIGNMENT);
-    layout->addWidget(drv8711_tblank_value, row, 1, Qt::AlignLeft);
-    row++;
-  }
-
-  {
-    drv8711_tdecay_value = new QSpinBox();
-    drv8711_tdecay_value->setObjectName("drv8711_tdecay_value");
-    drv8711_tdecay_value->setRange(0, 255);
-    drv8711_tdecay_label = new QLabel();
-    drv8711_tdecay_label->setBuddy(drv8711_tdecay_value);
-    layout->addWidget(drv8711_tdecay_label, row, 0, FIELD_LABEL_ALIGNMENT);
-    layout->addWidget(drv8711_tdecay_value, row, 1, Qt::AlignLeft);
-    row++;
-  }
-
-  layout->setColumnStretch(2, 1);
-  layout->setRowStretch(row, 1);
-
-  drv8711_settings_page_widget->setLayout(layout);
-  return drv8711_settings_page_widget;
-}
-
-
 //// end of pages
 
 QLayout * main_window::setup_footer()
@@ -3876,6 +3869,9 @@ void main_window::retranslate()
   agc_bottom_current_limit_label->setText(tr("AGC bottom current limit:"));
   agc_current_boost_steps_label->setText(tr("AGC current boost steps:"));
   agc_frequency_limit_label->setText(tr("AGC frequency limit:"));
+  drv8711_toff_label->setText(tr("Fixed off time (TOFF):"));
+  drv8711_tblank_label->setText(tr("Current trip blanking time (TBLANK):"));
+  drv8711_tdecay_label->setText(tr("Mixed decay transition time (TDECAY):"));
 
   //// advanced settings page
 
@@ -3924,12 +3920,6 @@ void main_window::retranslate()
   auto_homing_direction_label->setText(tr("Automatic homing direction:"));
   homing_speed_towards_label->setText(tr("Homing speed towards:"));
   homing_speed_away_label->setText(tr("Homing speed away:"));
-
-  //// DRV8711 settings page
-
-  drv8711_toff_label->setText(tr("Fixed off time (TOFF):"));
-  drv8711_tblank_label->setText(tr("Current trip blanking time (TBLANK):"));
-  drv8711_tdecay_label->setText(tr("Mixed decay transition time (TDECAY):"));
 
 
   //// end pages
