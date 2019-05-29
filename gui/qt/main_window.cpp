@@ -304,23 +304,19 @@ void main_window::update_shown_tabs()
   for (int i = 0; i < tab_specs.count(); i++)
   {
     tab_spec & ts = tab_specs[i];
-    QWidget * tab = tab_widget->widget(widget_index);
-
     if (ts.hidden)
     {
-      if (tab == ts.tab)
-      {
-        // Need to remove this tab.  Instead of just calling
-        // tab_widget.removeTab, we call `tab.setParent` so that the tab is
-        // still in the tree of Qt objects and will be destroyed properly
-        // (though that does not matter much for the main window of the
-        // application).
-        tab->setParent(tab_widget);
-      }
+      // Make sure this tab is not visible.
+      // Instead of just calling tab_widget.removeTab, we call `tab.setParent`
+      // so that the tab is still in the tree of Qt objects and will be
+      // destroyed properly (though that does not matter much for the main
+      // window of the application).
+      tab->setParent(tab_widget);
     }
     else
     {
-      if (tab != ts.tab)
+      // Make sure the tab is visible at widget_index.
+      if (tab_widget->widget(widget_index) != ts.tab)
       {
         tab_widget->insertTab(widget_index, ts.tab, ts.name);
       }
