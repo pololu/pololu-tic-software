@@ -311,7 +311,7 @@ void main_window::update_shown_tabs()
       // so that the tab is still in the tree of Qt objects and will be
       // destroyed properly (though that does not matter much for the main
       // window of the application).
-      tab->setParent(tab_widget);
+      ts.tab->setParent(tab_widget);
     }
     else
     {
