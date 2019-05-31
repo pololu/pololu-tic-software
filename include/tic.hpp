@@ -582,6 +582,18 @@ namespace tic
     {
       return tic_variables_get_pin_state(pointer, pin);
     }
+
+    /// Wrapper for tic_variables_get_last_drv8711_error().
+    uint32_t get_last_drv8711_error() const noexcept
+    {
+      return tic_variables_get_last_drv8711_errors(pointer);
+    }
+
+    /// Wrapper for tic_variables_get_drv8711_register().
+    uint16_t get_drv8711_register(uint8_t offset) const noexcept
+    {
+      return tic_variables_get_drv8711_register(pointer, offset);
+    }
   };
 
   /// Represents a Tic that is or was connected to the computer.  Can also be in

@@ -52,6 +52,27 @@ static void print_errors(uint32_t errors, const char * error_set_name)
   }
 }
 
+static void print_drv8711_errors(uint32_t errors)
+{
+  const char * error_set_name = "Last DRV8711 errors";
+  if (!errors)
+  {
+    std::cout << error_set_name << ": None" << std::endl;
+    return;
+  }
+
+  std::cout << error_set_name << ":" << std::endl;
+  for (uint32_t i = 0; i < 32; i++)
+  {
+    uint32_t error = (1 << i);
+    if (errors & error)
+    {
+      std::cout << "  - " << tic_look_up_drv8711_error_name_ui(error)
+        << std::endl;
+    }
+  }
+}
+
 static std::string input_format(uint16_t input)
 {
   if (input == TIC_INPUT_NULL)
@@ -81,6 +102,22 @@ static void print_pin_info(const tic::variables & vars,
   // in future versions of GCC, but it does no harm.)
   std::cout << left_column << "  Digital reading: "
       << (vars.get_digital_reading(pin) ? '1' : '0') << std::endl;
+}
+
+static void print_drv8711_registers(const tic::variables & vars)
+{
+  std::cout << left_column << "DRV8711 registers:";
+  std::cout << '[';
+  for (size_t i = 0; i < TIC_DRV8711_SETTING_REGISTER_COUNT; i++)
+  {
+    std::cout << "0x" << std::hex << std::setw(3) << std::setfill('0')
+      << vars.get_drv8711_register(i);
+    if (i < TIC_DRV8711_SETTING_REGISTER_COUNT - 1)
+    {
+      std::cout << ',';
+    }
+  }
+  std::cout << ']' << std::endl;
 }
 
 void print_status(const tic::variables & vars,
@@ -270,7 +307,7 @@ void print_status(const tic::variables & vars,
 
     if (product == TIC_PRODUCT_TIC06A)
     {
-      // TODO: print DRV8711 decay mode, etc.
+      print_drv8711_registers(vars);
     }
   }
 
@@ -280,6 +317,10 @@ void print_status(const tic::variables & vars,
     "Errors currently stopping the motor");
   print_errors(vars.get_errors_occurred(),
     "Errors that occurred since last check");
+  if (product == TIC_PRODUCT_TIC06A)
+  {
+    print_drv8711_errors(vars.get_last_drv8711_error());
+  }
   std::cout << std::endl;
 
   if (full_output)
@@ -289,5 +330,6 @@ void print_status(const tic::variables & vars,
     print_pin_info(vars, TIC_PIN_NUM_TX, "TX");
     print_pin_info(vars, TIC_PIN_NUM_RX, "RX");
     print_pin_info(vars, TIC_PIN_NUM_RC, "RC");
+    std::cout << std::endl;
   }
 }

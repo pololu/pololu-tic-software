@@ -49,6 +49,9 @@ struct tic_variables
     bool digital_reading;
     uint8_t pin_state;
   } pin_info[TIC_CONTROL_PIN_COUNT];
+
+  uint8_t last_drv8711_errors;
+  uint16_t drv8711_registers[TIC_DRV8711_SETTING_REGISTER_COUNT];
 };
 
 tic_error * tic_variables_create(tic_variables ** variables)
@@ -215,6 +218,16 @@ static void write_buffer_to_variables(const uint8_t * buf,
     vars->agc_current_boost_steps = buf[TIC_VAR_AGC_CURRENT_BOOST_STEPS];
     vars->agc_frequency_limit = buf[TIC_VAR_AGC_FREQUENCY_LIMIT];
   }
+
+  if (vars->product == TIC_PRODUCT_TIC06A)
+  {
+    vars->last_drv8711_errors = buf[TIC_VAR_LAST_DRV8711_ERRORS];
+    for (size_t i = 0; i < TIC_DRV8711_SETTING_REGISTER_COUNT; i++)
+    {
+      vars->drv8711_registers[i] =
+        read_u16(buf + TIC_VAR_DRV8711_REGISTERS + (i * 2));
+    }
+  }
 }
 
 tic_error * tic_get_variables(tic_handle * handle, tic_variables ** variables,
@@ -256,7 +269,7 @@ tic_error * tic_get_variables(tic_handle * handle, tic_variables ** variables,
 
   if (product == TIC_PRODUCT_TIC06A)
   {
-    product_specific_offset = TIC_VAR_LAST_DRV8711_ERROR;
+    product_specific_offset = TIC_VAR_LAST_DRV8711_ERRORS;
   }
 
   // Read all the variables from the device.
@@ -598,4 +611,20 @@ uint8_t tic_variables_get_pin_state(const tic_variables * variables,
 {
   if (variables == NULL || pin >= PIN_COUNT) { return 0; }
   return variables->pin_info[pin].pin_state;
+}
+
+uint32_t tic_variables_get_last_drv8711_errors(const tic_variables * variables)
+{
+  if (variables == NULL) { return 0; }
+  return variables->last_drv8711_errors;
+}
+
+uint16_t tic_variables_get_drv8711_register(const tic_variables * variables,
+  uint8_t offset)
+{
+  if (variables == NULL || offset >= TIC_DRV8711_SETTING_REGISTER_COUNT)
+  {
+    return 0;
+  }
+  return variables->drv8711_registers[offset];
 }

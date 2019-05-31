@@ -1590,6 +1590,23 @@ bool tic_variables_get_digital_reading(const tic_variables *, uint8_t pin);
 TIC_API
 uint8_t tic_variables_get_pin_state(const tic_variables *, uint8_t pin);
 
+/// Gets a bitmask describing the error conditions that caused the last
+/// motor driver error.
+///
+/// This is only valid for Tics based on the DRV8711, and will be 0 for all
+/// other Tics.
+///
+/// See tic_look_up_drv8711_error_name_ui().
+TIC_API
+uint32_t tic_variables_get_last_drv8711_errors(const tic_variables *);
+
+/// Gets the value of the specified DRV8711 register.
+///
+/// The offset argument should be between 0 and
+/// TIC_DRV8711_SETTING_REGISTER_COUNT.
+TIC_API
+uint16_t tic_variables_get_drv8711_register(const tic_variables *, uint8_t offset);
+
 
 // tic_device ///////////////////////////////////////////////////////////////////
 
