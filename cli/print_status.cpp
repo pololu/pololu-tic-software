@@ -107,17 +107,19 @@ static void print_pin_info(const tic::variables & vars,
 static void print_drv8711_registers(const tic::variables & vars)
 {
   std::cout << left_column << "DRV8711 registers:";
-  std::cout << '[';
+  std::ostringstream ss;
+  ss << std::right << std::setfill('0') << std::hex;
+  ss << '[';
   for (size_t i = 0; i < TIC_DRV8711_SETTING_REGISTER_COUNT; i++)
   {
-    std::cout << "0x" << std::hex << std::setw(3) << std::setfill('0')
-      << vars.get_drv8711_register(i);
+    ss << "0x" << std::setw(3) << vars.get_drv8711_register(i);
     if (i < TIC_DRV8711_SETTING_REGISTER_COUNT - 1)
     {
-      std::cout << ',';
+      ss << ',';
     }
   }
-  std::cout << ']' << std::endl;
+  ss << ']';
+  std::cout << ss.str() << std::endl;
 }
 
 void print_status(const tic::variables & vars,
