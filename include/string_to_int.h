@@ -177,7 +177,7 @@ static uint8_t hex_string_to_int(const char * str, T * out)
   return 0;
 }
 
-// Parse an integer that might be prefixed with "0x".
+// Parse an integer that might be prefixed with "0x" or "0b".
 // Advances the pointer to point past the end of the integer
 // (so this does not detect junk in your string after the integer).
 template <typename T>
@@ -204,13 +204,18 @@ static uint8_t parse_prefixed_int(const char * & p, T * out)
     base = 16;
     p += 2;
   }
+  if (p[0] == '0' && (p[1] == 'b' || p[1] == 'B'))
+  {
+    base = 2;
+    p += 2;
+  }
 
   bool found_digit = false;
   T result = 0;
   while (true)
   {
     uint8_t digit_value;
-    if (*p >= '0' && *p <= '9')
+    if (*p >= '0' && *p <= '9' && *p < '0' + base)
     {
       digit_value = *p - '0';
     }
