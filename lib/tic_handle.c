@@ -672,6 +672,38 @@ tic_error * tic_set_agc_frequency_limit(tic_handle * handle, uint8_t limit)
   return tic_set_agc_option(handle, TIC_AGC_OPTION_FREQUENCY_LIMIT, limit);
 }
 
+tic_error * tic_set_drv8711_register(tic_handle * handle,
+  uint8_t offset, uint16_t or_mask, uint16_t and_mask)
+{
+  if (handle == NULL)
+  {
+    return tic_error_create("Handle is null.");
+  }
+
+  const tic_device * device = tic_handle_get_device(handle);
+  uint8_t product = tic_device_get_product(device);
+  if (product != TIC_PRODUCT_TIC06A)
+  {
+    return tic_error_create(
+      "This Tic is not based on the DRV8711.");
+  }
+
+  tic_error * error = NULL;
+
+  uint16_t wValue = or_mask & 0xFFF;
+  uint16_t wIndex = (and_mask & 0xFFF) | (offset << 13);
+  error = tic_usb_error(libusbp_control_transfer(handle->usb_handle,
+    0x40, TIC_CMD_SET_DRV8711_REGISTER, wValue, wIndex, NULL, 0, NULL));
+
+  if (error != NULL)
+  {
+    error = tic_error_add(error,
+      "There was an error setting a DRV8711 register (%d,0x%x,0x%x).",
+      offset, or_mask, and_mask);
+  }
+
+  return error;
+}
 
 tic_error * tic_set_setting_byte(tic_handle * handle,
   uint8_t address, uint8_t byte)

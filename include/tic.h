@@ -1602,8 +1602,10 @@ uint32_t tic_variables_get_last_drv8711_errors(const tic_variables *);
 
 /// Gets the value of the specified DRV8711 register.
 ///
-/// The offset argument should be between 0 and
+/// The \p offset argument should be less than
 /// TIC_DRV8711_SETTING_REGISTER_COUNT.
+///
+/// See tic_set_drv8711_register().
 TIC_API
 uint16_t tic_variables_get_drv8711_register(const tic_variables *, uint8_t offset);
 
@@ -2014,6 +2016,30 @@ tic_error * tic_set_agc_current_boost_steps(tic_handle *, uint8_t steps);
 /// This command is only valid for the Tic T249.
 TIC_API TIC_WARN_UNUSED
 tic_error * tic_set_agc_frequency_limit(tic_handle *, uint8_t limit);
+
+/// Sets the value of the specified DRV8711 register.
+///
+/// The \p offset argument should be less than
+/// TIC_DRV8711_SETTING_REGISTER_COUNT.
+///
+/// The specified DRV8711 register will be modified in this way:
+///
+///    register = or_mask | (register & and_mask)
+///
+/// If you want to simply set the value of the entire register, set the
+/// \p and_mask argument to 0 and put the desired register value in the
+/// \p or_mask.
+///
+/// If you want to preserve some bits in the register, set those bits to 1
+/// in the \p and_mask and set them to 0 in the \p or_mask.
+///
+/// For more information about these registers, see the "Register Maps" section
+/// in the DRV8711 datasheet.
+///
+/// See tic_set_drv8711_register().
+TIC_API TIC_WARN_UNUSED
+tic_error * tic_set_drv8711_register(tic_handle *,
+  uint8_t offset, uint16_t or_mask, uint16_t and_mask);
 
 /// Reads all of the Tic's status variables and returns them as an object.
 ///

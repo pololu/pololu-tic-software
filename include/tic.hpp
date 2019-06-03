@@ -849,6 +849,12 @@ namespace tic
       throw_if_needed(tic_set_agc_frequency_limit(pointer, limit));
     }
 
+    /// Wrapper for tic_set_drv8711_register().
+    void set_drv8711_register(uint8_t offset, uint16_t or_mask, uint16_t and_mask = 0)
+    {
+      throw_if_needed(tic_set_drv8711_register(pointer, offset, or_mask, and_mask));
+    }
+
     /// Wrapper for tic_get_variables().
     variables get_variables(bool clear_errors_occurred = false)
     {
