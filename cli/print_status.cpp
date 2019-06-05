@@ -108,7 +108,7 @@ static void print_drv8711_registers(const tic::variables & vars)
 {
   std::cout << left_column << "DRV8711 registers:";
   std::ostringstream ss;
-  ss << std::right << std::setfill('0') << std::hex;
+  ss << std::right << std::setfill('0') << std::hex << std::uppercase;
   ss << '[';
   for (size_t i = 0; i < TIC_DRV8711_SETTING_REGISTER_COUNT; i++)
   {
