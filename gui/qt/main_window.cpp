@@ -1040,14 +1040,19 @@ void main_window::set_drv8711_tdecay(uint8_t time)
   set_spin_box(drv8711_tdecay_value, time);
 }
 
-void main_window::set_drv8711_toff(uint8_t time)
-{
-  set_spin_box(drv8711_toff_value, time);
-}
-
 void main_window::set_drv8711_tblank(uint8_t time)
 {
   set_spin_box(drv8711_tblank_value, time);
+}
+
+void main_window::set_drv8711_abt(bool adaptive)
+{
+  set_check_box(drv8711_abt_check, adaptive);
+}
+
+void main_window::set_drv8711_toff(uint8_t time)
+{
+  set_spin_box(drv8711_toff_value, time);
 }
 
 void main_window::set_soft_error_response(uint8_t soft_error_response)
@@ -1907,6 +1912,12 @@ void main_window::on_drv8711_tblank_value_valueChanged(int value)
 {
   if (suppress_events) { return; }
   controller->handle_drv8711_tblank_input(value);
+}
+
+void main_window::on_drv8711_abt_check_stateChanged(int state)
+{
+  if (suppress_events) { return; }
+  controller->handle_drv8711_abt_input(state == Qt::Checked);
 }
 
 void main_window::on_soft_error_response_radio_group_buttonToggled(int id, bool checked)
@@ -3395,6 +3406,13 @@ QWidget * main_window::setup_drv8711_motor_widget()
   }
 
   {
+    drv8711_abt_check = new QCheckBox();
+    drv8711_abt_check->setObjectName("drv8711_abt_check");
+    layout->addWidget(drv8711_abt_check, row, 0, 1, 2, Qt::AlignLeft);
+    row++;
+  }
+
+  {
     drv8711_tdecay_value = new QSpinBox();
     drv8711_tdecay_value->setObjectName("drv8711_tdecay_value");
     drv8711_tdecay_value->setRange(0, 255);
@@ -3867,6 +3885,7 @@ void main_window::retranslate()
   agc_frequency_limit_label->setText(tr("AGC frequency limit:"));
   drv8711_toff_label->setText(tr("Fixed off time (TOFF):"));
   drv8711_tblank_label->setText(tr("Current trip blanking time (TBLANK):"));
+  drv8711_abt_check->setText(tr("Adaptive blanking time"));
   drv8711_tdecay_label->setText(tr("Mixed decay transition time (TDECAY):"));
 
   //// advanced settings page

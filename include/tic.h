@@ -1209,6 +1209,20 @@ void tic_settings_set_drv8711_tblank(tic_settings *, uint8_t time);
 TIC_API
 uint8_t tic_settings_get_drv8711_tblank(const tic_settings *);
 
+/// Sets the value of the ABT bit in the DRV8711's BLANK register.
+///
+/// This enables adaptive blanking time.  See the DRV8711 datasheet for more
+/// information.
+///
+/// This setting is only valid for Tics based on the DRV8711 motor driver.
+TIC_API
+void tic_settings_set_drv8711_abt(tic_settings *, bool adaptive);
+
+/// Gets the value of the ABT bit in the DRV8711's blank register, as described
+/// in tic_settings_get_drv8711_tblank().
+TIC_API
+bool tic_settings_get_drv8711_abt(const tic_settings *);
+
 /// Sets the value of TDECAY in the DRV8711's DECAY register.
 ///
 /// This sets the mixed decay transition time, in units of 500 ns.

@@ -792,6 +792,15 @@ static tic_error * apply_string_pair(tic_settings * settings,
     }
     tic_settings_set_drv8711_tblank(settings, time);
   }
+  else if (!strcmp(key, "drv8711_abt"))
+  {
+    uint32_t adaptive;
+    if (!tic_name_to_code(tic_bool_names, value, &adaptive))
+    {
+      return tic_error_create("Unrecognized drv8711_abt value.");
+    }
+    tic_settings_set_drv8711_abt(settings, adaptive);
+  }
   else if (!strcmp(key, "drv8711_tdecay"))
   {
     int64_t time;

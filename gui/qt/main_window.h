@@ -245,9 +245,10 @@ public:
   void set_agc_bottom_current_limit(uint8_t);
   void set_agc_current_boost_steps(uint8_t);
   void set_agc_frequency_limit(uint8_t);
-  void set_drv8711_tdecay(uint8_t);
   void set_drv8711_toff(uint8_t);
   void set_drv8711_tblank(uint8_t);
+  void set_drv8711_abt(bool);
+  void set_drv8711_tdecay(uint8_t);
 
   void set_soft_error_response(uint8_t soft_error_response);
   void set_soft_error_position(int32_t soft_error_position);
@@ -379,9 +380,10 @@ private slots:
   void on_agc_bottom_current_limit_value_currentIndexChanged(int index);
   void on_agc_current_boost_steps_value_currentIndexChanged(int index);
   void on_agc_frequency_limit_value_currentIndexChanged(int index);
-  void on_drv8711_tdecay_value_valueChanged(int value);
   void on_drv8711_toff_value_valueChanged(int value);
   void on_drv8711_tblank_value_valueChanged(int value);
+  void on_drv8711_abt_check_stateChanged(int state);
+  void on_drv8711_tdecay_value_valueChanged(int value);
 
   void on_soft_error_response_radio_group_buttonToggled(int id, bool checked);
   void on_soft_error_position_value_valueChanged(int value);
@@ -688,12 +690,14 @@ private:
   QLabel * agc_frequency_limit_label;
   QComboBox * agc_frequency_limit_value;
   QWidget * drv8711_motor_widget;
-  QLabel * drv8711_tdecay_label;
-  QSpinBox * drv8711_tdecay_value;
   QLabel * drv8711_toff_label;
   QSpinBox * drv8711_toff_value;
   QLabel * drv8711_tblank_label;
   QSpinBox * drv8711_tblank_value;
+  QCheckBox * drv8711_abt_check;
+  QLabel * drv8711_tdecay_label;
+  QSpinBox * drv8711_tdecay_value;
+
 
   //// advanced settings page
 

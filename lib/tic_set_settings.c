@@ -368,7 +368,7 @@ static void tic_write_settings_to_buffer(const tic_settings * settings, uint8_t 
     p[5] = 0;
     // BLANK register
     p[6] = tic_settings_get_drv8711_tblank(settings);
-    p[7] = 0;
+    p[7] = tic_settings_get_drv8711_abt(settings);
     // DECAY register
     p[8] = tic_settings_get_drv8711_tdecay(settings);
     p[9] = tic_settings_get_drv8711_decmod(settings) & 7;

@@ -51,5 +51,6 @@ homing_speed_towards: 1000000
 homing_speed_away: 500000
 drv8711_toff: 48
 drv8711_tblank: 128
+drv8711_abt: false
 drv8711_tdecay: 16
 drv8711_decmod: slow_mixed

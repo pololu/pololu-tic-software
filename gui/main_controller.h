@@ -129,6 +129,7 @@ public:
 
   void handle_drv8711_toff_input(uint8_t);
   void handle_drv8711_tblank_input(uint8_t);
+  void handle_drv8711_abt_input(bool);
   void handle_drv8711_tdecay_input(uint8_t);
 
   void handle_soft_error_response_input(uint8_t soft_error_response);

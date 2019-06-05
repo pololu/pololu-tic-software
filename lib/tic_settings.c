@@ -77,6 +77,7 @@ struct tic_settings
 
   uint8_t drv8711_toff;
   uint8_t drv8711_tblank;
+  bool drv8711_abt;
   uint8_t drv8711_tdecay;
   uint8_t drv8711_decmod;
 };
@@ -1157,6 +1158,18 @@ uint8_t tic_settings_get_drv8711_tblank(const tic_settings * settings)
 {
   if (!settings) { return 0; }
   return settings->drv8711_tblank;
+}
+
+void tic_settings_set_drv8711_abt(tic_settings * settings, bool adaptive)
+{
+  if (!settings) { return; }
+  settings->drv8711_abt = adaptive;
+}
+
+bool tic_settings_get_drv8711_abt(const tic_settings * settings)
+{
+  if (!settings) { return 0; }
+  return settings->drv8711_abt;
 }
 
 void tic_settings_set_drv8711_tdecay(tic_settings * settings, uint8_t time)

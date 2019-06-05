@@ -865,6 +865,7 @@ void main_controller::handle_settings_changed()
 
   window->set_drv8711_toff(tic_settings_get_drv8711_toff(s));
   window->set_drv8711_tblank(tic_settings_get_drv8711_tblank(s));
+  window->set_drv8711_abt(tic_settings_get_drv8711_abt(s));
   window->set_drv8711_tdecay(tic_settings_get_drv8711_tdecay(s));
 
   window->set_apply_settings_enabled(connected() && settings_modified);
@@ -1229,6 +1230,14 @@ void main_controller::handle_drv8711_tblank_input(uint8_t time)
 {
   if (!connected()) { return; }
   tic_settings_set_drv8711_tblank(settings.get_pointer(), time);
+  settings_modified = true;
+  handle_settings_changed();
+}
+
+void main_controller::handle_drv8711_abt_input(bool adaptive)
+{
+  if (!connected()) { return; }
+  tic_settings_set_drv8711_abt(settings.get_pointer(), adaptive);
   settings_modified = true;
   handle_settings_changed();
 }

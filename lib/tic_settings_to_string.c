@@ -409,6 +409,12 @@ tic_error * tic_settings_to_string(const tic_settings * settings, char ** string
 
   if (drv8711)
   {
+    bool adaptive = tic_settings_get_drv8711_abt(settings);
+    tic_sprintf(&str, "drv8711_abt: %s\n", adaptive ? "true" : "false");
+  }
+
+  if (drv8711)
+  {
     uint8_t time = tic_settings_get_drv8711_tdecay(settings);
     tic_sprintf(&str, "drv8711_tdecay: %d\n", time);
   }

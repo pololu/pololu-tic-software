@@ -51,5 +51,6 @@ homing_speed_towards: 123456789
 homing_speed_away: 90786722
 drv8711_toff: 255
 drv8711_tblank: 127
+drv8711_abt: true
 drv8711_tdecay: 71
 drv8711_decmod: auto_mixed
