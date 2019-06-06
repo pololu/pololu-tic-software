@@ -583,8 +583,8 @@ namespace tic
       return tic_variables_get_pin_state(pointer, pin);
     }
 
-    /// Wrapper for tic_variables_get_last_drv8711_error().
-    uint32_t get_last_drv8711_error() const noexcept
+    /// Wrapper for tic_variables_get_last_drv8711_errors().
+    uint32_t get_last_drv8711_errors() const noexcept
     {
       return tic_variables_get_last_drv8711_errors(pointer);
     }
