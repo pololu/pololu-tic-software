@@ -178,6 +178,7 @@ public:
   void disable_limit_active();
   void set_homing_active(bool active);
   void set_last_motor_driver_error(const char * str);
+  void set_last_drv8711_errors(uint8_t errors);
   void set_target_position(int32_t target_position);
   void set_target_velocity(int32_t target_velocity);
   void set_target_none();

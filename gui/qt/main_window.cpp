@@ -274,6 +274,7 @@ void main_window::adjust_ui_for_product(uint8_t product)
         { "Slow / auto mixed", TIC_DRV8711_DECMOD_SLOW_AUTO_MIXED },
         { "Auto mixed", TIC_DRV8711_DECMOD_AUTO_MIXED }});
     decay_mode_visible = true;
+    last_motor_driver_error_visible = true;
     drv8711_visible = true;
     break;
   }
@@ -592,6 +593,15 @@ void main_window::set_homing_active(bool active)
 void main_window::set_last_motor_driver_error(const char * str)
 {
   last_motor_driver_error_value->setText(str);
+  last_motor_driver_error_value->setToolTip("");
+}
+
+void main_window::set_last_drv8711_errors(uint8_t errors)
+{
+  const char * name = tic_look_up_drv8711_error_name_ui(errors);
+  QString toolTip = "0x" + QString::number(errors, 16);
+  last_motor_driver_error_value->setText(name);
+  last_motor_driver_error_value->setToolTip(toolTip);
 }
 
 void main_window::set_target_position(int32_t target_position)

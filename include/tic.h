@@ -225,9 +225,14 @@ const char * tic_look_up_agc_frequency_limit_name_ui(uint8_t limit);
 /// Looks up a user-friendly string corresponding to the specified DRV8711
 /// error bit, e.g. "Overtemperature".
 ///
-/// The \p error argument should be of the form (1 << x) where x is one of the
-/// TIC_DRV8711_ERROR_* macros, but if it is not, this function
-/// returns "(Unknown)".  The returned string will be valid indefinitely and
+/// The \p error argument should be bitwise-or combination of numbers of the
+/// form (1 << x), where x is one of the TIC_DRV8711_ERROR_* macros.
+/// If it is not, this function returns "(Unknown)".
+/// If the argument is 0, this function returns "None".
+/// If multiple error bits are 1 and this function does not know a
+/// name to describe the set of errors, it returns "(Multiple)".
+///
+/// The returned string will be valid indefinitely and
 /// should not be freed.
 ///
 /// This function is only useful for Tics based on the DRV8711 motor driver.

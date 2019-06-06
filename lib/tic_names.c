@@ -367,6 +367,7 @@ const tic_name tic_drv8711_decmod_names_ui[] =
 
 const tic_name tic_drv8711_error_names_ui[] =
 {
+  { "None", 0 },
   { "Overtemperature", 1 << TIC_DRV8711_ERROR_OTS },
   { "Overcurrent A", 1 << TIC_DRV8711_ERROR_AOCP },
   { "Overcurrent B", 1 << TIC_DRV8711_ERROR_BOCP },
@@ -374,6 +375,8 @@ const tic_name tic_drv8711_error_names_ui[] =
   { "Predriver fault B", 1 << TIC_DRV8711_ERROR_BPDF },
   { "Undervoltage", 1 << TIC_DRV8711_ERROR_UVLO },
   { "Verification failure", 1 << TIC_DRV8711_ERROR_VERIFY },
+  { "Overcurrent", (1 << TIC_DRV8711_ERROR_AOCP) | (1 << TIC_DRV8711_ERROR_BOCP) },
+  { "Predriver fault", (1 << TIC_DRV8711_ERROR_APDF) | (1 << TIC_DRV8711_ERROR_BPDF) },
   { NULL, 0 },
 };
 
@@ -650,7 +653,18 @@ const char * tic_look_up_agc_frequency_limit_name_ui(uint8_t limit)
 
 const char * tic_look_up_drv8711_error_name_ui(uint8_t error)
 {
-  const char * str = "(Unknown)";
+  const char * str;
+  if (error & 0b10111111)
+  {
+    // The error code consists solely of bits that correspond to valid errors.
+    // If tic_code_to_name cannot find a name, it means there were
+    // multiple valid error bits set.
+    str = "(Multiple)";
+  }
+  else
+  {
+    str = "(Unknown)";
+  }
   tic_code_to_name(tic_drv8711_error_names_ui, error, &str);
   return str;
 }

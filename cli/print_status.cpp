@@ -321,7 +321,7 @@ void print_status(const tic::variables & vars,
     "Errors that occurred since last check");
   if (product == TIC_PRODUCT_TIC06A)
   {
-    print_drv8711_errors(vars.get_last_drv8711_error());
+    print_drv8711_errors(vars.get_last_drv8711_errors());
   }
   std::cout << std::endl;
 

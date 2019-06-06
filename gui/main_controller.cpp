@@ -524,6 +524,8 @@ void main_controller::initialize_manual_target()
 
 void main_controller::handle_variables_changed()
 {
+  uint8_t product = device_handle.get_device().get_product();
+
   window->set_up_time(variables.get_up_time());
 
   window->set_encoder_position(variables.get_encoder_position());
@@ -554,8 +556,16 @@ void main_controller::handle_variables_changed()
   window->set_homing_active(variables.get_homing_active());
   window->set_operation_state(
     tic_look_up_operation_state_name_ui(variables.get_operation_state()));
-  window->set_last_motor_driver_error(
-    tic_look_up_motor_driver_error_name_ui(variables.get_last_motor_driver_error()));
+
+  if (product == TIC_PRODUCT_TIC06A)
+  {
+    window->set_last_drv8711_errors(variables.get_last_drv8711_errors());
+  }
+  else
+  {
+    window->set_last_motor_driver_error(
+      tic_look_up_motor_driver_error_name_ui(variables.get_last_motor_driver_error()));
+  }
 
   int32_t target_position = variables.get_target_position();
   int32_t target_velocity = variables.get_target_velocity();
