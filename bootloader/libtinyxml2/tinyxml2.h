@@ -41,7 +41,7 @@ distribution.
 #endif
 
 /*
-   TODO: intern strings instead of allocation.
+   TO DO: intern strings instead of allocation.
 */
 /*
 	gcc:

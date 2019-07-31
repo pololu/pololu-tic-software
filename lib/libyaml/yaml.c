@@ -10519,7 +10519,7 @@ yaml_parser_scan_plain_scalar(yaml_parser_t *parser, yaml_token_t *token)
 
         while (!IS_BLANKZ(parser->buffer))
         {
-            /* Check for 'x:x' in the flow context. TODO: Fix the test "spec-08-13". */
+            /* Check for 'x:x' in the flow context. TO DO: Fix the test "spec-08-13". */
 
             if (parser->flow_level
                     && CHECK(parser->buffer, ':')
