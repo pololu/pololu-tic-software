@@ -156,8 +156,6 @@ void main_window::set_device_list_contents(const std::vector<tic::device> & devi
 
 void main_window::set_device_list_selected(const tic::device & device)
 {
-  // TODO: show an error if we couldn't find the specified device
-  // (findData returned -1)?
   suppress_events = true;
   int index = 0;
   if (device)
@@ -2091,8 +2089,6 @@ static void setup_read_only_text_field(QGridLayout * layout, int row,
 
 static void setup_error_row(QGridLayout * layout, int row, error_row & er)
 {
-  // TODO make sure this all looks good on mac/linux/high dpi
-
   er.count = 0;
 
   er.name_label = new QLabel();
@@ -2116,7 +2112,7 @@ static void setup_error_row(QGridLayout * layout, int row, error_row & er)
 
   if (row & 1)
   {
-    // TODO: The background color doesn't work with the fusion style on macOS,
+    // NOTE: The background color doesn't work with the fusion style on macOS,
     // it seems to be the same gray as the normal background.
     er.background->setStyleSheet("background-color: palette(alternate-base);");
   }

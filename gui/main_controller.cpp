@@ -61,7 +61,6 @@ static tic::device device_with_os_id(
 
 void main_controller::connect_device_with_os_id(std::string const & id)
 {
-  // TODO: deal with id being invalid
   connect_device(device_with_os_id(device_list, id));
 }
 

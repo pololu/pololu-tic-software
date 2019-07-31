@@ -68,13 +68,6 @@ void BallScrollBar::contextMenuEvent(QContextMenuEvent * event)
 
 void BallScrollBar::paintEvent(QPaintEvent * event)
 {
-  // Save the page step value and temporarily set it to 1 before invoking
-  // QScrollBar::paintEvent() to get the smallest slider (handle) possible.
-  // Otherwise, the size of the slider matches the page step.
-  // TODO: find a way to do this without as big of a performance impact
-  //int ps = pageStep();
-  //setPageStep(1);
-
   QScrollBar::paintEvent(event);
 
   // Only draw the ball if the scroll bar is enabled, the ball is allowed to be
@@ -119,7 +112,4 @@ void BallScrollBar::paintEvent(QPaintEvent * event)
     painter.translate(length_offset, thickness_offset);
     painter.drawEllipse(QPoint(pos, 0), radius, radius);
   }
-
-  // Restore the saved page step value.
-  //setPageStep(ps);
 }
