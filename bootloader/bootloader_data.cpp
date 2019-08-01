@@ -76,4 +76,17 @@ const std::vector<bootloader_type> bootloader_types = {
     /* eeprom_address_hex_file */ 0xF00000,
     /* eeprom_size */ 0x100,
   },
+  {
+    /* id */ ID_TIC_T249_BOOTLOADER,
+    /* usb_vendor_id */ 0x1FFB,
+    /* usb_product_id */ 0x00CA,
+    /* name */ "Tic tic06a Bootloader",  // TODO: real name
+    /* short_name */ "tic06a",  // TODO: real name
+    /* app_address */ 0x2000,
+    /* app_size */ 0x6000,
+    /* write_block_size */ 0x40,
+    /* eeprom_address */ 0,
+    /* eeprom_address_hex_file */ 0xF00000,
+    /* eeprom_size */ 0x100,
+  },
 };
