@@ -175,10 +175,11 @@ void tic_settings_fill_with_defaults(tic_settings * settings)
 
   if (product == TIC_PRODUCT_TIC06A)
   {
-    tic_settings_set_drv8711_toff(settings, 0x30);
-    tic_settings_set_drv8711_tblank(settings, 0x80);
+    tic_settings_set_drv8711_toff(settings, 0x32);
+    tic_settings_set_drv8711_tblank(settings, 0x00);
+    tic_settings_set_drv8711_abt(settings, true);
     tic_settings_set_drv8711_tdecay(settings, 0x10);
-    tic_settings_set_drv8711_decmod(settings, TIC_DRV8711_DECMOD_SLOW_MIXED);
+    tic_settings_set_drv8711_decmod(settings, TIC_DRV8711_DECMOD_AUTO_MIXED);
   }
 }
 

@@ -374,10 +374,10 @@ static void tic_write_settings_to_buffer(const tic_settings * settings, uint8_t 
     p[9] = tic_settings_get_drv8711_decmod(settings) & 7;
     // STALL register
     p[10] = 0;
-    p[11] = 0;
+    p[11] = 0xA;
     // DRIVE register
-    p[12] = 0b01011001;
-    p[13] = 0b1010;
+    p[12] = 0;
+    p[13] = 0;
   }
 }
 

@@ -3304,7 +3304,7 @@ QLayout * main_window::setup_motor_settings_layout()
   {
     decay_mode_value = new QComboBox();
     decay_mode_value->setObjectName("decay_mode_value");
-    decay_mode_value->addItem("Mixed 75%", 0);  // reserve space
+    decay_mode_value->addItem("Slow / auto mixed", 0);  // reserve space
     decay_mode_label = new QLabel();
     decay_mode_label->setBuddy(decay_mode_value);
     layout->addWidget(decay_mode_label, row, 0, FIELD_LABEL_ALIGNMENT);
