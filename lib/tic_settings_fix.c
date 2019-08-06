@@ -971,6 +971,24 @@ static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings
     tic_settings_set_pin_func(settings, TIC_PIN_NUM_RC, rc_func);
     tic_settings_set_pin_analog(settings, TIC_PIN_NUM_RC, rc_analog);
   }
+
+  if (product == TIC_PRODUCT_TIC06A)
+  {
+    if (!tic_settings_drv8711_gate_charge_ok(settings))
+    {
+      uint8_t toff = tic_settings_get_drv8711_toff(settings);
+      while (true)
+      {
+        if (toff >= 255) { break; }   // Shouldn't happen.
+        toff++;
+        tic_settings_set_drv8711_toff(settings, toff);
+        if (tic_settings_drv8711_gate_charge_ok(settings)) { break; }
+      }
+      tic_sprintf(warnings,
+        "Warning: The fixed off time (TOFF) will be increased to %u "
+        "(to satisfy equation 3 in the DRV8711 datasheet).", toff);
+    }
+  }
 }
 
 tic_error * tic_settings_fix(tic_settings * settings, char ** warnings)

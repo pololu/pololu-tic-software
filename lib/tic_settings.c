@@ -1196,3 +1196,35 @@ uint8_t tic_settings_get_drv8711_decmod(const tic_settings * settings)
   if (!settings) { return 0; }
   return settings->drv8711_decmod;
 }
+
+static uint32_t tic_settings_get_drv8711_tblank_ns(
+    const tic_settings * settings)
+{
+  uint8_t tblank = tic_settings_get_drv8711_tblank(settings);
+  if (tblank < 0x32) { tblank = 0x32; }
+  return tblank * 20;
+}
+
+static uint32_t tic_settings_get_drv8711_toff_ns(const tic_settings * settings)
+{
+  uint8_t toff = tic_settings_get_drv8711_toff(settings);
+  return (toff + 1) * 500;
+}
+
+// Return true if equation 3 in the DRV8711 datasheet is satisfied, taking into
+// account the fact that the DRV8711 can decrease the actual blanking time by
+// 50% if adaptive blanking time is enabled.
+bool tic_settings_drv8711_gate_charge_ok(const tic_settings * settings)
+{
+  uint32_t tblank_ns = tic_settings_get_drv8711_tblank_ns(settings);
+  if (tic_settings_get_drv8711_abt(settings)) { tblank_ns /= 2; }
+
+  uint32_t toff_ns = tic_settings_get_drv8711_toff_ns(settings);
+
+  // Assumption: We use a dead time (DTIME) of 850 ns.
+  uint32_t dtime_ns = 850;
+
+  // Assumption: The gate charge of the MOSFETs is 20 nC or less.
+
+  return 2 * dtime_ns + tblank_ns + toff_ns > 4000;
+}

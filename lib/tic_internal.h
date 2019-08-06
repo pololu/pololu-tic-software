@@ -248,3 +248,5 @@ typedef struct tic_settings_segments
 } tic_settings_segments;
 
 tic_settings_segments tic_get_settings_segments(uint8_t product);
+
+bool tic_settings_drv8711_gate_charge_ok(const tic_settings *);
