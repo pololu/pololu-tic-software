@@ -358,6 +358,7 @@ static void tic_write_settings_to_buffer(const tic_settings * settings, uint8_t 
     step_mode_code &= 0xF;
 
     // CTRL register
+    // Sets DTIME to 00 (850 ns), which drv8711_gate_charge_ok relies on.
     p[0] = step_mode_code << 3;
     p[1] = 0b1100;
     // TORQUE register
@@ -376,8 +377,8 @@ static void tic_write_settings_to_buffer(const tic_settings * settings, uint8_t 
     p[10] = 0;
     p[11] = 0xA;
     // DRIVE register
-    p[12] = 0;
-    p[13] = 0;
+    p[12] = 0x08;
+    p[13] = 0xA;
   }
 }
 
