@@ -51,10 +51,6 @@ static const char help[] =
   "  --agc-frequency-limit LIMIT        Set AGC frequency limit in Hz:\n"
   "                                     off, 225, 450, or 675.\n"
   "\n"
-  "Temporary settings for DRV8711 on the tic06a:\n"
-  "  --drv8711-reg N,V            Change register N's value to V (use 0x for hex).\n"
-  "  --drv8711-reg N,V,A          Change register N's value from X to V | (X & A).\n"
-  "\n"
   "Permanent settings:\n"
   "  --restore-defaults           Restore device's factory settings\n"
   "  --settings FILE              Load settings file into device.\n"
@@ -145,13 +141,6 @@ struct arguments
   bool set_agc_frequency_limit = false;
   uint8_t agc_frequency_limit;
 
-  bool set_drv8711_register = false;
-  struct {
-    bool set_register = false;
-    uint16_t and_mask = 0;
-    uint16_t or_mask = 0;
-  } drv8711_registers[TIC_DRV8711_SETTING_REGISTER_COUNT];
-
   bool restore_defaults = false;
 
   bool set_settings = false;
@@ -197,7 +186,6 @@ struct arguments
       set_agc_bottom_current_limit ||
       set_agc_current_boost_steps ||
       set_agc_frequency_limit ||
-      set_drv8711_register ||
       restore_defaults ||
       set_settings ||
       get_settings ||
@@ -439,69 +427,6 @@ static uint8_t parse_arg_agc_frequency_limit(arg_reader & arg_reader)
   }
 }
 
-static void parse_arg_drv8711_reg(arguments & args, arg_reader & arg_reader)
-{
-  std::string str = parse_arg_string(arg_reader);
-  const char * cursor = str.c_str();
-
-  uint8_t offset = 0;
-  uint16_t or_mask = 0;
-  uint16_t and_mask = 0;
-
-  if (parse_prefixed_int(cursor, &offset))
-  {
-    throw exception_with_exit_code(EXIT_BAD_ARGS,
-      "Invalid DRV8711 register address.");
-  }
-
-  if (*cursor != ',')
-  {
-    throw exception_with_exit_code(EXIT_BAD_ARGS,
-      "Expected a comma after DRV8711 register address.");
-  }
-  cursor++;
-
-  if (parse_prefixed_int(cursor, &or_mask))
-  {
-    throw exception_with_exit_code(EXIT_BAD_ARGS,
-      "Invalid DRV8711 register value.");
-  }
-
-  if (*cursor)
-  {
-    if (*cursor != ',')
-    {
-      throw exception_with_exit_code(EXIT_BAD_ARGS,
-        "Expected a comma or nothing after DRV8711 register value.");
-    }
-    cursor++;
-
-    if (parse_prefixed_int(cursor, &and_mask))
-    {
-      throw exception_with_exit_code(EXIT_BAD_ARGS,
-        "Invalid DRV8711 register AND mask.");
-    }
-  }
-
-  if (*cursor)
-  {
-    throw exception_with_exit_code(EXIT_BAD_ARGS,
-      "Invalid argument to --drv8711-reg.");
-  }
-
-  if (offset >= TIC_DRV8711_SETTING_REGISTER_COUNT)
-  {
-    throw exception_with_exit_code(EXIT_BAD_ARGS,
-      "DRV8711 register address is too high.");
-  }
-
-  args.set_drv8711_register = true;
-  auto & spec = args.drv8711_registers[offset];
-  spec.set_register = true;
-  spec.and_mask = and_mask;
-  spec.or_mask = or_mask;
-}
-
 static uint8_t parse_arg_homing_direction(arg_reader & arg_reader)
 {
   std::string str = parse_arg_string(arg_reader);
@@ -689,10 +614,6 @@ static arguments parse_args(int argc, char ** argv)
     {
       args.set_agc_frequency_limit = true;
       args.agc_frequency_limit = parse_arg_agc_frequency_limit(arg_reader);
-    }
-    else if (arg == "--drv8711-reg")
-    {
-      parse_arg_drv8711_reg(args, arg_reader);
     }
     else if (arg == "--restore-defaults" || arg == "--restoredefaults")
     {
@@ -1115,17 +1036,6 @@ static void run(const arguments & args)
   if (args.set_agc_frequency_limit)
   {
     handle(selector).set_agc_frequency_limit(args.agc_frequency_limit);
-  }
-
-  if (args.set_drv8711_register)
-  {
-    tic::handle h = handle(selector);
-    for (size_t i = 0; i < TIC_DRV8711_SETTING_REGISTER_COUNT; i++)
-    {
-      const auto & spec = args.drv8711_registers[i];
-      if (!spec.set_register) { continue; }
-      h.set_drv8711_register(i, spec.or_mask, spec.and_mask);
-    }
   }
 
   if (args.clear_driver_error)

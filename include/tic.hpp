@@ -588,12 +588,6 @@ namespace tic
     {
       return tic_variables_get_last_drv8711_errors(pointer);
     }
-
-    /// Wrapper for tic_variables_get_drv8711_register().
-    uint16_t get_drv8711_register(uint8_t offset) const noexcept
-    {
-      return tic_variables_get_drv8711_register(pointer, offset);
-    }
   };
 
   /// Represents a Tic that is or was connected to the computer.  Can also be in
@@ -847,12 +841,6 @@ namespace tic
     void set_agc_frequency_limit(uint8_t limit)
     {
       throw_if_needed(tic_set_agc_frequency_limit(pointer, limit));
-    }
-
-    /// Wrapper for tic_set_drv8711_register().
-    void set_drv8711_register(uint8_t offset, uint16_t or_mask, uint16_t and_mask = 0)
-    {
-      throw_if_needed(tic_set_drv8711_register(pointer, offset, or_mask, and_mask));
     }
 
     /// Wrapper for tic_get_variables().

@@ -51,7 +51,6 @@ struct tic_variables
   } pin_info[TIC_CONTROL_PIN_COUNT];
 
   uint8_t last_drv8711_errors;
-  uint16_t drv8711_registers[TIC_DRV8711_SETTING_REGISTER_COUNT];
 };
 
 tic_error * tic_variables_create(tic_variables ** variables)
@@ -222,11 +221,6 @@ static void write_buffer_to_variables(const uint8_t * buf,
   if (vars->product == TIC_PRODUCT_TIC06A)
   {
     vars->last_drv8711_errors = buf[TIC_VAR_LAST_DRV8711_ERRORS];
-    for (size_t i = 0; i < TIC_DRV8711_SETTING_REGISTER_COUNT; i++)
-    {
-      vars->drv8711_registers[i] =
-        read_u16(buf + TIC_VAR_DRV8711_REGISTERS + (i * 2));
-    }
   }
 }
 
@@ -617,14 +611,4 @@ uint32_t tic_variables_get_last_drv8711_errors(const tic_variables * variables)
 {
   if (variables == NULL) { return 0; }
   return variables->last_drv8711_errors;
-}
-
-uint16_t tic_variables_get_drv8711_register(const tic_variables * variables,
-  uint8_t offset)
-{
-  if (variables == NULL || offset >= TIC_DRV8711_SETTING_REGISTER_COUNT)
-  {
-    return 0;
-  }
-  return variables->drv8711_registers[offset];
 }

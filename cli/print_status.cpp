@@ -104,24 +104,6 @@ static void print_pin_info(const tic::variables & vars,
       << (vars.get_digital_reading(pin) ? '1' : '0') << std::endl;
 }
 
-static void print_drv8711_registers(const tic::variables & vars)
-{
-  std::cout << left_column << "DRV8711 registers:";
-  std::ostringstream ss;
-  ss << std::right << std::setfill('0') << std::hex << std::uppercase;
-  ss << '[';
-  for (size_t i = 0; i < TIC_DRV8711_SETTING_REGISTER_COUNT; i++)
-  {
-    ss << "0x" << std::setw(3) << vars.get_drv8711_register(i);
-    if (i < TIC_DRV8711_SETTING_REGISTER_COUNT - 1)
-    {
-      ss << ',';
-    }
-  }
-  ss << ']';
-  std::cout << ss.str() << std::endl;
-}
-
 void print_status(const tic::variables & vars,
   const tic::settings & settings,
   const std::string & name,
@@ -305,11 +287,6 @@ void print_status(const tic::variables & vars,
       std::cout << left_column << "AGC frequency limit: "
         << tic_look_up_agc_frequency_limit_name_ui(vars.get_agc_frequency_limit())
         << std::endl;
-    }
-
-    if (product == TIC_PRODUCT_TIC06A)
-    {
-      print_drv8711_registers(vars);
     }
   }
 
