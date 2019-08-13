@@ -143,6 +143,9 @@ describe '--status' do
       expected_keys << 'AGC mode'
       expected_keys << 'Last motor driver error'
     end
+    if tic_product == :tic06a
+      expected_keys << 'Last motor driver errors'
+    end
 
     unexpected_keys = actual_keys - expected_keys - unreliable_keys
     expect(unexpected_keys).to eq []
