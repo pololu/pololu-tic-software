@@ -220,7 +220,7 @@ static void write_buffer_to_variables(const uint8_t * buf,
 
   if (vars->product == TIC_PRODUCT_TIC06A)
   {
-    vars->last_drv8711_errors = buf[TIC_VAR_LAST_DRV8711_ERRORS];
+    vars->last_drv8711_errors = buf[TIC_VAR_LAST_HPSC_DRIVER_ERRORS];
   }
 }
 
@@ -263,7 +263,7 @@ tic_error * tic_get_variables(tic_handle * handle, tic_variables ** variables,
 
   if (product == TIC_PRODUCT_TIC06A)
   {
-    product_specific_offset = TIC_VAR_LAST_DRV8711_ERRORS;
+    product_specific_offset = TIC_VAR_LAST_HPSC_DRIVER_ERRORS;
   }
 
   // Read all the variables from the device.

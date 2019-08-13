@@ -265,12 +265,12 @@ void main_window::adjust_ui_for_product(uint8_t product)
         { "1/256 step", TIC_STEP_MODE_MICROSTEP256 } });
 
     set_combo_items(decay_mode_value,
-      { { "Slow", TIC_DRV8711_DECMOD_SLOW },
-        { "Slow / mixed", TIC_DRV8711_DECMOD_SLOW_MIXED },
-        { "Fast", TIC_DRV8711_DECMOD_FAST },
-        { "Mixed", TIC_DRV8711_DECMOD_MIXED },
-        { "Slow / auto mixed", TIC_DRV8711_DECMOD_SLOW_AUTO_MIXED },
-        { "Auto mixed", TIC_DRV8711_DECMOD_AUTO_MIXED }});
+      { { "Slow", TIC_HPSC_DECMOD_SLOW },
+        { "Slow / mixed", TIC_HPSC_DECMOD_SLOW_MIXED },
+        { "Fast", TIC_HPSC_DECMOD_FAST },
+        { "Mixed", TIC_HPSC_DECMOD_MIXED },
+        { "Slow / auto mixed", TIC_HPSC_DECMOD_SLOW_AUTO_MIXED },
+        { "Auto mixed", TIC_HPSC_DECMOD_AUTO_MIXED }});
     decay_mode_visible = true;
     last_motor_driver_error_visible = true;
     drv8711_visible = true;

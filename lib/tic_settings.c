@@ -179,7 +179,7 @@ void tic_settings_fill_with_defaults(tic_settings * settings)
     tic_settings_set_drv8711_tblank(settings, 0x00);
     tic_settings_set_drv8711_abt(settings, true);
     tic_settings_set_drv8711_tdecay(settings, 0x10);
-    tic_settings_set_drv8711_decmod(settings, TIC_DRV8711_DECMOD_AUTO_MIXED);
+    tic_settings_set_drv8711_decmod(settings, TIC_HPSC_DECMOD_AUTO_MIXED);
   }
 }
 

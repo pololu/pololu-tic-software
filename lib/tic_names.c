@@ -345,38 +345,38 @@ const tic_name tic_agc_frequency_limit_names_ui[] =
 
 const tic_name tic_drv8711_decmod_names_snake[] =
 {
-  { "slow_mixed", TIC_DRV8711_DECMOD_SLOW_MIXED },
-  { "slow", TIC_DRV8711_DECMOD_SLOW },
-  { "fast", TIC_DRV8711_DECMOD_FAST },
-  { "mixed", TIC_DRV8711_DECMOD_MIXED },
-  { "slow_auto_mixed", TIC_DRV8711_DECMOD_SLOW_AUTO_MIXED },
-  { "auto_mixed", TIC_DRV8711_DECMOD_AUTO_MIXED },
+  { "slow_mixed", TIC_HPSC_DECMOD_SLOW_MIXED },
+  { "slow", TIC_HPSC_DECMOD_SLOW },
+  { "fast", TIC_HPSC_DECMOD_FAST },
+  { "mixed", TIC_HPSC_DECMOD_MIXED },
+  { "slow_auto_mixed", TIC_HPSC_DECMOD_SLOW_AUTO_MIXED },
+  { "auto_mixed", TIC_HPSC_DECMOD_AUTO_MIXED },
   { NULL, 0 },
 };
 
 const tic_name tic_drv8711_decmod_names_ui[] =
 {
-  { "Slow / mixed", TIC_DRV8711_DECMOD_SLOW_MIXED },
-  { "Slow", TIC_DRV8711_DECMOD_SLOW },
-  { "Fast", TIC_DRV8711_DECMOD_FAST },
-  { "Mixed", TIC_DRV8711_DECMOD_MIXED },
-  { "Slow / auto mixed", TIC_DRV8711_DECMOD_SLOW_AUTO_MIXED },
-  { "Auto mixed", TIC_DRV8711_DECMOD_AUTO_MIXED },
+  { "Slow", TIC_HPSC_DECMOD_SLOW },
+  { "Slow / mixed", TIC_HPSC_DECMOD_SLOW_MIXED },
+  { "Fast", TIC_HPSC_DECMOD_FAST },
+  { "Mixed", TIC_HPSC_DECMOD_MIXED },
+  { "Slow / auto mixed", TIC_HPSC_DECMOD_SLOW_AUTO_MIXED },
+  { "Auto mixed", TIC_HPSC_DECMOD_AUTO_MIXED },
   { NULL, 0 },
 };
 
 const tic_name tic_drv8711_error_names_ui[] =
 {
   { "None", 0 },
-  { "Overtemperature", 1 << TIC_DRV8711_ERROR_OTS },
-  { "Overcurrent A", 1 << TIC_DRV8711_ERROR_AOCP },
-  { "Overcurrent B", 1 << TIC_DRV8711_ERROR_BOCP },
-  { "Predriver fault A", 1 << TIC_DRV8711_ERROR_APDF },
-  { "Predriver fault B", 1 << TIC_DRV8711_ERROR_BPDF },
-  { "Undervoltage", 1 << TIC_DRV8711_ERROR_UVLO },
-  { "Verification failure", 1 << TIC_DRV8711_ERROR_VERIFY },
-  { "Overcurrent", (1 << TIC_DRV8711_ERROR_AOCP) | (1 << TIC_DRV8711_ERROR_BOCP) },
-  { "Predriver fault", (1 << TIC_DRV8711_ERROR_APDF) | (1 << TIC_DRV8711_ERROR_BPDF) },
+  { "Overtemperature", 1 << TIC_HPSC_DRIVER_ERROR_OTS },
+  { "Overcurrent A", 1 << TIC_HPSC_DRIVER_ERROR_AOCP },
+  { "Overcurrent B", 1 << TIC_HPSC_DRIVER_ERROR_BOCP },
+  { "Predriver fault A", 1 << TIC_HPSC_DRIVER_ERROR_APDF },
+  { "Predriver fault B", 1 << TIC_HPSC_DRIVER_ERROR_BPDF },
+  { "Undervoltage", 1 << TIC_HPSC_DRIVER_ERROR_UVLO },
+  { "Verification failure", 1 << TIC_HPSC_DRIVER_ERROR_VERIFY },
+  { "Overcurrent", (1 << TIC_HPSC_DRIVER_ERROR_AOCP) | (1 << TIC_HPSC_DRIVER_ERROR_BOCP) },
+  { "Predriver fault", (1 << TIC_HPSC_DRIVER_ERROR_APDF) | (1 << TIC_HPSC_DRIVER_ERROR_BPDF) },
   { NULL, 0 },
 };
 

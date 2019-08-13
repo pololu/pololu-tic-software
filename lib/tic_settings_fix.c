@@ -210,7 +210,7 @@ static void tic_settings_fix_enums(tic_settings * settings, tic_string * warning
         tic_sprintf(warnings,
           "Warning: The DRV8711 decay mode was invalid "
           "so it will be changed to \"Slow / mixed\".\n");
-        mode = TIC_DRV8711_DECMOD_SLOW_MIXED;
+        mode = TIC_HPSC_DECMOD_SLOW_MIXED;
       }
     }
     else

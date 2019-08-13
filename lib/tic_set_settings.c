@@ -351,7 +351,7 @@ static void tic_write_settings_to_buffer(const tic_settings * settings, uint8_t 
   {
     // Take care of DRV8711 registers.
 
-    uint8_t * p = buf + TIC_SETTING_DRV8711_REGISTERS;
+    uint8_t * p = buf + TIC_SETTING_HPSC_DRIVER_REGISTERS;
 
     uint8_t step_mode_code = step_mode;
     if (step_mode_code >= TIC_STEP_MODE_MICROSTEP2_100P) { step_mode_code--; }

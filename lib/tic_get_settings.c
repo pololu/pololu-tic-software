@@ -378,7 +378,7 @@ static void write_buffer_to_settings(const uint8_t * buf, tic_settings * setting
 
   if (product == TIC_PRODUCT_TIC06A)
   {
-    const uint8_t * p = buf + TIC_SETTING_DRV8711_REGISTERS;
+    const uint8_t * p = buf + TIC_SETTING_HPSC_DRIVER_REGISTERS;
     tic_settings_set_drv8711_toff(settings, p[4]);
     tic_settings_set_drv8711_tblank(settings, p[6]);
     tic_settings_set_drv8711_abt(settings, p[7] & 1);
@@ -477,7 +477,7 @@ tic_settings_segments tic_get_settings_segments(uint8_t product)
 
   if (product == TIC_PRODUCT_TIC06A)
   {
-    segments.product_specific_offset = TIC_SETTING_DRV8711_REGISTERS;
+    segments.product_specific_offset = TIC_SETTING_HPSC_DRIVER_REGISTERS;
   }
 
   if (segments.product_specific_offset)
