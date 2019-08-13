@@ -50,7 +50,7 @@ struct tic_variables
     uint8_t pin_state;
   } pin_info[TIC_CONTROL_PIN_COUNT];
 
-  uint8_t last_drv8711_errors;
+  uint8_t last_hpsc_driver_errors;
 };
 
 tic_error * tic_variables_create(tic_variables ** variables)
@@ -220,7 +220,7 @@ static void write_buffer_to_variables(const uint8_t * buf,
 
   if (vars->product == TIC_PRODUCT_TIC06A)
   {
-    vars->last_drv8711_errors = buf[TIC_VAR_LAST_HPSC_DRIVER_ERRORS];
+    vars->last_hpsc_driver_errors = buf[TIC_VAR_LAST_HPSC_DRIVER_ERRORS];
   }
 }
 
@@ -607,8 +607,8 @@ uint8_t tic_variables_get_pin_state(const tic_variables * variables,
   return variables->pin_info[pin].pin_state;
 }
 
-uint32_t tic_variables_get_last_drv8711_errors(const tic_variables * variables)
+uint32_t tic_variables_get_last_hpsc_driver_errors(const tic_variables * variables)
 {
   if (variables == NULL) { return 0; }
-  return variables->last_drv8711_errors;
+  return variables->last_hpsc_driver_errors;
 }

@@ -379,11 +379,11 @@ static void write_buffer_to_settings(const uint8_t * buf, tic_settings * setting
   if (product == TIC_PRODUCT_TIC06A)
   {
     const uint8_t * p = buf + TIC_SETTING_HPSC_DRIVER_REGISTERS;
-    tic_settings_set_drv8711_toff(settings, p[4]);
-    tic_settings_set_drv8711_tblank(settings, p[6]);
-    tic_settings_set_drv8711_abt(settings, p[7] & 1);
-    tic_settings_set_drv8711_tdecay(settings, p[8]);
-    tic_settings_set_drv8711_decmod(settings, p[9] & 7);
+    tic_settings_set_hpsc_toff(settings, p[4]);
+    tic_settings_set_hpsc_tblank(settings, p[6]);
+    tic_settings_set_hpsc_abt(settings, p[7] & 1);
+    tic_settings_set_hpsc_tdecay(settings, p[8]);
+    tic_settings_set_hpsc_decmod(settings, p[9] & 7);
   }
 }
 

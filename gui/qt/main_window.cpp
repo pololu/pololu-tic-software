@@ -184,7 +184,7 @@ void main_window::adjust_ui_for_product(uint8_t product)
   bool decay_mode_visible = false;
   bool agc_mode_visible = false;
   bool last_motor_driver_error_visible = false;
-  bool drv8711_visible = false;
+  bool hpsc_visible = false;
 
   switch (product)
   {
@@ -273,7 +273,7 @@ void main_window::adjust_ui_for_product(uint8_t product)
         { "Auto mixed", TIC_HPSC_DECMOD_AUTO_MIXED }});
     decay_mode_visible = true;
     last_motor_driver_error_visible = true;
-    drv8711_visible = true;
+    hpsc_visible = true;
     break;
   }
 
@@ -292,7 +292,7 @@ void main_window::adjust_ui_for_product(uint8_t product)
   last_motor_driver_error_label->setVisible(last_motor_driver_error_visible);
   last_motor_driver_error_value->setVisible(last_motor_driver_error_visible);
 
-  drv8711_motor_widget->setVisible(drv8711_visible);
+  hpsc_motor_widget->setVisible(hpsc_visible);
 
   update_current_limit_table(product);
 }
@@ -594,9 +594,9 @@ void main_window::set_last_motor_driver_error(const char * str)
   last_motor_driver_error_value->setToolTip("");
 }
 
-void main_window::set_last_drv8711_errors(uint8_t errors)
+void main_window::set_last_hpsc_driver_errors(uint8_t errors)
 {
-  const char * name = tic_look_up_drv8711_error_name_ui(errors);
+  const char * name = tic_look_up_hpsc_driver_error_name_ui(errors);
   QString toolTip = "0x" + QString::number(errors, 16);
   last_motor_driver_error_value->setText(name);
   last_motor_driver_error_value->setToolTip(toolTip);
@@ -1043,24 +1043,24 @@ void main_window::set_agc_frequency_limit(uint8_t limit)
   set_combo(agc_frequency_limit_value, limit);
 }
 
-void main_window::set_drv8711_tdecay(uint8_t time)
+void main_window::set_hpsc_tdecay(uint8_t time)
 {
-  set_spin_box(drv8711_tdecay_value, time);
+  set_spin_box(hpsc_tdecay_value, time);
 }
 
-void main_window::set_drv8711_tblank(uint8_t time)
+void main_window::set_hpsc_tblank(uint8_t time)
 {
-  set_spin_box(drv8711_tblank_value, time);
+  set_spin_box(hpsc_tblank_value, time);
 }
 
-void main_window::set_drv8711_abt(bool adaptive)
+void main_window::set_hpsc_abt(bool adaptive)
 {
-  set_check_box(drv8711_abt_check, adaptive);
+  set_check_box(hpsc_abt_check, adaptive);
 }
 
-void main_window::set_drv8711_toff(uint8_t time)
+void main_window::set_hpsc_toff(uint8_t time)
 {
-  set_spin_box(drv8711_toff_value, time);
+  set_spin_box(hpsc_toff_value, time);
 }
 
 void main_window::set_soft_error_response(uint8_t soft_error_response)
@@ -1904,28 +1904,28 @@ void main_window::on_agc_frequency_limit_value_currentIndexChanged(int index)
   controller->handle_agc_frequency_limit_input(limit);
 }
 
-void main_window::on_drv8711_tdecay_value_valueChanged(int value)
+void main_window::on_hpsc_tdecay_value_valueChanged(int value)
 {
   if (suppress_events) { return; }
-  controller->handle_drv8711_tdecay_input(value);
+  controller->handle_hpsc_tdecay_input(value);
 }
 
-void main_window::on_drv8711_toff_value_valueChanged(int value)
+void main_window::on_hpsc_toff_value_valueChanged(int value)
 {
   if (suppress_events) { return; }
-  controller->handle_drv8711_toff_input(value);
+  controller->handle_hpsc_toff_input(value);
 }
 
-void main_window::on_drv8711_tblank_value_valueChanged(int value)
+void main_window::on_hpsc_tblank_value_valueChanged(int value)
 {
   if (suppress_events) { return; }
-  controller->handle_drv8711_tblank_input(value);
+  controller->handle_hpsc_tblank_input(value);
 }
 
-void main_window::on_drv8711_abt_check_stateChanged(int state)
+void main_window::on_hpsc_abt_check_stateChanged(int state)
 {
   if (suppress_events) { return; }
-  controller->handle_drv8711_abt_input(state == Qt::Checked);
+  controller->handle_hpsc_abt_input(state == Qt::Checked);
 }
 
 void main_window::on_soft_error_response_radio_group_buttonToggled(int id, bool checked)
@@ -3373,7 +3373,7 @@ QLayout * main_window::setup_motor_settings_layout()
     row++;
   }
 
-  layout->addWidget(setup_drv8711_motor_widget(), row++, 0, 1, 3);
+  layout->addWidget(setup_hpsc_motor_widget(), row++, 0, 1, 3);
 
   layout->setColumnStretch(2, 1);
   layout->setRowStretch(row, 1);
@@ -3381,59 +3381,59 @@ QLayout * main_window::setup_motor_settings_layout()
   return layout;
 }
 
-QWidget * main_window::setup_drv8711_motor_widget()
+QWidget * main_window::setup_hpsc_motor_widget()
 {
-  drv8711_motor_widget = new QWidget();
+  hpsc_motor_widget = new QWidget();
   QGridLayout * layout = new QGridLayout();
   layout->setContentsMargins(0, 0, 0, 0);
 
   int row = 0;
 
   {
-    drv8711_toff_value = new QSpinBox();
-    drv8711_toff_value->setObjectName("drv8711_toff_value");
-    drv8711_toff_value->setRange(0, 255);
-    drv8711_toff_label = new QLabel();
-    drv8711_toff_label->setBuddy(drv8711_toff_value);
-    layout->addWidget(drv8711_toff_label, row, 0, FIELD_LABEL_ALIGNMENT);
-    layout->addWidget(drv8711_toff_value, row, 1, Qt::AlignLeft);
+    hpsc_toff_value = new QSpinBox();
+    hpsc_toff_value->setObjectName("hpsc_toff_value");
+    hpsc_toff_value->setRange(0, 255);
+    hpsc_toff_label = new QLabel();
+    hpsc_toff_label->setBuddy(hpsc_toff_value);
+    layout->addWidget(hpsc_toff_label, row, 0, FIELD_LABEL_ALIGNMENT);
+    layout->addWidget(hpsc_toff_value, row, 1, Qt::AlignLeft);
     row++;
   }
 
   {
-    drv8711_tblank_value = new QSpinBox();
-    drv8711_tblank_value->setObjectName("drv8711_tblank_value");
-    drv8711_tblank_value->setRange(0, 255);
-    drv8711_tblank_label = new QLabel();
-    drv8711_tblank_label->setBuddy(drv8711_tblank_value);
-    layout->addWidget(drv8711_tblank_label, row, 0, FIELD_LABEL_ALIGNMENT);
-    layout->addWidget(drv8711_tblank_value, row, 1, Qt::AlignLeft);
+    hpsc_tblank_value = new QSpinBox();
+    hpsc_tblank_value->setObjectName("hpsc_tblank_value");
+    hpsc_tblank_value->setRange(0, 255);
+    hpsc_tblank_label = new QLabel();
+    hpsc_tblank_label->setBuddy(hpsc_tblank_value);
+    layout->addWidget(hpsc_tblank_label, row, 0, FIELD_LABEL_ALIGNMENT);
+    layout->addWidget(hpsc_tblank_value, row, 1, Qt::AlignLeft);
     row++;
   }
 
   {
-    drv8711_abt_check = new QCheckBox();
-    drv8711_abt_check->setObjectName("drv8711_abt_check");
-    layout->addWidget(drv8711_abt_check, row, 0, 1, 2, Qt::AlignLeft);
+    hpsc_abt_check = new QCheckBox();
+    hpsc_abt_check->setObjectName("hpsc_abt_check");
+    layout->addWidget(hpsc_abt_check, row, 0, 1, 2, Qt::AlignLeft);
     row++;
   }
 
   {
-    drv8711_tdecay_value = new QSpinBox();
-    drv8711_tdecay_value->setObjectName("drv8711_tdecay_value");
-    drv8711_tdecay_value->setRange(0, 255);
-    drv8711_tdecay_label = new QLabel();
-    drv8711_tdecay_label->setBuddy(drv8711_tdecay_value);
-    layout->addWidget(drv8711_tdecay_label, row, 0, FIELD_LABEL_ALIGNMENT);
-    layout->addWidget(drv8711_tdecay_value, row, 1, Qt::AlignLeft);
+    hpsc_tdecay_value = new QSpinBox();
+    hpsc_tdecay_value->setObjectName("hpsc_tdecay_value");
+    hpsc_tdecay_value->setRange(0, 255);
+    hpsc_tdecay_label = new QLabel();
+    hpsc_tdecay_label->setBuddy(hpsc_tdecay_value);
+    layout->addWidget(hpsc_tdecay_label, row, 0, FIELD_LABEL_ALIGNMENT);
+    layout->addWidget(hpsc_tdecay_value, row, 1, Qt::AlignLeft);
     row++;
   }
 
   layout->setColumnStretch(2, 1);
   layout->setRowStretch(row, 1);
 
-  drv8711_motor_widget->setLayout(layout);
-  return drv8711_motor_widget;
+  hpsc_motor_widget->setLayout(layout);
+  return hpsc_motor_widget;
 }
 
 QWidget * main_window::setup_motor_settings_box()
@@ -3889,10 +3889,10 @@ void main_window::retranslate()
   agc_bottom_current_limit_label->setText(tr("AGC bottom current limit:"));
   agc_current_boost_steps_label->setText(tr("AGC current boost steps:"));
   agc_frequency_limit_label->setText(tr("AGC frequency limit:"));
-  drv8711_toff_label->setText(tr("Fixed off time (TOFF):"));
-  drv8711_tblank_label->setText(tr("Current trip blanking time (TBLANK):"));
-  drv8711_abt_check->setText(tr("Adaptive blanking time"));
-  drv8711_tdecay_label->setText(tr("Mixed decay transition time (TDECAY):"));
+  hpsc_toff_label->setText(tr("Fixed off time (TOFF):"));
+  hpsc_tblank_label->setText(tr("Current trip blanking time (TBLANK):"));
+  hpsc_abt_check->setText(tr("Adaptive blanking time"));
+  hpsc_tdecay_label->setText(tr("Mixed decay transition time (TDECAY):"));
 
   //// advanced settings page
 

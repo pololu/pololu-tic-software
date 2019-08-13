@@ -34,7 +34,6 @@ Acting target position:       -1
 Time since last step:         4294967295
 Step mode:                    (Unknown)
 Current limit:                0 mA
-Decay mode:                   (Unknown)
 
 Errors currently stopping the motor:
   - Intentionally de-energized
@@ -105,6 +104,7 @@ RX pin:
   Digital reading:            1
 RC pin:
   Digital reading:            1
+
 END
 
 describe '--status' do
@@ -133,7 +133,7 @@ describe '--status' do
 
     actual_keys = status.keys.sort
     expected_keys = YAML.load(FakeStatus).keys.sort
-    if tic_product == :T500 || tic_product == :T249
+    unless %i(T825 N825 T834).include?(tic_product)
       expected_keys.delete("Decay mode")
     end
     if tic_product == :T249

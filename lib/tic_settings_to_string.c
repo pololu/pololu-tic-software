@@ -393,38 +393,38 @@ tic_error * tic_settings_to_string(const tic_settings * settings, char ** string
     tic_sprintf(&str, "agc_frequency_limit: %s\n", name);
   }
 
-  bool drv8711 = product == TIC_PRODUCT_TIC06A;
+  bool hpsc = product == TIC_PRODUCT_TIC06A;
 
-  if (drv8711)
+  if (hpsc)
   {
-    uint8_t time = tic_settings_get_drv8711_toff(settings);
-    tic_sprintf(&str, "drv8711_toff: %d\n", time);
+    uint8_t time = tic_settings_get_hpsc_toff(settings);
+    tic_sprintf(&str, "hpsc_toff: %d\n", time);
   }
 
-  if (drv8711)
+  if (hpsc)
   {
-    uint8_t time = tic_settings_get_drv8711_tblank(settings);
-    tic_sprintf(&str, "drv8711_tblank: %d\n", time);
+    uint8_t time = tic_settings_get_hpsc_tblank(settings);
+    tic_sprintf(&str, "hpsc_tblank: %d\n", time);
   }
 
-  if (drv8711)
+  if (hpsc)
   {
-    bool adaptive = tic_settings_get_drv8711_abt(settings);
-    tic_sprintf(&str, "drv8711_abt: %s\n", adaptive ? "true" : "false");
+    bool adaptive = tic_settings_get_hpsc_abt(settings);
+    tic_sprintf(&str, "hpsc_abt: %s\n", adaptive ? "true" : "false");
   }
 
-  if (drv8711)
+  if (hpsc)
   {
-    uint8_t time = tic_settings_get_drv8711_tdecay(settings);
-    tic_sprintf(&str, "drv8711_tdecay: %d\n", time);
+    uint8_t time = tic_settings_get_hpsc_tdecay(settings);
+    tic_sprintf(&str, "hpsc_tdecay: %d\n", time);
   }
 
-  if (drv8711)
+  if (hpsc)
   {
-    uint8_t mode = tic_settings_get_drv8711_decmod(settings);
+    uint8_t mode = tic_settings_get_hpsc_decmod(settings);
     const char * name;
-    tic_code_to_name(tic_drv8711_decmod_names_snake, mode, &name);
-    tic_sprintf(&str, "drv8711_decmod: %s\n", name);
+    tic_code_to_name(tic_hpsc_decmod_names_snake, mode, &name);
+    tic_sprintf(&str, "hpsc_decmod: %s\n", name);
   }
 
   if (error == NULL && str.data == NULL)

@@ -52,9 +52,9 @@ static void print_errors(uint32_t errors, const char * error_set_name)
   }
 }
 
-static void print_drv8711_errors(uint32_t errors)
+static void print_hpsc_driver_errors(uint32_t errors)
 {
-  const char * error_set_name = "Last DRV8711 errors";
+  const char * error_set_name = "Last motor driver errors";
   if (!errors)
   {
     std::cout << error_set_name << ": None" << std::endl;
@@ -67,7 +67,7 @@ static void print_drv8711_errors(uint32_t errors)
     uint32_t error = (1 << i);
     if (errors & error)
     {
-      std::cout << "  - " << tic_look_up_drv8711_error_name_ui(error)
+      std::cout << "  - " << tic_look_up_hpsc_driver_error_name_ui(error)
         << std::endl;
     }
   }
@@ -298,7 +298,7 @@ void print_status(const tic::variables & vars,
     "Errors that occurred since last check");
   if (product == TIC_PRODUCT_TIC06A)
   {
-    print_drv8711_errors(vars.get_last_drv8711_errors());
+    print_hpsc_driver_errors(vars.get_last_hpsc_driver_errors());
   }
   std::cout << std::endl;
 

@@ -558,7 +558,7 @@ void main_controller::handle_variables_changed()
 
   if (product == TIC_PRODUCT_TIC06A)
   {
-    window->set_last_drv8711_errors(variables.get_last_drv8711_errors());
+    window->set_last_hpsc_driver_errors(variables.get_last_hpsc_driver_errors());
   }
   else
   {
@@ -823,7 +823,7 @@ void main_controller::handle_settings_changed()
   window->set_current_limit(tic_settings_get_current_limit(s));
   if (settings.get_product() == TIC_PRODUCT_TIC06A)
   {
-    window->set_decay_mode(tic_settings_get_drv8711_decmod(s));
+    window->set_decay_mode(tic_settings_get_hpsc_decmod(s));
   }
   else
   {
@@ -872,10 +872,10 @@ void main_controller::handle_settings_changed()
     window->set_pin_analog(i, analog, analog_enabled);
   }
 
-  window->set_drv8711_toff(tic_settings_get_drv8711_toff(s));
-  window->set_drv8711_tblank(tic_settings_get_drv8711_tblank(s));
-  window->set_drv8711_abt(tic_settings_get_drv8711_abt(s));
-  window->set_drv8711_tdecay(tic_settings_get_drv8711_tdecay(s));
+  window->set_hpsc_toff(tic_settings_get_hpsc_toff(s));
+  window->set_hpsc_tblank(tic_settings_get_hpsc_tblank(s));
+  window->set_hpsc_abt(tic_settings_get_hpsc_abt(s));
+  window->set_hpsc_tdecay(tic_settings_get_hpsc_tdecay(s));
 
   window->set_apply_settings_enabled(connected() && settings_modified);
 }
@@ -1177,7 +1177,7 @@ void main_controller::handle_decay_mode_input(uint8_t decay_mode)
   if (!connected()) { return; }
   if (settings.get_product() == TIC_PRODUCT_TIC06A)
   {
-    tic_settings_set_drv8711_decmod(settings.get_pointer(), decay_mode);
+    tic_settings_set_hpsc_decmod(settings.get_pointer(), decay_mode);
   }
   else
   {
@@ -1219,34 +1219,34 @@ void main_controller::handle_agc_frequency_limit_input(uint8_t limit)
   handle_settings_changed();
 }
 
-void main_controller::handle_drv8711_tdecay_input(uint8_t time)
+void main_controller::handle_hpsc_tdecay_input(uint8_t time)
 {
   if (!connected()) { return; }
-  tic_settings_set_drv8711_tdecay(settings.get_pointer(), time);
+  tic_settings_set_hpsc_tdecay(settings.get_pointer(), time);
   settings_modified = true;
   handle_settings_changed();
 }
 
-void main_controller::handle_drv8711_toff_input(uint8_t time)
+void main_controller::handle_hpsc_toff_input(uint8_t time)
 {
   if (!connected()) { return; }
-  tic_settings_set_drv8711_toff(settings.get_pointer(), time);
+  tic_settings_set_hpsc_toff(settings.get_pointer(), time);
   settings_modified = true;
   handle_settings_changed();
 }
 
-void main_controller::handle_drv8711_tblank_input(uint8_t time)
+void main_controller::handle_hpsc_tblank_input(uint8_t time)
 {
   if (!connected()) { return; }
-  tic_settings_set_drv8711_tblank(settings.get_pointer(), time);
+  tic_settings_set_hpsc_tblank(settings.get_pointer(), time);
   settings_modified = true;
   handle_settings_changed();
 }
 
-void main_controller::handle_drv8711_abt_input(bool adaptive)
+void main_controller::handle_hpsc_abt_input(bool adaptive)
 {
   if (!connected()) { return; }
-  tic_settings_set_drv8711_abt(settings.get_pointer(), adaptive);
+  tic_settings_set_hpsc_abt(settings.get_pointer(), adaptive);
   settings_modified = true;
   handle_settings_changed();
 }

@@ -65,7 +65,7 @@ def tic_max_allowed_current(product)
     T500: 3093,
     N825: 3968,
     T249: 4480,
-    tic06a: 9095,
+    tic06a: 9131,
   }.fetch(product)
 end
 

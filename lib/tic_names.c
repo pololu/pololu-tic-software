@@ -343,7 +343,7 @@ const tic_name tic_agc_frequency_limit_names_ui[] =
   { NULL, 0 },
 };
 
-const tic_name tic_drv8711_decmod_names_snake[] =
+const tic_name tic_hpsc_decmod_names_snake[] =
 {
   { "slow_mixed", TIC_HPSC_DECMOD_SLOW_MIXED },
   { "slow", TIC_HPSC_DECMOD_SLOW },
@@ -354,7 +354,7 @@ const tic_name tic_drv8711_decmod_names_snake[] =
   { NULL, 0 },
 };
 
-const tic_name tic_drv8711_decmod_names_ui[] =
+const tic_name tic_hpsc_decmod_names_ui[] =
 {
   { "Slow", TIC_HPSC_DECMOD_SLOW },
   { "Slow / mixed", TIC_HPSC_DECMOD_SLOW_MIXED },
@@ -365,7 +365,7 @@ const tic_name tic_drv8711_decmod_names_ui[] =
   { NULL, 0 },
 };
 
-const tic_name tic_drv8711_error_names_ui[] =
+const tic_name tic_hpsc_driver_error_names_ui[] =
 {
   { "None", 0 },
   { "Overtemperature", 1 << TIC_HPSC_DRIVER_ERROR_OTS },
@@ -450,10 +450,10 @@ const char * tic_look_up_planning_mode_name_ui(uint8_t planning_mode)
   return str;
 }
 
-const char * tic_look_up_drv8711_decmod_name_ui(uint8_t mode)
+const char * tic_look_up_hpsc_decmod_name_ui(uint8_t mode)
 {
   const char * str = "(Unknown)";
-  tic_code_to_name(tic_drv8711_decmod_names_ui, mode, &str);
+  tic_code_to_name(tic_hpsc_decmod_names_ui, mode, &str);
   return str;
 }
 
@@ -651,7 +651,7 @@ const char * tic_look_up_agc_frequency_limit_name_ui(uint8_t limit)
   return str;
 }
 
-const char * tic_look_up_drv8711_error_name_ui(uint8_t error)
+const char * tic_look_up_hpsc_driver_error_name_ui(uint8_t error)
 {
   const char * str;
   if (error & 0b10111111)
@@ -665,7 +665,7 @@ const char * tic_look_up_drv8711_error_name_ui(uint8_t error)
   {
     str = "(Unknown)";
   }
-  tic_code_to_name(tic_drv8711_error_names_ui, error, &str);
+  tic_code_to_name(tic_hpsc_driver_error_names_ui, error, &str);
   return str;
 }
 

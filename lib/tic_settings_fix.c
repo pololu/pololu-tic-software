@@ -202,13 +202,13 @@ static void tic_settings_fix_enums(tic_settings * settings, tic_string * warning
   }
 
   {
-    uint8_t mode = tic_settings_get_drv8711_decmod(settings);
+    uint8_t mode = tic_settings_get_hpsc_decmod(settings);
     if (product == TIC_PRODUCT_TIC06A)
     {
-      if (!tic_code_to_name(tic_drv8711_decmod_names_snake, mode, NULL))
+      if (!tic_code_to_name(tic_hpsc_decmod_names_snake, mode, NULL))
       {
         tic_sprintf(warnings,
-          "Warning: The DRV8711 decay mode was invalid "
+          "Warning: The decay mode was invalid "
           "so it will be changed to \"Slow / mixed\".\n");
         mode = TIC_HPSC_DECMOD_SLOW_MIXED;
       }
@@ -217,7 +217,7 @@ static void tic_settings_fix_enums(tic_settings * settings, tic_string * warning
     {
       mode = 0;
     }
-    tic_settings_set_drv8711_decmod(settings, mode);
+    tic_settings_set_hpsc_decmod(settings, mode);
   }
 }
 
@@ -974,19 +974,19 @@ static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings
 
   if (product == TIC_PRODUCT_TIC06A)
   {
-    if (!tic_settings_drv8711_gate_charge_ok(settings))
+    if (!tic_settings_hpsc_gate_charge_ok(settings))
     {
-      uint8_t toff = tic_settings_get_drv8711_toff(settings);
+      uint8_t toff = tic_settings_get_hpsc_toff(settings);
       while (true)
       {
         if (toff >= 255) { break; }   // Shouldn't happen.
         toff++;
-        tic_settings_set_drv8711_toff(settings, toff);
-        if (tic_settings_drv8711_gate_charge_ok(settings)) { break; }
+        tic_settings_set_hpsc_toff(settings, toff);
+        if (tic_settings_hpsc_gate_charge_ok(settings)) { break; }
       }
       tic_sprintf(warnings,
-        "Warning: The fixed off time (TOFF) will be increased to %u "
-        "(to satisfy equation 3 in the DRV8711 datasheet).", toff);
+        "Warning: The fixed off time (TOFF) will be increased to %u, "
+        "which is the minimum valid value given other settings.", toff);
     }
   }
 }

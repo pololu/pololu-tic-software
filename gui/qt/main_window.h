@@ -178,7 +178,7 @@ public:
   void disable_limit_active();
   void set_homing_active(bool active);
   void set_last_motor_driver_error(const char * str);
-  void set_last_drv8711_errors(uint8_t errors);
+  void set_last_hpsc_driver_errors(uint8_t errors);
   void set_target_position(int32_t target_position);
   void set_target_velocity(int32_t target_velocity);
   void set_target_none();
@@ -246,10 +246,10 @@ public:
   void set_agc_bottom_current_limit(uint8_t);
   void set_agc_current_boost_steps(uint8_t);
   void set_agc_frequency_limit(uint8_t);
-  void set_drv8711_toff(uint8_t);
-  void set_drv8711_tblank(uint8_t);
-  void set_drv8711_abt(bool);
-  void set_drv8711_tdecay(uint8_t);
+  void set_hpsc_toff(uint8_t);
+  void set_hpsc_tblank(uint8_t);
+  void set_hpsc_abt(bool);
+  void set_hpsc_tdecay(uint8_t);
 
   void set_soft_error_response(uint8_t soft_error_response);
   void set_soft_error_position(int32_t soft_error_position);
@@ -381,10 +381,10 @@ private slots:
   void on_agc_bottom_current_limit_value_currentIndexChanged(int index);
   void on_agc_current_boost_steps_value_currentIndexChanged(int index);
   void on_agc_frequency_limit_value_currentIndexChanged(int index);
-  void on_drv8711_toff_value_valueChanged(int value);
-  void on_drv8711_tblank_value_valueChanged(int value);
-  void on_drv8711_abt_check_stateChanged(int state);
-  void on_drv8711_tdecay_value_valueChanged(int value);
+  void on_hpsc_toff_value_valueChanged(int value);
+  void on_hpsc_tblank_value_valueChanged(int value);
+  void on_hpsc_abt_check_stateChanged(int state);
+  void on_hpsc_tdecay_value_valueChanged(int value);
 
   void on_soft_error_response_radio_group_buttonToggled(int id, bool checked);
   void on_soft_error_position_value_valueChanged(int value);
@@ -443,7 +443,7 @@ private:
   QWidget * setup_encoder_settings_box();
   QWidget * setup_conditioning_settings_box();
   QWidget * setup_scaling_settings_box();
-  QWidget * setup_drv8711_motor_widget();
+  QWidget * setup_hpsc_motor_widget();
   QLayout * setup_motor_settings_layout();
   QWidget * setup_motor_settings_box();
   QWidget * setup_motor_settings_widget();
@@ -690,14 +690,14 @@ private:
   QComboBox * agc_current_boost_steps_value;
   QLabel * agc_frequency_limit_label;
   QComboBox * agc_frequency_limit_value;
-  QWidget * drv8711_motor_widget;
-  QLabel * drv8711_toff_label;
-  QSpinBox * drv8711_toff_value;
-  QLabel * drv8711_tblank_label;
-  QSpinBox * drv8711_tblank_value;
-  QCheckBox * drv8711_abt_check;
-  QLabel * drv8711_tdecay_label;
-  QSpinBox * drv8711_tdecay_value;
+  QWidget * hpsc_motor_widget;
+  QLabel * hpsc_toff_label;
+  QSpinBox * hpsc_toff_value;
+  QLabel * hpsc_tblank_label;
+  QSpinBox * hpsc_tblank_value;
+  QCheckBox * hpsc_abt_check;
+  QLabel * hpsc_tdecay_label;
+  QSpinBox * hpsc_tdecay_value;
 
 
   //// advanced settings page

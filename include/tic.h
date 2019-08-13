@@ -222,11 +222,11 @@ const char * tic_look_up_agc_current_boost_steps_name_ui(uint8_t steps);
 TIC_API
 const char * tic_look_up_agc_frequency_limit_name_ui(uint8_t limit);
 
-/// Looks up a user-friendly string corresponding to the specified DRV8711
+/// Looks up a user-friendly string corresponding to the specified HPSC
 /// error bit, e.g. "Overtemperature".
 ///
 /// The \p error argument should be bitwise-or combination of numbers of the
-/// form (1 << x), where x is one of the TIC_DRV8711_ERROR_* macros.
+/// form (1 << x), where x is one of the TIC_HPSC_DRIVER_ERROR_* macros.
 /// If it is not, this function returns "(Unknown)".
 /// If the argument is 0, this function returns "None".
 /// If multiple error bits are 1 and this function does not know a
@@ -235,21 +235,21 @@ const char * tic_look_up_agc_frequency_limit_name_ui(uint8_t limit);
 /// The returned string will be valid indefinitely and
 /// should not be freed.
 ///
-/// This function is only useful for Tics based on the DRV8711 motor driver.
+/// This function is only useful for HPSC Tics.
 ///
-/// See also tic_variables_get_last_drv8711_error().
+/// See also tic_variables_get_last_hpsc_driver_errors().
 TIC_API
-const char * tic_look_up_drv8711_error_name_ui(uint8_t error);
+const char * tic_look_up_hpsc_driver_error_name_ui(uint8_t error);
 
-/// Looks up a user-friendly string corresponding to the specified DRV8711 decay
+/// Looks up a user-friendly string corresponding to the specified HPSC decay
 /// mode, e.g. "Mixed".
 ///
-/// The \p mode argument should be one of the TIC_DRV8711_DECMOD_*
+/// The \p mode argument should be one of the TIC_HPSC_DECMOD_*
 /// macros, but if it is not, this function returns "(Unknown)".
 /// The returned string will be valid indefinitely and should not be freed.
 ///
-/// This function is only useful for Tics based on the DRV8711 motor driver.
-const char * tic_look_up_drv8711_decmod_name_ui(uint8_t mode);
+/// This function is only useful for HPSC Tics.
+const char * tic_look_up_hpsc_decmod_name_ui(uint8_t mode);
 
 
 // Advanced name/code lookup ////////////////////////////////////////////////////
@@ -283,7 +283,7 @@ const char * tic_look_up_drv8711_decmod_name_ui(uint8_t mode);
 /// If this function succeeds, it returns true.  Otherwise, it returns false.
 ///
 /// This function is only useful to the Tic T825, Tic N825, and Tic T834.
-/// For DRV8711-based Tics, see tic_look_up_drv8711_decmod_name_ui().
+/// For HPSC Tics, see tic_look_up_hpsc_decmod_name_ui().
 ///
 /// See also tic_look_up_decay_mode_code().
 TIC_API
@@ -1181,82 +1181,78 @@ void tic_settings_set_agc_frequency_limit(tic_settings *, uint8_t limit);
 TIC_API
 uint8_t tic_settings_get_agc_frequency_limit(const tic_settings *);
 
-/// Sets the value of TOFF in the DRV8711's OFF register.
+/// Sets the fixed off time (HPSC Tics only).
 ///
 /// This sets the fixed off time in increments of 500 nanoseconds,
 /// with 0 corresponding to 500 ns.
 /// Any value between 0 (500 ns) and 255 (1280 us) is allowed.
 ///
-/// This setting is only valid for Tics based on the DRV8711 motor driver.
+/// This setting is only valid for HPSC Tics.
 TIC_API
-void tic_settings_set_drv8711_toff(tic_settings *, uint8_t time);
+void tic_settings_set_hpsc_toff(tic_settings *, uint8_t time);
 
-/// Gets the value of TOFF in the DRV8711's OFF register, as described in
-/// tic_settings_set_drv8711_toff().
+/// Gets the fixed off time setting for an HPSC Tic, as described in
+/// tic_settings_set_hpsc_toff().
 TIC_API
-uint8_t tic_settings_get_drv8711_toff(const tic_settings *);
+uint8_t tic_settings_get_hpsc_toff(const tic_settings *);
 
-/// Sets the value of TBLANK in the DRV8711's BLANK register.
+/// Sets the current trip blanking time (HPSC Tics only).
 ///
-/// This sets the current trip blanking time, in increments of 20 ns.
+/// This sets the current trip blanking time, in increments of 0.02 us.
 ///
 /// Any value between 0 and 255 is valid.
 /// Any value between 0 and 50 corresponds to 1 us.
-/// Any value above 50 corresponds to 20 ns times the value, so a value of
+/// Any value above 50 corresponds to 0.02 us times the value, so a value of
 /// 255 corresponds to 5.1 us.
 ///
-/// This setting is only valid for Tics based on the DRV8711 motor driver.
+/// This setting is only valid for HPSC Tics.
 TIC_API
-void tic_settings_set_drv8711_tblank(tic_settings *, uint8_t time);
+void tic_settings_set_hpsc_tblank(tic_settings *, uint8_t time);
 
-/// Gets the value of TBLANK in the DRV8711's BLANK register, as described in
-/// tic_settings_set_drv8711_tblank().
+/// Gets the current trip blanking time for the Tic HPSC, as described in
+/// tic_settings_set_hpsc_tblank().
 TIC_API
-uint8_t tic_settings_get_drv8711_tblank(const tic_settings *);
+uint8_t tic_settings_get_hpsc_tblank(const tic_settings *);
 
-/// Sets the value of the ABT bit in the DRV8711's BLANK register.
+/// Enables or disables adaptive blanking time for a Tic HPSC.
 ///
-/// This enables adaptive blanking time.  See the DRV8711 datasheet for more
-/// information.
-///
-/// This setting is only valid for Tics based on the DRV8711 motor driver.
+/// This setting is only valid for HPSC Tics.
 TIC_API
-void tic_settings_set_drv8711_abt(tic_settings *, bool adaptive);
+void tic_settings_set_hpsc_abt(tic_settings *, bool adaptive);
 
-/// Gets the value of the ABT bit in the DRV8711's blank register, as described
-/// in tic_settings_get_drv8711_tblank().
+/// Gets the value of the Tic HPSC adaptive blanking time setting, as described
+/// in tic_settings_get_hpsc_abt().
 TIC_API
-bool tic_settings_get_drv8711_abt(const tic_settings *);
+bool tic_settings_get_hpsc_abt(const tic_settings *);
 
-/// Sets the value of TDECAY in the DRV8711's DECAY register.
+/// Sets the mixed decay transition time of the Tic HPSC.
 ///
-/// This sets the mixed decay transition time, in units of 500 ns.
+/// This sets the mixed decay transition time, in units of 0.5 us.
 ///
 /// Any value between 0 (0.5 us) and 255 (127.5 us) is valid.
 ///
-/// This setting is only valid for Tics based on the DRV8711 motor driver.
+/// This setting is only valid for HPSC Tics.
 TIC_API
-void tic_settings_set_drv8711_tdecay(tic_settings *, uint8_t time);
+void tic_settings_set_hpsc_tdecay(tic_settings *, uint8_t time);
 
-/// Gets the value of TDECAY in the DRV8711's DECAY register, as described in
-/// tic_settings_set_drv8711_tdecay().
+/// Gets the mixed decay transition time of the Tic HPSC, as described in
+/// tic_settings_get_hpsc_tdecay().
 TIC_API
-uint8_t tic_settings_get_drv8711_tdecay(const tic_settings *);
+uint8_t tic_settings_get_hpsc_tdecay(const tic_settings *);
 
-/// Sets the value of the DECMOD bits in the DRV8711's DECAY register.
+/// Sets the decay mode of the Tic HPSC.
 ///
-/// This sets the decay mode of the DRV8711 motor driver.
+/// The /p mode argument should be one of the TIC_HPSC_DECMOD_* macros.
 ///
-/// The /p mode argument should be one of the TIC_DRV8711_DECMOD_* macros.
-///
-/// This setting is only valid for Tics based on the DRV8711 motor driver.
+/// This setting is only valid for HPSC Tics.  If you are using a different Tic,
+/// see tic_settings_set_decay_mode().
 TIC_API
-void tic_settings_set_drv8711_decmod(tic_settings *, uint8_t mode);
+void tic_settings_set_hpsc_decmod(tic_settings *, uint8_t mode);
 
-/// Gets the value of the DECMOD bits in the DRV8711's DECAY register,
-/// as described in tic_settings_set_drv8711_decmod().
+/// Gets the decay mode of the Tic HPSC, as described in
+/// tic_settings_set_hpsc_decmod().
 TIC_API
-uint8_t tic_settings_get_drv8711_decmod(const tic_settings *);
+uint8_t tic_settings_get_hpsc_decmod(const tic_settings *);
 
 
 // tic_variables ///////////////////////////////////////////////////////////////
@@ -1612,12 +1608,12 @@ uint8_t tic_variables_get_pin_state(const tic_variables *, uint8_t pin);
 /// Gets a bitmask describing the error conditions that caused the last
 /// motor driver error.
 ///
-/// This is only valid for Tics based on the DRV8711, and will be 0 for all
+/// This is only valid for HPSC Tics, and will be 0 for all
 /// other Tics.
 ///
-/// See tic_look_up_drv8711_error_name_ui().
+/// See tic_look_up_hpsc_driver_error_name_ui().
 TIC_API
-uint32_t tic_variables_get_last_drv8711_errors(const tic_variables *);
+uint32_t tic_variables_get_last_hpsc_driver_errors(const tic_variables *);
 
 
 // tic_device ///////////////////////////////////////////////////////////////////
@@ -1949,12 +1945,11 @@ tic_error * tic_set_current_limit_code(tic_handle *, uint8_t current_limit);
 ///   TIC_DECAY_MODE_T834_* macros.
 /// - Tic T500 and Tic T249: This command is supported, but there is only one
 ///   decay mode (0), so it is not useful.
-/// - Tics based on the DRV8711: This command is not supported, and this
+/// - HPSC Tics: This command is not supported, and this
 ///   function will return an error instead of attempting to send the command
-///   to the device.  For these Tics, see tic_set_drv8711_decmod() or
-///   tic_settings_set_drv8711_decmod().
+///   to the device.
 ///
-/// Invalid \p decay_mdoe arguments will be changed to 0 by the firmware.
+/// Invalid \p decay_mode arguments will be changed to 0 by the firmware.
 TIC_API TIC_WARN_UNUSED
 tic_error * tic_set_decay_mode(tic_handle *, uint8_t decay_mode);
 
