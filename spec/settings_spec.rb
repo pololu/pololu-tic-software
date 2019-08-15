@@ -27,7 +27,7 @@ def test_cases_for_settings_fix(product)
     default_current = 200
     medium_current = 440
     high_current = 1440
-  elsif product == :tic06a
+  elsif product == :'36v4'
     lowest_current = 0
     low_current = 72
     default_current = 215
@@ -347,7 +347,7 @@ def test_cases_for_settings_fix(product)
     cases << [ { 'decay_mode' => 'mode4' },
                { 'decay_mode' => case product
                                  when :T834 then 'mixed75'
-                                 when :tic06a then 'slow_mixed'
+                                 when :'36v4' then 'slow_mixed'
                                  else 'mixed'
                                  end
                },

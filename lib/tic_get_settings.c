@@ -376,7 +376,7 @@ static void write_buffer_to_settings(const uint8_t * buf, tic_settings * setting
     }
   }
 
-  if (product == TIC_PRODUCT_TIC06A)
+  if (product == TIC_PRODUCT_36V4)
   {
     const uint8_t * p = buf + TIC_SETTING_HPSC_DRIVER_REGISTERS;
     tic_settings_set_hpsc_toff(settings, p[4]);
@@ -475,7 +475,7 @@ tic_settings_segments tic_get_settings_segments(uint8_t product)
     segments.general_size = TIC_SETTING_AGC_FREQUENCY_LIMIT + 1;
   }
 
-  if (product == TIC_PRODUCT_TIC06A)
+  if (product == TIC_PRODUCT_36V4)
   {
     segments.product_specific_offset = TIC_SETTING_HPSC_DRIVER_REGISTERS;
   }

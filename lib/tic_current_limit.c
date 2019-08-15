@@ -62,7 +62,7 @@ static const uint8_t tic01a_recommended_codes[64] =
   96,  100, 104, 108, 112, 116, 120, 124,
 };
 
-static const uint8_t tic06a_recommended_codes[256] =
+static const uint8_t tic_36v4_recommended_codes[256] =
 {
   0,   1,   2,   3,   4,   5,   6,   7,
   8,   9,   10,  11,  12,  13,  14,  15,
@@ -111,8 +111,8 @@ uint32_t tic_get_max_allowed_current(uint8_t product)
     return TIC_MAX_ALLOWED_CURRENT_T825;
   case TIC_PRODUCT_T249:
     return TIC_MAX_ALLOWED_CURRENT_T249;
-  case TIC_PRODUCT_TIC06A:
-    return TIC_MAX_ALLOWED_CURRENT_TIC06A;
+  case TIC_PRODUCT_36V4:
+    return TIC_MAX_ALLOWED_CURRENT_36V4;
   default:
     return 0;
   }
@@ -151,9 +151,9 @@ const uint8_t * tic_get_recommended_current_limit_codes(
     count = sizeof(tic01a_recommended_codes);
     break;
 
-  case TIC_PRODUCT_TIC06A:
-    table = tic06a_recommended_codes;
-    count = sizeof(tic06a_recommended_codes);
+  case TIC_PRODUCT_36V4:
+    table = tic_36v4_recommended_codes;
+    count = sizeof(tic_36v4_recommended_codes);
     break;
 
   default:
@@ -195,7 +195,7 @@ uint32_t tic_current_limit_code_to_ma(uint8_t product, uint8_t code)
 
     return code * units;
   }
-  else if (product == TIC_PRODUCT_TIC06A)
+  else if (product == TIC_PRODUCT_36V4)
   {
     // 2.75 V / (256 * 5 * 0.06 Ohm)
     // = 2.75 / (256 * 5 * 0.06) A

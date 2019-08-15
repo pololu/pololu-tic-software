@@ -84,7 +84,7 @@ static void tic_settings_fix_enums(tic_settings * settings, tic_string * warning
       *p++ = TIC_STEP_MODE_MICROSTEP32;
       *p++ = TIC_STEP_MODE_MICROSTEP2_100P;
       break;
-    case TIC_PRODUCT_TIC06A:
+    case TIC_PRODUCT_36V4:
       *p++ = TIC_STEP_MODE_MICROSTEP16;
       *p++ = TIC_STEP_MODE_MICROSTEP32;
       *p++ = TIC_STEP_MODE_MICROSTEP64;
@@ -203,7 +203,7 @@ static void tic_settings_fix_enums(tic_settings * settings, tic_string * warning
 
   {
     uint8_t mode = tic_settings_get_hpsc_decmod(settings);
-    if (product == TIC_PRODUCT_TIC06A)
+    if (product == TIC_PRODUCT_36V4)
     {
       if (!tic_code_to_name(tic_hpsc_decmod_names_snake, mode, NULL))
       {
@@ -972,7 +972,7 @@ static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings
     tic_settings_set_pin_analog(settings, TIC_PIN_NUM_RC, rc_analog);
   }
 
-  if (product == TIC_PRODUCT_TIC06A)
+  if (product == TIC_PRODUCT_36V4)
   {
     if (!tic_settings_hpsc_gate_charge_ok(settings))
     {

@@ -16,7 +16,7 @@ const tic_name tic_product_names_short[] =
   { "T500", TIC_PRODUCT_T500 },
   { "N825", TIC_PRODUCT_N825 },
   { "T249", TIC_PRODUCT_T249 },
-  { "tic06a", TIC_PRODUCT_TIC06A },  // TODO: real names
+  { "36v4", TIC_PRODUCT_36V4 },
   { NULL, 0 },
 };
 
@@ -27,7 +27,7 @@ const tic_name tic_product_names_ui[] =
   { "Tic T500 Stepper Motor Controller", TIC_PRODUCT_T500 },
   { "Tic N825 Stepper Motor Controller", TIC_PRODUCT_N825 },
   { "Tic T249 Stepper Motor Controller", TIC_PRODUCT_T249 },
-  { "Tic tic06a Stepper Motor Controller", TIC_PRODUCT_TIC06A },  // TODO: real names
+  { "Tic 36v4 High-Power Stepper Motor Controller", TIC_PRODUCT_36V4 },
   { NULL, 0 },
 };
 

@@ -20,7 +20,7 @@ from source.
 ## Version history
 
 - 1.8.0 (unreleased):
-  - Added support for tic06a.
+  - Added support for the Tic 36v4.
 - 1.7.0 (2019-01-31):
   - Added support for the Tic N825.
   - Added support for the new features in firmware version 1.06: limit switches,

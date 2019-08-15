@@ -296,7 +296,7 @@ void print_status(const tic::variables & vars,
     "Errors currently stopping the motor");
   print_errors(vars.get_errors_occurred(),
     "Errors that occurred since last check");
-  if (product == TIC_PRODUCT_TIC06A)
+  if (product == TIC_PRODUCT_36V4)
   {
     print_hpsc_driver_errors(vars.get_last_hpsc_driver_errors());
   }
