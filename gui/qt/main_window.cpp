@@ -270,8 +270,8 @@ void main_window::adjust_ui_for_product(uint8_t product)
         { "Slow / mixed", TIC_HPSC_DECMOD_SLOW_MIXED },
         { "Fast", TIC_HPSC_DECMOD_FAST },
         { "Mixed", TIC_HPSC_DECMOD_MIXED },
-        { "Slow / auto mixed", TIC_HPSC_DECMOD_SLOW_AUTO_MIXED },
-        { "Auto mixed", TIC_HPSC_DECMOD_AUTO_MIXED }});
+        { "Slow / auto-mixed", TIC_HPSC_DECMOD_SLOW_AUTO_MIXED },
+        { "Auto-mixed", TIC_HPSC_DECMOD_AUTO_MIXED }});
     decay_mode_visible = true;
     last_motor_driver_error_visible = true;
     hpsc_visible = true;
@@ -3306,7 +3306,7 @@ QLayout * main_window::setup_motor_settings_layout()
   {
     decay_mode_value = new QComboBox();
     decay_mode_value->setObjectName("decay_mode_value");
-    decay_mode_value->addItem("Slow / auto mixed", 0);  // reserve space
+    decay_mode_value->addItem("Slow / auto-mixed", 0);  // reserve space
     decay_mode_label = new QLabel();
     decay_mode_label->setBuddy(decay_mode_value);
     layout->addWidget(decay_mode_label, row, 0, FIELD_LABEL_ALIGNMENT);
