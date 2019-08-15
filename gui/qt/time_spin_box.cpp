@@ -142,7 +142,7 @@ int time_spin_box::valueFromText(const QString & text) const
   copy.remove(QRegularExpression("[^0-9.]"));
   double entered_double = copy.toDouble();
   if (!entered_ns) { entered_double *= 1000; }
-  int entered_value = entered_double;
+  int entered_value = qRound(entered_double);
 
   if (mapping.empty())
   {
@@ -176,7 +176,7 @@ QString time_spin_box::textFromValue(int value) const
 // of digits which can be entered and the allowed letters.
 QValidator::State time_spin_box::validate(QString & input, int & pos) const
 {
-  QRegularExpression r("\\A\\d{0,6}(\\.\\d{0,3})?\\s*n?s?\\Z",
+  QRegularExpression r("\\A\\d{0,6}(\\.\\d{0,3})?\\s*n?s?\\s*\u00b5?s?\\Z",
     QRegularExpression::CaseInsensitiveOption);
 
   if (input.isEmpty())

@@ -1921,8 +1921,6 @@ void main_window::on_hpsc_tblank_value_valueChanged(int value)
 {
   if (suppress_events) { return; }
 
-  printf("tblank input: %3d %s\n", value, hpsc_tblank_value->text().constData());
-  fflush(stdout);
   controller->handle_hpsc_tblank_input(value);
 }
 
@@ -3422,7 +3420,7 @@ QWidget * main_window::setup_hpsc_motor_widget()
       mapping.insert(i, i * 20);
     }
     hpsc_tblank_value->set_mapping(mapping);
-    //TODO: hpsc_tblank_value->setSuffix(" \u00b5s");
+    hpsc_tblank_value->setSuffix(" \u00b5s");
     hpsc_tblank_label = new QLabel();
     hpsc_tblank_label->setBuddy(hpsc_tblank_value);
     layout->addWidget(hpsc_tblank_label, row, 0, FIELD_LABEL_ALIGNMENT);
