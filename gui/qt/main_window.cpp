@@ -3399,9 +3399,14 @@ QWidget * main_window::setup_hpsc_motor_widget()
   int row = 0;
 
   {
-    hpsc_toff_value = new QSpinBox();
+    hpsc_toff_value = new time_spin_box();
     hpsc_toff_value->setObjectName("hpsc_toff_value");
-    hpsc_toff_value->setRange(0, 255);
+    hpsc_toff_value->setMinimumWidth(minimum_time_box_width);
+    hpsc_toff_value->set_decimals(1);
+    QMap <int, int> mapping;
+    for (int i = 0; i < 0x100; i++) { mapping.insert(i, (i + 1) * 500); }
+    hpsc_toff_value->set_mapping(mapping);
+    hpsc_toff_value->setSuffix(" \u00b5s");
     hpsc_toff_label = new QLabel();
     hpsc_toff_label->setBuddy(hpsc_toff_value);
     layout->addWidget(hpsc_toff_label, row, 0, FIELD_LABEL_ALIGNMENT);
@@ -3412,13 +3417,10 @@ QWidget * main_window::setup_hpsc_motor_widget()
   {
     hpsc_tblank_value = new time_spin_box();
     hpsc_tblank_value->setObjectName("hpsc_tblank_value");
-    hpsc_tblank_value->set_decimals(2);
     hpsc_tblank_value->setMinimumWidth(minimum_time_box_width);
+    hpsc_tblank_value->set_decimals(2);
     QMap<int, int> mapping;
-    for (int i = 0x32; i < 0x100; i++)
-    {
-      mapping.insert(i, i * 20);
-    }
+    for (int i = 0x32; i < 0x100; i++) { mapping.insert(i, i * 20); }
     hpsc_tblank_value->set_mapping(mapping);
     hpsc_tblank_value->setSuffix(" \u00b5s");
     hpsc_tblank_label = new QLabel();
@@ -3436,9 +3438,14 @@ QWidget * main_window::setup_hpsc_motor_widget()
   }
 
   {
-    hpsc_tdecay_value = new QSpinBox();
+    hpsc_tdecay_value = new time_spin_box();
     hpsc_tdecay_value->setObjectName("hpsc_tdecay_value");
-    hpsc_tdecay_value->setRange(0, 255);
+    hpsc_tdecay_value->setMinimumWidth(minimum_time_box_width);
+    hpsc_tdecay_value->set_decimals(1);
+    QMap<int, int> mapping;
+    for (int i = 0; i < 0x100; i++) { mapping.insert(i, i * 500); }
+    hpsc_tdecay_value->set_mapping(mapping);
+    hpsc_tdecay_value->setSuffix(" \u00b5s");
     hpsc_tdecay_label = new QLabel();
     hpsc_tdecay_label->setBuddy(hpsc_tdecay_value);
     layout->addWidget(hpsc_tdecay_label, row, 0, FIELD_LABEL_ALIGNMENT);
@@ -3906,10 +3913,10 @@ void main_window::retranslate()
   agc_bottom_current_limit_label->setText(tr("AGC bottom current limit:"));
   agc_current_boost_steps_label->setText(tr("AGC current boost steps:"));
   agc_frequency_limit_label->setText(tr("AGC frequency limit:"));
-  hpsc_toff_label->setText(tr("Fixed off time (TOFF):"));
-  hpsc_tblank_label->setText(tr("Current trip blanking time (TBLANK):"));
+  hpsc_toff_label->setText(tr("Fixed off time:"));
+  hpsc_tblank_label->setText(tr("Current trip blanking time:"));
   hpsc_abt_check->setText(tr("Adaptive blanking time"));
-  hpsc_tdecay_label->setText(tr("Mixed decay transition time (TDECAY):"));
+  hpsc_tdecay_label->setText(tr("Mixed decay transition time:"));
 
   //// advanced settings page
 

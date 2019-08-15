@@ -693,12 +693,12 @@ private:
   QComboBox * agc_frequency_limit_value;
   QWidget * hpsc_motor_widget;
   QLabel * hpsc_toff_label;
-  QSpinBox * hpsc_toff_value;
+  time_spin_box * hpsc_toff_value;
   QLabel * hpsc_tblank_label;
   time_spin_box * hpsc_tblank_value;
   QCheckBox * hpsc_abt_check;
   QLabel * hpsc_tdecay_label;
-  QSpinBox * hpsc_tdecay_value;
+  time_spin_box * hpsc_tdecay_value;
 
 
   //// advanced settings page
