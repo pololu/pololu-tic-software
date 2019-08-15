@@ -218,7 +218,7 @@ static void write_buffer_to_variables(const uint8_t * buf,
     vars->agc_frequency_limit = buf[TIC_VAR_AGC_FREQUENCY_LIMIT];
   }
 
-  if (vars->product == TIC_PRODUCT_TIC06A)
+  if (vars->product == TIC_PRODUCT_36V4)
   {
     vars->last_hpsc_driver_errors = buf[TIC_VAR_LAST_HPSC_DRIVER_ERRORS];
   }
@@ -261,7 +261,7 @@ tic_error * tic_get_variables(tic_handle * handle, tic_variables ** variables,
     general_size = TIC_VAR_AGC_FREQUENCY_LIMIT + 1;
   }
 
-  if (product == TIC_PRODUCT_TIC06A)
+  if (product == TIC_PRODUCT_36V4)
   {
     product_specific_offset = TIC_VAR_LAST_HPSC_DRIVER_ERRORS;
   }

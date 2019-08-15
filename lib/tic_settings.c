@@ -141,7 +141,7 @@ void tic_settings_fill_with_defaults(tic_settings * settings)
     tic_settings_set_high_vin_shutoff_voltage(settings, 40000);
     tic_settings_set_current_limit(settings, 200);
   }
-  else if (product == TIC_PRODUCT_TIC06A)
+  else if (product == TIC_PRODUCT_36V4)
   {
     tic_settings_set_low_vin_shutoff_voltage(settings, 5800);
     tic_settings_set_low_vin_startup_voltage(settings, 6100);
@@ -173,7 +173,7 @@ void tic_settings_fill_with_defaults(tic_settings * settings)
       TIC_AGC_BOTTOM_CURRENT_LIMIT_80);
   }
 
-  if (product == TIC_PRODUCT_TIC06A)
+  if (product == TIC_PRODUCT_36V4)
   {
     tic_settings_set_hpsc_toff(settings, 0x32);
     tic_settings_set_hpsc_tblank(settings, 0x00);

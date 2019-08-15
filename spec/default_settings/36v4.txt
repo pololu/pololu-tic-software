@@ -1,6 +1,6 @@
 # Pololu Tic USB Stepper Controller settings file.
 # https://www.pololu.com/docs/0J71
-product: tic06a
+product: 36v4
 control_mode: serial
 never_sleep: false
 disable_safe_start: false

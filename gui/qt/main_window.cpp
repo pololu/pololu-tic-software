@@ -253,7 +253,7 @@ void main_window::adjust_ui_for_product(uint8_t product)
     last_motor_driver_error_visible = true;
     break;
 
-  case TIC_PRODUCT_TIC06A:
+  case TIC_PRODUCT_36V4:
     set_combo_items(step_mode_value,
       { { "Full step", TIC_STEP_MODE_MICROSTEP1 },
         { "1/2 step", TIC_STEP_MODE_MICROSTEP2 },

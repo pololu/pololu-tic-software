@@ -237,7 +237,7 @@ describe 'Set current limit command' do
     if tic_product == :T249
       currents = [40, 80]
     end
-    if tic_product == :tic06a
+    if tic_product == :'36v4'
       currents = [72, 107]
     end
     currents.each do |limit|
@@ -278,7 +278,7 @@ describe 'Set decay mode' do
     when :T500, :T249
       # The board only has one decay mode so skip this test.
       next
-    when :tic06a
+    when :'36v4'
       # Cannot set the decay mode at runtime.
       next
     end

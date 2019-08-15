@@ -143,7 +143,7 @@ describe '--status' do
       expected_keys << 'AGC mode'
       expected_keys << 'Last motor driver error'
     end
-    if tic_product == :tic06a
+    if tic_product == :'36v4'
       expected_keys << 'Last motor driver errors'
     end
 

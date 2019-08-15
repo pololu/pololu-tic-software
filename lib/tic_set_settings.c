@@ -347,7 +347,7 @@ static void tic_write_settings_to_buffer(const tic_settings * settings, uint8_t 
   buf[TIC_SETTING_INVERT_MOTOR_DIRECTION] =
     tic_settings_get_invert_motor_direction(settings);
 
-  if (product == TIC_PRODUCT_TIC06A)
+  if (product == TIC_PRODUCT_36V4)
   {
     // Take care of HPSC driver registers.
 

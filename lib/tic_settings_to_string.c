@@ -393,7 +393,7 @@ tic_error * tic_settings_to_string(const tic_settings * settings, char ** string
     tic_sprintf(&str, "agc_frequency_limit: %s\n", name);
   }
 
-  bool hpsc = product == TIC_PRODUCT_TIC06A;
+  bool hpsc = product == TIC_PRODUCT_36V4;
 
   if (hpsc)
   {

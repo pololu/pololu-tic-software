@@ -556,7 +556,7 @@ void main_controller::handle_variables_changed()
   window->set_operation_state(
     tic_look_up_operation_state_name_ui(variables.get_operation_state()));
 
-  if (product == TIC_PRODUCT_TIC06A)
+  if (product == TIC_PRODUCT_36V4)
   {
     window->set_last_hpsc_driver_errors(variables.get_last_hpsc_driver_errors());
   }
@@ -821,7 +821,7 @@ void main_controller::handle_settings_changed()
   window->set_decel_max(tic_settings_get_max_decel(s));
   window->set_step_mode(tic_settings_get_step_mode(s));
   window->set_current_limit(tic_settings_get_current_limit(s));
-  if (settings.get_product() == TIC_PRODUCT_TIC06A)
+  if (settings.get_product() == TIC_PRODUCT_36V4)
   {
     window->set_decay_mode(tic_settings_get_hpsc_decmod(s));
   }
@@ -1175,7 +1175,7 @@ void main_controller::handle_current_limit_input(uint32_t current_limit)
 void main_controller::handle_decay_mode_input(uint8_t decay_mode)
 {
   if (!connected()) { return; }
-  if (settings.get_product() == TIC_PRODUCT_TIC06A)
+  if (settings.get_product() == TIC_PRODUCT_36V4)
   {
     tic_settings_set_hpsc_decmod(settings.get_pointer(), decay_mode);
   }
