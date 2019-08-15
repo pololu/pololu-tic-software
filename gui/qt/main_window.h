@@ -383,7 +383,7 @@ private slots:
   void on_agc_current_boost_steps_value_currentIndexChanged(int index);
   void on_agc_frequency_limit_value_currentIndexChanged(int index);
   void on_hpsc_toff_value_valueChanged(int value);
-  void on_hpsc_tblank_value_valueChanged(double value);
+  void on_hpsc_tblank_value_valueChanged(int value);
   void on_hpsc_abt_check_stateChanged(int state);
   void on_hpsc_tdecay_value_valueChanged(int value);
 
@@ -695,7 +695,7 @@ private:
   QLabel * hpsc_toff_label;
   QSpinBox * hpsc_toff_value;
   QLabel * hpsc_tblank_label;
-  timing_spin_box * hpsc_tblank_value;
+  time_spin_box * hpsc_tblank_value;
   QCheckBox * hpsc_abt_check;
   QLabel * hpsc_tdecay_label;
   QSpinBox * hpsc_tdecay_value;

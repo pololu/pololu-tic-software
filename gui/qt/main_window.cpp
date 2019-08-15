@@ -1051,7 +1051,7 @@ void main_window::set_hpsc_tdecay(uint8_t time)
 
 void main_window::set_hpsc_tblank(uint8_t time)
 {
-  //TODO: set_spin_box(hpsc_tblank_value, time);
+  set_spin_box(hpsc_tblank_value, time);
 }
 
 void main_window::set_hpsc_abt(bool adaptive)
@@ -1917,13 +1917,13 @@ void main_window::on_hpsc_toff_value_valueChanged(int value)
   controller->handle_hpsc_toff_input(value);
 }
 
-void main_window::on_hpsc_tblank_value_valueChanged(double value)
+void main_window::on_hpsc_tblank_value_valueChanged(int value)
 {
   if (suppress_events) { return; }
 
-  // TODO: Convert TBLANK from microseconds to 8-bit integer.
-
-  // TODO: controller->handle_hpsc_tblank_input(value);
+  printf("tblank input: %3d %s\n", value, hpsc_tblank_value->text().constData());
+  fflush(stdout);
+  controller->handle_hpsc_tblank_input(value);
 }
 
 void main_window::on_hpsc_abt_check_stateChanged(int state)
@@ -3391,6 +3391,13 @@ QWidget * main_window::setup_hpsc_motor_widget()
   QGridLayout * layout = new QGridLayout();
   layout->setContentsMargins(0, 0, 0, 0);
 
+  size_t minimum_time_box_width;
+  {
+    QSpinBox tmp_box;
+    tmp_box.setSpecialValueText("99.99 \u00b5s");
+    minimum_time_box_width = tmp_box.sizeHint().width();
+  }
+
   int row = 0;
 
   {
@@ -3405,12 +3412,17 @@ QWidget * main_window::setup_hpsc_motor_widget()
   }
 
   {
-    hpsc_tblank_value = new QDoubleSpinBox();
+    hpsc_tblank_value = new time_spin_box();
     hpsc_tblank_value->setObjectName("hpsc_tblank_value");
-    hpsc_tblank_value->setDecimals(2);
-    hpsc_tblank_value->setSingleStep(0.02);
-    hpsc_tblank_value->setRange(1, 5.1);
-    hpsc_tblank_value->setSuffix(" \u00b5s");
+    hpsc_tblank_value->set_decimals(2);
+    hpsc_tblank_value->setMinimumWidth(minimum_time_box_width);
+    QMap<int, int> mapping;
+    for (int i = 0x32; i < 0x100; i++)
+    {
+      mapping.insert(i, i * 20);
+    }
+    hpsc_tblank_value->set_mapping(mapping);
+    //TODO: hpsc_tblank_value->setSuffix(" \u00b5s");
     hpsc_tblank_label = new QLabel();
     hpsc_tblank_label->setBuddy(hpsc_tblank_value);
     layout->addWidget(hpsc_tblank_label, row, 0, FIELD_LABEL_ALIGNMENT);

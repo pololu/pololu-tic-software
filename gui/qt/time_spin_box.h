@@ -17,11 +17,11 @@ class time_spin_box : public QSpinBox
   int decimals = 0;
 
 public:
-  nice_spin_box(QWidget * parent = NULL);
+  time_spin_box(QWidget * parent = NULL);
 
   // Sets the mapping from encoded timing values which get returned by value(),
-  // to the actual time they encode (in nanoseconds) which are displayed to the
-  // user.
+  // to the actual times they encode (in nanoseconds), which are displayed to
+  // the user.
   void set_mapping(const QMap<int, int> &);
 
   // Sets the number of digits to show after the decimal point.
@@ -31,7 +31,7 @@ private slots:
   void set_code_from_value(int value);
 
 private:
-  QString text_from_ns(int) const;
+  QString text_from_value(int) const;
   int canonical_key_for_text(const QString & text) const;
   int step_up(int code) const;
   int step_down(int code) const;

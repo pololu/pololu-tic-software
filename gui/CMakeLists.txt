@@ -33,6 +33,7 @@ add_executable (gui
   qt/InputWizard.cpp
   qt/current_spin_box.cpp
   qt/elided_label.cpp
+  qt/time_spin_box.cpp
   to_string.cpp
   ${CMAKE_CURRENT_BINARY_DIR}/gui_info.rc
   ${ICON_QRC}
@@ -43,11 +44,11 @@ set_target_properties (gui PROPERTIES
   OUTPUT_NAME ${GUI_NAME}
 )
 
-if (WIN32)
-  set_target_properties (gui PROPERTIES
-    LINK_FLAGS "-mwindows"
-  )
-endif ()
+#if (WIN32)
+#  set_target_properties (gui PROPERTIES
+#    LINK_FLAGS "-mwindows"
+#  )
+#endif ()
 
 target_link_libraries (gui Qt5::Widgets lib bootloader)
 
