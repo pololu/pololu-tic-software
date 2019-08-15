@@ -360,8 +360,8 @@ const tic_name tic_hpsc_decmod_names_ui[] =
   { "Slow / mixed", TIC_HPSC_DECMOD_SLOW_MIXED },
   { "Fast", TIC_HPSC_DECMOD_FAST },
   { "Mixed", TIC_HPSC_DECMOD_MIXED },
-  { "Slow / auto mixed", TIC_HPSC_DECMOD_SLOW_AUTO_MIXED },
-  { "Auto mixed", TIC_HPSC_DECMOD_AUTO_MIXED },
+  { "Slow / auto-mixed", TIC_HPSC_DECMOD_SLOW_AUTO_MIXED },
+  { "Auto-mixed", TIC_HPSC_DECMOD_AUTO_MIXED },
   { NULL, 0 },
 };
 
