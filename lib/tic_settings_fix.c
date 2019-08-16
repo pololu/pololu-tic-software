@@ -984,9 +984,10 @@ static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings
         tic_settings_set_hpsc_toff(settings, toff);
         if (tic_settings_hpsc_gate_charge_ok(settings)) { break; }
       }
+      uint32_t toff_ns = tic_settings_get_hpsc_toff_ns(settings);
       tic_sprintf(warnings,
-        "Warning: The fixed off time (TOFF) will be increased to %u, "
-        "which is the minimum valid value given other settings.", toff);
+        "Warning: The fixed off time will be increased to %u ns, "
+        "which is the minimum valid value given other settings.", toff_ns);
     }
   }
 }

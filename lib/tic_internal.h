@@ -249,4 +249,5 @@ typedef struct tic_settings_segments
 
 tic_settings_segments tic_get_settings_segments(uint8_t product);
 
+uint32_t tic_settings_get_hpsc_toff_ns(const tic_settings *);
 bool tic_settings_hpsc_gate_charge_ok(const tic_settings *);

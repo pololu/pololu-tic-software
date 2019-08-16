@@ -1205,7 +1205,7 @@ static uint32_t tic_settings_get_hpsc_tblank_ns(
   return tblank * 20;
 }
 
-static uint32_t tic_settings_get_hpsc_toff_ns(const tic_settings * settings)
+uint32_t tic_settings_get_hpsc_toff_ns(const tic_settings * settings)
 {
   uint8_t toff = tic_settings_get_hpsc_toff(settings);
   return (toff + 1) * 500;
