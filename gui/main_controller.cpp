@@ -126,6 +126,7 @@ void main_controller::connect_device(const tic::device & device)
     connection_error = false;
     disconnected_by_user = false;
     send_reset_command_timeout = false;
+    suppress_high_current_limit_warning = false;
 
     // Open a handle to the specified device.
     device_handle = tic::handle(device);
@@ -1511,9 +1512,39 @@ void main_controller::start_input_setup()
   window->run_input_wizard(control_mode);
 }
 
+bool main_controller::warn_about_applying_high_current_settings()
+{
+  if (suppress_high_current_limit_warning) { return true; }
+
+  uint32_t current_limit =
+    tic_settings_get_current_limit(settings.get_pointer());
+  int32_t current_limit_during_error =
+    tic_settings_get_current_limit_during_error(settings.get_pointer());
+
+  if (settings.get_product() == TIC_PRODUCT_36V4 &&
+    (current_limit > 4000 || current_limit_during_error > 4000))
+  {
+    bool confirmed = window->warn_and_confirm(
+      "We strongly recommend you do not increase the current limit setting "
+      "beyond 4000 mA (or lower in applications with reduced heat dissipation) "
+      "unless you can first confirm that the temperature of the MOSFETs will "
+      "stay under 140\u00B0C.  Are you sure you want to "
+      "apply a current limit that is higher than that level?");
+    if (confirmed)
+    {
+      suppress_high_current_limit_warning = true;
+    }
+    return confirmed;
+  }
+
+  return true;
+}
+
 void main_controller::apply_settings()
 {
   if (!connected()) { return; }
+
+  if (!warn_about_applying_high_current_settings()) { return; }
 
   try
   {

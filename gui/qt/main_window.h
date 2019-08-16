@@ -114,6 +114,9 @@ public:
   // Show an OK/Cancel dialog, return true if the user selects OK.
   bool confirm(const std::string & question);
 
+  // Like confirm() but with a warning icon.
+  bool warn_and_confirm(const std::string & question);
+
   void set_device_list_contents(const std::vector<tic::device> & device_list);
   void set_device_list_selected(const tic::device & device);
 

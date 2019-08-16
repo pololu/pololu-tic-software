@@ -75,6 +75,8 @@ public:
   void resume();
   void start_input_setup();
 
+  bool warn_about_applying_high_current_settings();
+
   // This is called when the user wants to apply the settings.
   void apply_settings();
 
@@ -207,6 +209,8 @@ private:
   // True if we want to regularly send the "Reset command timeout" command to
   // this device.
   bool send_reset_command_timeout = false;
+
+  bool suppress_high_current_limit_warning = false;
 
   void reload_variables();
 

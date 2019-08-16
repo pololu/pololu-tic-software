@@ -140,6 +140,14 @@ bool main_window::confirm(const std::string & question)
   return button == QMessageBox::Ok;
 }
 
+bool main_window::warn_and_confirm(const std::string & question)
+{
+  QMessageBox mbox(QMessageBox::Warning, windowTitle(),
+    QString::fromStdString(question), QMessageBox::Ok | QMessageBox::Cancel, this);
+  int button = mbox.exec();
+  return button == QMessageBox::Ok;
+}
+
 void main_window::set_device_list_contents(const std::vector<tic::device> & device_list)
 {
   suppress_events = true;
