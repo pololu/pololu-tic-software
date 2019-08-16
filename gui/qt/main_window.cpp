@@ -1920,7 +1920,6 @@ void main_window::on_hpsc_toff_value_valueChanged(int value)
 void main_window::on_hpsc_tblank_value_valueChanged(int value)
 {
   if (suppress_events) { return; }
-
   controller->handle_hpsc_tblank_input(value);
 }
 
@@ -3915,7 +3914,7 @@ void main_window::retranslate()
   agc_frequency_limit_label->setText(tr("AGC frequency limit:"));
   hpsc_toff_label->setText(tr("Fixed off time:"));
   hpsc_tblank_label->setText(tr("Current trip blanking time:"));
-  hpsc_abt_check->setText(tr("Adaptive blanking time"));
+  hpsc_abt_check->setText(tr("Enable adaptive blanking time"));
   hpsc_tdecay_label->setText(tr("Mixed decay transition time:"));
 
   //// advanced settings page
