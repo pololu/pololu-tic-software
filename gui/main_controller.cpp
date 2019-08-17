@@ -1525,11 +1525,12 @@ bool main_controller::warn_about_applying_high_current_settings()
     (current_limit > 4000 || current_limit_during_error > 4000))
   {
     bool confirmed = window->warn_and_confirm(
-      "We strongly recommend you do not increase the current limit setting "
-      "beyond 4000 mA (or lower in applications with reduced heat dissipation) "
-      "unless you can first confirm that the temperature of the MOSFETs will "
-      "stay under 140\u00B0C.  Are you sure you want to "
-      "apply a current limit that is higher than that level?");
+      "WARNING: Increasing the current limit beyond 4000 mA "
+      "(or lower in applications with reduced heat dissipation) "
+      "puts the Tic 36v4 at risk of over-temperature conditions "
+      "that can result in PERMANENT DAMAGE.  "
+      "Please see the Tic 36v4 user's guide for more information.  "
+      "Really proceed with setting the current limit above this level?");
     if (confirmed)
     {
       suppress_high_current_limit_warning = true;

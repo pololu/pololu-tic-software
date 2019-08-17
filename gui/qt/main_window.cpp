@@ -144,6 +144,7 @@ bool main_window::warn_and_confirm(const std::string & question)
 {
   QMessageBox mbox(QMessageBox::Warning, windowTitle(),
     QString::fromStdString(question), QMessageBox::Ok | QMessageBox::Cancel, this);
+  mbox.setDefaultButton(QMessageBox::Cancel);
   int button = mbox.exec();
   return button == QMessageBox::Ok;
 }
