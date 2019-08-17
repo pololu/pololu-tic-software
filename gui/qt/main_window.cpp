@@ -357,6 +357,20 @@ void main_window::update_current_limit_table(uint8_t product)
   suppress_events = false;
 }
 
+void main_window::update_current_limit_warnings()
+{
+  int threshold = std::numeric_limits<int>::max();
+  if (controller->get_product() == TIC_PRODUCT_36V4)
+  {
+    threshold = 4000;
+  }
+
+  current_limit_warning_label->setVisible(
+    current_limit_value->value() > threshold);
+  current_limit_during_error_warning_label->setVisible(
+    current_limit_during_error_value->value() > threshold);
+}
+
 void main_window::set_tab_pages_enabled(bool enabled)
 {
   for (int i = 0; i < tab_widget->count(); i++)
@@ -1874,6 +1888,7 @@ void main_window::on_step_mode_value_currentIndexChanged(int index)
 
 void main_window::on_current_limit_value_valueChanged(int value)
 {
+  update_current_limit_warnings();
   if (suppress_events) { return; }
   controller->handle_current_limit_input(value);
 }
@@ -1967,6 +1982,7 @@ void main_window::on_current_limit_during_error_check_stateChanged(int state)
 
 void main_window::on_current_limit_during_error_value_valueChanged(int value)
 {
+  update_current_limit_warnings();
   if (suppress_events) { return; }
   controller->handle_current_limit_during_error_input(value);
 }
@@ -3299,14 +3315,25 @@ QLayout * main_window::setup_motor_settings_layout()
   }
 
   {
+    QGridLayout * current_limit_layout = new QGridLayout();
+
     current_limit_value = new current_spin_box();
     current_limit_value->setObjectName("current_limit_value");
     current_limit_value->setRange(0, 9999);
     current_limit_value->setSuffix(" mA");
     current_limit_label = new QLabel();
     current_limit_label->setBuddy(current_limit_value);
+
+    current_limit_warning_label = new QLabel();
+    current_limit_warning_label->setObjectName("current_limit_warning_label");
+    current_limit_warning_label->setStyleSheet("color: red;");
+
+    current_limit_layout->addWidget(current_limit_value, 0, 0);
+    current_limit_layout->addWidget(current_limit_warning_label, 0, 1,
+      Qt::AlignLeft);
+
     layout->addWidget(current_limit_label, row, 0, FIELD_LABEL_ALIGNMENT);
-    layout->addWidget(current_limit_value, row, 1, Qt::AlignLeft);
+    layout->addLayout(current_limit_layout, row, 1, 1, 2, Qt::AlignLeft);
     row++;
   }
 
@@ -3604,11 +3631,32 @@ QWidget * main_window::setup_error_settings_box()
   }
 
   {
+    QGridLayout * clde_layout = new QGridLayout();
+
     current_limit_during_error_value = new current_spin_box();
     current_limit_during_error_value->setObjectName("current_limit_during_error_value");
     current_limit_during_error_value->setRange(0, 9999);
     current_limit_during_error_value->setSuffix(" mA");
-    layout->addWidget(current_limit_during_error_value, row, 1, Qt::AlignLeft);
+
+    current_limit_during_error_warning_label = new QLabel();
+    current_limit_during_error_warning_label->setObjectName(
+      "current_limit_during_error_warning_label");
+    current_limit_during_error_warning_label->setStyleSheet("color: red;");
+
+    QCheckBox * dummy_checkbox = new QCheckBox();
+    QSizePolicy sp = dummy_checkbox->sizePolicy();
+    sp.setRetainSizeWhenHidden(true);
+    dummy_checkbox->setSizePolicy(sp);
+    dummy_checkbox->setVisible(false);
+
+    clde_layout->addWidget(dummy_checkbox, 0, 0);
+    clde_layout->addWidget(current_limit_during_error_value, 0, 1);
+    clde_layout->addWidget(current_limit_during_error_warning_label, 0, 2);
+    clde_layout->setColumnStretch(3, 1);
+    clde_layout->setRowStretch(1, 1);
+
+    layout->addLayout(clde_layout, row, 0, 1, 2, Qt::AlignLeft);
+    row++;
   }
 
   layout->setColumnStretch(1, 1);
@@ -3915,6 +3963,7 @@ void main_window::retranslate()
   decel_accel_max_same_check->setText(tr("Use max acceleration limit for deceleration"));
   step_mode_label->setText(tr("Step mode:"));
   current_limit_label->setText(tr("Current limit:"));
+  current_limit_warning_label->setText(tr("WARNING: high current"));
   decay_mode_label->setText(tr("Decay mode:"));
   agc_mode_label->setText(tr("AGC mode:"));
   agc_bottom_current_limit_label->setText(tr("AGC bottom current limit:"));
@@ -3956,6 +4005,7 @@ void main_window::retranslate()
   soft_error_response_radio_group->button(TIC_RESPONSE_DECEL_TO_HOLD)->setText(tr("Decelerate to hold"));
   soft_error_response_radio_group->button(TIC_RESPONSE_GO_TO_POSITION)->setText(tr("Go to position:"));
   current_limit_during_error_check->setText(tr("Use different current limit during soft error:"));
+  current_limit_during_error_warning_label->setText(tr("WARNING: high current"));
 
   misc_settings_box->setTitle(tr("Miscellaneous"));
   disable_safe_start_check->setText(tr("Disable safe start"));

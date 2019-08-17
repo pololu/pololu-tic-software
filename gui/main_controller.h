@@ -156,6 +156,8 @@ public:
 
   void handle_upload_complete();
 
+  uint8_t get_product() { return settings.get_product(); }
+
 private:
   // This is called whenever it is possible that we have connected to a
   // different device.

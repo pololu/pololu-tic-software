@@ -131,6 +131,8 @@ public:
 
   void update_current_limit_table(uint8_t product);
 
+  void update_current_limit_warnings();
+
   // Controls whether the main controls of the application are enabled or
   // disabled.
   void set_tab_pages_enabled(bool enabled);
@@ -684,6 +686,7 @@ private:
   QComboBox * step_mode_value;
   QLabel * current_limit_label;
   current_spin_box * current_limit_value;
+  QLabel * current_limit_warning_label;
   QLabel * decay_mode_label;
   QComboBox * decay_mode_value;
   QLabel * agc_mode_label;
@@ -719,6 +722,7 @@ private:
   QSpinBox * soft_error_position_value;
   QCheckBox * current_limit_during_error_check;
   current_spin_box * current_limit_during_error_value;
+  QLabel * current_limit_during_error_warning_label;
 
   QGroupBox * misc_settings_box;
   QCheckBox * disable_safe_start_check;
