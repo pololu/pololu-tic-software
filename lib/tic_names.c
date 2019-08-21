@@ -345,8 +345,8 @@ const tic_name tic_agc_frequency_limit_names_ui[] =
 
 const tic_name tic_hpsc_decmod_names_snake[] =
 {
-  { "slow_mixed", TIC_HPSC_DECMOD_SLOW_MIXED },
   { "slow", TIC_HPSC_DECMOD_SLOW },
+  { "slow_mixed", TIC_HPSC_DECMOD_SLOW_MIXED },
   { "fast", TIC_HPSC_DECMOD_FAST },
   { "mixed", TIC_HPSC_DECMOD_MIXED },
   { "slow_auto_mixed", TIC_HPSC_DECMOD_SLOW_AUTO_MIXED },
