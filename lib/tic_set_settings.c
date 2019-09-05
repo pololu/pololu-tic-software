@@ -349,30 +349,30 @@ static void tic_write_settings_to_buffer(const tic_settings * settings, uint8_t 
 
   if (product == TIC_PRODUCT_36V4)
   {
-    // Take care of HPSC driver registers.
+    // Take care of HP driver registers.
 
-    uint8_t * p = buf + TIC_SETTING_HPSC_DRIVER_REGISTERS;
+    uint8_t * p = buf + TIC_SETTING_HP_DRIVER_REGISTERS;
 
     uint8_t step_mode_code = step_mode;
     if (step_mode_code >= TIC_STEP_MODE_MICROSTEP2_100P) { step_mode_code--; }
     step_mode_code &= 0xF;
 
     // CTRL register
-    // Sets DTIME to 00 (850 ns), which hpsc_gate_charge_ok relies on.
+    // Sets DTIME to 00 (850 ns), which hp_gate_charge_ok relies on.
     p[0] = step_mode_code << 3;
     p[1] = 0b1100;
     // TORQUE register
     p[2] = current_limit_code;
     p[3] = 0b0001;
     // OFF register
-    p[4] = tic_settings_get_hpsc_toff(settings);
+    p[4] = tic_settings_get_hp_toff(settings);
     p[5] = 0;
     // BLANK register
-    p[6] = tic_settings_get_hpsc_tblank(settings);
-    p[7] = tic_settings_get_hpsc_abt(settings);
+    p[6] = tic_settings_get_hp_tblank(settings);
+    p[7] = tic_settings_get_hp_abt(settings);
     // DECAY register
-    p[8] = tic_settings_get_hpsc_tdecay(settings);
-    p[9] = tic_settings_get_hpsc_decmod(settings) & 7;
+    p[8] = tic_settings_get_hp_tdecay(settings);
+    p[9] = tic_settings_get_hp_decmod(settings) & 7;
     // STALL register
     p[10] = 0;
     p[11] = 0xA;

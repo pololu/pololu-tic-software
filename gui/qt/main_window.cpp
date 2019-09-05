@@ -194,7 +194,7 @@ void main_window::adjust_ui_for_product(uint8_t product)
   bool decay_mode_visible = false;
   bool agc_mode_visible = false;
   bool last_motor_driver_error_visible = false;
-  bool hpsc_visible = false;
+  bool hp_visible = false;
 
   switch (product)
   {
@@ -275,15 +275,15 @@ void main_window::adjust_ui_for_product(uint8_t product)
         { "1/256 step", TIC_STEP_MODE_MICROSTEP256 } });
 
     set_combo_items(decay_mode_value,
-      { { "Slow", TIC_HPSC_DECMOD_SLOW },
-        { "Slow / mixed", TIC_HPSC_DECMOD_SLOW_MIXED },
-        { "Fast", TIC_HPSC_DECMOD_FAST },
-        { "Mixed", TIC_HPSC_DECMOD_MIXED },
-        { "Slow / auto-mixed", TIC_HPSC_DECMOD_SLOW_AUTO_MIXED },
-        { "Auto-mixed", TIC_HPSC_DECMOD_AUTO_MIXED }});
+      { { "Slow", TIC_HP_DECMOD_SLOW },
+        { "Slow / mixed", TIC_HP_DECMOD_SLOW_MIXED },
+        { "Fast", TIC_HP_DECMOD_FAST },
+        { "Mixed", TIC_HP_DECMOD_MIXED },
+        { "Slow / auto-mixed", TIC_HP_DECMOD_SLOW_AUTO_MIXED },
+        { "Auto-mixed", TIC_HP_DECMOD_AUTO_MIXED }});
     decay_mode_visible = true;
     last_motor_driver_error_visible = true;
-    hpsc_visible = true;
+    hp_visible = true;
     break;
   }
 
@@ -302,7 +302,7 @@ void main_window::adjust_ui_for_product(uint8_t product)
   last_motor_driver_error_label->setVisible(last_motor_driver_error_visible);
   last_motor_driver_error_value->setVisible(last_motor_driver_error_visible);
 
-  hpsc_motor_widget->setVisible(hpsc_visible);
+  hp_motor_widget->setVisible(hp_visible);
 
   update_current_limit_table(product);
 }
@@ -618,9 +618,9 @@ void main_window::set_last_motor_driver_error(const char * str)
   last_motor_driver_error_value->setToolTip("");
 }
 
-void main_window::set_last_hpsc_driver_errors(uint8_t errors)
+void main_window::set_last_hp_driver_errors(uint8_t errors)
 {
-  const char * name = tic_look_up_hpsc_driver_error_name_ui(errors);
+  const char * name = tic_look_up_hp_driver_error_name_ui(errors);
   QString toolTip = "0x" + QString::number(errors, 16);
   last_motor_driver_error_value->setText(name);
   last_motor_driver_error_value->setToolTip(toolTip);
@@ -1067,24 +1067,24 @@ void main_window::set_agc_frequency_limit(uint8_t limit)
   set_combo(agc_frequency_limit_value, limit);
 }
 
-void main_window::set_hpsc_tdecay(uint8_t time)
+void main_window::set_hp_tdecay(uint8_t time)
 {
-  set_spin_box(hpsc_tdecay_value, time);
+  set_spin_box(hp_tdecay_value, time);
 }
 
-void main_window::set_hpsc_tblank(uint8_t time)
+void main_window::set_hp_tblank(uint8_t time)
 {
-  set_spin_box(hpsc_tblank_value, time);
+  set_spin_box(hp_tblank_value, time);
 }
 
-void main_window::set_hpsc_abt(bool adaptive)
+void main_window::set_hp_abt(bool adaptive)
 {
-  set_check_box(hpsc_abt_check, adaptive);
+  set_check_box(hp_abt_check, adaptive);
 }
 
-void main_window::set_hpsc_toff(uint8_t time)
+void main_window::set_hp_toff(uint8_t time)
 {
-  set_spin_box(hpsc_toff_value, time);
+  set_spin_box(hp_toff_value, time);
 }
 
 void main_window::set_soft_error_response(uint8_t soft_error_response)
@@ -1929,28 +1929,28 @@ void main_window::on_agc_frequency_limit_value_currentIndexChanged(int index)
   controller->handle_agc_frequency_limit_input(limit);
 }
 
-void main_window::on_hpsc_tdecay_value_valueChanged(int value)
+void main_window::on_hp_tdecay_value_valueChanged(int value)
 {
   if (suppress_events) { return; }
-  controller->handle_hpsc_tdecay_input(value);
+  controller->handle_hp_tdecay_input(value);
 }
 
-void main_window::on_hpsc_toff_value_valueChanged(int value)
+void main_window::on_hp_toff_value_valueChanged(int value)
 {
   if (suppress_events) { return; }
-  controller->handle_hpsc_toff_input(value);
+  controller->handle_hp_toff_input(value);
 }
 
-void main_window::on_hpsc_tblank_value_valueChanged(int value)
+void main_window::on_hp_tblank_value_valueChanged(int value)
 {
   if (suppress_events) { return; }
-  controller->handle_hpsc_tblank_input(value);
+  controller->handle_hp_tblank_input(value);
 }
 
-void main_window::on_hpsc_abt_check_stateChanged(int state)
+void main_window::on_hp_abt_check_stateChanged(int state)
 {
   if (suppress_events) { return; }
-  controller->handle_hpsc_abt_input(state == Qt::Checked);
+  controller->handle_hp_abt_input(state == Qt::Checked);
 }
 
 void main_window::on_soft_error_response_radio_group_buttonToggled(int id, bool checked)
@@ -3410,7 +3410,7 @@ QLayout * main_window::setup_motor_settings_layout()
     row++;
   }
 
-  layout->addWidget(setup_hpsc_motor_widget(), row++, 0, 1, 3);
+  layout->addWidget(setup_hp_motor_widget(), row++, 0, 1, 3);
 
   layout->setColumnStretch(2, 1);
   layout->setRowStretch(row, 1);
@@ -3418,9 +3418,9 @@ QLayout * main_window::setup_motor_settings_layout()
   return layout;
 }
 
-QWidget * main_window::setup_hpsc_motor_widget()
+QWidget * main_window::setup_hp_motor_widget()
 {
-  hpsc_motor_widget = new QWidget();
+  hp_motor_widget = new QWidget();
   QGridLayout * layout = new QGridLayout();
   layout->setContentsMargins(0, 0, 0, 0);
 
@@ -3434,65 +3434,65 @@ QWidget * main_window::setup_hpsc_motor_widget()
   int row = 0;
 
   {
-    hpsc_toff_value = new time_spin_box();
-    hpsc_toff_value->setObjectName("hpsc_toff_value");
-    hpsc_toff_value->setMinimumWidth(minimum_time_box_width);
-    hpsc_toff_value->set_decimals(1);
+    hp_toff_value = new time_spin_box();
+    hp_toff_value->setObjectName("hp_toff_value");
+    hp_toff_value->setMinimumWidth(minimum_time_box_width);
+    hp_toff_value->set_decimals(1);
     QMap <int, int> mapping;
     for (int i = 0; i < 0x100; i++) { mapping.insert(i, (i + 1) * 500); }
-    hpsc_toff_value->set_mapping(mapping);
-    hpsc_toff_value->setSuffix(" \u00b5s");
-    hpsc_toff_label = new QLabel();
-    hpsc_toff_label->setBuddy(hpsc_toff_value);
-    layout->addWidget(hpsc_toff_label, row, 0, FIELD_LABEL_ALIGNMENT);
-    layout->addWidget(hpsc_toff_value, row, 1, Qt::AlignLeft);
+    hp_toff_value->set_mapping(mapping);
+    hp_toff_value->setSuffix(" \u00b5s");
+    hp_toff_label = new QLabel();
+    hp_toff_label->setBuddy(hp_toff_value);
+    layout->addWidget(hp_toff_label, row, 0, FIELD_LABEL_ALIGNMENT);
+    layout->addWidget(hp_toff_value, row, 1, Qt::AlignLeft);
     row++;
   }
 
   {
-    hpsc_tblank_value = new time_spin_box();
-    hpsc_tblank_value->setObjectName("hpsc_tblank_value");
-    hpsc_tblank_value->setMinimumWidth(minimum_time_box_width);
-    hpsc_tblank_value->set_decimals(2);
+    hp_tblank_value = new time_spin_box();
+    hp_tblank_value->setObjectName("hp_tblank_value");
+    hp_tblank_value->setMinimumWidth(minimum_time_box_width);
+    hp_tblank_value->set_decimals(2);
     QMap<int, int> mapping;
     for (int i = 0x32; i < 0x100; i++) { mapping.insert(i, i * 20); }
-    hpsc_tblank_value->set_mapping(mapping);
-    hpsc_tblank_value->setSuffix(" \u00b5s");
-    hpsc_tblank_label = new QLabel();
-    hpsc_tblank_label->setBuddy(hpsc_tblank_value);
-    layout->addWidget(hpsc_tblank_label, row, 0, FIELD_LABEL_ALIGNMENT);
-    layout->addWidget(hpsc_tblank_value, row, 1, Qt::AlignLeft);
+    hp_tblank_value->set_mapping(mapping);
+    hp_tblank_value->setSuffix(" \u00b5s");
+    hp_tblank_label = new QLabel();
+    hp_tblank_label->setBuddy(hp_tblank_value);
+    layout->addWidget(hp_tblank_label, row, 0, FIELD_LABEL_ALIGNMENT);
+    layout->addWidget(hp_tblank_value, row, 1, Qt::AlignLeft);
     row++;
   }
 
   {
-    hpsc_abt_check = new QCheckBox();
-    hpsc_abt_check->setObjectName("hpsc_abt_check");
-    layout->addWidget(hpsc_abt_check, row, 0, 1, 2, Qt::AlignLeft);
+    hp_abt_check = new QCheckBox();
+    hp_abt_check->setObjectName("hp_abt_check");
+    layout->addWidget(hp_abt_check, row, 0, 1, 2, Qt::AlignLeft);
     row++;
   }
 
   {
-    hpsc_tdecay_value = new time_spin_box();
-    hpsc_tdecay_value->setObjectName("hpsc_tdecay_value");
-    hpsc_tdecay_value->setMinimumWidth(minimum_time_box_width);
-    hpsc_tdecay_value->set_decimals(1);
+    hp_tdecay_value = new time_spin_box();
+    hp_tdecay_value->setObjectName("hp_tdecay_value");
+    hp_tdecay_value->setMinimumWidth(minimum_time_box_width);
+    hp_tdecay_value->set_decimals(1);
     QMap<int, int> mapping;
     for (int i = 0; i < 0x100; i++) { mapping.insert(i, i * 500); }
-    hpsc_tdecay_value->set_mapping(mapping);
-    hpsc_tdecay_value->setSuffix(" \u00b5s");
-    hpsc_tdecay_label = new QLabel();
-    hpsc_tdecay_label->setBuddy(hpsc_tdecay_value);
-    layout->addWidget(hpsc_tdecay_label, row, 0, FIELD_LABEL_ALIGNMENT);
-    layout->addWidget(hpsc_tdecay_value, row, 1, Qt::AlignLeft);
+    hp_tdecay_value->set_mapping(mapping);
+    hp_tdecay_value->setSuffix(" \u00b5s");
+    hp_tdecay_label = new QLabel();
+    hp_tdecay_label->setBuddy(hp_tdecay_value);
+    layout->addWidget(hp_tdecay_label, row, 0, FIELD_LABEL_ALIGNMENT);
+    layout->addWidget(hp_tdecay_value, row, 1, Qt::AlignLeft);
     row++;
   }
 
   layout->setColumnStretch(2, 1);
   layout->setRowStretch(row, 1);
 
-  hpsc_motor_widget->setLayout(layout);
-  return hpsc_motor_widget;
+  hp_motor_widget->setLayout(layout);
+  return hp_motor_widget;
 }
 
 QWidget * main_window::setup_motor_settings_box()
@@ -3970,10 +3970,10 @@ void main_window::retranslate()
   agc_bottom_current_limit_label->setText(tr("AGC bottom current limit:"));
   agc_current_boost_steps_label->setText(tr("AGC current boost steps:"));
   agc_frequency_limit_label->setText(tr("AGC frequency limit:"));
-  hpsc_toff_label->setText(tr("Fixed off time:"));
-  hpsc_tblank_label->setText(tr("Current trip blanking time:"));
-  hpsc_abt_check->setText(tr("Enable adaptive blanking time"));
-  hpsc_tdecay_label->setText(tr("Mixed decay transition time:"));
+  hp_toff_label->setText(tr("Fixed off time:"));
+  hp_tblank_label->setText(tr("Current trip blanking time:"));
+  hp_abt_check->setText(tr("Enable adaptive blanking time"));
+  hp_tdecay_label->setText(tr("Mixed decay transition time:"));
 
   //// advanced settings page
 

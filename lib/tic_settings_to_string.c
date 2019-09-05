@@ -393,38 +393,38 @@ tic_error * tic_settings_to_string(const tic_settings * settings, char ** string
     tic_sprintf(&str, "agc_frequency_limit: %s\n", name);
   }
 
-  bool hpsc = product == TIC_PRODUCT_36V4;
+  bool hp = product == TIC_PRODUCT_36V4;
 
-  if (hpsc)
+  if (hp)
   {
-    uint8_t time = tic_settings_get_hpsc_toff(settings);
-    tic_sprintf(&str, "hpsc_toff: %d\n", time);
+    uint8_t time = tic_settings_get_hp_toff(settings);
+    tic_sprintf(&str, "hp_toff: %d\n", time);
   }
 
-  if (hpsc)
+  if (hp)
   {
-    uint8_t time = tic_settings_get_hpsc_tblank(settings);
-    tic_sprintf(&str, "hpsc_tblank: %d\n", time);
+    uint8_t time = tic_settings_get_hp_tblank(settings);
+    tic_sprintf(&str, "hp_tblank: %d\n", time);
   }
 
-  if (hpsc)
+  if (hp)
   {
-    bool adaptive = tic_settings_get_hpsc_abt(settings);
-    tic_sprintf(&str, "hpsc_abt: %s\n", adaptive ? "true" : "false");
+    bool adaptive = tic_settings_get_hp_abt(settings);
+    tic_sprintf(&str, "hp_abt: %s\n", adaptive ? "true" : "false");
   }
 
-  if (hpsc)
+  if (hp)
   {
-    uint8_t time = tic_settings_get_hpsc_tdecay(settings);
-    tic_sprintf(&str, "hpsc_tdecay: %d\n", time);
+    uint8_t time = tic_settings_get_hp_tdecay(settings);
+    tic_sprintf(&str, "hp_tdecay: %d\n", time);
   }
 
-  if (hpsc)
+  if (hp)
   {
-    uint8_t mode = tic_settings_get_hpsc_decmod(settings);
+    uint8_t mode = tic_settings_get_hp_decmod(settings);
     const char * name;
-    tic_code_to_name(tic_hpsc_decmod_names_snake, mode, &name);
-    tic_sprintf(&str, "hpsc_decmod: %s\n", name);
+    tic_code_to_name(tic_hp_decmod_names_snake, mode, &name);
+    tic_sprintf(&str, "hp_decmod: %s\n", name);
   }
 
   if (error == NULL && str.data == NULL)

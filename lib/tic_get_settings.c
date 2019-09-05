@@ -378,12 +378,12 @@ static void write_buffer_to_settings(const uint8_t * buf, tic_settings * setting
 
   if (product == TIC_PRODUCT_36V4)
   {
-    const uint8_t * p = buf + TIC_SETTING_HPSC_DRIVER_REGISTERS;
-    tic_settings_set_hpsc_toff(settings, p[4]);
-    tic_settings_set_hpsc_tblank(settings, p[6]);
-    tic_settings_set_hpsc_abt(settings, p[7] & 1);
-    tic_settings_set_hpsc_tdecay(settings, p[8]);
-    tic_settings_set_hpsc_decmod(settings, p[9] & 7);
+    const uint8_t * p = buf + TIC_SETTING_HP_DRIVER_REGISTERS;
+    tic_settings_set_hp_toff(settings, p[4]);
+    tic_settings_set_hp_tblank(settings, p[6]);
+    tic_settings_set_hp_abt(settings, p[7] & 1);
+    tic_settings_set_hp_tdecay(settings, p[8]);
+    tic_settings_set_hp_decmod(settings, p[9] & 7);
   }
 }
 
@@ -477,7 +477,7 @@ tic_settings_segments tic_get_settings_segments(uint8_t product)
 
   if (product == TIC_PRODUCT_36V4)
   {
-    segments.product_specific_offset = TIC_SETTING_HPSC_DRIVER_REGISTERS;
+    segments.product_specific_offset = TIC_SETTING_HP_DRIVER_REGISTERS;
   }
 
   if (segments.product_specific_offset)

@@ -72,9 +72,9 @@ extern const tic_name tic_agc_mode_names[];
 extern const tic_name tic_agc_bottom_current_limit_names[];
 extern const tic_name tic_agc_current_boost_steps_names[];
 extern const tic_name tic_agc_frequency_limit_names[];
-extern const tic_name tic_hpsc_decmod_names_snake[];
-extern const tic_name tic_hpsc_decmod_names_ui[];
-extern const tic_name tic_hpsc_driver_error_names_ui[];
+extern const tic_name tic_hp_decmod_names_snake[];
+extern const tic_name tic_hp_decmod_names_ui[];
+extern const tic_name tic_hp_driver_error_names_ui[];
 
 // Intenral variables functions.
 
@@ -249,5 +249,5 @@ typedef struct tic_settings_segments
 
 tic_settings_segments tic_get_settings_segments(uint8_t product);
 
-uint32_t tic_settings_get_hpsc_toff_ns(const tic_settings *);
-bool tic_settings_hpsc_gate_charge_ok(const tic_settings *);
+uint32_t tic_settings_get_hp_toff_ns(const tic_settings *);
+bool tic_settings_hp_gate_charge_ok(const tic_settings *);

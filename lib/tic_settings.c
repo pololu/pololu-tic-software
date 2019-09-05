@@ -75,11 +75,11 @@ struct tic_settings
   uint8_t agc_current_boost_steps;
   uint8_t agc_frequency_limit;
 
-  uint8_t hpsc_toff;
-  uint8_t hpsc_tblank;
-  bool hpsc_abt;
-  uint8_t hpsc_tdecay;
-  uint8_t hpsc_decmod;
+  uint8_t hp_toff;
+  uint8_t hp_tblank;
+  bool hp_abt;
+  uint8_t hp_tdecay;
+  uint8_t hp_decmod;
 };
 
 void tic_settings_fill_with_defaults(tic_settings * settings)
@@ -175,11 +175,11 @@ void tic_settings_fill_with_defaults(tic_settings * settings)
 
   if (product == TIC_PRODUCT_36V4)
   {
-    tic_settings_set_hpsc_toff(settings, 0x32);
-    tic_settings_set_hpsc_tblank(settings, 0x00);
-    tic_settings_set_hpsc_abt(settings, true);
-    tic_settings_set_hpsc_tdecay(settings, 0x10);
-    tic_settings_set_hpsc_decmod(settings, TIC_HPSC_DECMOD_AUTO_MIXED);
+    tic_settings_set_hp_toff(settings, 0x32);
+    tic_settings_set_hp_tblank(settings, 0x00);
+    tic_settings_set_hp_abt(settings, true);
+    tic_settings_set_hp_tdecay(settings, 0x10);
+    tic_settings_set_hp_decmod(settings, TIC_HP_DECMOD_AUTO_MIXED);
   }
 }
 
@@ -1137,87 +1137,87 @@ uint8_t tic_settings_get_agc_frequency_limit(const tic_settings * settings)
   return settings->agc_frequency_limit;
 }
 
-void tic_settings_set_hpsc_toff(tic_settings * settings, uint8_t time)
+void tic_settings_set_hp_toff(tic_settings * settings, uint8_t time)
 {
   if (!settings) { return; }
-  settings->hpsc_toff = time;
+  settings->hp_toff = time;
 }
 
-uint8_t tic_settings_get_hpsc_toff(const tic_settings * settings)
+uint8_t tic_settings_get_hp_toff(const tic_settings * settings)
 {
   if (!settings) { return 0; }
-  return settings->hpsc_toff;
+  return settings->hp_toff;
 }
 
-void tic_settings_set_hpsc_tblank(tic_settings * settings, uint8_t time)
+void tic_settings_set_hp_tblank(tic_settings * settings, uint8_t time)
 {
   if (!settings) { return; }
-  settings->hpsc_tblank = time;
+  settings->hp_tblank = time;
 }
 
-uint8_t tic_settings_get_hpsc_tblank(const tic_settings * settings)
+uint8_t tic_settings_get_hp_tblank(const tic_settings * settings)
 {
   if (!settings) { return 0; }
-  return settings->hpsc_tblank;
+  return settings->hp_tblank;
 }
 
-void tic_settings_set_hpsc_abt(tic_settings * settings, bool adaptive)
+void tic_settings_set_hp_abt(tic_settings * settings, bool adaptive)
 {
   if (!settings) { return; }
-  settings->hpsc_abt = adaptive;
+  settings->hp_abt = adaptive;
 }
 
-bool tic_settings_get_hpsc_abt(const tic_settings * settings)
+bool tic_settings_get_hp_abt(const tic_settings * settings)
 {
   if (!settings) { return 0; }
-  return settings->hpsc_abt;
+  return settings->hp_abt;
 }
 
-void tic_settings_set_hpsc_tdecay(tic_settings * settings, uint8_t time)
+void tic_settings_set_hp_tdecay(tic_settings * settings, uint8_t time)
 {
   if (!settings) { return; }
-  settings->hpsc_tdecay = time;
+  settings->hp_tdecay = time;
 }
 
-uint8_t tic_settings_get_hpsc_tdecay(const tic_settings * settings)
+uint8_t tic_settings_get_hp_tdecay(const tic_settings * settings)
 {
   if (!settings) { return 0; }
-  return settings->hpsc_tdecay;
+  return settings->hp_tdecay;
 }
 
-void tic_settings_set_hpsc_decmod(tic_settings * settings, uint8_t mode)
+void tic_settings_set_hp_decmod(tic_settings * settings, uint8_t mode)
 {
   if (!settings) { return; }
-  settings->hpsc_decmod = mode;
+  settings->hp_decmod = mode;
 }
 
-uint8_t tic_settings_get_hpsc_decmod(const tic_settings * settings)
+uint8_t tic_settings_get_hp_decmod(const tic_settings * settings)
 {
   if (!settings) { return 0; }
-  return settings->hpsc_decmod;
+  return settings->hp_decmod;
 }
 
-static uint32_t tic_settings_get_hpsc_tblank_ns(
+static uint32_t tic_settings_get_hp_tblank_ns(
     const tic_settings * settings)
 {
-  uint8_t tblank = tic_settings_get_hpsc_tblank(settings);
+  uint8_t tblank = tic_settings_get_hp_tblank(settings);
   if (tblank < 0x32) { tblank = 0x32; }
   return tblank * 20;
 }
 
-uint32_t tic_settings_get_hpsc_toff_ns(const tic_settings * settings)
+uint32_t tic_settings_get_hp_toff_ns(const tic_settings * settings)
 {
-  uint8_t toff = tic_settings_get_hpsc_toff(settings);
+  uint8_t toff = tic_settings_get_hp_toff(settings);
   return (toff + 1) * 500;
 }
 
 // Return true if equation 3 in the DRV8711 datasheet is satisfied.
-bool tic_settings_hpsc_gate_charge_ok(const tic_settings * settings)
+bool tic_settings_hp_gate_charge_ok(const tic_settings * settings)
 {
-  uint32_t tblank_ns = tic_settings_get_hpsc_tblank_ns(settings);
-  if (tic_settings_get_hpsc_abt(settings)) { tblank_ns /= 2; }
+  uint32_t tblank_ns = tic_settings_get_hp_tblank_ns(settings);
+  if (tic_settings_get_hp_abt(settings)) { tblank_ns /= 2; }
 
-  uint32_t toff_ns = tic_settings_get_hpsc_toff_ns(settings);
+  uint32_t toff_ns = tic_settings_get_hp_toff_ns(settings);
 
   // Assumption: We use a dead time (DTIME) of 850 ns.
   uint32_t dtime_ns = 850;

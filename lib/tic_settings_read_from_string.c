@@ -766,62 +766,62 @@ static tic_error * apply_string_pair(tic_settings * settings,
     }
     tic_settings_set_agc_frequency_limit(settings, limit);
   }
-  else if (!strcmp(key, "hpsc_toff"))
+  else if (!strcmp(key, "hp_toff"))
   {
     int64_t time;
     if (tic_string_to_i64(value, &time))
     {
-      return tic_error_create("Invalid hpsc_toff value.");
+      return tic_error_create("Invalid hp_toff value.");
     }
     if (time < 0 || time > UINT8_MAX)
     {
-      return tic_error_create("The hpsc_toff value is out of range.");
+      return tic_error_create("The hp_toff value is out of range.");
     }
-    tic_settings_set_hpsc_toff(settings, time);
+    tic_settings_set_hp_toff(settings, time);
   }
-  else if (!strcmp(key, "hpsc_tblank"))
+  else if (!strcmp(key, "hp_tblank"))
   {
     int64_t time;
     if (tic_string_to_i64(value, &time))
     {
-      return tic_error_create("Invalid hpsc_tblank value.");
+      return tic_error_create("Invalid hp_tblank value.");
     }
     if (time < 0 || time > UINT8_MAX)
     {
-      return tic_error_create("The hpsc_tblank value is out of range.");
+      return tic_error_create("The hp_tblank value is out of range.");
     }
-    tic_settings_set_hpsc_tblank(settings, time);
+    tic_settings_set_hp_tblank(settings, time);
   }
-  else if (!strcmp(key, "hpsc_abt"))
+  else if (!strcmp(key, "hp_abt"))
   {
     uint32_t adaptive;
     if (!tic_name_to_code(tic_bool_names, value, &adaptive))
     {
-      return tic_error_create("Unrecognized hpsc_abt value.");
+      return tic_error_create("Unrecognized hp_abt value.");
     }
-    tic_settings_set_hpsc_abt(settings, adaptive);
+    tic_settings_set_hp_abt(settings, adaptive);
   }
-  else if (!strcmp(key, "hpsc_tdecay"))
+  else if (!strcmp(key, "hp_tdecay"))
   {
     int64_t time;
     if (tic_string_to_i64(value, &time))
     {
-      return tic_error_create("Invalid hpsc_tdecay value.");
+      return tic_error_create("Invalid hp_tdecay value.");
     }
     if (time < 0 || time > UINT8_MAX)
     {
-      return tic_error_create("The hpsc_tdecay value is out of range.");
+      return tic_error_create("The hp_tdecay value is out of range.");
     }
-    tic_settings_set_hpsc_tdecay(settings, time);
+    tic_settings_set_hp_tdecay(settings, time);
   }
-  else if (!strcmp(key, "hpsc_decmod"))
+  else if (!strcmp(key, "hp_decmod"))
   {
     uint32_t code;
-    if (!tic_name_to_code(tic_hpsc_decmod_names_snake, value, &code))
+    if (!tic_name_to_code(tic_hp_decmod_names_snake, value, &code))
     {
-      return tic_error_create("Invalid hpsc_decmod value.");
+      return tic_error_create("Invalid hp_decmod value.");
     }
-    tic_settings_set_hpsc_decmod(settings, code);
+    tic_settings_set_hp_decmod(settings, code);
   }
   else
   {

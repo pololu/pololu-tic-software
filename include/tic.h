@@ -222,11 +222,11 @@ const char * tic_look_up_agc_current_boost_steps_name_ui(uint8_t steps);
 TIC_API
 const char * tic_look_up_agc_frequency_limit_name_ui(uint8_t limit);
 
-/// Looks up a user-friendly string corresponding to the specified HPSC
-/// error bit, e.g. "Overtemperature".
+/// Looks up a user-friendly string corresponding to the specified Tic 36v4
+/// driver error bit, e.g. "Overtemperature".
 ///
 /// The \p error argument should be bitwise-or combination of numbers of the
-/// form (1 << x), where x is one of the TIC_HPSC_DRIVER_ERROR_* macros.
+/// form (1 << x), where x is one of the TIC_HP_DRIVER_ERROR_* macros.
 /// If it is not, this function returns "(Unknown)".
 /// If the argument is 0, this function returns "None".
 /// If multiple error bits are 1 and this function does not know a
@@ -235,21 +235,21 @@ const char * tic_look_up_agc_frequency_limit_name_ui(uint8_t limit);
 /// The returned string will be valid indefinitely and
 /// should not be freed.
 ///
-/// This function is only useful for HPSC Tics.
+/// This function is only useful for the Tic 36v4.
 ///
-/// See also tic_variables_get_last_hpsc_driver_errors().
+/// See also tic_variables_get_last_hp_driver_errors().
 TIC_API
-const char * tic_look_up_hpsc_driver_error_name_ui(uint8_t error);
+const char * tic_look_up_hp_driver_error_name_ui(uint8_t error);
 
-/// Looks up a user-friendly string corresponding to the specified HPSC decay
-/// mode, e.g. "Mixed".
+/// Looks up a user-friendly string corresponding to the specified Tic 36v4
+/// decay mode, e.g. "Mixed".
 ///
-/// The \p mode argument should be one of the TIC_HPSC_DECMOD_*
+/// The \p mode argument should be one of the TIC_HP_DECMOD_*
 /// macros, but if it is not, this function returns "(Unknown)".
 /// The returned string will be valid indefinitely and should not be freed.
 ///
-/// This function is only useful for HPSC Tics.
-const char * tic_look_up_hpsc_decmod_name_ui(uint8_t mode);
+/// This function is only useful for the Tic 36v4.
+const char * tic_look_up_hp_decmod_name_ui(uint8_t mode);
 
 
 // Advanced name/code lookup ////////////////////////////////////////////////////
@@ -283,7 +283,7 @@ const char * tic_look_up_hpsc_decmod_name_ui(uint8_t mode);
 /// If this function succeeds, it returns true.  Otherwise, it returns false.
 ///
 /// This function is only useful to the Tic T825, Tic N825, and Tic T834.
-/// For HPSC Tics, see tic_look_up_hpsc_decmod_name_ui().
+/// For the Tic 36v4, see tic_look_up_hp_decmod_name_ui().
 ///
 /// See also tic_look_up_decay_mode_code().
 TIC_API
@@ -1181,22 +1181,22 @@ void tic_settings_set_agc_frequency_limit(tic_settings *, uint8_t limit);
 TIC_API
 uint8_t tic_settings_get_agc_frequency_limit(const tic_settings *);
 
-/// Sets the fixed off time (HPSC Tics only).
+/// Sets the fixed off time (Tic 36v4 only).
 ///
 /// This sets the fixed off time in increments of 500 nanoseconds,
 /// with 0 corresponding to 500 ns.
 /// Any value between 0 (500 ns) and 255 (1280 us) is allowed.
 ///
-/// This setting is only valid for HPSC Tics.
+/// This setting is only valid for the Tic 36v4.
 TIC_API
-void tic_settings_set_hpsc_toff(tic_settings *, uint8_t time);
+void tic_settings_set_hp_toff(tic_settings *, uint8_t time);
 
-/// Gets the fixed off time setting for an HPSC Tic, as described in
-/// tic_settings_set_hpsc_toff().
+/// Gets the fixed off time setting for the Tic 36v4, as described in
+/// tic_settings_set_hp_toff().
 TIC_API
-uint8_t tic_settings_get_hpsc_toff(const tic_settings *);
+uint8_t tic_settings_get_hp_toff(const tic_settings *);
 
-/// Sets the current trip blanking time (HPSC Tics only).
+/// Sets the current trip blanking time (Tic 36v4 only).
 ///
 /// This sets the current trip blanking time, in increments of 0.02 us.
 ///
@@ -1205,54 +1205,54 @@ uint8_t tic_settings_get_hpsc_toff(const tic_settings *);
 /// Any value above 50 corresponds to 0.02 us times the value, so a value of
 /// 255 corresponds to 5.1 us.
 ///
-/// This setting is only valid for HPSC Tics.
+/// This setting is only valid for the Tic 36v4.
 TIC_API
-void tic_settings_set_hpsc_tblank(tic_settings *, uint8_t time);
+void tic_settings_set_hp_tblank(tic_settings *, uint8_t time);
 
-/// Gets the current trip blanking time for the Tic HPSC, as described in
-/// tic_settings_set_hpsc_tblank().
+/// Gets the current trip blanking time for the Tic 36v4, as described in
+/// tic_settings_set_hp_tblank().
 TIC_API
-uint8_t tic_settings_get_hpsc_tblank(const tic_settings *);
+uint8_t tic_settings_get_hp_tblank(const tic_settings *);
 
-/// Enables or disables adaptive blanking time for a Tic HPSC.
+/// Enables or disables adaptive blanking time for a Tic 36v4.
 ///
-/// This setting is only valid for HPSC Tics.
+/// This setting is only valid for the Tic 36v4.
 TIC_API
-void tic_settings_set_hpsc_abt(tic_settings *, bool adaptive);
+void tic_settings_set_hp_abt(tic_settings *, bool adaptive);
 
-/// Gets the value of the Tic HPSC adaptive blanking time setting, as described
-/// in tic_settings_get_hpsc_abt().
+/// Gets the value of the Tic 36v4 adaptive blanking time setting, as described
+/// in tic_settings_get_hp_abt().
 TIC_API
-bool tic_settings_get_hpsc_abt(const tic_settings *);
+bool tic_settings_get_hp_abt(const tic_settings *);
 
-/// Sets the mixed decay transition time of the Tic HPSC.
+/// Sets the mixed decay transition time of the Tic 36v4.
 ///
 /// This sets the mixed decay transition time, in units of 0.5 us.
 ///
 /// Any value between 0 (0.5 us) and 255 (127.5 us) is valid.
 ///
-/// This setting is only valid for HPSC Tics.
+/// This setting is only valid for the Tic 36v4.
 TIC_API
-void tic_settings_set_hpsc_tdecay(tic_settings *, uint8_t time);
+void tic_settings_set_hp_tdecay(tic_settings *, uint8_t time);
 
-/// Gets the mixed decay transition time of the Tic HPSC, as described in
-/// tic_settings_get_hpsc_tdecay().
+/// Gets the mixed decay transition time of the Tic 36v4, as described in
+/// tic_settings_get_hp_tdecay().
 TIC_API
-uint8_t tic_settings_get_hpsc_tdecay(const tic_settings *);
+uint8_t tic_settings_get_hp_tdecay(const tic_settings *);
 
-/// Sets the decay mode of the Tic HPSC.
+/// Sets the decay mode of the Tic 36v4.
 ///
-/// The /p mode argument should be one of the TIC_HPSC_DECMOD_* macros.
+/// The /p mode argument should be one of the TIC_HP_DECMOD_* macros.
 ///
-/// This setting is only valid for HPSC Tics.  If you are using a different Tic,
-/// see tic_settings_set_decay_mode().
+/// This setting is only valid for the Tic 36v4.
+/// If you are using a different Tic, see tic_settings_set_decay_mode().
 TIC_API
-void tic_settings_set_hpsc_decmod(tic_settings *, uint8_t mode);
+void tic_settings_set_hp_decmod(tic_settings *, uint8_t mode);
 
-/// Gets the decay mode of the Tic HPSC, as described in
-/// tic_settings_set_hpsc_decmod().
+/// Gets the decay mode of the Tic 36v4, as described in
+/// tic_settings_set_hp_decmod().
 TIC_API
-uint8_t tic_settings_get_hpsc_decmod(const tic_settings *);
+uint8_t tic_settings_get_hp_decmod(const tic_settings *);
 
 
 // tic_variables ///////////////////////////////////////////////////////////////
@@ -1608,12 +1608,12 @@ uint8_t tic_variables_get_pin_state(const tic_variables *, uint8_t pin);
 /// Gets a bitmask describing the error conditions that caused the last
 /// motor driver error.
 ///
-/// This is only valid for HPSC Tics, and will be 0 for all
+/// This is only valid for the Tic 36v4, and will be 0 for all
 /// other Tics.
 ///
-/// See tic_look_up_hpsc_driver_error_name_ui().
+/// See tic_look_up_hp_driver_error_name_ui().
 TIC_API
-uint32_t tic_variables_get_last_hpsc_driver_errors(const tic_variables *);
+uint32_t tic_variables_get_last_hp_driver_errors(const tic_variables *);
 
 
 // tic_device ///////////////////////////////////////////////////////////////////
@@ -1945,7 +1945,7 @@ tic_error * tic_set_current_limit_code(tic_handle *, uint8_t current_limit);
 ///   TIC_DECAY_MODE_T834_* macros.
 /// - Tic T500 and Tic T249: This command is supported, but there is only one
 ///   decay mode (0), so it is not useful.
-/// - HPSC Tics: This command is not supported, and this
+/// - Tic 36v4: This command is not supported, and this
 ///   function will return an error instead of attempting to send the command
 ///   to the device.
 ///

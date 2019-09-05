@@ -202,22 +202,22 @@ static void tic_settings_fix_enums(tic_settings * settings, tic_string * warning
   }
 
   {
-    uint8_t mode = tic_settings_get_hpsc_decmod(settings);
+    uint8_t mode = tic_settings_get_hp_decmod(settings);
     if (product == TIC_PRODUCT_36V4)
     {
-      if (!tic_code_to_name(tic_hpsc_decmod_names_snake, mode, NULL))
+      if (!tic_code_to_name(tic_hp_decmod_names_snake, mode, NULL))
       {
         tic_sprintf(warnings,
           "Warning: The decay mode was invalid "
           "so it will be changed to \"Slow / mixed\".\n");
-        mode = TIC_HPSC_DECMOD_SLOW_MIXED;
+        mode = TIC_HP_DECMOD_SLOW_MIXED;
       }
     }
     else
     {
       mode = 0;
     }
-    tic_settings_set_hpsc_decmod(settings, mode);
+    tic_settings_set_hp_decmod(settings, mode);
   }
 }
 
@@ -974,17 +974,17 @@ static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings
 
   if (product == TIC_PRODUCT_36V4)
   {
-    if (!tic_settings_hpsc_gate_charge_ok(settings))
+    if (!tic_settings_hp_gate_charge_ok(settings))
     {
-      uint8_t toff = tic_settings_get_hpsc_toff(settings);
+      uint8_t toff = tic_settings_get_hp_toff(settings);
       while (true)
       {
         if (toff >= 255) { break; }   // Shouldn't happen.
         toff++;
-        tic_settings_set_hpsc_toff(settings, toff);
-        if (tic_settings_hpsc_gate_charge_ok(settings)) { break; }
+        tic_settings_set_hp_toff(settings, toff);
+        if (tic_settings_hp_gate_charge_ok(settings)) { break; }
       }
-      uint32_t toff_ns = tic_settings_get_hpsc_toff_ns(settings);
+      uint32_t toff_ns = tic_settings_get_hp_toff_ns(settings);
       tic_sprintf(warnings,
         "Warning: The fixed off time will be increased to %u ns, "
         "which is the minimum valid value given other settings.", toff_ns);

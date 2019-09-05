@@ -583,10 +583,10 @@ namespace tic
       return tic_variables_get_pin_state(pointer, pin);
     }
 
-    /// Wrapper for tic_variables_get_last_hpsc_driver_errors().
-    uint32_t get_last_hpsc_driver_errors() const noexcept
+    /// Wrapper for tic_variables_get_last_hp_driver_errors().
+    uint32_t get_last_hp_driver_errors() const noexcept
     {
-      return tic_variables_get_last_hpsc_driver_errors(pointer);
+      return tic_variables_get_last_hp_driver_errors(pointer);
     }
   };
 

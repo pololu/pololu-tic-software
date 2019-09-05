@@ -49,8 +49,8 @@ auto_homing: true
 auto_homing_forward: true
 homing_speed_towards: 123456789
 homing_speed_away: 90786722
-hpsc_toff: 255
-hpsc_tblank: 127
-hpsc_abt: true
-hpsc_tdecay: 71
-hpsc_decmod: auto_mixed
+hp_toff: 255
+hp_tblank: 127
+hp_abt: true
+hp_tdecay: 71
+hp_decmod: auto_mixed
