@@ -1,4 +1,4 @@
-; Copyright (C) 2018 Pololu Corporation
+; Copyright (C) 2019 Pololu Corporation
 
 ; This driver file is not needed on Windows 8.1 and later because each device
 ; implements Microsoft OS 2.0 Descriptors.
@@ -12,12 +12,13 @@ p00B5="Pololu Tic T834"
 p00BD="Pololu Tic T500"
 p00C3="Pololu Tic N825"
 p00C9="Pololu Tic T249"
+p00CB="Pololu Tic 36v4"
 
 [DefaultInstall]
 CopyINF=tic.inf
 
 [Version]
-DriverVer=12/21/2018,1.4.0
+DriverVer=08/14/2019,1.6.1
 Signature=$Windows NT$
 Class=USBDevice
 ClassGuid={88BAE032-5A81-49F0-BC3D-A4FF138216D6}
@@ -45,6 +46,7 @@ HKR,,Configurable,,1
 %p00BD%=DriverInstall, USB\VID_1FFB&PID_00BD
 %p00C3%=DriverInstall, USB\VID_1FFB&PID_00C3
 %p00C9%=DriverInstall, USB\VID_1FFB&PID_00C9
+%p00CB%=DriverInstall, USB\VID_1FFB&PID_00CB
 
 [Models.NTamd64]
 %p00B3%=DriverInstall, USB\VID_1FFB&PID_00B3
@@ -52,6 +54,7 @@ HKR,,Configurable,,1
 %p00BD%=DriverInstall, USB\VID_1FFB&PID_00BD
 %p00C3%=DriverInstall, USB\VID_1FFB&PID_00C3
 %p00C9%=DriverInstall, USB\VID_1FFB&PID_00C9
+%p00CB%=DriverInstall, USB\VID_1FFB&PID_00CB
 
 [Models.NTarm]
 %p00B3%=DriverInstall, USB\VID_1FFB&PID_00B3
@@ -59,6 +62,7 @@ HKR,,Configurable,,1
 %p00BD%=DriverInstall, USB\VID_1FFB&PID_00BD
 %p00C3%=DriverInstall, USB\VID_1FFB&PID_00C3
 %p00C9%=DriverInstall, USB\VID_1FFB&PID_00C9
+%p00CB%=DriverInstall, USB\VID_1FFB&PID_00CB
 
 [DriverInstall]
 Include=Winusb.inf
