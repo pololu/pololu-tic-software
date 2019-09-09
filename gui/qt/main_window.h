@@ -265,6 +265,7 @@ public:
   void set_ignore_err_line_high(bool ignore_err_line_high);
   void set_auto_clear_driver_error(bool auto_clear_driver_error);
   void set_never_sleep(bool never_sleep);
+  void set_hp_enable_unrestricted_current_limits(bool enable);
   void set_vin_calibration(int16_t vin_calibration);
 
   void set_auto_homing(bool auto_homing);
@@ -401,6 +402,7 @@ private slots:
   void on_ignore_err_line_high_check_stateChanged(int state);
   void on_auto_clear_driver_error_check_stateChanged(int state);
   void on_never_sleep_check_stateChanged(int state);
+  void on_hp_enable_unrestricted_current_limits_check_stateChanged(int state);
   void on_vin_calibration_value_valueChanged(int value);
 
   void on_auto_homing_check_stateChanged(int state);
@@ -729,6 +731,7 @@ private:
   QCheckBox * ignore_err_line_high_check;
   QCheckBox * auto_clear_driver_error_check;
   QCheckBox * never_sleep_check;
+  QCheckBox * hp_enable_unrestricted_current_limits_check;
   QLabel * vin_calibration_label;
   QSpinBox * vin_calibration_value;
 

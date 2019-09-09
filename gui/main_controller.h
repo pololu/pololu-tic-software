@@ -129,6 +129,7 @@ public:
   void handle_agc_current_boost_steps_input(uint8_t);
   void handle_agc_frequency_limit_input(uint8_t);
 
+  void handle_hp_enable_unrestricted_current_limits_input(bool);
   void handle_hp_toff_input(uint8_t);
   void handle_hp_tblank_input(uint8_t);
   void handle_hp_abt_input(bool);

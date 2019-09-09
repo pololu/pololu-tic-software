@@ -873,6 +873,8 @@ void main_controller::handle_settings_changed()
     window->set_pin_analog(i, analog, analog_enabled);
   }
 
+  window->set_hp_enable_unrestricted_current_limits(
+    tic_settings_get_hp_enable_unrestricted_current_limits(s));
   window->set_hp_toff(tic_settings_get_hp_toff(s));
   window->set_hp_tblank(tic_settings_get_hp_tblank(s));
   window->set_hp_abt(tic_settings_get_hp_abt(s));
@@ -1224,6 +1226,15 @@ void main_controller::handle_hp_tdecay_input(uint8_t time)
 {
   if (!connected()) { return; }
   tic_settings_set_hp_tdecay(settings.get_pointer(), time);
+  settings_modified = true;
+  handle_settings_changed();
+}
+
+void main_controller::handle_hp_enable_unrestricted_current_limits_input(bool enabled)
+{
+  if (!connected()) { return; }
+  tic_settings_set_hp_enable_unrestricted_current_limits(
+    settings.get_pointer(), enabled);
   settings_modified = true;
   handle_settings_changed();
 }

@@ -302,7 +302,14 @@ void main_window::adjust_ui_for_product(uint8_t product)
   last_motor_driver_error_label->setVisible(last_motor_driver_error_visible);
   last_motor_driver_error_value->setVisible(last_motor_driver_error_visible);
 
+  hp_enable_unrestricted_current_limits_check->setVisible(hp_visible);
   hp_motor_widget->setVisible(hp_visible);
+
+  if (hp_visible && product != TIC_PRODUCT_36V4)
+  {
+    // Need to update the hp_enable_unrestricted_current_limits_check tooltip.
+    assert(0);
+  }
 
   update_current_limit_table(product);
 }
@@ -1149,6 +1156,11 @@ void main_window::set_auto_clear_driver_error(bool auto_clear_driver_error)
 void main_window::set_never_sleep(bool never_sleep)
 {
   set_check_box(never_sleep_check, never_sleep);
+}
+
+void main_window::set_hp_enable_unrestricted_current_limits(bool enable)
+{
+  set_check_box(hp_enable_unrestricted_current_limits_check, enable);
 }
 
 void main_window::set_vin_calibration(int16_t vin_calibration)
@@ -2010,6 +2022,13 @@ void main_window::on_never_sleep_check_stateChanged(int state)
 {
   if (suppress_events) { return; }
   controller->handle_never_sleep_input(state == Qt::Checked);
+}
+
+void main_window::on_hp_enable_unrestricted_current_limits_check_stateChanged(
+  int state)
+{
+  if (suppress_events) { return; }
+  controller->handle_hp_enable_unrestricted_current_limits_input(state == Qt::Checked);
 }
 
 void main_window::on_vin_calibration_value_valueChanged(int value)
@@ -3701,6 +3720,15 @@ QWidget * main_window::setup_misc_settings_box()
     row++;
   }
 
+  {
+    hp_enable_unrestricted_current_limits_check = new QCheckBox();
+    hp_enable_unrestricted_current_limits_check->setObjectName(
+      "hp_enable_unrestricted_current_limits_check");
+    layout->addWidget(hp_enable_unrestricted_current_limits_check,
+      row, 0, 1, 2, Qt::AlignLeft);
+    row++;
+  }
+
   layout->addItem(new QSpacerItem(1, fontMetrics().height()), row++, 0);
 
   {
@@ -4012,6 +4040,12 @@ void main_window::retranslate()
   disable_safe_start_check->setText(tr("Disable safe start"));
   ignore_err_line_high_check->setText(tr("Ignore ERR line high"));
   auto_clear_driver_error_check->setText(tr("Automatically clear driver errors"));
+  hp_enable_unrestricted_current_limits_check->setText(tr(
+    "Enable unrestricted current limits"));
+  hp_enable_unrestricted_current_limits_check->setToolTip(tr(
+    "When checked, allows current limits above 4000 mA on the Tic 36v4,\n" \
+    "potentially resulting in overheating and permanent damage!"
+  ));
   never_sleep_check->setText(tr("Never sleep (ignore USB suspend)"));
   vin_calibration_label->setText(tr("VIN measurement calibration:"));
 
