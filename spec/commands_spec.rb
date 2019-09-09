@@ -238,7 +238,7 @@ describe 'Set current limit command' do
       currents = [40, 80]
     end
     if tic_product == :'36v4'
-      currents = [72, 107]
+      currents = [72, 143]
     end
     currents.each do |limit|
       stdout, stderr, result = run_ticcmd("--current #{limit}")
