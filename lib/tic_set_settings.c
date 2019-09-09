@@ -349,7 +349,8 @@ static void tic_write_settings_to_buffer(const tic_settings * settings, uint8_t 
 
   if (product == TIC_PRODUCT_36V4)
   {
-    // Take care of HP driver registers.
+    buf[TIC_SETTING_HP_ENABLE_UNRESTRICTED_CURRENT_LIMITS] =
+      tic_settings_get_hp_enable_unrestricted_current_limits(settings);
 
     uint8_t * p = buf + TIC_SETTING_HP_DRIVER_REGISTERS;
 

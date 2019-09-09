@@ -49,6 +49,9 @@ def test_cases_for_settings_fix(product)
   end
 
   max_current = tic_max_allowed_current(product)
+  if product == :'36v4'
+    max_current = 3939
+  end
 
   cases = [
     [ { 'control_mode' => 'rc_speed', 'soft_error_response' => 'go_to_position' },
@@ -361,6 +364,16 @@ def test_cases_for_settings_fix(product)
                { 'step_mode' => 1 },
                "Warning: The step mode is invalid " \
                "so it will be changed to 1 (full step).\n" ]
+  end
+
+  if product == :'36v4'
+    cases << [
+      { 'current_limit' => 10000,
+        'hp_enable_unrestricted_current_limits' => true },
+      { 'current_limit' => 9095 },
+      "Warning: The current limit is too high " \
+      "so it will be lowered to 9095 mA.\n"
+    ]
   end
 
   cases

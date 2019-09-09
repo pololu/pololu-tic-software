@@ -397,6 +397,14 @@ tic_error * tic_settings_to_string(const tic_settings * settings, char ** string
 
   if (hp)
   {
+    bool enable =
+      tic_settings_get_hp_enable_unrestricted_current_limits(settings);
+    tic_sprintf(&str, "hp_enable_unrestricted_current_limits: %s\n",
+      enable ? "true" : "false");
+  }
+
+  if (hp)
+  {
     uint8_t time = tic_settings_get_hp_toff(settings);
     tic_sprintf(&str, "hp_toff: %d\n", time);
   }

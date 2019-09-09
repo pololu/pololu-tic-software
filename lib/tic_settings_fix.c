@@ -564,6 +564,11 @@ static void tic_settings_fix_core(tic_settings * settings, tic_string * warnings
   {
     uint32_t current = tic_settings_get_current_limit(settings);
     uint32_t max_current = tic_get_max_allowed_current(product);
+    if (product == TIC_PRODUCT_36V4 &&
+      !tic_settings_get_hp_enable_unrestricted_current_limits(settings))
+    {
+      max_current = 3939;
+    }
 
     if (current > max_current)
     {

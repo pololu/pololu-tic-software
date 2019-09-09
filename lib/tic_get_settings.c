@@ -378,6 +378,9 @@ static void write_buffer_to_settings(const uint8_t * buf, tic_settings * setting
 
   if (product == TIC_PRODUCT_36V4)
   {
+    tic_settings_set_hp_enable_unrestricted_current_limits(settings,
+      buf[TIC_SETTING_HP_ENABLE_UNRESTRICTED_CURRENT_LIMITS] & 1);
+
     const uint8_t * p = buf + TIC_SETTING_HP_DRIVER_REGISTERS;
     tic_settings_set_hp_toff(settings, p[4]);
     tic_settings_set_hp_tblank(settings, p[6]);
@@ -470,13 +473,13 @@ tic_settings_segments tic_get_settings_segments(uint8_t product)
 
   if (product == TIC_PRODUCT_ID_T249)
   {
-    // The Tic T249 actually has some product-specific variables that were
-    // placed in the general variables area.
     segments.general_size = TIC_SETTING_AGC_FREQUENCY_LIMIT + 1;
   }
 
   if (product == TIC_PRODUCT_36V4)
   {
+    segments.general_size =
+      TIC_SETTING_HP_ENABLE_UNRESTRICTED_CURRENT_LIMITS + 1;
     segments.product_specific_offset = TIC_SETTING_HP_DRIVER_REGISTERS;
   }
 

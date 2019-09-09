@@ -75,6 +75,7 @@ struct tic_settings
   uint8_t agc_current_boost_steps;
   uint8_t agc_frequency_limit;
 
+  bool hp_enable_unrestricted_current_limits;
   uint8_t hp_toff;
   uint8_t hp_tblank;
   bool hp_abt;
@@ -1135,6 +1136,20 @@ uint8_t tic_settings_get_agc_frequency_limit(const tic_settings * settings)
 {
   if (!settings) { return 0; }
   return settings->agc_frequency_limit;
+}
+
+void tic_settings_set_hp_enable_unrestricted_current_limits(
+  tic_settings * settings, bool enable)
+{
+  if (!settings) { return; }
+  settings->hp_enable_unrestricted_current_limits = enable;
+}
+
+bool tic_settings_get_hp_enable_unrestricted_current_limits(
+  const tic_settings * settings)
+{
+  if (!settings) { return 0; }
+  return settings->hp_enable_unrestricted_current_limits;
 }
 
 void tic_settings_set_hp_toff(tic_settings * settings, uint8_t time)

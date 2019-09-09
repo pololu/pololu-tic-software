@@ -49,6 +49,7 @@ auto_homing: false
 auto_homing_forward: false
 homing_speed_towards: 1000000
 homing_speed_away: 500000
+hp_enable_unrestricted_current_limits: false
 hp_toff: 50
 hp_tblank: 0
 hp_abt: true

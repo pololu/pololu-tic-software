@@ -766,6 +766,16 @@ static tic_error * apply_string_pair(tic_settings * settings,
     }
     tic_settings_set_agc_frequency_limit(settings, limit);
   }
+  else if (!strcmp(key, "hp_enable_unrestricted_current_limits"))
+  {
+    uint32_t enable;
+    if (!tic_name_to_code(tic_bool_names, value, &enable))
+    {
+      return tic_error_create(
+        "Unrecognized hp_enable_unrestricted_current_limits value.");
+    }
+    tic_settings_set_hp_enable_unrestricted_current_limits(settings, enable);
+  }
   else if (!strcmp(key, "hp_toff"))
   {
     int64_t time;

@@ -1181,6 +1181,24 @@ void tic_settings_set_agc_frequency_limit(tic_settings *, uint8_t limit);
 TIC_API
 uint8_t tic_settings_get_agc_frequency_limit(const tic_settings *);
 
+/// Sets the "Enable unrestricted current limits" setting (Tic 36v4 only).
+///
+/// By default, the Tic 36v4 caps its current limit at 3939 mA (which is
+/// encoded as 55).  Any attempt to set a current limit above that, whether
+/// from a setting or a command, results in 3939 mA.
+///
+/// If this setting is enabled, that limit is disabled, and currents can go
+/// all the way up to 9095 mA (encoded as 127).
+TIC_API
+void tic_settings_set_hp_enable_unrestricted_current_limits(
+  tic_settings *, bool enable);
+
+/// Gets the "Enable unrestricted current limits" setting for the Tic 36v4,
+/// as described in tic_settings_set_hp_enable_unrestricted_current_limits().
+TIC_API
+bool tic_settings_get_hp_enable_unrestricted_current_limits(
+  const tic_settings *);
+
 /// Sets the fixed off time (Tic 36v4 only).
 ///
 /// This sets the fixed off time in increments of 500 nanoseconds,
@@ -2094,6 +2112,10 @@ tic_error * tic_get_debug_data(tic_handle *, uint8_t * data, size_t * size);
 ///
 /// If you try to set a current limit higher than this, the Tic's firmware will
 /// adjust it down because of of hardware limitations.
+///
+/// This function returns 9095 for the Tic 36v4, but to actually succeed in
+/// setting current limits above 4000, you must enable unrestricted current
+/// limits.  See tic_settings_set_hp_enable_unrestricted_current_limits().
 TIC_API
 uint32_t tic_get_max_allowed_current(uint8_t product);
 
