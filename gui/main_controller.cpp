@@ -127,6 +127,7 @@ void main_controller::connect_device(const tic::device & device)
     disconnected_by_user = false;
     send_reset_command_timeout = false;
     suppress_high_current_limit_warning = false;
+    suppress_potential_high_current_limit_warning = false;
 
     // Open a handle to the specified device.
     device_handle = tic::handle(device);
@@ -1525,16 +1526,23 @@ void main_controller::start_input_setup()
 
 bool main_controller::warn_about_applying_high_current_settings()
 {
-  if (suppress_high_current_limit_warning) { return true; }
+  if (settings.get_product() != TIC_PRODUCT_36V4) { return true; }
+
+  if (!tic_settings_get_hp_enable_unrestricted_current_limits(
+    settings.get_pointer()))
+  {
+    return true;
+  }
 
   uint32_t current_limit =
     tic_settings_get_current_limit(settings.get_pointer());
   int32_t current_limit_during_error =
     tic_settings_get_current_limit_during_error(settings.get_pointer());
 
-  if (settings.get_product() == TIC_PRODUCT_36V4 &&
-    (current_limit > 4000 || current_limit_during_error > 4000))
+  if (current_limit > 4000 || current_limit_during_error > 4000)
   {
+    if (suppress_high_current_limit_warning) { return true; }
+
     bool confirmed = window->warn_and_confirm(
       "WARNING: Increasing the current limit beyond 4000 mA "
       "(or lower in applications with reduced heat dissipation) "
@@ -1548,8 +1556,26 @@ bool main_controller::warn_about_applying_high_current_settings()
     }
     return confirmed;
   }
+  else
+  {
+    if (suppress_potential_high_current_limit_warning) { return true; }
 
-  return true;
+    bool confirmed = window->warn_and_confirm(
+      "WARNING: The \"Enable unrestricted current limits\" option " \
+      "allows you to set the current limit to high levels that could put " \
+      "the Tic 36v4 at risk of over-temperature conditions that can result " \
+      "in PERMANENT DAMAGE.  " \
+      "Even if the current limits specified in your settings are okay, the " \
+      "current limit could change to an unsafe value if the Tic receives a " \
+      "command to do so via USB, serial, or I\u00B2C.  " \
+      "Please see the Tic 36v4 user's guide for more information.  " \
+      "Really proceed with allowing unrestricted current limits?");
+    if (confirmed)
+    {
+      suppress_potential_high_current_limit_warning = true;
+    }
+    return confirmed;
+  }
 }
 
 void main_controller::apply_settings()

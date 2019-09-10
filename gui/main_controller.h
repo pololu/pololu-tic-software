@@ -214,6 +214,7 @@ private:
   bool send_reset_command_timeout = false;
 
   bool suppress_high_current_limit_warning = false;
+  bool suppress_potential_high_current_limit_warning = false;
 
   void reload_variables();
 
