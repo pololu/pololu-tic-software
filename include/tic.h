@@ -1189,6 +1189,14 @@ uint8_t tic_settings_get_agc_frequency_limit(const tic_settings *);
 ///
 /// If this setting is enabled, that limit is disabled, and currents can go
 /// all the way up to 9095 mA (encoded as 127).
+///
+/// WARNING: The Tic 36v4 has no meaningful over-temperature shut-off
+/// (while the gate driver IC has over-temperature protection, it is the
+/// external MOSFETs that will overheat first).  An over-temperature condition
+/// can cause permanent damage to the motor driver.  We strongly recommend you
+/// do not increase the current limit setting beyond 4000&nbsp;mA (or lower in
+/// applications with reduced heat dissipation) unless you can first confirm
+/// that the temperature of the MOSFETs will stay under 140°C.
 TIC_API
 void tic_settings_set_hp_enable_unrestricted_current_limits(
   tic_settings *, bool enable);
