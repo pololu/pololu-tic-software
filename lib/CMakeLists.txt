@@ -32,7 +32,6 @@ if (CMAKE_C_COMPILER_ID STREQUAL "GNU")
 endif ()
 
 # If we are building a DLL, put version and name information in it.
-# Might need conditions in the future: if (WIN32 AND BUILD_SHARED_LIBS)
 set (os_src ${CMAKE_CURRENT_BINARY_DIR}/lib_info.rc)
 
 add_library (lib

@@ -20,14 +20,14 @@ public:
     if (list_initialized) { return list; }
 
     list.clear();
-    for (const tic::device & device : tic::list_connected_devices())
+    for (tic::device & device : tic::list_connected_devices())
     {
       if (serial_number_specified && device.get_serial_number() != serial_number)
       {
         continue;
       }
 
-      list.push_back(device);
+      list.push_back(std::move(device));
     }
     list_initialized = true;
     return list;
