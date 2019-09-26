@@ -1,7 +1,7 @@
 # Tic Stepper Motor Controller software
 
 Version: 1.8.0<br>
-Release date: (unreleased)<br>
+Release date: 2019-09-16<br>
 [www.pololu.com](https://www.pololu.com/)
 
 This repository contains the source code of the configuration and control software for
@@ -19,7 +19,7 @@ from source.
 
 ## Version history
 
-- 1.8.0 (unreleased):
+- 1.8.0 (2019-09-16):
   - Added support for the Tic 36v4.
 - 1.7.0 (2019-01-31):
   - Added support for the Tic N825.
