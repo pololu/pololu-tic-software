@@ -14,7 +14,7 @@
 #define STRING_TO_INT_ERR_EMPTY 3
 #define STRING_TO_INT_ERR_INVALID 4
 
-// Converts a decimal string to the specified integer type. returning an error
+// Converts a decimal string to the specified integer type, returning an error
 // if there is non-number junk in the string or the number is out of range.
 template <typename T>
 static uint8_t string_to_int(const char * str, T * out)
