@@ -3347,6 +3347,8 @@ QLayout * main_window::setup_motor_settings_layout()
     current_limit_warning_label = new QLabel();
     current_limit_warning_label->setObjectName("current_limit_warning_label");
     current_limit_warning_label->setStyleSheet("color: red;");
+    // TODO: Hide this label and the other one like it in the advanced
+    // settings tab so the user cannot see them before connecting to a Tic.
 
     current_limit_layout->addWidget(current_limit_value, 0, 0);
     current_limit_layout->addWidget(current_limit_warning_label, 0, 1,
