@@ -471,7 +471,7 @@ tic_settings_segments tic_get_settings_segments(uint8_t product)
     .general_size = (TIC_SETTING_SERIAL_ALT_DEVICE_NUMBER + 2) - 1
   };
 
-  if (product == TIC_PRODUCT_ID_T249)
+  if (product == TIC_PRODUCT_T249)
   {
     segments.general_size = TIC_SETTING_AGC_FREQUENCY_LIMIT + 1;
   }
