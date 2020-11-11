@@ -26,7 +26,7 @@ from source.
 - 1.8.0 (2019-09-16):
   - Added support for the Tic 36v4.
 - 1.7.0 (2019-01-31):
-  - Added support for the Tic N825.
+  - Added support for the Tic T249 and Tic N825.
   - Added support for the new features in firmware version 1.06: limit switches,
     the "Go home" command, automatic homing, 14-bit serial device numbers,
     alternative serial device numbers,
