@@ -17,7 +17,7 @@ endif ()
 
 # Fix a warning in later versions of CMake.
 if (POLICY CMP0071)
-  cmake_policy(SET CMP0071 OLD)
+  cmake_policy(SET CMP0071 NEW)
 endif ()
 
 project (tic)
