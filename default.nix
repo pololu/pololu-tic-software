@@ -1,5 +1,5 @@
 rec {
-  nixcrpkgs = import <nixcrpkgs>;
+  nixcrpkgs = import <nixcrpkgs> {};
 
   src = nixcrpkgs.filter ./.;
 
