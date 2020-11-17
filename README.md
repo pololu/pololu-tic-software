@@ -1,7 +1,7 @@
 # Tic Stepper Motor Controller software
 
-Version: 1.8.1<br>
-Release date: 2020-06-03<br>
+Version: 1.8.2<br>
+Release date: 2020-11-16<br>
 [www.pololu.com](https://www.pololu.com/)
 
 This repository contains the source code of the configuration and control software for
@@ -19,6 +19,10 @@ from source.
 
 ## Version history
 
+- 1.8.2 (2020-11-16):
+  - Started using a newer version of libusbp so that the Windows version of
+    this software might work with Tic devices that are connected through
+    certain special USB hubs (no actual code changes in this repository).
 - 1.8.1 (2020-06-03):
   - Fixed a bug introduced in version 1.8.0 that prevented the `tic_get_settings`
     and `tic_set_settings` functions from properly loading or storing the
