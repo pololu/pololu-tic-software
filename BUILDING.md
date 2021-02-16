@@ -140,11 +140,11 @@ If you have not done so already, follow the instructions on the MSYS2 website to
 download, install, and update your MSYS2 environment.  In particular, be sure to
 update your installed packages.
 
-Next, start a shell by selecting "MinGW-w64 Win32 Shell" from your Start menu or
+Next, start a shell by selecting "MSYS2 MinGW 32-bit" from your Start menu or
 by running `mingw32.exe`.  This is the right environment to use if you want to
 build 32-bit software that works on 32-bit or 64-bit Windows.  (If you want to
 build 64-bit software that only works on 64-bit versions of Windows, select
-"MinGW-w64 Win64 Shell" or `mingw64.exe`.)
+"MSYS2 MinGW 64-bit" or `mingw64.exe`.)
 
 Run this command to install the required development tools:
 
