@@ -13,7 +13,6 @@
 #include <QCloseEvent>
 #include <QComboBox>
 #include <QDesktopServices>
-#include <QDesktopWidget>
 #include <QDoubleSpinBox>
 #include <QFileDialog>
 #include <QGridLayout>
@@ -1365,7 +1364,7 @@ void main_window::center_at_startup_if_needed()
         Qt::LeftToRight,
         Qt::AlignCenter,
         size(),
-        qApp->desktop()->availableGeometry()
+        qApp->primaryScreen()->availableGeometry()
         )
       );
   }
