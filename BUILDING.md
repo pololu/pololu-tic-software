@@ -187,7 +187,7 @@ your shell, and you should be able to start the graphical configuration utility
 by running `ticgui`.
 
 
-## Building from source on Mac OS X with Homebrew
+## Building from source on macOS with Homebrew
 
 First, install [Homebrew](http://brew.sh/).
 

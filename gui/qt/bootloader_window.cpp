@@ -59,7 +59,7 @@ static void update_device_combo_box(QComboBox & box, bool & device_was_selected)
   box.setCurrentIndex(index);
 }
 
-// On Mac OS X, field labels are usually right-aligned.
+// On macOS, field labels are usually right-aligned.
 #ifdef __APPLE__
 #define FIELD_LABEL_ALIGNMENT Qt::AlignRight
 #else
