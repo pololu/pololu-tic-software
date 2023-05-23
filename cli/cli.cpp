@@ -36,7 +36,7 @@ static const char help[] =
   "  --max-accel NUM              Set the acceleration limit.\n"
   "  --max-decel NUM              Set the deceleration limit.\n"
   "  --step-mode MODE             Set step mode: full, half, 1, 2, 2_100p, 4, 8,\n"
-  "                               16, 32.\n"
+  "                               16, 32, 64, 128, 256.\n"
   "  --current NUM                Set the current limit in mA.\n"
   "  --decay MODE                 Set decay mode:\n"
   "                               Tic T825/N825: mixed, slow, or fast\n"
