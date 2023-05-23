@@ -148,7 +148,7 @@ build 64-bit software that only works on 64-bit versions of Windows, select
 
 Run this command to install the required development tools:
 
-    pacman -S base-devel git $MINGW_PACKAGE_PREFIX-{toolchain,cmake,qt5}
+    pacman -S base-devel git $MINGW_PACKAGE_PREFIX-{toolchain,cmake,qt5-base}
 
 If pacman prompts you to enter a selection of packages to install, just press
 enter to install all of the packages.
@@ -161,8 +161,9 @@ library into your MSYS2 environment.
     cd libusbp
     mkdir build
     cd build
-    MSYS2_ARG_CONV_EXCL=- cmake .. -G"MSYS Makefiles" -DCMAKE_INSTALL_PREFIX=$MINGW_PREFIX
-    make install DESTDIR=/
+    cmake .. -DCMAKE_INSTALL_PREFIX=$MINGW_PREFIX
+    ninja
+    ninja install
     cd ../..
 
 You can test to see if libusbp-1 was installed correctly by running
@@ -178,8 +179,9 @@ Run these commands to build this software and install it:
     cd tic
     mkdir build
     cd build
-    MSYS2_ARG_CONV_EXCL=- cmake .. -G"MSYS Makefiles" -DCMAKE_INSTALL_PREFIX=$MINGW_PREFIX
-    make install DESTDIR=/
+    cmake .. -DCMAKE_INSTALL_PREFIX=$MINGW_PREFIX
+    ninja
+    ninja install
     cd ../..
 
 You should now be able to run the command-line utility by running `ticcmd` in
