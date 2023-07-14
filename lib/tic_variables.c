@@ -612,3 +612,66 @@ uint32_t tic_variables_get_last_hp_driver_errors(const tic_variables * variables
   if (variables == NULL) { return 0; }
   return variables->last_hp_driver_errors;
 }
+
+tic_variables * tic_variables_fake(void)
+{
+  tic_variables * vars = (tic_variables *)calloc(1, sizeof(tic_variables));
+  vars->product = TIC_PRODUCT_T825;
+  vars->operation_state = TIC_OPERATION_STATE_NORMAL;
+  vars->energized = 1;
+  vars->position_uncertain = 1;
+  vars->forward_limit_active = 0;
+  vars->reverse_limit_active = 1;
+  vars->homing_active = 0;
+  vars->error_status = 0x3FF;
+  vars->errors_occurred = 0x3F03FF;
+  vars->planning_mode = TIC_PLANNING_MODE_TARGET_POSITION;
+  vars->target_position = 1234;
+  vars->target_velocity = -44;
+  vars->starting_speed = 1000;
+  vars->max_speed = 2023714;
+  vars->max_decel = 23456;
+  vars->max_accel = 34567;
+  vars->current_position = 500;
+  vars->current_velocity = 951145;
+  vars->acting_target_position = vars->target_position + 100;
+  vars->time_since_last_step = 90;
+  vars->device_reset = TIC_RESET_STACK_UNDERFLOW;
+  vars->vin_voltage = 7005;
+  vars->up_time = 3725010;
+  vars->encoder_position = -801;
+  vars->rc_pulse_width = 1555 * 12;
+  vars->step_mode = TIC_STEP_MODE_HALF;
+  vars->current_limit_code = 0xFF;
+  vars->decay_mode = TIC_DECAY_MODE_SLOW;
+  vars->input_state = TIC_INPUT_STATE_POSITION;
+  vars->input_after_averaging = 0;
+  vars->input_after_hysteresis = 0;
+  vars->input_after_scaling = 0;
+  vars->last_motor_driver_error = TIC_MOTOR_DRIVER_ERROR_OVERCURRENT;
+  vars->agc_mode = TIC_AGC_MODE_ON;
+  vars->agc_bottom_current_limit = 0xFF;
+  vars->agc_current_boost_steps = 0xFF;
+  vars->agc_frequency_limit = 0xFF;
+
+  vars->pin_info[TIC_PIN_NUM_SCL].analog_reading = 100;
+  vars->pin_info[TIC_PIN_NUM_SCL].digital_reading = 0;
+  vars->pin_info[TIC_PIN_NUM_SCL].pin_state = TIC_PIN_STATE_HIGH_IMPEDANCE;
+
+  vars->pin_info[TIC_PIN_NUM_SDA].analog_reading = 900;
+  vars->pin_info[TIC_PIN_NUM_SDA].digital_reading = 1;
+  vars->pin_info[TIC_PIN_NUM_SDA].pin_state = TIC_PIN_STATE_OUTPUT_HIGH;
+
+  vars->pin_info[TIC_PIN_NUM_TX].analog_reading = 200;
+  vars->pin_info[TIC_PIN_NUM_TX].digital_reading = 0;
+  vars->pin_info[TIC_PIN_NUM_TX].pin_state = TIC_PIN_STATE_OUTPUT_LOW;
+
+  vars->pin_info[TIC_PIN_NUM_RX].analog_reading = 800;
+  vars->pin_info[TIC_PIN_NUM_RX].digital_reading = 1;
+  vars->pin_info[TIC_PIN_NUM_RX].pin_state = TIC_PIN_STATE_PULLED_UP;
+
+  vars->pin_info[TIC_PIN_NUM_RC].digital_reading = 0;
+  vars->pin_info[TIC_PIN_NUM_RC].pin_state = TIC_PIN_STATE_HIGH_IMPEDANCE;
+
+  return vars;
+}

@@ -786,16 +786,10 @@ static void test_procedure(device_selector & selector, uint32_t procedure)
 {
   if (procedure == 1)
   {
-    // Let's print some fake variable data to test our print_status().  This
-    // test invokes all sorts of undefined behavior but it's the easiest way to
-    // put fake data into a tic::variables object without modifying
-    // libpololu-tic.
-    uint8_t fake_data[4096];
-    memset(fake_data, 0xFF, sizeof(fake_data));
-    tic::variables fake_vars((tic_variables *)fake_data);
+    // Print some fake variable data to test our print_status().
+    tic::variables fake_vars(tic_variables_fake());
     tic::settings settings;
     print_status(fake_vars, settings, "Fake name", "123", "9.99", true);
-    fake_vars.pointer_release();
   }
   else if (procedure == 2)
   {

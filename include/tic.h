@@ -1641,6 +1641,10 @@ uint8_t tic_variables_get_pin_state(const tic_variables *, uint8_t pin);
 TIC_API
 uint32_t tic_variables_get_last_hp_driver_errors(const tic_variables *);
 
+// Undocumented function for testing.  Not part of the public API.
+TIC_API
+tic_variables * tic_variables_fake(void);
+
 
 // tic_device ///////////////////////////////////////////////////////////////////
 

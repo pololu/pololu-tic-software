@@ -5,35 +5,35 @@ FakeStatus = <<END
 Name:                         Fake name
 Serial number:                123
 Firmware version:             9.99
-Last reset:                   (Unknown)
-Up time:                      1193:02:47
+Last reset:                   Stack underflow
+Up time:                      1:02:05
 
-Encoder position:             -1
-RC pulse width:               N/A
-Input state:                  (Unknown)
-Input after averaging:        N/A
-Input after hysteresis:       N/A
-Input after scaling:          -1
-Forward limit active:         Yes
+Encoder position:             -801
+RC pulse width:               18660
+Input state:                  Position
+Input after averaging:        0
+Input after hysteresis:       0
+Input after scaling:          0
+Forward limit active:         No
 Reverse limit active:         Yes
 
-VIN voltage:                  65.535 V
-Operation state:              (Unknown)
+VIN voltage:                  7.005 V
+Operation state:              Normal
 Energized:                    Yes
-Homing active:                Yes
+Homing active:                No
 
-Target:                       No target
-Current position:             -1
+Target position:              1234
+Current position:             500
 Position uncertain:           Yes
-Current velocity:             -1
-Max speed:                    4294967295
-Starting speed:               4294967295
-Max acceleration:             4294967295
-Max deceleration:             4294967295
-Acting target position:       -1
-Time since last step:         4294967295
-Step mode:                    (Unknown)
-Current limit:                0 mA
+Current velocity:             951145
+Max speed:                    2023714
+Starting speed:               1000
+Max acceleration:             34567
+Max deceleration:             23456
+Acting target position:       1334
+Time since last step:         90
+Step mode:                    1/2 step
+Current limit:                3968 mA
 
 Errors currently stopping the motor:
   - Intentionally de-energized
@@ -46,12 +46,6 @@ Errors currently stopping the motor:
   - Safe start violation
   - ERR line high
   - (Unknown)
-  - (Unknown)
-  - (Unknown)
-  - (Unknown)
-  - (Unknown)
-  - (Unknown)
-  - (Unknown)
 Errors that occurred since last check:
   - Intentionally de-energized
   - Motor driver error
@@ -63,47 +57,31 @@ Errors that occurred since last check:
   - Safe start violation
   - ERR line high
   - (Unknown)
-  - (Unknown)
-  - (Unknown)
-  - (Unknown)
-  - (Unknown)
-  - (Unknown)
-  - (Unknown)
   - Serial framing
   - Serial RX overrun
   - Serial format
   - Serial CRC
   - Encoder skip
   - (Unknown)
-  - (Unknown)
-  - (Unknown)
-  - (Unknown)
-  - (Unknown)
-  - (Unknown)
-  - (Unknown)
-  - (Unknown)
-  - (Unknown)
-  - (Unknown)
-  - (Unknown)
 
 SCL pin:
-  State:                      (Unknown)
-  Analog reading:             N/A
-  Digital reading:            1
+  State:                      High impedance
+  Analog reading:             100
+  Digital reading:            0
 SDA pin:
-  State:                      (Unknown)
-  Analog reading:             N/A
+  State:                      Output high
+  Analog reading:             900
   Digital reading:            1
 TX pin:
-  State:                      (Unknown)
-  Analog reading:             N/A
-  Digital reading:            1
+  State:                      Output low
+  Analog reading:             200
+  Digital reading:            0
 RX pin:
-  State:                      (Unknown)
-  Analog reading:             N/A
+  State:                      Pulled up
+  Analog reading:             800
   Digital reading:            1
 RC pin:
-  Digital reading:            1
+  Digital reading:            0
 
 END
 
@@ -133,8 +111,8 @@ describe '--status' do
 
     actual_keys = status.keys.sort
     expected_keys = YAML.load(FakeStatus).keys.sort
-    unless %i(T825 N825 T834).include?(tic_product)
-      expected_keys.delete("Decay mode")
+    if %i(T825 N825 T834).include?(tic_product)
+      expected_keys << "Decay mode"
     end
     if tic_product == :T249
       expected_keys << 'AGC bottom current limit'
