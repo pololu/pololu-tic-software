@@ -1,7 +1,7 @@
 This is the license for the Tic software written by Pololu.
 ---
 
-Copyright (c) 2018 Pololu Corporation.  For more information, see
+Copyright (c) 2018-2023 Pololu Corporation.  For more information, see
 
 http://www.pololu.com/
 http://forum.pololu.com/
