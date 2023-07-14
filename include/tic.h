@@ -1802,7 +1802,7 @@ tic_error * tic_halt_and_hold(tic_handle *);
 
 /// Sends a "Go Home" command, starting the Tic's homing procedure.
 ///
-/// The direcition argument should be 1 for forward or 0 for reverse.
+/// The direction argument should be 1 for forward or 0 for reverse.
 TIC_API TIC_WARN_UNUSED
 tic_error * tic_go_home(tic_handle *, uint8_t direction);
 

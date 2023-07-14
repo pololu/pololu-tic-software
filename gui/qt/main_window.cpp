@@ -25,6 +25,7 @@
 #include <QProcessEnvironment>
 #include <QPushButton>
 #include <QRadioButton>
+#include <QScreen>
 #include <QShortcut>
 #include <QSpinBox>
 #include <QTabWidget>
@@ -1365,7 +1366,7 @@ void main_window::center_at_startup_if_needed()
         Qt::LeftToRight,
         Qt::AlignCenter,
         size(),
-        qApp->desktop()->availableGeometry()
+        qApp->primaryScreen()->availableGeometry()
         )
       );
   }
