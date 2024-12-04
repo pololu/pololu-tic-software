@@ -254,7 +254,7 @@ tic_error * tic_get_variables(tic_handle * handle, tic_variables ** variables,
   uint8_t general_size = TIC_VAR_INPUT_AFTER_SCALING + 4;
   uint8_t product_specific_offset = 0;
 
-  if (product == TIC_PRODUCT_ID_T249)
+  if (product == TIC_PRODUCT_T249)
   {
     // The Tic T249 actually has some product-specific variables that were
     // placed in the general variables area.
