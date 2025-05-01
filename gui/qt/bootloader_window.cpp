@@ -4,6 +4,7 @@
 #include <bootloader.h>
 
 #include <QComboBox>
+#include <QCoreApplication>
 #include <QFileDialog>
 #include <QFileInfo>
 #include <QGridLayout>
@@ -297,6 +298,7 @@ void bootloader_window::set_status(const char * status, uint32_t progress, uint3
   progress_bar->setRange(0, max_progress);
   progress_bar->setValue(progress);
   progress_bar->setVisible(true);
+  QCoreApplication::processEvents();  // Allow UI to update
 }
 
 void bootloader_window::clear_status()
