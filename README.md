@@ -1,7 +1,5 @@
 # Tic Stepper Motor Controller software
 
-Version: 1.8.2<br>
-Release date: 2020-11-16<br>
 [www.pololu.com](https://www.pololu.com/)
 
 This repository contains the source code of the configuration and control software for
@@ -19,6 +17,14 @@ from source.
 
 ## Version history
 
+- 1.8.3 (2025-05-01):
+  - Fixed a bug in tic_get_variables that prevented it from fetching the
+    Tic T249-specific variables, including 'Last motor driver error' and
+    the four AGC variables.  Those variables were always reported as 0.
+  - Made a small change to the bootloader GUI code that should generally
+    make the progress bar update more reliably, and seems to fix the
+    timeout issue that has been happening during firmware updates in
+    later versions of macOS.
 - 1.8.2 (2020-11-16):
   - Started using a newer version of libusbp so that the Windows version of
     this software might work with Tic devices that are connected through
