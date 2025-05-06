@@ -13,7 +13,6 @@
 #include <QCloseEvent>
 #include <QComboBox>
 #include <QDesktopServices>
-#include <QDesktopWidget>
 #include <QDoubleSpinBox>
 #include <QFileDialog>
 #include <QGridLayout>
