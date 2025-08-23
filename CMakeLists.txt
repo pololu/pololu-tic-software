@@ -103,6 +103,8 @@ if (ENABLE_GUI)
   add_subdirectory (gui)
 endif ()
 
+include(GNUInstallDirs)
+
 # Install the header files into include/
 install(FILES include/tic.h include/tic.hpp include/tic_protocol.h
-  DESTINATION "include/libpololu-tic-${SOFTWARE_VERSION_MAJOR}")
+  DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/libpololu-tic-${SOFTWARE_VERSION_MAJOR}")
