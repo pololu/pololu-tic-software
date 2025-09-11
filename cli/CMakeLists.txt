@@ -20,4 +20,6 @@ include_directories (
 
 target_link_libraries (cli lib)
 
-install(TARGETS cli DESTINATION bin)
+include(GNUInstallDirs)
+
+install(TARGETS cli DESTINATION ${CMAKE_INSTALL_BINDIR})
