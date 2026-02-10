@@ -16,28 +16,32 @@ end
 attr_name = ARGV.shift
 
 # Read in the NIX_PATH as a hash.
-nix_path = {}
-ENV['NIX_PATH'].split(":").each do |entry|
+$nix_path = {}
+ENV.fetch('NIX_PATH', '').split(":").each do |entry|
   if md = entry.match(/(\w+)=(.+)/)
-    nix_path[md[1]] = md[2]
+    $nix_path[md[1]] = md[2]
   end
 end
 
-def get_git_commit(path)
-  path = Pathname(path)
-  if File.exists?(path + '.git')
-    return %x(git -C #{path} rev-parse HEAD).strip
+def get_git_commit(name)
+  if name.start_with?('.')
+    path = name
+  else
+    path = $nix_path.fetch(name, File.expand_path("~/.nix-defexpr/channels/#{name}"))
   end
-  dest = path.readlink
-  if md = dest.to_s.match(/\bnixpkgs-[.0-9a-z]+\.([0-9a-f]+)\b/)
-    return md[1]
+  path = Pathname(path)
+  if File.exist?(path + '.git-revision')
+    return File.read(path + '.git-revision')
+  end
+  if File.exist?(path + '.git')
+    return %x(git -C #{path} rev-parse HEAD).strip
   end
   raise "unable to get git commit for #{path}"
 end
 
 env = {}
 env['commit'] = get_git_commit('.')
-env['nixcrpkgs_commit'] = get_git_commit(nix_path.fetch('nixcrpkgs'))
-env['nixpkgs_commit'] = get_git_commit(nix_path.fetch('nixpkgs'))
+env['nixcrpkgs_commit'] = get_git_commit('nixcrpkgs')
+env['nixpkgs_commit'] = get_git_commit('nixpkgs')
 cmd = "nix-build -A #{attr_name}"
 exec(env, cmd)
