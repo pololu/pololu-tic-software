@@ -52,4 +52,6 @@ endif ()
 
 target_link_libraries (gui Qt5::Widgets lib bootloader)
 
-install(TARGETS gui DESTINATION bin)
+include(GNUInstallDirs)
+
+install(TARGETS gui DESTINATION ${CMAKE_INSTALL_BINDIR})
